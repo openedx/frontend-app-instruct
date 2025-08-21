@@ -1,10 +1,10 @@
 {
-  "name": "@openedx/frontend-template-application",
+  "name": "@openedx/frontend-app-instruct",
   "version": "1.0.0",
   "description": "Frontend application template",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openedx/frontend-template-application.git"
+    "url": "git+https://github.com/openedx/frontend-app-instruct.git"
   },
   "main": "src/index.ts",
   "files": [
@@ -27,12 +27,12 @@
   },
   "author": "Open edX",
   "license": "AGPL-3.0",
-  "homepage": "https://github.com/openedx/frontend-template-application#readme",
+  "homepage": "https://github.com/openedx/frontend-app-instruct#readme",
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/openedx/frontend-template-application/issues"
+    "url": "https://github.com/openedx/frontend-app-instruct/issues"
   },
   "dependencies": {
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.3",
