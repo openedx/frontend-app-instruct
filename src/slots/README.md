@@ -1,1 +1,1 @@
-# `frontend-template-application` Slots
+# `frontend-app-instruct` Slots

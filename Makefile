@@ -36,7 +36,7 @@ pull_translations:
 	   && atlas pull $(ATLAS_OPTIONS) \
 	            translations/frontend-base/src/i18n/messages:frontend-base \
 	            translations/paragon/src/i18n/messages:paragon \
-	            translations/frontend-template-application/src/i18n/messages:frontend-template-application
+	            translations/frontend-app-instruct/src/i18n/messages:frontend-app-instruct
 
-	$(intl_imports) frontend-base paragon frontend-component-header frontend-component-footer frontend-template-application
+	$(intl_imports) frontend-base paragon frontend-component-header frontend-component-footer frontend-app-instruct
 

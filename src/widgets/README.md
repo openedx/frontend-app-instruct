@@ -1,1 +1,1 @@
-# `frontend-template-application` Widgets
+# `frontend-app-instruct` Widgets

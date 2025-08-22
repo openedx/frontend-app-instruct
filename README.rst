@@ -1,4 +1,4 @@
-frontend-template-application
+frontend-app-instruct
 #############################
 
 |license-badge| |status-badge| |ci-badge| |codecov-badge|
@@ -7,17 +7,26 @@ frontend-template-application
 Purpose
 *******
 
-This repository is a template for Open edX micro-frontend applications. It is
-flagged as a Template Repository, meaning it can be used as a basis for new
-GitHub repositories by clicking the green "Use this template" button above.
-The rest of this document describes how to work with your new micro-frontend
-**after you've created a new repository from the template.**
+This repository implements a micro-frontend for Instructor Dashboard, providing a seamless 
+and integrated user experience for instructors. It focuses on providing tools and features 
+specifically designed for instructors to track student progress, and facilitate communication with learners.
+
+### What is the domain of this MFE?
+- Course information (Enrollment info, Basic course info, Pending tasks)
+- Membership
+- Cohorts
+- Extensions
+- Student Admin
+- Data Download
+- Special Exams
+- Certificates
+- Open Responses
 
 Getting Started
 ***************
 
 After copying the template repository, you'll want to do a find-and-replace to
-replace all instances of ``frontend-template-application`` with the name of
+replace all instances of ``frontend-app-instruct`` with the name of
 your new repository.  Also edit index.html to replace "Application Template"
 with a friendly name for this application that users will see in their browser
 tab.
@@ -36,12 +45,9 @@ using it.
 Cloning and Startup
 ===================
 
-In the following steps, replace "[PLACEHOLDER]" with the name of the repo you
-created when copying this template above.
-
 1. Clone your new repo:
 
-  ``git clone https://github.com/openedx/frontend-app-[PLACEHOLDER].git``
+  ``git clone https://github.com/openedx/frontend-app-instruct.git``
 
 2. Use node v20.x.
 
@@ -52,7 +58,7 @@ created when copying this template above.
 
 3. Install npm dependencies:
 
-  ``cd frontend-app-[PLACEHOLDER] && npm install``
+  ``cd frontend-app-instruct && npm install``
 
 4. Update the application port to use for local development:
 
@@ -66,35 +72,13 @@ created when copying this template above.
 The dev server is running at `http://apps.local.openedx.io:8080 <http://apps.local.openedx.io:8080>`_
 or whatever port you setup.
 
-Making Your New Project's README File
-=====================================
-
-Move ``README-template-frontend-app.rst`` to your project's ``README.rst``
-file. Please fill out all the sections - this helps out all developers
-understand your frontend app, how to install it, and how to use it.
-
-Developing
-**********
-
-This section concerns development of ``frontend-template-application`` itself,
-not the templated copy.
-
-It should be noted that one of the goals of this repository is for it to
-function in development mode (as in ``npm install && npm run dev``) and as an
-app that can be imported into a shell site, even if no modifications are made.
-This ensures that developers get a *practical* working example, not just a
-theoretical one.
-
-This also means, of course, that any committed code should be tested and
-subject to both CI and branch protection rules.
-
 Project Structure
 =================
 
 The source for this project is organized into nested submodules according to
 the `Feature-based Application Organization ADR`_.
 
-.. _Feature-based Application Organization ADR: https://github.com/openedx/frontend-template-application/blob/master/docs/decisions/0002-feature-based-application-organization.rst
+.. _Feature-based Application Organization ADR: https://github.com/openedx/frontend-app-instruct/blob/master/docs/decisions/0002-feature-based-application-organization.rst
 
 Internationalization
 ====================
@@ -118,7 +102,7 @@ channel`_.
 For anything non-trivial, the best path is to open an issue in this repository
 with as many details about the issue you are facing as you can provide.
 
-https://github.com/openedx/frontend-template-application/issues
+https://github.com/openedx/frontend-app-instruct/issues
 
 For more information about these options, see the `Getting Help`_ page.
 
@@ -163,23 +147,23 @@ The assigned maintainers for this component and other project details may be
 found in `Backstage`_. Backstage pulls this data from the ``catalog-info.yaml``
 file in this repo.
 
-.. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-template-application
+.. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-app-instruct
 
 Reporting Security Issues
 *************************
 
 Please do not report security issues in public, and email security@openedx.org instead.
 
-.. |license-badge| image:: https://img.shields.io/github/license/openedx/frontend-template-application.svg
-    :target: https://github.com/openedx/frontend-template-application/blob/main/LICENSE
+.. |license-badge| image:: https://img.shields.io/github/license/openedx/frontend-app-instruct.svg
+    :target: https://github.com/openedx/frontend-app-instruct/blob/main/LICENSE
     :alt: License
 
 .. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
 
-.. |ci-badge| image:: https://github.com/openedx/frontend-template-application/actions/workflows/ci.yml/badge.svg
-    :target: https://github.com/openedx/frontend-template-application/actions/workflows/ci.yml
+.. |ci-badge| image:: https://github.com/openedx/frontend-app-instruct/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/openedx/frontend-app-instruct/actions/workflows/ci.yml
     :alt: Continuous Integration
 
-.. |codecov-badge| image:: https://codecov.io/github/openedx/frontend-template-application/coverage.svg?branch=main
-    :target: https://codecov.io/github/openedx/frontend-template-application?branch=main
+.. |codecov-badge| image:: https://codecov.io/github/openedx/frontend-app-instruct/coverage.svg?branch=main
+    :target: https://codecov.io/github/openedx/frontend-app-instruct?branch=main
     :alt: Codecov
