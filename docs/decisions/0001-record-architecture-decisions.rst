@@ -26,7 +26,8 @@ Several factors have motivated the creation of a new micro-frontend (MFE) for th
 *   **Frontend-Base Migration**: The Open edX ecosystem is moving toward frontend-base as the standard foundation for MFEs, replacing the legacy MFE architecture.
 *   **Plugin Integration Complexity**: The current system has various plugin slots for additional tabs and CCX (Custom Course for edX) integration that complicate the conversion process.
 *   **Design Consistency**: Need to align with Paragon design system and modern styling used across the platform
-*   **Product Experience Enhancement**: Elevate instructor tools to the level of other platform products like Studio and LMS
+*   **Product Experience Enhancement**: Elevate instructor tools from being "a tab appended to the learner course navigation" into its own distinct product area, providing instructors with improved course way-finding between the learning experience (LMS), instructor tools (Instruct), and authoring tools (Studio)
+*   **Stakeholder Support**: Axim and WGU are supporting this modernization effort with development capacity, while Schema is providing product and design definition assistance during the transition
 
 The key decision point was whether to create a traditional legacy MFE and later migrate to frontend-base (dual-conversion) or build directly on frontend-base as a native implementation.
 
@@ -43,34 +44,43 @@ The `frontend-app-instruct` MFE will provide the following instructor tools:
 *   Extensions (deadline extensions and special accommodations)
 *   Student Admin (individual student management tools)
 *   Data Download (export capabilities for course data)
-*   Special Exams (proctored exam management)
-*   Certificates (certificate generation and management)
 *   Open Responses (open-ended assignment management)
 *   Bulk Email (course communication tools)
+*   Certificates (certificate generation and management)
+*   CCX (Custom Course for edX integration)
 *   Reports (course analytics and reporting)
 
 We will implement this MFE as frontend-base native from the start, rather than using the legacy MFE architecture.
 
 **Implementation Approach**
 
-The conversion will follow a three-stage approach:
+The conversion will follow a three-stage implementation plan:
 
-**Stage 1: Product Level Switching for Courses**
+**Stage 1 (MVP): Convert Existing Instructor Tools to use Paragon**
 
-*   App Header implementation with dropdown to switch between Learn, Studio, and Instruct
-*   Page Level CTAs for navigation between different platform products
+*   Utilize Paragon components for all instructor dashboard tools
+*   Shift UI to use standard typography and colors
+*   Implement incremental UI improvements
+*   No changes to wayfinding or tool location in this stage
+*   Note: This stage was moved from Stage 3 to Stage 1 in the final implementation approach
 
 **Stage 2: Introduction of Instruct Course Home**
 
-*   Creation of new Instructor Home page with product URL: `/instruct/course/courseurl`
-*   Centralized jumping-off point to all instructor tools
-*   Navigation system for individual tool pages
+*   Introduce a landing page with all course-specific tools from current Instructor Dashboard
+*   Navigate to instructor tools from one centralized location, replacing current tab approach
+*   New product URL: `exampleinstance.com/instruct/course/courseurl`
+*   Echo designs from the xBlock configuration page
 
-**Stage 3: Convert Instructor Tools to use Paragon**
+**Stage 3 (Future Direction): Product Level Switching for Courses**
 
-*   All existing instructor dashboard tools redesigned using Paragon components
-*   UI improvements and design consistency implementation
-*   Modern styling aligned with platform design system
+*   App Header Navigation Bar Changes: Introduce a dropdown product switcher between Learn, Studio, and Instruct tools with context-dependent routing:
+
+    *   From Course Outline: "Learn" → LMS course home, "Studio" → Studio Course Outline, "Instruct" → Instructor Home page
+    *   From Course Unit: "Learn" → LMS unit page, "Studio" → Studio Unit page, "Instruct" → Instructor Home page  
+    *   From other pages: Product switcher becomes static label (not visible to learners)
+
+*   Page Level Header Changes: Adjust LMS and Studio headers to include links to instructor pages alongside current Studio/LMS switching buttons
+*   Requires additional community alignment before implementation
 
 Consequences
 ------------
@@ -81,10 +91,16 @@ However, frontend-base native implementation may require additional development 
 
 The team will need to create a DEPR (Deprecation) document for the legacy Instructor Dashboard pages following OEP-0021 processes. Comprehensive API mapping and design documentation will be created, similar to the approach used for the Catalog MFE. The implementation will target Verawood release at the earliest, allowing sufficient development and testing time. Regular community engagement through the Educators Working Group and UX/UI Working Group will be essential to ensure the new MFE meets instructor needs.
 
+**Long-term Ownership and Maintainership**
+
+The updated Instruct product still needs a defined long-term maintainer. Schema is supporting early stages of product definition through documentation updates, QA pipeline recommendations, and release testing coordination to help ensure long-term stability and continuity, but a code-level maintainer needs to be identified for ongoing maintenance and development.
+
 References
 ----------
 
-*   Slack discussion in #inst-dash-mfe-fc-0100 channel (July-August 2025)
+*   Slack discussion in #inst-dash-mfe-fc-0100 channel (July-August 2024)
 *   GitHub issue: "Purpose of this repo" ADR with frontend-base justification #1
+*   GitHub issue: "[Proposal] Instructor Dashboard MFE Conversion #459" - https://github.com/openedx/platform-roadmap/issues/459
 *   OEP-0021: Deprecation Process - https://docs.openedx.org/projects/openedx-proposals/en/latest/processes/oep-0021-proc-deprecation.html
-*   Frontend-base documentation - https://github.com/openedx/frontend-base](https://github.com/openedx/frontend-base
+*   Frontend-base documentation - https://github.com/openedx/frontend-base
+*   Implementation Plan - https://openedx.atlassian.net/wiki/spaces/COMM/pages/5140217859/Proposal+Instructor+Dashboard+MFE+Conversion?focusedCommentId=5167972358
