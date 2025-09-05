@@ -7,6 +7,7 @@ module.exports = createConfig('test', {
   coveragePathIgnorePatterns: [
     'src/setupTest.js',
     'src/i18n',
+    'src/__mocks__',
   ],
   moduleNameMapper: {
     '\\.svg$': '<rootDir>/src/__mocks__/svg.js',
