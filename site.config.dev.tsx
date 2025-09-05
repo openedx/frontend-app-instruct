@@ -2,7 +2,7 @@ import { EnvironmentTypes, SiteConfig, footerApp, headerApp, shellApp } from '@o
 
 import { instructApp } from './src';
 
-import './src/app.scss';
+import './src/main.scss';
 
 const siteConfig: SiteConfig = {
   siteId: 'instructor-dev',
