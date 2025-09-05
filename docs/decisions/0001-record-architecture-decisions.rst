@@ -93,7 +93,7 @@ The team will need to create a DEPR (Deprecation) document for the legacy Instru
 
 **Long-term Ownership and Maintainership**
 
-The updated Instruct product still needs a defined long-term maintainer. Schema is supporting early stages of product definition through documentation updates, QA pipeline recommendations, and release testing coordination to help ensure long-term stability and continuity, but a code-level maintainer needs to be identified for ongoing maintenance and development.
+The long-term maintainership for the Instruct product has been established with WGU team members Diana Villalvazo (@diana-villalvazo-wgu) and Jesse Stewart (@wgu-jesse-stewart) serving as the initial maintainers under a new "committers-frontend-app-instruct" group. Schema continues to support early stages of product definition through documentation updates, QA pipeline recommendations, and release testing coordination to help ensure long-term stability and continuity during the transition period.
 
 References
 ----------
