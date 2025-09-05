@@ -29,7 +29,7 @@ Several factors have motivated the creation of a new micro-frontend (MFE) for th
 *   **Product Experience Enhancement**: Elevate instructor tools from being "a tab appended to the learner course navigation" into its own distinct product area, providing instructors with improved course way-finding between the learning experience (LMS), instructor tools (Instruct), and authoring tools (Studio)
 *   **Stakeholder Support**: Axim and WGU are supporting this modernization effort with development capacity, while Schema is providing product and design definition assistance during the transition
 
-The key decision point was whether to create a traditional legacy MFE and later migrate to frontend-base (dual-conversion) or build directly on frontend-base as a native implementation.
+The key decision point was whether to create a traditional legacy MFE and later migrate to frontend-base (dual-conversion) or build directly on frontend-base as a native implementation. This decision was informed by the Frontend-base strategy summit on 27 Aug 2025 and represents a community consensus on the strategic direction for new MFE development.
 
 Decision
 --------
@@ -98,9 +98,10 @@ The updated Instruct product still needs a defined long-term maintainer. Schema 
 References
 ----------
 
-*   Slack discussion in #inst-dash-mfe-fc-0100 channel (July-August 2024)
+*   Slack discussion in #inst-dash-mfe-fc-0100 channel (July-August 2025)
 *   GitHub issue: "Purpose of this repo" ADR with frontend-base justification #1
 *   GitHub issue: "[Proposal] Instructor Dashboard MFE Conversion #459" - https://github.com/openedx/platform-roadmap/issues/459
 *   OEP-0021: Deprecation Process - https://docs.openedx.org/projects/openedx-proposals/en/latest/processes/oep-0021-proc-deprecation.html
 *   Frontend-base documentation - https://github.com/openedx/frontend-base
 *   Implementation Plan - https://openedx.atlassian.net/wiki/spaces/COMM/pages/5140217859/Proposal+Instructor+Dashboard+MFE+Conversion?focusedCommentId=5167972358
+*   Frontend-base Strategy Summit (27 Aug 2025)
