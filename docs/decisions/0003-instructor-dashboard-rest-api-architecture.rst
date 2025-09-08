@@ -4,492 +4,272 @@ ADR-0003 Instructor Dashboard REST API Architecture
 Decision
 --------
 
-Implement unified Instructor Dashboard REST API with service
-orchestration pattern organizing 90 endpoints across 12 functional
-domains.
+Implement unified Instructor Dashboard REST API with service orchestration
+pattern organizing 90 endpoints across 12 functional domains.
 
 API Endpoints & Services
 ------------------------
 
 Course Information API
-~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/a                   | instructor,            |
-|                   | pi/instructor/v1/cours | xmodule.modulestore    |
-|                   | es/{course_key}/info`` |                        |
-+-------------------+------------------------+------------------------+
-| PUT               | ``/a                   | instructor,            |
-|                   | pi/instructor/v1/cours | xmodule.modulestore    |
-|                   | es/{course_key}/info`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructo       | instructor_task        |
-|                   | r/v1/courses/{course_k |                        |
-|                   | ey}/instructor_tasks`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/ap                  | course_modes           |
-|                   | i/instructor/v1/course |                        |
-|                   | s/{course_key}/modes`` |                        |
-+-------------------+------------------------+------------------------+
-| PUT               | ``/api/instructor/v1/  | course_modes           |
-|                   | courses/{course_key}/m |                        |
-|                   | odes/{mode_id}/price`` |                        |
-+-------------------+------------------------+------------------------+
++--------+------------------------------------------------------------+---------------------------------------------+
+| Method | Endpoint                                                   | Services                                    |
++========+============================================================+=============================================+
+| GET    | /api/instructor/v1/courses/{course_key}/info               | instructor, xmodule.modulestore             |
++--------+------------------------------------------------------------+---------------------------------------------+
+| PUT    | /api/instructor/v1/courses/{course_key}/info               | instructor, xmodule.modulestore             |
++--------+------------------------------------------------------------+---------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/instructor_tasks   | instructor_task                             |
++--------+------------------------------------------------------------+---------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/modes              | course_modes                                |
++--------+------------------------------------------------------------+---------------------------------------------+
+| PUT    | /api/instructor/v1/courses/{course_key}/modes/{mode_id}/price | course_modes                             |
++--------+------------------------------------------------------------+---------------------------------------------+
 
 Membership Management API
-~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/api/ins             | enrollments, student   |
-|                   | tructor/v1/courses/{co |                        |
-|                   | urse_key}/enrollment`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/ins             | enrollments, student   |
-|                   | tructor/v1/courses/{co |                        |
-|                   | urse_key}/enrollment`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/api/ins             | enrollments, student   |
-|                   | tructor/v1/courses/{co |                        |
-|                   | urse_key}/enrollment`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instructo       | bulk_enroll,           |
-|                   | r/v1/courses/{course_k | bulk_email             |
-|                   | ey}/enrollment/batch`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instructor/v1/  | bulk_enroll, util      |
-|                   | courses/{course_key}/e |                        |
-|                   | nrollment/csv_upload`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/ap                  | student.auth           |
-|                   | i/instructor/v1/course |                        |
-|                   | s/{course_key}/roles`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/ap                  | student.auth           |
-|                   | i/instructor/v1/course |                        |
-|                   | s/{course_key}/roles`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/ap                  | student.auth           |
-|                   | i/instructor/v1/course |                        |
-|                   | s/{course_key}/roles`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/                    | student.auth           |
-|                   | api/instructor/v1/cour |                        |
-|                   | ses/{course_key}/roles |                        |
-|                   | /{role_type}/members`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instr           | student.auth           |
-|                   | uctor/v1/courses/{cour |                        |
-|                   | se_key}/beta_testers`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instr           | student.auth           |
-|                   | uctor/v1/courses/{cour |                        |
-|                   | se_key}/beta_testers`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/api/instr           | student.auth           |
-|                   | uctor/v1/courses/{cour |                        |
-|                   | se_key}/beta_testers`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instru          | discussion,            |
-|                   | ctor/v1/courses/{cours | student.auth           |
-|                   | e_key}/forum/members`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instru          | discussion,            |
-|                   | ctor/v1/courses/{cours | student.auth           |
-|                   | e_key}/forum/members`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/api/instru          | discussion,            |
-|                   | ctor/v1/courses/{cours | student.auth           |
-|                   | e_key}/forum/members`` |                        |
-+-------------------+------------------------+------------------------+
++--------+--------------------------------------------------------------------+--------------------------------+
+| Method | Endpoint                                                           | Services                       |
++========+====================================================================+================================+
+| GET    | /api/instructor/v1/courses/{course_key}/enrollment                 | enrollments, student           |
++--------+--------------------------------------------------------------------+--------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/enrollment                 | enrollments, student           |
++--------+--------------------------------------------------------------------+--------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/enrollment                 | enrollments, student           |
++--------+--------------------------------------------------------------------+--------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/enrollment/batch           | bulk_enroll, bulk_email        |
++--------+--------------------------------------------------------------------+--------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/enrollment/csv_upload      | bulk_enroll, util              |
++--------+--------------------------------------------------------------------+--------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/roles                      | student.auth                   |
++--------+--------------------------------------------------------------------+--------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/roles                      | student.auth                   |
++--------+--------------------------------------------------------------------+--------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/roles                      | student.auth                   |
++--------+--------------------------------------------------------------------+--------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/roles/{role_type}/members  | student.auth                   |
++--------+--------------------------------------------------------------------+--------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/beta_testers               | student.auth                   |
++--------+--------------------------------------------------------------------+--------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/beta_testers               | student.auth                   |
++--------+--------------------------------------------------------------------+--------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/beta_testers               | student.auth                   |
++--------+--------------------------------------------------------------------+--------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/forum/members              | discussion, student.auth       |
++--------+--------------------------------------------------------------------+--------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/forum/members              | discussion, student.auth       |
++--------+--------------------------------------------------------------------+--------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/forum/members              | discussion, student.auth       |
++--------+--------------------------------------------------------------------+--------------------------------+
 
 Student Administration API
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/api/i               | student, instructor    |
-|                   | nstructor/v1/courses/{ |                        |
-|                   | course_key}/students`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructor/v    | student, instructor    |
-|                   | 1/courses/{course_key} |                        |
-|                   | /students/{username}`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instruct        | enrollments            |
-|                   | or/v1/courses/{course_ |                        |
-|                   | key}/students/{usernam |                        |
-|                   | e}/enrollment_status`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/ins             | student, instructor    |
-|                   | tructor/v1/courses/{co |                        |
-|                   | urse_key}/students/{us |                        |
-|                   | ername}/progress_url`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instr           | grades,                |
-|                   | uctor/v1/courses/{cour | xmodule.modulestore,   |
-|                   | se_key}/students/{user | instructor_task        |
-|                   | name}/reset_attempts`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instructor      | grades,                |
-|                   | /v1/courses/{course_ke | xmodule.modulestore    |
-|                   | y}/students/{username} |                        |
-|                   | /reset_entrance_exam`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instru          | grades,                |
-|                   | ctor/v1/courses/{cours | xmodule.modulestore,   |
-|                   | e_key}/students/{usern | instructor_task        |
-|                   | ame}/rescore_problem`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instr           | grades,                |
-|                   | uctor/v1/courses/{cour | xmodule.modulestore    |
-|                   | se_key}/students/{user |                        |
-|                   | name}/override_score`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/ins             | student,               |
-|                   | tructor/v1/courses/{co | xmodule.modulestore    |
-|                   | urse_key}/students/{us |                        |
-|                   | ername}/delete_state`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instructor/     | grades,                |
-|                   | v1/courses/{course_key | xmodule.modulestore,   |
-|                   | }/problems/{problem_id | instructor_task        |
-|                   | }/reset_attempts_all`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/inst            | grades,                |
-|                   | ructor/v1/courses/{cou | xmodule.modulestore,   |
-|                   | rse_key}/problems/{pro | instructor_task        |
-|                   | blem_id}/rescore_all`` |                        |
-+-------------------+------------------------+------------------------+
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| Method | Endpoint                                                                   | Services                                         |
++========+============================================================================+==================================================+
+| GET    | /api/instructor/v1/courses/{course_key}/students                           | student, instructor                              |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/students/{username}                | student, instructor                              |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/students/{username}/enrollment_status | enrollments                                    |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/students/{username}/progress_url   | student, instructor                              |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/students/{username}/reset_attempts | grades, xmodule.modulestore, instructor_task     |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/students/{username}/reset_entrance_exam | grades, xmodule.modulestore                    |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/students/{username}/rescore_problem | grades, xmodule.modulestore, instructor_task    |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/students/{username}/override_score | grades, xmodule.modulestore                      |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/students/{username}/delete_state   | student, xmodule.modulestore                     |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/problems/{problem_id}/reset_attempts_all | grades, xmodule.modulestore, instructor_task  |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/problems/{problem_id}/rescore_all  | grades, xmodule.modulestore, instructor_task     |
++--------+----------------------------------------------------------------------------+--------------------------------------------------+
 
 Cohort Management API
-~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/api/                | openedx.core.dj        |
-|                   | instructor/v1/courses/ | angoapps.course_groups |
-|                   | {course_key}/cohorts`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/                | openedx.core.dj        |
-|                   | instructor/v1/courses/ | angoapps.course_groups |
-|                   | {course_key}/cohorts`` |                        |
-+-------------------+------------------------+------------------------+
-| PUT               | ``/api/instructor/v    | openedx.core.dj        |
-|                   | 1/courses/{course_key} | angoapps.course_groups |
-|                   | /cohorts/{cohort_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/api/instructor/v    | openedx.core.dj        |
-|                   | 1/courses/{course_key} | angoapps.course_groups |
-|                   | /cohorts/{cohort_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api                 | openedx.core.dj        |
-|                   | /instructor/v1/courses | angoapps.course_groups |
-|                   | /{course_key}/cohorts/ |                        |
-|                   | {cohort_id}/students`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/api                 | openedx.core.dj        |
-|                   | /instructor/v1/courses | angoapps.course_groups |
-|                   | /{course_key}/cohorts/ |                        |
-|                   | {cohort_id}/students`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instructor/     | openedx.core.dja       |
-|                   | v1/courses/{course_key | ngoapps.course_groups, |
-|                   | }/cohorts/csv_upload`` | util                   |
-+-------------------+------------------------+------------------------+
++--------+------------------------------------------------------------------------------------+--------------------------------------------+
+| Method | Endpoint                                                                           | Services                                   |
++========+====================================================================================+============================================+
+| GET    | /api/instructor/v1/courses/{course_key}/cohorts                                   | openedx.core.djangoapps.course_groups      |
++--------+------------------------------------------------------------------------------------+--------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/cohorts                                   | openedx.core.djangoapps.course_groups      |
++--------+------------------------------------------------------------------------------------+--------------------------------------------+
+| PUT    | /api/instructor/v1/courses/{course_key}/cohorts/{cohort_id}                       | openedx.core.djangoapps.course_groups      |
++--------+------------------------------------------------------------------------------------+--------------------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/cohorts/{cohort_id}                       | openedx.core.djangoapps.course_groups      |
++--------+------------------------------------------------------------------------------------+--------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/cohorts/{cohort_id}/students              | openedx.core.djangoapps.course_groups      |
++--------+------------------------------------------------------------------------------------+--------------------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/cohorts/{cohort_id}/students              | openedx.core.djangoapps.course_groups      |
++--------+------------------------------------------------------------------------------------+--------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/cohorts/csv_upload                        | openedx.core.djangoapps.course_groups, util|
++--------+------------------------------------------------------------------------------------+--------------------------------------------+
 
 Discussion Management API
-~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/api/instructor/     | discussion             |
-|                   | v1/courses/{course_key |                        |
-|                   | }/discussions/topics`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instructor/     | discussion,            |
-|                   | v1/courses/{course_key | xmodule.modulestore    |
-|                   | }/discussions/topics`` |                        |
-+-------------------+------------------------+------------------------+
-| PUT               | ``/api/                | discussion             |
-|                   | instructor/v1/courses/ |                        |
-|                   | {course_key}/discussio |                        |
-|                   | ns/topics/{topic_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/api/                | discussion             |
-|                   | instructor/v1/courses/ |                        |
-|                   | {course_key}/discussio |                        |
-|                   | ns/topics/{topic_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructor/v1   | discussion             |
-|                   | /courses/{course_key}/ |                        |
-|                   | discussions/settings`` |                        |
-+-------------------+------------------------+------------------------+
-| PUT               | ``/api/instructor/v1   | discussion             |
-|                   | /courses/{course_key}/ |                        |
-|                   | discussions/settings`` |                        |
-+-------------------+------------------------+------------------------+
++--------+------------------------------------------------------------------------------------+-----------------------------------------+
+| Method | Endpoint                                                                           | Services                                |
++========+====================================================================================+=========================================+
+| GET    | /api/instructor/v1/courses/{course_key}/discussions/topics                         | discussion                              |
++--------+------------------------------------------------------------------------------------+-----------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/discussions/topics                         | discussion, xmodule.modulestore         |
++--------+------------------------------------------------------------------------------------+-----------------------------------------+
+| PUT    | /api/instructor/v1/courses/{course_key}/discussions/topics/{topic_id}              | discussion                              |
++--------+------------------------------------------------------------------------------------+-----------------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/discussions/topics/{topic_id}              | discussion                              |
++--------+------------------------------------------------------------------------------------+-----------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/discussions/settings                       | discussion                              |
++--------+------------------------------------------------------------------------------------+-----------------------------------------+
+| PUT    | /api/instructor/v1/courses/{course_key}/discussions/settings                       | discussion                              |
++--------+------------------------------------------------------------------------------------+-----------------------------------------+
 
 Extensions & Deadlines API
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/api/ins             | util.date_utils        |
-|                   | tructor/v1/courses/{co |                        |
-|                   | urse_key}/extensions`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/ins             | util.date_utils        |
-|                   | tructor/v1/courses/{co |                        |
-|                   | urse_key}/extensions`` |                        |
-+-------------------+------------------------+------------------------+
-| PUT               | ``/                    | util.date_utils        |
-|                   | api/instructor/v1/cour |                        |
-|                   | ses/{course_key}/exten |                        |
-|                   | sions/{extension_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/                    | util.date_utils        |
-|                   | api/instructor/v1/cour |                        |
-|                   | ses/{course_key}/exten |                        |
-|                   | sions/{extension_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructor/v1/  | util.date_utils,       |
-|                   | courses/{course_key}/e | student                |
-|                   | xtensions/{username}`` |                        |
-+-------------------+------------------------+------------------------+
++--------+-----------------------------------------------------------------------------------+----------------------------------+
+| Method | Endpoint                                                                          | Services                         |
++========+===================================================================================+==================================+
+| GET    | /api/instructor/v1/courses/{course_key}/extensions                               | util.date_utils                  |
++--------+-----------------------------------------------------------------------------------+----------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/extensions                               | util.date_utils                  |
++--------+-----------------------------------------------------------------------------------+----------------------------------+
+| PUT    | /api/instructor/v1/courses/{course_key}/extensions/{extension_id}                | util.date_utils                  |
++--------+-----------------------------------------------------------------------------------+----------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/extensions/{extension_id}                | util.date_utils                  |
++--------+-----------------------------------------------------------------------------------+----------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/extensions/{username}                    | util.date_utils, student         |
++--------+-----------------------------------------------------------------------------------+----------------------------------+
 
 Data Export API
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/api/instruc         | instructor_task, util  |
-|                   | tor/v1/courses/{course |                        |
-|                   | _key}/data_downloads`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instruc         | instructor_task, util  |
-|                   | tor/v1/courses/{course |                        |
-|                   | _key}/data_downloads`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api                 | instructor_task, util  |
-|                   | /instructor/v1/courses |                        |
-|                   | /{course_key}/data_dow |                        |
-|                   | nloads/{download_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/api                 | instructor_task, util  |
-|                   | /instructor/v1/courses |                        |
-|                   | /{course_key}/data_dow |                        |
-|                   | nloads/{download_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/in              | instructor_task,       |
-|                   | structor/v1/courses/{c | student                |
-|                   | ourse_key}/data_downlo |                        |
-|                   | ads/student_profiles`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/ap                  | instructor_task,       |
-|                   | i/instructor/v1/course | grades                 |
-|                   | s/{course_key}/data_do |                        |
-|                   | wnloads/grade_report`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instru          | instructor_task,       |
-|                   | ctor/v1/courses/{cours | grades                 |
-|                   | e_key}/data_downloads/ |                        |
-|                   | problem_grade_report`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/in              | instructor_task,       |
-|                   | structor/v1/courses/{c | xmodule.modulestore    |
-|                   | ourse_key}/data_downlo |                        |
-|                   | ads/course_structure`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/                | instructor_task,       |
-|                   | instructor/v1/courses/ | grades                 |
-|                   | {course_key}/data_down |                        |
-|                   | loads/survey_results`` |                        |
-+-------------------+------------------------+------------------------+
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| Method | Endpoint                                                                          | Services                                     |
++========+===================================================================================+==============================================+
+| GET    | /api/instructor/v1/courses/{course_key}/data_downloads                           | instructor_task, util                        |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/data_downloads                           | instructor_task, util                        |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/data_downloads/{download_id}             | instructor_task, util                        |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/data_downloads/{download_id}             | instructor_task, util                        |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/data_downloads/student_profiles          | instructor_task, student                     |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/data_downloads/grade_report              | instructor_task, grades                      |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/data_downloads/problem_grade_report      | instructor_task, grades                      |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/data_downloads/course_structure          | instructor_task, xmodule.modulestore         |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/data_downloads/survey_results            | instructor_task, grades                      |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
 
 Bulk Email API
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/api/ins             | bulk_email             |
-|                   | tructor/v1/courses/{co |                        |
-|                   | urse_key}/bulk_email`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/ins             | bulk_email,            |
-|                   | tructor/v1/courses/{co | instructor_task        |
-|                   | urse_key}/bulk_email`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructor/v1/  | bulk_email             |
-|                   | courses/{course_key}/b |                        |
-|                   | ulk_email/{email_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api                 | bulk_email,            |
-|                   | /instructor/v1/courses | instructor_task        |
-|                   | /{course_key}/bulk_ema |                        |
-|                   | il/{email_id}/status`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/api/instructor/v1/  | bulk_email             |
-|                   | courses/{course_key}/b |                        |
-|                   | ulk_email/{email_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instruct        | bulk_email             |
-|                   | or/v1/courses/{course_ |                        |
-|                   | key}/email_templates`` |                        |
-+-------------------+------------------------+------------------------+
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| Method | Endpoint                                                                          | Services                                     |
++========+===================================================================================+==============================================+
+| GET    | /api/instructor/v1/courses/{course_key}/bulk_email                               | bulk_email                                   |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/bulk_email                               | bulk_email, instructor_task                  |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/bulk_email/{email_id}                    | bulk_email                                   |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/bulk_email/{email_id}/status             | bulk_email, instructor_task                  |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/bulk_email/{email_id}                    | bulk_email                                   |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/email_templates                          | bulk_email                                   |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
 
 Special Exams API
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/api/instru          | edx_proctoring, grades |
-|                   | ctor/v1/courses/{cours |                        |
-|                   | e_key}/special_exams`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | `                      | edx_proctoring, grades |
-|                   | `/api/instructor/v1/co |                        |
-|                   | urses/{course_key}/spe |                        |
-|                   | cial_exams/{exam_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instructor/     | edx_proctoring,        |
-|                   | v1/courses/{course_key | InstructorService      |
-|                   | }/special_exams/{exam_ |                        |
-|                   | id}/reset/{username}`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/ins             | edx_proctoring, grades |
-|                   | tructor/v1/courses/{co |                        |
-|                   | urse_key}/special_exam |                        |
-|                   | s/{exam_id}/attempts`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructor/v    | edx_proctoring         |
-|                   | 1/courses/{course_key} |                        |
-|                   | /proctoring_settings`` |                        |
-+-------------------+------------------------+------------------------+
-| PUT               | ``/api/instructor/v    | edx_proctoring         |
-|                   | 1/courses/{course_key} |                        |
-|                   | /proctoring_settings`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/inst            | edx_proctoring,        |
-|                   | ructor/v1/courses/{cou | student                |
-|                   | rse_key}/special_exams |                        |
-|                   | /{exam_id}/allowance`` |                        |
-+-------------------+------------------------+------------------------+
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| Method | Endpoint                                                                          | Services                                     |
++========+===================================================================================+==============================================+
+| GET    | /api/instructor/v1/courses/{course_key}/special_exams                            | edx_proctoring, grades                       |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/special_exams/{exam_id}                  | edx_proctoring, grades                       |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/special_exams/{exam_id}/reset/{username} | edx_proctoring, InstructorService            |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/special_exams/{exam_id}/attempts         | edx_proctoring, grades                       |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/proctoring_settings                      | edx_proctoring                               |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| PUT    | /api/instructor/v1/courses/{course_key}/proctoring_settings                      | edx_proctoring                               |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/special_exams/{exam_id}/allowance        | edx_proctoring, student                      |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
 
 Certificates API
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/api/instr           | certificates           |
-|                   | uctor/v1/courses/{cour |                        |
-|                   | se_key}/certificates`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instructor/v1/  | certificates,          |
-|                   | courses/{course_key}/c | instructor_task        |
-|                   | ertificates/generate`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/ins             | certificates, student  |
-|                   | tructor/v1/courses/{co |                        |
-|                   | urse_key}/certificates |                        |
-|                   | /generate/{username}`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/a                   | certificates,          |
-|                   | pi/instructor/v1/cours | instructor_task        |
-|                   | es/{course_key}/certif |                        |
-|                   | icates/generate_bulk`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructor/v1/c | certificates           |
-|                   | ourses/{course_key}/ce |                        |
-|                   | rtificates/allowlist`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/instructor/v1/c | certificates, student  |
-|                   | ourses/{course_key}/ce |                        |
-|                   | rtificates/allowlist`` |                        |
-+-------------------+------------------------+------------------------+
-| DELETE            | ``/api/instructor/v1/c | certificates           |
-|                   | ourses/{course_key}/ce |                        |
-|                   | rtificates/allowlist`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instruc         | certificates           |
-|                   | tor/v1/courses/{course |                        |
-|                   | _key}/certificates/{ce |                        |
-|                   | rtificate_id}/status`` |                        |
-+-------------------+------------------------+------------------------+
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| Method | Endpoint                                                                          | Services                                     |
++========+===================================================================================+==============================================+
+| GET    | /api/instructor/v1/courses/{course_key}/certificates                             | certificates                                 |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/certificates/generate                    | certificates, instructor_task                |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/certificates/generate/{username}         | certificates, student                        |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/certificates/generate_bulk               | certificates, instructor_task                |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/certificates/allowlist                   | certificates                                 |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/certificates/allowlist                   | certificates, student                        |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| DELETE | /api/instructor/v1/courses/{course_key}/certificates/allowlist                   | certificates                                 |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/certificates/{certificate_id}/status     | certificates                                 |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
 
 Open Response Assessment API
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | ``/                    | ora_staff_grader,      |
-|                   | api/instructor/v1/cour | xmodule.modulestore    |
-|                   | ses/{course_key}/ora`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instr           | ora_staff_grader,      |
-|                   | uctor/v1/courses/{cour | xmodule.modulestore    |
-|                   | se_key}/ora/{ora_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``                     | ora_staff_grader       |
-|                   | /api/instructor/v1/cou |                        |
-|                   | rses/{course_key}/ora/ |                        |
-|                   | {ora_id}/submissions`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructor/     | ora_staff_grader       |
-|                   | v1/courses/{course_key |                        |
-|                   | }/ora/{ora_id}/submiss |                        |
-|                   | ions/{submission_id}`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``/api/inst            | ora_staff_grader       |
-|                   | ructor/v1/courses/{cou |                        |
-|                   | rse_key}/ora/{ora_id}/ |                        |
-|                   | submissions/{submissio |                        |
-|                   | n_id}/override_grade`` |                        |
-+-------------------+------------------------+------------------------+
-| POST              | ``                     | ora_staff_grader       |
-|                   | /api/instructor/v1/cou |                        |
-|                   | rses/{course_key}/ora/ |                        |
-|                   | {ora_id}/submissions/{ |                        |
-|                   | submission_id}/reset`` |                        |
-+-------------------+------------------------+------------------------+
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| Method | Endpoint                                                                          | Services                                     |
++========+===================================================================================+==============================================+
+| GET    | /api/instructor/v1/courses/{course_key}/ora                                      | ora_staff_grader, xmodule.modulestore        |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/ora/{ora_id}                             | ora_staff_grader, xmodule.modulestore        |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/ora/{ora_id}/submissions                 | ora_staff_grader                             |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/ora/{ora_id}/submissions/{submission_id} | ora_staff_grader                             |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/ora/{ora_id}/submissions/{submission_id}/override_grade | ora_staff_grader              |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| POST   | /api/instructor/v1/courses/{course_key}/ora/{ora_id}/submissions/{submission_id}/reset | ora_staff_grader                         |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
 
 Analytics API
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^
 
-+-------------------+------------------------+------------------------+
-| Method            | Endpoint               | Services               |
-+===================+========================+========================+
-| GET               | `                      | instructor_analytics   |
-|                   | `/api/instructor/v1/co |                        |
-|                   | urses/{course_key}/ana |                        |
-|                   | lytics/dashboard_url`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructor      | instructor_analytics,  |
-|                   | /v1/courses/{course_ke | student                |
-|                   | y}/analytics/summary`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructor/v1   | instructor_analytics   |
-|                   | /courses/{course_key}/ |                        |
-|                   | analytics/engagement`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/api/instructor/v1/  | instructor_analytics,  |
-|                   | courses/{course_key}/a | grades                 |
-|                   | nalytics/performance`` |                        |
-+-------------------+------------------------+------------------------+
-| GET               | ``/a                   | instructor_analytics,  |
-|                   | pi/instructor/v1/cours | enrollments            |
-|                   | es/{course_key}/analyt |                        |
-|                   | ics/enrollment_stats`` |                        |
-+-------------------+------------------------+------------------------+
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| Method | Endpoint                                                                          | Services                                     |
++========+===================================================================================+==============================================+
+| GET    | /api/instructor/v1/courses/{course_key}/analytics/dashboard_url                  | instructor_analytics                         |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/analytics/summary                        | instructor_analytics, student                |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/analytics/engagement                     | instructor_analytics                         |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/analytics/performance                    | instructor_analytics, grades                 |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
+| GET    | /api/instructor/v1/courses/{course_key}/analytics/enrollment_stats               | instructor_analytics, enrollments            |
++--------+-----------------------------------------------------------------------------------+----------------------------------------------+
