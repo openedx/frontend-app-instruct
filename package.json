@@ -18,7 +18,7 @@
     "*.scss"
   ],
   "scripts": {
-    "dev": "PORT=8080 PUBLIC_PATH=/frontend-template openedx dev",
+    "dev": "PORT=8080 PUBLIC_PATH=/instructor openedx dev",
     "i18n_extract": "openedx formatjs extract",
     "lint": "openedx lint .",
     "lint:fix": "openedx lint --fix .",
@@ -40,6 +40,10 @@
   },
   "devDependencies": {
     "@edx/browserslist-config": "^1.5.0",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "jest": "^29"

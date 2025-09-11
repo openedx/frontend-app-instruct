@@ -1,1 +1,1 @@
-export const appId = 'org.openedx.frontend.app.frontendTemplate';
+export const appId = 'org.openedx.frontend.app.instructor';
