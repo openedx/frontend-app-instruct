@@ -1,8 +1,13 @@
 import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
-import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
+import CertificatesPage from '@src/certificates/CertificatesPage';
+import CourseTeamPage from '@src/courseTeam/CourseTeamPage';
 import DataDownloadsPage from '@src/dataDownloads/DataDownloadsPage';
+import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
+import EnrollmentsPage from '@src/enrollments/EnrollmentsPage';
+import GradingPage from '@src/grading/GradingPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
+import SpecialExamsPage from '@src/specialExams/SpecialExamsPage';
 
 const routes = [
   {
@@ -20,10 +25,14 @@ const routes = [
         path: 'course_info',
         element: <CourseInfoPage />
       },
-      // {
-      //   path: 'membership',
-      //   element: <MembershipPage />
-      // },
+      {
+        path: 'enrollments',
+        element: <EnrollmentsPage />
+      },
+      {
+        path: 'course_team',
+        element: <CourseTeamPage />
+      },
       {
         path: 'cohorts',
         element: <CohortsPage />
@@ -32,22 +41,22 @@ const routes = [
         path: 'date_extensions',
         element: <DateExtensionsPage />
       },
-      // {
-      //   path: 'student_admin',
-      //   element: <StudentAdminPage />
-      // },
+      {
+        path: 'grading',
+        element: <GradingPage />
+      },
       {
         path: 'data_downloads',
         element: <DataDownloadsPage />
       },
-      // {
-      //   path: 'special_exams',
-      //   element: <SpecialExamsPage />
-      // },
-      // {
-      //   path: 'certificates',
-      //   element: <CertificatesPage />
-      // },
+      {
+        path: 'special_exams',
+        element: <SpecialExamsPage />
+      },
+      {
+        path: 'certificates',
+        element: <CertificatesPage />
+      },
       {
         path: 'open_responses',
         element: <OpenResponsesPage />
