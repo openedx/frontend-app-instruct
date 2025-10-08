@@ -3,7 +3,7 @@ import EnrollmentInformation from './components/enrollmentInformation/Enrollment
 const CourseInfoPage = () => {
   return (
     <div>
-      <h1>Course Info</h1>
+      <h3>Course Info</h3>
       <EnrollmentInformation />
     </div>
   );
