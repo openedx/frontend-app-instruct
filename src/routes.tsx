@@ -1,6 +1,14 @@
+import CertificatesPage from './certificates/CertificatesPage';
 import CohortsPage from './cohorts/CohortsPage';
 import CourseInfoPage from './courseInfo/CourseInfoPage';
+import CourseTeamPage from './courseTeam/CourseTeamPage';
+import DataDownloadsPage from './dataDownloads/DataDownloadsPage';
+import DateExtensionsPage from './dateExtensions/DateExtensionsPage';
+import EnrollmentsPage from './enrollments/EnrollmentsPage';
+import GradingPage from './grading/GradingPage';
 import Main from './Main';
+import OpenResponsesPage from './openResponses/OpenResponsesPage';
+import SpecialExamsPage from './specialExams/SpecialExamsPage';
 
 const routes = [
   {
@@ -15,38 +23,42 @@ const routes = [
         path: 'course_info',
         element: <CourseInfoPage />
       },
-      // {
-      //   path: 'membership',
-      //   element: <MembershipPage />
-      // },
+      {
+        path: 'enrollments',
+        element: <EnrollmentsPage />
+      },
+      {
+        path: 'course_team',
+        element: <CourseTeamPage />
+      },
       {
         path: 'cohorts',
         element: <CohortsPage />
       },
-      // {
-      //   path: 'extensions',
-      //   element: <ExtensionsPage />
-      // },
-      // {
-      //   path: 'student_admin',
-      //   element: <StudentAdminPage />
-      // },
-      // {
-      //   path: 'data_download',
-      //   element: <DataDownloadPage />
-      // },
-      // {
-      //   path: 'special_exams',
-      //   element: <SpecialExamsPage />
-      // },
-      // {
-      //   path: 'certificates',
-      //   element: <CertificatesPage />
-      // },
-      // {
-      //   path: 'open_responses',
-      //   element: <OpenResponsesPage />
-      // }
+      {
+        path: 'date_extensions',
+        element: <DateExtensionsPage />
+      },
+      {
+        path: 'grading',
+        element: <GradingPage />
+      },
+      {
+        path: 'data_downloads',
+        element: <DataDownloadsPage />
+      },
+      {
+        path: 'special_exams',
+        element: <SpecialExamsPage />
+      },
+      {
+        path: 'certificates',
+        element: <CertificatesPage />
+      },
+      {
+        path: 'open_responses',
+        element: <OpenResponsesPage />
+      }
     ]
   }
 ];
