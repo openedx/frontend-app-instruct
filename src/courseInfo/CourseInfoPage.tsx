@@ -1,10 +1,9 @@
-import EnrollmentInformation from './components/enrollmentInformation/EnrollmentInformation';
+import { GeneralCourseInfo } from './components/generalCourseInfo';
 
 const CourseInfoPage = () => {
   return (
     <div>
-      <h1>Course Info</h1>
-      <EnrollmentInformation />
+      <GeneralCourseInfo />
     </div>
   );
 };
