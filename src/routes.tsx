@@ -11,7 +11,7 @@ const routes = [
     Component: Main,
     children: [
       {
-        path: 'course_info',
+        path: '/:courseId/course_info',
         element: <CourseInfoPage />
       },
       // {
