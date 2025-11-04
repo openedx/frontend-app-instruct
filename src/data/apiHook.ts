@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCourseInfo } from './api';
+import { getCourseInfo, getDateExtensions } from './api';
 import { appId } from '../constants';
 
 const courseInfoQueryKeys = {
@@ -7,9 +7,21 @@ const courseInfoQueryKeys = {
   byCourse: (courseId: string) => [appId, 'courseInfo', courseId] as const,
 };
 
+const dateExtensionsQueryKeys = {
+  all: [appId, 'dateExtensions'] as const,
+  byCourse: (courseId: string) => [appId, 'dateExtensions', courseId] as const,
+};
+
 export const useCourseInfo = (courseId: string) => (
   useQuery({
     queryKey: courseInfoQueryKeys.byCourse(courseId),
     queryFn: () => getCourseInfo(courseId),
+  })
+);
+
+export const useDateExtensions = (courseId: string) => (
+  useQuery({
+    queryKey: dateExtensionsQueryKeys.byCourse(courseId),
+    queryFn: () => getDateExtensions(courseId),
   })
 );

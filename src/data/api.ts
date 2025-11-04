@@ -13,3 +13,8 @@ export const getCourseInfo = async (courseId) => {
     .get(`${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}`);
   return camelCaseObject(data);
 };
+
+export const getDateExtensions = async (courseId) => {
+  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/date-extensions`);
+  return camelCaseObject(data);
+};
