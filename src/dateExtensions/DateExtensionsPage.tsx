@@ -2,9 +2,18 @@ import { useIntl } from '@openedx/frontend-base';
 import messages from './messages';
 import DateExtensionsList from './components/DateExtensionsList';
 import { Button } from '@openedx/paragon';
+import { useDateExtensions } from './data/apiHook';
+import { useParams } from 'react-router-dom';
+
+const mockDateExtensions = [
+  { id: 1, username: 'edByun', fullname: 'Ed Byun', email: 'ed.byun@example.com', graded_subsection: 'Three body diagrams', extended_due_date: '2026-07-15' },
+];
 
 const DateExtensionsPage = () => {
   const intl = useIntl();
+  const { courseId } = useParams();
+  const { data, isLoading } = useDateExtensions(courseId ?? '');
+
   return (
     <div>
       <h3>{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
@@ -12,7 +21,7 @@ const DateExtensionsPage = () => {
         <p>filters</p>
         <Button>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
       </div>
-      <DateExtensionsList />
+      <DateExtensionsList data={data ?? mockDateExtensions} isLoading={isLoading} />
     </div>
   );
 };
