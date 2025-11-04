@@ -25,7 +25,7 @@ const routes = [
         element: <CohortsPage />
       },
       {
-        path: 'date_extensions',
+        path: '/:courseId/date_extensions',
         element: <DateExtensionsPage />
       },
       // {
