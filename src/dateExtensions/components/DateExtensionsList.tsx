@@ -2,13 +2,24 @@ import { useIntl } from '@openedx/frontend-base';
 import { DataTable } from '@openedx/paragon';
 import messages from '../messages';
 
-const mockDateExtensions = [
-  { id: 1, username: 'edByun', fullname: 'Ed Byun', email: 'ed.byun@example.com', graded_subsection: 'Three body diagrams', extended_due_date: '2026-07-15', reset: <a href="/">Reset Extensions</a> },
-];
-
 const DATE_EXTENSIONS_PAGE_SIZE = 25;
 
-const DateExtensionsList = () => {
+interface DateExtensionListProps {
+  data: {
+    id: number,
+    username: string,
+    fullname: string,
+    email: string,
+    graded_subsection: string,
+    extended_due_date: string,
+  }[],
+  isLoading: boolean,
+}
+
+const DateExtensionsList = ({
+  data = [],
+  isLoading = false,
+}: DateExtensionListProps) => {
   const intl = useIntl();
 
   const tableColumns = [
@@ -21,8 +32,14 @@ const DateExtensionsList = () => {
   ];
 
   const totalItemCount = 25;
+
+  const tableData = data.map(item => ({
+    ...item,
+    reset: <a href="/">Reset Extensions</a>,
+  }));
+
   return (
-    <DataTable columns={tableColumns} data={mockDateExtensions} isPaginated itemCount={totalItemCount} pageSize={DATE_EXTENSIONS_PAGE_SIZE} />
+    <DataTable columns={tableColumns} data={tableData} isPaginated itemCount={totalItemCount} pageSize={DATE_EXTENSIONS_PAGE_SIZE} isLoading={isLoading} />
   );
 };
 
