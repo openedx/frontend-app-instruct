@@ -17,6 +17,7 @@ const routes = [
     handle: {
       role: 'org.openedx.frontend.role.instructor'
     },
+    path: ':courseId',
     Component: Main,
     children: [
       {
