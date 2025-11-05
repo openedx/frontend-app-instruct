@@ -1,7 +1,7 @@
 import { useIntl } from '@openedx/frontend-base';
 import messages from './messages';
 import DateExtensionsList from './components/DateExtensionsList';
-import { Button } from '@openedx/paragon';
+import { Button, Container } from '@openedx/paragon';
 import { useDateExtensions } from './data/apiHook';
 import { useParams } from 'react-router-dom';
 
@@ -15,14 +15,14 @@ const DateExtensionsPage = () => {
   const { data, isLoading } = useDateExtensions(courseId ?? '');
 
   return (
-    <div>
+    <Container className="mt-4.5 mb-4 mx-4" fluid="xl">
       <h3>{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
-      <div className="d-flex align-items-center justify-content-between">
+      <div className="d-flex align-items-center justify-content-between mb-3.5">
         <p>filters</p>
         <Button>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
       </div>
       <DateExtensionsList data={data ?? mockDateExtensions} isLoading={isLoading} />
-    </div>
+    </Container>
   );
 };
 
