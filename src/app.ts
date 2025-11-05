@@ -2,13 +2,14 @@ import { App } from '@openedx/frontend-base';
 import { appId } from './constants';
 import routes from './routes';
 import messages from './i18n';
+import slots from './slots';
 
 const app: App = {
   appId,
   routes,
   messages,
   providers: [],
-  slots: [],
+  slots,
   config: {
     NODE_ENV: 'development',
     LMS_BASE_URL: 'http://local.openedx.io:8000'
