@@ -1,50 +1,31 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Tabs, Tab } from '@openedx/paragon';
+import { Tab, Tabs } from '@openedx/paragon';
+import { SlotContext, BaseSlotOperation, useSlotOperations } from '@openedx/frontend-base';
 
-enum InstructorTabKeys {
-  COURSE_INFO = 'courseInfo',
-  ENROLLMENTS = 'enrollments',
-  COURSE_TEAM = 'courseTeam',
-  GRADING = 'grading',
-  DATE_EXTENSIONS = 'dateExtensions',
-  DATA_DOWNLOADS = 'dataDownloads',
-  OPEN_RESPONSES = 'openResponses',
-  CERTIFICATES = 'certificates',
-  COHORTS = 'cohorts',
-  SPECIAL_EXAMS = 'specialExams',
-}
-
-interface TabConfig {
-  tab_id: InstructorTabKeys,
+export interface TabProps {
+  tab_id: string,
   url: string,
   title: string,
 }
 
-// example of tabs response from an API, should be refactored to react query when backend is ready
-const tabs: TabConfig[] = [
-  { tab_id: InstructorTabKeys.COURSE_INFO, url: 'course_info', title: 'Course Info' },
-  { tab_id: InstructorTabKeys.ENROLLMENTS, url: 'enrollments', title: 'Enrollments' },
-  { tab_id: InstructorTabKeys.COURSE_TEAM, url: 'course_team', title: 'Course Team' },
-  { tab_id: InstructorTabKeys.GRADING, url: 'grading', title: 'Grading' },
-  { tab_id: InstructorTabKeys.DATE_EXTENSIONS, url: 'date_extensions', title: 'Date Extensions' },
-  { tab_id: InstructorTabKeys.DATA_DOWNLOADS, url: 'data_downloads', title: 'Data Downloads' },
-  { tab_id: InstructorTabKeys.OPEN_RESPONSES, url: 'open_responses', title: 'Open Responses' },
-  { tab_id: InstructorTabKeys.CERTIFICATES, url: 'certificates', title: 'Certificates' },
-  { tab_id: InstructorTabKeys.COHORTS, url: 'cohorts', title: 'Cohorts' },
-  { tab_id: InstructorTabKeys.SPECIAL_EXAMS, url: 'special_exams', title: 'Special Exams' },
-];
+interface SlotWithElementOperation extends BaseSlotOperation {
+  element: React.ReactElement,
+}
 
 const InstructorTabs = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const getActiveTabFromUrl = useCallback((): InstructorTabKeys => {
-    const currentPath = location.pathname.split('/').pop() ?? '';
-    const activeTab = tabs.find(({ url }) => url === currentPath);
-    return (activeTab ? activeTab.tab_id : InstructorTabKeys.COURSE_INFO) as InstructorTabKeys;
-  }, [location.pathname]);
+  const { id: slotId } = useContext(SlotContext);
+  const widgets: SlotWithElementOperation[] = useSlotOperations(slotId) as SlotWithElementOperation[];
 
-  const [tabKey, setTabKey] = useState<InstructorTabKeys>(getActiveTabFromUrl);
+  const [tabKey, setTabKey] = useState<string>('courseInfo');
+
+  const getActiveTabFromUrl = useCallback(() => {
+    const currentPath = location.pathname.split('/').pop() ?? '';
+    const activeTab = widgets.find((slot) => slot.element.props.url === currentPath)?.element;
+    return activeTab ? activeTab.props.tab_id : '';
+  }, [widgets, location.pathname]);
 
   useEffect(() => {
     setTabKey(getActiveTabFromUrl());
@@ -52,8 +33,9 @@ const InstructorTabs = () => {
 
   const handleSelect = (eventKey: string | null) => {
     if (eventKey) {
-      const tabKey = eventKey as InstructorTabKeys;
-      const selectedUrl = tabs.find(tab => tab.tab_id === tabKey)?.url;
+      const tabKey = eventKey;
+      const selectedElement = widgets.find((slot) => slot?.element?.props.tab_id === tabKey)?.element;
+      const selectedUrl = selectedElement?.props.url;
       setTabKey(tabKey);
       if (selectedUrl) {
         navigate(`/${selectedUrl}`);
@@ -61,11 +43,16 @@ const InstructorTabs = () => {
     }
   };
 
+  if (widgets.length === 0) return null;
+
   return (
     <Tabs id="instructor-tabs" activeKey={tabKey} onSelect={handleSelect}>
-      {tabs.map(({ tab_id, title }) => (
-        <Tab key={tab_id} eventKey={tab_id} title={title} />
-      ))}
+      {widgets.map((widget: any, index: number) => {
+        // We get props from TabSlot to create each Tab
+        const element = widget.element;
+        const { tab_id, title } = element.props;
+        return <Tab key={tab_id ?? index} eventKey={tab_id} title={title} />;
+      })}
     </Tabs>
   );
 };
