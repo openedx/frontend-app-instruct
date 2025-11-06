@@ -4,7 +4,7 @@ import messages from '../messages';
 
 const DATE_EXTENSIONS_PAGE_SIZE = 25;
 
-interface DateExtensionListProps {
+export interface DateExtensionListProps {
   data: {
     id: number,
     username: string,
@@ -13,7 +13,7 @@ interface DateExtensionListProps {
     graded_subsection: string,
     extended_due_date: string,
   }[],
-  isLoading: boolean,
+  isLoading?: boolean,
 }
 
 const DateExtensionsList = ({
