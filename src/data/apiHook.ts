@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { getCourseInfo, getDateExtensions, PaginationQueryKeys } from './api';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { getCourseInfo, getDateExtensions, resetDateExtension, PaginationQueryKeys } from './api';
 import { appId } from '../constants';
 
 const courseInfoQueryKeys = {
@@ -26,3 +26,10 @@ export const useDateExtensions = (courseId: string, pagination: PaginationQueryK
     queryFn: () => getDateExtensions(courseId, pagination),
   })
 );
+
+export const useResetDateExtensionMutation = () => {
+  return useMutation({
+    mutationFn: ({ courseId, userId }: { courseId: string, userId: number }) =>
+      resetDateExtension(courseId, userId),
+  });
+};
