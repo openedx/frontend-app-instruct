@@ -16,3 +16,8 @@ export const getDateExtensions = async (
   );
   return camelCaseObject(data);
 };
+
+export const resetDateExtension = async (courseId, userId) => {
+  const { data } = await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/date-extensions/${userId}/reset`);
+  return camelCaseObject(data);
+};
