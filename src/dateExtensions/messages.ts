@@ -41,6 +41,26 @@ const messages = defineMessages({
     defaultMessage: 'Reset',
     description: 'Label for the reset column in the date extensions table',
   },
+  resetConfirmationHeader: {
+    id: 'instruct.dateExtensions.page.resetModal.confirmationHeader',
+    defaultMessage: 'Reset extensions for {username}?',
+    description: 'Header for the reset confirmation modal',
+  },
+  resetConfirmationMessage: {
+    id: 'instruct.dateExtensions.page.resetModal.confirmationMessage',
+    defaultMessage: 'Resetting a problem\'s due date rescinds a due date extension for a student on a particular subsection. This will revert the due date for the student back to the problem\'s original due date.',
+    description: 'Confirmation message for resetting extensions in the reset modal',
+  },
+  cancel: {
+    id: 'instruct.dateExtensions.page.resetModal.cancel',
+    defaultMessage: 'Cancel',
+    description: 'Label for the cancel button in the reset modal',
+  },
+  confirm: {
+    id: 'instruct.dateExtensions.page.resetModal.confirm',
+    defaultMessage: 'Reset Due Date for Student',
+    description: 'Label for the confirm button in the reset modal',
+  },
 });
 
 export default messages;
