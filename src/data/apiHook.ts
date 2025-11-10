@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCourseInfo, getDateExtensions, resetDateExtension, PaginationQueryKeys } from './api';
 import { appId } from '../constants';
 
@@ -28,8 +28,12 @@ export const useDateExtensions = (courseId: string, pagination: PaginationQueryK
 );
 
 export const useResetDateExtensionMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ courseId, userId }: { courseId: string, userId: number }) =>
       resetDateExtension(courseId, userId),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: dateExtensionsQueryKeys.all });
+    },
   });
 };
