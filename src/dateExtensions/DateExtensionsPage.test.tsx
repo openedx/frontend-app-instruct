@@ -55,10 +55,16 @@ describe('DateExtensionsPage', () => {
 
   it('shows loading state on table when fetching data', () => {
     (useDateExtensions as jest.Mock).mockReturnValue({
-      data: null,
+      data: [],
       isLoading: true,
     });
     render(<RenderWithRouter />);
     expect(screen.getByRole('status')).toBeInTheDocument();
+  });
+
+  it('renders reset link for each row', () => {
+    render(<RenderWithRouter />);
+    const resetLinks = screen.getAllByRole('button', { name: 'Reset Extensions' });
+    expect(resetLinks).toHaveLength(mockDateExtensions.length);
   });
 });
