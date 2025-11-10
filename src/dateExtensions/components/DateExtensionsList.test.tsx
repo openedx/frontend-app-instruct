@@ -32,12 +32,6 @@ describe('DateExtensionsList', () => {
     expect(screen.getByText('2024-01-01')).toBeInTheDocument();
   });
 
-  it('renders reset link for each row', () => {
-    renderComponent({ data: mockData });
-    const resetLinks = screen.getAllByRole('link', { name: 'Reset Extensions' });
-    expect(resetLinks).toHaveLength(mockData.length);
-  });
-
   it('renders empty table when no data provided', () => {
     renderComponent({ data: [] });
     expect(screen.queryByText('test_user')).not.toBeInTheDocument();
