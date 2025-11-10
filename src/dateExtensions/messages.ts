@@ -66,6 +66,11 @@ const messages = defineMessages({
     defaultMessage: 'Reset Due Date for Student',
     description: 'Label for the confirm button in the reset modal',
   },
+  close: {
+    id: 'instruct.dateExtensions.page.resetModal.close',
+    defaultMessage: 'Close',
+    description: 'Label for the close button in the reset modal',
+  },
 });
 
 export default messages;
