@@ -1,18 +1,12 @@
 import { useIntl } from '@openedx/frontend-base';
 import { DataTable } from '@openedx/paragon';
 import messages from '../messages';
+import { User } from '../DateExtensionsPage';
 
 const DATE_EXTENSIONS_PAGE_SIZE = 25;
 
 export interface DateExtensionListProps {
-  data: {
-    id: number,
-    username: string,
-    fullname: string,
-    email: string,
-    graded_subsection: string,
-    extended_due_date: string,
-  }[],
+  data: User[],
   isLoading?: boolean,
 }
 
@@ -33,14 +27,7 @@ const DateExtensionsList = ({
 
   const totalItemCount = 25;
 
-  const tableData = data.map(item => ({
-    ...item,
-    reset: <a href="/">Reset Extensions</a>,
-  }));
-
-  return (
-    <DataTable columns={tableColumns} data={tableData} isPaginated itemCount={totalItemCount} pageSize={DATE_EXTENSIONS_PAGE_SIZE} isLoading={isLoading} />
-  );
+  return <DataTable columns={tableColumns} data={data} isPaginated itemCount={totalItemCount} pageSize={DATE_EXTENSIONS_PAGE_SIZE} isLoading={isLoading} />;
 };
 
 export default DateExtensionsList;
