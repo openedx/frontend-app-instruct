@@ -14,18 +14,18 @@ const DateExtensionsPage = () => {
   const intl = useIntl();
   const { courseId } = useParams<{ courseId: string }>();
   const { mutate: resetMutation } = useResetDateExtensionMutation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<LearnerDateExtension | null>(null);
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleResetExtensions = (user: LearnerDateExtension) => {
-    setIsModalOpen(true);
+    setIsResetModalOpen(true);
     setSelectedUser(user);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
+    setIsResetModalOpen(false);
     setSelectedUser(null);
   };
 
@@ -60,7 +60,7 @@ const DateExtensionsPage = () => {
       </div>
       <DateExtensionsList onResetExtensions={handleResetExtensions} />
       <ResetExtensionsModal
-        isOpen={isModalOpen}
+        isOpen={isResetModalOpen}
         message={intl.formatMessage(messages.resetConfirmationMessage)}
         title={intl.formatMessage(messages.resetConfirmationHeader, { username: selectedUser?.username })}
         onCancelReset={handleCloseModal}
@@ -70,7 +70,7 @@ const DateExtensionsPage = () => {
       <Toast show={!!successMessage} onClose={() => {}} className="text-break">
         {successMessage}
       </Toast>
-      <AlertModal isOpen={!!errorMessage} footerNode={<Button onClick={() => setErrorMessage('')}>{intl.formatMessage(messages.close)}</Button>}>
+      <AlertModal title={errorMessage} isOpen={!!errorMessage} footerNode={<Button onClick={() => setErrorMessage('')}>{intl.formatMessage(messages.close)}</Button>}>
         {errorMessage}
       </AlertModal>
     </div>
