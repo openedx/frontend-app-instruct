@@ -15,9 +15,11 @@ const createWrapper = () => {
       mutations: { retry: false },
     },
   });
+
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+
   Wrapper.displayName = 'TestWrapper';
   return Wrapper;
 };
