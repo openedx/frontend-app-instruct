@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Tab, Tabs } from '@openedx/paragon';
-import { SlotContext, BaseSlotOperation, useSlotOperations } from '@openedx/frontend-base';
+import { SlotContext, useWidgetsForId } from '@openedx/frontend-base';
 
 export interface TabProps {
   tab_id: string,
@@ -9,23 +9,33 @@ export interface TabProps {
   title: string,
 }
 
-interface SlotWithElementOperation extends BaseSlotOperation {
-  element: React.ReactElement,
-}
+const extractWidgetProps = (widget: React.ReactNode): TabProps | null => {
+  if (widget && typeof widget === 'object' && 'props' in widget) {
+    return widget.props.children.props as TabProps;
+  }
+  return null;
+};
+
+const useWidgetProps = (slotId: string): TabProps[] => {
+  const widgets = useWidgetsForId(slotId);
+  return widgets.map(extractWidgetProps).filter((props): props is TabProps => props !== null);
+};
 
 const InstructorTabs = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id: slotId } = useContext(SlotContext);
-  const widgets: SlotWithElementOperation[] = useSlotOperations(slotId) as SlotWithElementOperation[];
+  const widgetPropsArray = useWidgetProps(slotId);
 
   const [tabKey, setTabKey] = useState<string>('courseInfo');
 
   const getActiveTabFromUrl = useCallback(() => {
     const currentPath = location.pathname.split('/').pop() ?? '';
-    const activeTab = widgets.find((slot) => slot.element.props.url === currentPath)?.element;
-    return activeTab ? activeTab.props.tab_id : '';
-  }, [widgets, location.pathname]);
+
+    const activeTab = widgetPropsArray.find(({ url }) => url === currentPath);
+
+    return activeTab ? activeTab.tab_id : '';
+  }, [widgetPropsArray, location.pathname]);
 
   useEffect(() => {
     setTabKey(getActiveTabFromUrl());
@@ -33,26 +43,23 @@ const InstructorTabs = () => {
 
   const handleSelect = (eventKey: string | null) => {
     if (eventKey) {
-      const tabKey = eventKey;
-      const selectedElement = widgets.find((slot) => slot?.element?.props.tab_id === tabKey)?.element;
-      const selectedUrl = selectedElement?.props.url;
-      setTabKey(tabKey);
-      if (selectedUrl) {
-        navigate(`/${selectedUrl}`);
+      const selectedTab = widgetPropsArray.find(({ tab_id }) => tab_id === eventKey);
+      const urlToNavigate = selectedTab?.url;
+
+      setTabKey(eventKey);
+      if (urlToNavigate) {
+        navigate(`/${urlToNavigate}`);
       }
     }
   };
 
-  if (widgets.length === 0) return null;
+  if (widgetPropsArray.length === 0) return null;
 
   return (
     <Tabs id="instructor-tabs" activeKey={tabKey} onSelect={handleSelect}>
-      {widgets.map((widget: any, index: number) => {
-        // We get props from TabSlot to create each Tab
-        const element = widget.element;
-        const { tab_id, title } = element.props;
-        return <Tab key={tab_id ?? index} eventKey={tab_id} title={title} />;
-      })}
+      {widgetPropsArray.map(({ tab_id, title }) => (
+        <Tab key={tab_id} eventKey={tab_id} title={title} />
+      ))}
     </Tabs>
   );
 };
