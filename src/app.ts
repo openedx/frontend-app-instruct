@@ -3,12 +3,13 @@ import { appId } from '@src/constants';
 import routes from '@src/routes';
 import messages from '@src/i18n';
 import slots from '@src/slots';
+import providers from '@src/providers';
 
 const app: App = {
   appId,
   routes,
   messages,
-  providers: [],
+  providers,
   slots,
   config: {
     NODE_ENV: 'development',
