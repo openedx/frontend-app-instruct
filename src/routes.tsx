@@ -4,7 +4,7 @@ import Main from './Main';
 const routes = [
   {
     id: 'org.openedx.frontend.route.instructor.main',
-    path: '/',
+    path: ':courseId',
     handle: {
       role: 'org.openedx.frontend.role.instructor'
     },

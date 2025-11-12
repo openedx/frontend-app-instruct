@@ -9,7 +9,10 @@ const app: App = {
   messages,
   providers: [],
   slots: [],
-  config: {}
+  config: {
+    NODE_ENV: 'development',
+    LMS_BASE_URL: 'http://localhost:18000'
+  }
 };
 
 export default app;
