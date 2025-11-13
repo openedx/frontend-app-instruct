@@ -18,7 +18,7 @@
     "*.scss"
   ],
   "scripts": {
-    "dev": "PORT=8080 PUBLIC_PATH=/instructor openedx dev",
+    "dev": "PORT=8081 PUBLIC_PATH=/instructor openedx dev",
     "i18n_extract": "openedx formatjs extract",
     "lint": "openedx lint .",
     "lint:fix": "openedx lint --fix .",
