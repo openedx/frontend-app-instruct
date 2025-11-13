@@ -26,13 +26,13 @@ const messages = defineMessages({
     defaultMessage: 'Email',
     description: 'Label for the email column in the date extensions table',
   },
-  graded_subsection: {
-    id: 'instruct.dateExtensions.page.tableHeader.graded_subsection',
+  gradedSubsection: {
+    id: 'instruct.dateExtensions.page.tableHeader.gradedSubsection',
     defaultMessage: 'Graded Subsection',
     description: 'Label for the graded subsection column in the date extensions table',
   },
-  extended_due_date: {
-    id: 'instruct.dateExtensions.page.tableHeader.extended_due_date',
+  extendedDueDate: {
+    id: 'instruct.dateExtensions.page.tableHeader.extendedDueDate',
     defaultMessage: 'Extended Due Date',
     description: 'Label for the extended due date column in the date extensions table',
   },
