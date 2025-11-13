@@ -1,6 +1,11 @@
-// TODO: remove next eslint disable when the variables get used
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@tanstack/react-query';
+import { getCourseInfo } from './api';
 
-export const queryKeys = {
-};
+const COURSE_INFO_QUERY_KEY = ['courseInfo'];
+
+export const useCourseInfo = (courseId: string) => (
+  useQuery({
+    queryKey: COURSE_INFO_QUERY_KEY,
+    queryFn: () => getCourseInfo(courseId),
+  })
+);
