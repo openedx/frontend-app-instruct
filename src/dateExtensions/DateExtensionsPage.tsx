@@ -2,37 +2,17 @@ import { useIntl } from '@openedx/frontend-base';
 import messages from './messages';
 import DateExtensionsList from './components/DateExtensionsList';
 import { Button, Container } from '@openedx/paragon';
-import { useDateExtensions } from './data/apiHook';
-import { useParams } from 'react-router-dom';
+import { LearnerDateExtension } from './types';
 
-// For testing purposes, will be deleted once backend is ready
-// const mockDateExtensions = [
-//   { id: 1, username: 'edByun', fullname: 'Ed Byun', email: 'ed.byun@example.com', graded_subsection: 'Three body diagrams', extended_due_date: '2026-07-15' },
-// ];
-
-export interface User {
-  id: number,
-  username: string,
-  fullname: string,
-  email: string,
-  graded_subsection: string,
-  extended_due_date: string,
-}
+// const successMessage = 'Successfully reset due date for student Phu Nguyen for A subsection with two units (block-v1:SchemaAximWGU+WGU101+1+type@sequential+block@3984030755104708a86592cf23fb1ae4) to 2025-08-21 00:00';
 
 const DateExtensionsPage = () => {
   const intl = useIntl();
-  const { courseId } = useParams();
-  const { data = [], isLoading } = useDateExtensions(courseId ?? '');
 
-  const handleResetExtensions = (user: User) => {
+  const handleResetExtensions = (user: LearnerDateExtension) => {
     // Implementation for resetting extensions will go here
     console.log(user);
   };
-
-  const tableData = data.map(item => ({
-    ...item,
-    reset: <Button variant="link" size="inline" onClick={() => handleResetExtensions(item)}>Reset Extensions</Button>,
-  }));
 
   return (
     <Container className="mt-4.5 mb-4 mx-4" fluid="xl">
@@ -41,7 +21,7 @@ const DateExtensionsPage = () => {
         <p>filters</p>
         <Button>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
       </div>
-      <DateExtensionsList data={tableData} isLoading={isLoading} />
+      <DateExtensionsList onResetExtensions={handleResetExtensions} />
     </Container>
   );
 };

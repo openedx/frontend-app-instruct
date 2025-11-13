@@ -22,7 +22,7 @@ const mockDateExtensions = [
 describe('DateExtensionsPage', () => {
   beforeEach(() => {
     (useDateExtensions as jest.Mock).mockReturnValue({
-      data: mockDateExtensions,
+      data: { count: mockDateExtensions.length, results: mockDateExtensions },
       isLoading: false,
     });
   });
@@ -55,7 +55,7 @@ describe('DateExtensionsPage', () => {
 
   it('shows loading state on table when fetching data', () => {
     (useDateExtensions as jest.Mock).mockReturnValue({
-      data: [],
+      data: { count: 0, results: [] },
       isLoading: true,
     });
     render(<RenderWithRouter />);
