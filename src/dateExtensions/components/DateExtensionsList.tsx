@@ -39,8 +39,8 @@ const DateExtensionsList = ({
     { accessor: 'username', Header: intl.formatMessage(messages.username) },
     { accessor: 'fullname', Header: intl.formatMessage(messages.fullname) },
     { accessor: 'email', Header: intl.formatMessage(messages.email) },
-    { accessor: 'graded_subsection', Header: intl.formatMessage(messages.graded_subsection) },
-    { accessor: 'extended_due_date', Header: intl.formatMessage(messages.extended_due_date) },
+    { accessor: 'graded_subsection', Header: intl.formatMessage(messages.gradedSubsection) },
+    { accessor: 'extended_due_date', Header: intl.formatMessage(messages.extendedDueDate) },
     { accessor: 'reset', Header: intl.formatMessage(messages.reset) },
   ];
 
