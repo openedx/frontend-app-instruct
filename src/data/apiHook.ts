@@ -1,8 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCourseInfo, getDateExtensions } from './api';
+import { getCourseInfo, getDateExtensions, PaginationQueryKeys } from './api';
+import { appId } from '../constants';
 
 const COURSE_INFO_QUERY_KEY = ['courseInfo'];
-const DATE_EXTENSIONS_QUERY_KEY = ['dateExtensions'];
+
+const dateExtensionsQueryKeys = {
+  all: [appId, 'dateExtensions'] as const,
+  byId: (id: string) => [...dateExtensionsQueryKeys.all, id] as const,
+};
 
 export const useCourseInfo = (courseId: string) => (
   useQuery({
@@ -11,9 +16,9 @@ export const useCourseInfo = (courseId: string) => (
   })
 );
 
-export const useDateExtensions = (courseId: string) => (
+export const useDateExtensions = (courseId: string, pagination: PaginationQueryKeys) => (
   useQuery({
-    queryKey: DATE_EXTENSIONS_QUERY_KEY,
-    queryFn: () => getDateExtensions(courseId),
+    queryKey: dateExtensionsQueryKeys.all,
+    queryFn: () => getDateExtensions(courseId, pagination),
   })
 );
