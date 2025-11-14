@@ -2,9 +2,9 @@ import { render, screen } from '@testing-library/react';
 import { IntlProvider } from '@openedx/frontend-base';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import DateExtensionsPage from './DateExtensionsPage';
-import { useDateExtensions } from '../data/apiHook';
+import { useDateExtensions } from './data/apiHook';
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('./data/apiHook', () => ({
   useDateExtensions: jest.fn(),
 }));
 
