@@ -114,6 +114,8 @@ These endpoints manage instructor-granted due date extensions (per-student deadl
 +--------+-----------------------------------------------------------------------------------+----------------------------------+-----------+-------------------------------------------------------------------+-----------------------------------------------------------------------------------------+
 | Method | Endpoint                                                                          | Services                         | Status    | Existing API Path                                                 | Description                                                                             |
 +========+===================================================================================+==================================+===========+===================================================================+=========================================================================================+
+| GET    | /api/instructor/v1/courses/{course_key}/graded_subsections                        | xmodule.modulestore, util        | Missing   | N/A                                                               | List all graded subsections/units with due dates (required for extension UI dropdowns) |
++--------+-----------------------------------------------------------------------------------+----------------------------------+-----------+-------------------------------------------------------------------+-----------------------------------------------------------------------------------------+
 | GET    | /api/instructor/v1/courses/{course_key}/extensions                                | util.date_utils                  | Missing   | N/A                                                               | List all due date extensions for a unit (requires unit usage_key in query params)      |
 +--------+-----------------------------------------------------------------------------------+----------------------------------+-----------+-------------------------------------------------------------------+-----------------------------------------------------------------------------------------+
 | POST   | /api/instructor/v1/courses/{course_key}/extensions                                | util.date_utils                  | Partial   | /courses/{course_id}/instructor/api/change_due_date               | Grant a due date extension to a student for a specific unit                             |
@@ -124,6 +126,23 @@ These endpoints manage instructor-granted due date extensions (per-student deadl
 +--------+-----------------------------------------------------------------------------------+----------------------------------+-----------+-------------------------------------------------------------------+-----------------------------------------------------------------------------------------+
 | GET    | /api/instructor/v1/courses/{course_key}/extensions/{username}                     | util.date_utils, student         | Exists    | /courses/{course_id}/instructor/api/show_student_extensions       | List all due date extensions granted to a specific student                              |
 +--------+-----------------------------------------------------------------------------------+----------------------------------+-----------+-------------------------------------------------------------------+-----------------------------------------------------------------------------------------+
+
+**GET /api/instructor/v1/courses/{course_key}/graded_subsections**
+
+Returns an array of graded subsections/units with due dates, used to populate dropdown selectors in the Extensions UI.
+
+Response format::
+
+    [
+        {
+            "graded_subsection": "Homework 1",
+            "block_id": "block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5"
+        },
+        {
+            "graded_subsection": "Midterm Exam",
+            "block_id": "block-v1:edX+DemoX+Demo_Course+type@sequential+block@07bc32474380492cb34f76e5f9d9a135"
+        }
+    ]
 
 Data Export API
 ^^^^^^^^^^^^^^^
