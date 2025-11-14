@@ -2,7 +2,7 @@ import { useIntl } from '@openedx/frontend-base';
 import { Button, DataTable } from '@openedx/paragon';
 import messages from '../messages';
 import { LearnerDateExtension } from '../types';
-import { useDateExtensions } from '../../data/apiHook';
+import { useDateExtensions } from '../data/apiHook';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -12,7 +12,7 @@ import { useState } from 'react';
 //   { id: 2, username: 'dianaSalas', fullname: 'Diana Villalvazo', email: 'diana.villalvazo@example.com', graded_subsection: 'Three body diagrams', extended_due_date: '2026-07-15' },
 // ];
 
-export const DATE_EXTENSIONS_PAGE_SIZE = 25;
+const DATE_EXTENSIONS_PAGE_SIZE = 25;
 
 export interface DateExtensionListProps {
   onResetExtensions?: (user: LearnerDateExtension) => void,

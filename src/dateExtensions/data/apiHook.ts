@@ -4,7 +4,7 @@ import { dateExtensionsQueryKeys } from './queryKeys';
 
 export const useDateExtensions = (courseId: string, pagination: PaginationQueryKeys) => (
   useQuery({
-    queryKey: dateExtensionsQueryKeys.byCourse(courseId),
+    queryKey: dateExtensionsQueryKeys.byCoursePaginated(courseId, pagination),
     queryFn: () => getDateExtensions(courseId, pagination),
   })
 );

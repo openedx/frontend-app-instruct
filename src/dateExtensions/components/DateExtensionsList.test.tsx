@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DateExtensionsList, { DateExtensionListProps } from './DateExtensionsList';
 import { renderWithIntl } from '../../testUtils';
-import { useDateExtensions } from '../../data/apiHook';
+import { useDateExtensions } from '../data/apiHook';
 
 const mockData = [
   {
@@ -15,7 +15,7 @@ const mockData = [
   }
 ];
 
-jest.mock('../../data/apiHook', () => ({
+jest.mock('../data/apiHook', () => ({
   useDateExtensions: jest.fn(),
 }));
 
