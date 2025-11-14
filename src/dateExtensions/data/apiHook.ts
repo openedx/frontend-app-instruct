@@ -14,8 +14,8 @@ export const useResetDateExtensionMutation = () => {
   return useMutation({
     mutationFn: ({ courseId, userId }: { courseId: string, userId: number }) =>
       resetDateExtension(courseId, userId),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: dateExtensionsQueryKeys.all });
+    onSuccess: ({ courseId }) => {
+      queryClient.invalidateQueries({ queryKey: dateExtensionsQueryKeys.byCourse(courseId) });
     },
   });
 };
