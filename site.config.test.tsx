@@ -7,8 +7,9 @@ const siteConfig: SiteConfig = {
   lmsBaseUrl: 'http://localhost:8000',
   loginUrl: 'http://localhost:8000/login',
   logoutUrl: 'http://localhost:8000/logout',
+
   // if EnvironmentTypes.TEST is set, some tests fails due to it, TODO: update here once this issue is fixed in frontend-base
-  environment: 'TEST' as EnvironmentTypes.TEST,
+  environment: EnvironmentTypes?.TEST ?? 'test',
   basename: '/instructor',
   apps: [{
     appId: 'org.openedx.frontend.app.instructor',
