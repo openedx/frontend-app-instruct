@@ -1,4 +1,5 @@
 import CourseInfoPage from './courseInfo/CourseInfoPage';
+import { DataDownloadsPage } from './dataDownloads/DataDownloadsPage';
 import Main from './Main';
 
 const routes = [
@@ -30,10 +31,10 @@ const routes = [
       //   path: 'student_admin',
       //   element: <StudentAdminPage />
       // },
-      // {
-      //   path: 'data_download',
-      //   element: <DataDownloadPage />
-      // },
+      {
+        path: 'data_download',
+        element: <DataDownloadsPage />
+      },
       // {
       //   path: 'special_exams',
       //   element: <SpecialExamsPage />
