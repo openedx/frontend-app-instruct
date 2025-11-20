@@ -10,7 +10,7 @@ describe('getCourseInfo', () => {
   const mockHttpClient = {
     get: jest.fn(),
   };
-  const mockCourseData = { course_name: 'Test Course' };
+  const mockCourseData = { course_name: 'Test Course', tabs: [{ tab_id: 'course_info', title: 'Course Information', url: 'https://test-lms.com/courses/test-course-123/info' }] };
 
   beforeEach(() => {
     jest.clearAllMocks();
