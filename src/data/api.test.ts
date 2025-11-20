@@ -12,7 +12,7 @@ const mockGetAppConfig = getAppConfig as jest.MockedFunction<typeof getAppConfig
 const mockGetAuthenticatedHttpClient = getAuthenticatedHttpClient as jest.MockedFunction<typeof getAuthenticatedHttpClient>;
 
 describe('getCourseInfo', () => {
-  const mockCourseData = { course_name: 'Test Course' };
+  const mockCourseData = { course_name: 'Test Course', tabs: [{ tab_id: 'course_info', title: 'Course Information', url: 'https://test-lms.com/courses/test-course-123/info' }] };
 
   beforeEach(() => {
     jest.clearAllMocks();
