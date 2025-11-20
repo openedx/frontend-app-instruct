@@ -16,11 +16,9 @@ Slots in `frontend-app-instruct` use the slot system from `@openedx/frontend-bas
 
 ### 1. Slot Operations Definition
 
-The `src/instructorTabs/app.tsx` file shows how to define slot operations:
-
 ```tsx
 import { SlotOperation, WidgetOperationTypes } from '@openedx/frontend-base';
-import TabSlot from '../slots/instructorTabsSlot/TabSlot';
+import { InstructorTab } from 'src/slots/instructorTabsSlot/InstructorTabsSlot';
 
 // Tab configuration data
 const tabData = { tab_id: 'course_info', url: 'course_info', title: 'Course Info' };
@@ -30,7 +28,7 @@ export const tabSlots: SlotOperation[] = [{
   slotId: `org.openedx.frontend.slot.instructor.tabs.v1`,
   id: `org.openedx.frontend.widget.instructor.tab.${tab_id}`,
   op: WidgetOperationTypes.APPEND,
-  element: <TabSlot tab_id={tabData.tab_id} title={tabData.title} url={tabData.url} />,
+  element: <InstructorTab tab_id={tabData.tab_id} title={tabData.title} url={tabData.url} />,
 }];
 ```
 
