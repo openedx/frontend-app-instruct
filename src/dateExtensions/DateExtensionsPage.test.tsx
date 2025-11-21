@@ -8,6 +8,7 @@ import { useDateExtensions, useResetDateExtensionMutation } from '../data/apiHoo
 jest.mock('../data/apiHook', () => ({
   useDateExtensions: jest.fn(),
   useResetDateExtensionMutation: jest.fn(),
+  useAddDateExtensionMutation: jest.fn(() => ({ mutate: jest.fn() })),
 }));
 
 const mockDateExtensions = [
