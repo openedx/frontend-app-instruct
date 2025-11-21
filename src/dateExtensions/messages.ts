@@ -75,7 +75,42 @@ const messages = defineMessages({
     id: 'instruct.dateExtensions.page.error.missingUserOrCourseId',
     defaultMessage: 'Unable to reset extension: missing user or course ID.',
     description: 'Error message shown when user or course ID is missing during reset',
-  }
+  },
+  addIndividualDueDateExtension: {
+    id: 'instruct.dateExtensions.page.addIndividualDueDateExtensionModal.title',
+    defaultMessage: 'Add Individual Due Date Extension',
+    description: 'Title for the add individual due date extension modal',
+  },
+  addExtension: {
+    id: 'instruct.dateExtensions.page.addIndividualDueDateExtensionModal.addExtension',
+    defaultMessage: 'Add Extension',
+    description: 'Label for the add extension button',
+  },
+  extensionInstructions: {
+    id: 'instruct.dateExtensions.page.addIndividualDueDateExtensionModal.extensionInstructions',
+    defaultMessage: 'To grant an extension, select a student, graded subsection, and define the extension due date and time.',
+    description: 'Instructions for adding an individual due date extension',
+  },
+  defineExtension: {
+    id: 'instruct.dateExtensions.page.addIndividualDueDateExtensionModal.defineExtension',
+    defaultMessage: 'Define Extension',
+    description: 'Label for the define extension section',
+  },
+  extensionDate: {
+    id: 'instruct.dateExtensions.page.addIndividualDueDateExtensionModal.extensionDate',
+    defaultMessage: 'Extension Date',
+    description: 'Label for the extension date field',
+  },
+  reasonForExtension: {
+    id: 'instruct.dateExtensions.page.addIndividualDueDateExtensionModal.reasonForExtension',
+    defaultMessage: 'Reason for Extension',
+    description: 'Label for the reason for extension field',
+  },
+  selectGradedSubsection: {
+    id: 'instruct.dateExtensions.page.addIndividualDueDateExtensionModal.selectGradedSubsection',
+    defaultMessage: 'Select Graded Subsection',
+    description: 'Label for the select graded subsection field',
+  },
 });
 
 export default messages;

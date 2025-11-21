@@ -21,3 +21,15 @@ export const resetDateExtension = async (courseId: string, params: ResetDueDateP
   const { data } = await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}/courses/${courseId}/instructor/api/reset_due_date`, params);
   return camelCaseObject(data);
 };
+
+interface AddDateExtensionParams {
+  email_or_username: string,
+  block_id: string,
+  due_datetime: string,
+  reason: string,
+}
+
+export const addDateExtension = async (courseId, extensionData: AddDateExtensionParams) => {
+  const { data } = await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/change_due_date`, extensionData);
+  return camelCaseObject(data);
+};

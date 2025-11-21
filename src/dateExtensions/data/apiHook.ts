@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getDateExtensions, PaginationQueryKeys, resetDateExtension } from './api';
+import { getDateExtensions, PaginationQueryKeys, resetDateExtension, addDateExtension } from './api';
 import { dateExtensionsQueryKeys } from './queryKeys';
 import { ResetDueDateParams } from '../types';
 
@@ -17,6 +17,17 @@ export const useResetDateExtensionMutation = () => {
       resetDateExtension(courseId, params),
     onSuccess: (_, { courseId }) => {
       queryClient.invalidateQueries({ queryKey: dateExtensionsQueryKeys.byCourse(courseId), exact: false });
+    },
+  });
+};
+
+export const useAddDateExtensionMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, extensionData }: { courseId: string, extensionData: any }) =>
+      addDateExtension(courseId, extensionData),
+    onSuccess: ({ courseId }) => {
+      queryClient.invalidateQueries({ queryKey: dateExtensionsQueryKeys.byCourse(courseId) });
     },
   });
 };
