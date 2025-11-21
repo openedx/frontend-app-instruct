@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCourseInfo, getDateExtensions, resetDateExtension, PaginationQueryKeys } from './api';
+import { getCourseInfo, getDateExtensions, resetDateExtension, PaginationQueryKeys, addDateExtension } from './api';
 import { appId } from '../constants';
 
 const COURSE_INFO_QUERY_KEY = ['courseInfo'];
@@ -29,6 +29,17 @@ export const useResetDateExtensionMutation = () => {
   return useMutation({
     mutationFn: ({ courseId, userId }: { courseId: string, userId: number }) =>
       resetDateExtension(courseId, userId),
+    onSuccess: ({ courseId }) => {
+      queryClient.invalidateQueries({ queryKey: dateExtensionsQueryKeys.byCourse(courseId) });
+    },
+  });
+};
+
+export const useAddDateExtensionMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, extensionData }: { courseId: string, extensionData: any }) =>
+      addDateExtension(courseId, extensionData),
     onSuccess: ({ courseId }) => {
       queryClient.invalidateQueries({ queryKey: dateExtensionsQueryKeys.byCourse(courseId) });
     },
