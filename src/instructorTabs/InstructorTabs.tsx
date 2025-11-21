@@ -38,6 +38,12 @@ const InstructorTabs = () => {
   widgetPropsArray.forEach(slotTab => {
     if (!apiTabs.find(apiTab => apiTab.tab_id === slotTab.tab_id)) {
       allTabs.push(slotTab);
+    } else {
+      const indexToRemove = allTabs.findIndex(({ tab_id }) => tab_id === slotTab.tab_id);
+      if (indexToRemove !== -1) {
+        allTabs.splice(indexToRemove, 1);
+      }
+      allTabs.push(slotTab);
     }
   });
 
