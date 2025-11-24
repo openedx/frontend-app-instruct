@@ -13,3 +13,21 @@ export const getCourseInfo = async (courseId) => {
     .get(`${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}`);
   return camelCaseObject(data);
 };
+
+export const getCohorts = async (courseId: string) => {
+  const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/cohorts/`;
+  const { data } = await getAuthenticatedHttpClient().get(url);
+  return data;
+};
+
+export const enableCohorts = async (courseId: string) => {
+  const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/cohorts/enable/`;
+  const { data } = await getAuthenticatedHttpClient().post(url);
+  return camelCaseObject(data);
+};
+
+export const disableCohorts = async (courseId: string) => {
+  const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/cohorts/disable/`;
+  const { data } = await getAuthenticatedHttpClient().post(url);
+  return camelCaseObject(data);
+};

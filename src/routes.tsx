@@ -1,3 +1,4 @@
+import CohortsPage from './cohorts/CohortsPage';
 import CourseInfoPage from './courseInfo/CourseInfoPage';
 import Main from './Main';
 
@@ -18,10 +19,10 @@ const routes = [
       //   path: 'membership',
       //   element: <MembershipPage />
       // },
-      // {
-      //   path: 'cohorts',
-      //   element: <CohortsPage />
-      // },
+      {
+        path: 'cohorts',
+        element: <CohortsPage />
+      },
       // {
       //   path: 'extensions',
       //   element: <ExtensionsPage />
