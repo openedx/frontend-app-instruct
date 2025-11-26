@@ -27,7 +27,7 @@ describe('getCourseInfo', () => {
     const result = await getCourseInfo(courseId);
     expect(mockGetAppConfig).toHaveBeenCalledWith('org.openedx.frontend.app.instructor');
     expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
-    expect(mockHttpClient.get).toHaveBeenCalledWith('https://test-lms.com/api/instructor/v1/courses/test-course-123');
+    expect(mockHttpClient.get).toHaveBeenCalledWith('https://test-lms.com/api/instructor/v2/courses/test-course-123');
     expect(mockCamelCaseObject).toHaveBeenCalledWith(mockCourseData);
     expect(result).toBe(mockCamelCaseData);
   });

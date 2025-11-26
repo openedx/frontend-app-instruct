@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { GeneralCourseInfo } from './GeneralCourseInfo';
 import { useCourseInfo } from '../../../data/apiHook';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderWithIntl } from '../../../testUtils';
+import { createQueryMock, renderWithIntl } from '../../../testUtils';
 
 jest.mock('../../../data/apiHook');
 jest.mock('react-router', () => ({
@@ -22,18 +22,6 @@ const mockCourseInfo = {
   hasStarted: true,
   hasEnded: false,
 };
-
-// Simple mock factory
-const createQueryMock = (data: any = undefined, isLoading = false) => ({
-  data,
-  isLoading,
-  error: null,
-  isError: false,
-  isSuccess: !isLoading && data !== undefined,
-  status: isLoading ? 'loading' : data ? 'success' : 'idle',
-  fetchStatus: isLoading ? 'fetching' : 'idle',
-  refetch: jest.fn(),
-} as any);
 
 describe('GeneralCourseInfo', () => {
   let queryClient: QueryClient;
@@ -57,20 +45,20 @@ describe('GeneralCourseInfo', () => {
     jest.clearAllMocks();
   });
 
-  it('displays loading state', () => {
+  it('displays skeleton when is in loading state', () => {
     mockUseCourseInfo.mockReturnValue(createQueryMock(undefined, true));
-    renderComponent();
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    const { container } = renderComponent();
+    expect(container.querySelector('.react-loading-skeleton')).toBeInTheDocument();
   });
 
   it('renders course information', () => {
     mockUseCourseInfo.mockReturnValue(createQueryMock(mockCourseInfo));
     renderComponent();
 
-    expect(screen.getByText('TestOrg')).toBeInTheDocument();
-    expect(screen.getByText('CS101')).toBeInTheDocument();
-    expect(screen.getByText('2024_T1')).toBeInTheDocument();
-    expect(screen.getByText('Introduction to Computer Science')).toBeInTheDocument();
+    expect(screen.getByText(mockCourseInfo.org)).toBeInTheDocument();
+    expect(screen.getByText(mockCourseInfo.courseId)).toBeInTheDocument();
+    expect(screen.getByText(mockCourseInfo.run)).toBeInTheDocument();
+    expect(screen.getByText(mockCourseInfo.displayName)).toBeInTheDocument();
   });
 
   it('displays active status for ongoing course', () => {

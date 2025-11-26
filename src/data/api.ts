@@ -10,7 +10,6 @@ const getApiBaseUrl = () => getAppConfig(appId).LMS_BASE_URL;
  */
 export const getCourseInfo = async (courseId) => {
   const { data } = await getAuthenticatedHttpClient()
-  // TODO: Validate if url is correct once the new API endpoint is available
-    .get(`${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}`);
+    .get(`${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}`);
   return camelCaseObject(data);
 };

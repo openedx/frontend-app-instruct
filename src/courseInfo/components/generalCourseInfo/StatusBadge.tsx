@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { Badge } from '@openedx/paragon';
 
 interface StatusBadgeProps {
@@ -11,7 +10,7 @@ const STATUS_VARIANTS: Record<string, string> = {
   upcoming: 'warning',
 };
 
-const StatusBadge: FC<StatusBadgeProps> = ({ status }) => {
+const StatusBadge = ({ status }: StatusBadgeProps) => {
   const getBadgeVariant = (status: string) => {
     return STATUS_VARIANTS[status.toLowerCase()] || 'light';
   };

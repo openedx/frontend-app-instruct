@@ -1,11 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { getCourseInfo } from './api';
+import { appId } from '../constants';
 
-const COURSE_INFO_QUERY_KEY = ['courseInfo'];
+const courseInfoQueryKeys = {
+  all: [appId, 'courseInfo'] as const,
+  byCourse: (courseId: string) => [appId, 'courseInfo', courseId] as const,
+};
 
 export const useCourseInfo = (courseId: string) => (
   useQuery({
-    queryKey: COURSE_INFO_QUERY_KEY,
+    queryKey: courseInfoQueryKeys.byCourse(courseId),
     queryFn: () => getCourseInfo(courseId),
   })
 );

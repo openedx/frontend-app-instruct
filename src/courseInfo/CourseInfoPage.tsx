@@ -1,10 +1,11 @@
+import { Container } from '@openedx/paragon';
 import { GeneralCourseInfo } from './components/generalCourseInfo';
 
 const CourseInfoPage = () => {
   return (
-    <div>
+    <Container className="mt-4.5 mb-4" fluid="xl">
       <GeneralCourseInfo />
-    </div>
+    </Container>
   );
 };
 
