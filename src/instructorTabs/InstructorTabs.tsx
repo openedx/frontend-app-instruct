@@ -5,7 +5,7 @@ import { SlotContext, useWidgetsForId } from '@openedx/frontend-base';
 import { useCourseInfo } from '../data/apiHook';
 
 export interface TabProps {
-  tab_id: string,
+  tabId: string,
   url: string,
   title: string,
 }
@@ -13,7 +13,7 @@ export interface TabProps {
 const extractWidgetProps = (widget: React.ReactNode): TabProps | null => {
   if (widget && typeof widget === 'object' && 'props' in widget) {
     const props = widget.props.children.props as TabProps;
-    if (props?.tab_id && props?.url && props?.title) {
+    if (props?.tabId && props?.url && props?.title) {
       return props;
     }
   }
@@ -35,11 +35,13 @@ const InstructorTabs = () => {
   const apiTabs: TabProps[] = courseInfo?.tabs ?? [];
   const allTabs = [...apiTabs];
 
+  // Tabs added via slot take priority over (read: replace) tabs from the API
+  // All tabs added via slot are placed at the end of the tabs array
   widgetPropsArray.forEach(slotTab => {
-    if (!apiTabs.find(apiTab => apiTab.tab_id === slotTab.tab_id)) {
+    if (!apiTabs.find(apiTab => apiTab.tabId === slotTab.tabId)) {
       allTabs.push(slotTab);
     } else {
-      const indexToRemove = allTabs.findIndex(({ tab_id }) => tab_id === slotTab.tab_id);
+      const indexToRemove = allTabs.findIndex(({ tabId }) => tabId === slotTab.tabId);
       if (indexToRemove !== -1) {
         allTabs.splice(indexToRemove, 1);
       }
@@ -50,7 +52,7 @@ const InstructorTabs = () => {
   const activeKey = tabId ?? 'course_info';
   const handleSelect = (eventKey: string | null) => {
     if (eventKey && courseId) {
-      const selectedTab = allTabs.find(({ tab_id }) => tab_id === eventKey);
+      const selectedTab = allTabs.find(({ tabId }) => tabId === eventKey);
       if (selectedTab) {
         navigate(`/${courseId}/${eventKey}`);
       }
@@ -65,8 +67,8 @@ const InstructorTabs = () => {
 
   return (
     <Tabs id="instructor-tabs" activeKey={activeKey} onSelect={handleSelect}>
-      {allTabs.map(({ tab_id, title }) => (
-        <Tab key={tab_id} eventKey={tab_id} title={title} />
+      {allTabs.map(({ tabId, title }) => (
+        <Tab key={tabId} eventKey={tabId} title={title} />
       ))}
     </Tabs>
   );
