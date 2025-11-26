@@ -21,14 +21,14 @@ import { SlotOperation, WidgetOperationTypes } from '@openedx/frontend-base';
 import { InstructorTab } from 'src/slots/instructorTabsSlot/InstructorTabsSlot';
 
 // Tab configuration data
-const tabData = { tab_id: 'course_info', url: 'course_info', title: 'Course Info' };
+const tabData = { tabId: 'course_info', url: 'course_info', title: 'Course Info' };
 
 // Create slot operations
 export const tabSlots: SlotOperation[] = [{
   slotId: `org.openedx.frontend.slot.instructor.tabs.v1`,
-  id: `org.openedx.frontend.widget.instructor.tab.${tab_id}`,
+  id: `org.openedx.frontend.widget.instructor.tab.${tabId}`,
   op: WidgetOperationTypes.APPEND,
-  element: <InstructorTab tab_id={tabData.tab_id} title={tabData.title} url={tabData.url} />,
+  element: <InstructorTab tabId={tabData.tabId} title={tabData.title} url={tabData.url} />,
 }];
 ```
 
@@ -60,8 +60,8 @@ const InstructorTabs = () => {
   return (
     <Tabs>
       {widgets.map((widget, index) => {
-        const { tab_id, title } = widget.element.props;
-        return <Tab key={tab_id} eventKey={tab_id} title={title} />;
+        const { tabId, title } = widget.element.props;
+        return <Tab key={tabId} eventKey={tabId} title={title} />;
       })}
     </Tabs>
   );
