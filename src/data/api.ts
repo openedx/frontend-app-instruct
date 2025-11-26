@@ -1,4 +1,4 @@
-import { getAppConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
+import { getAppConfig, getAuthenticatedHttpClient, camelCaseObject } from '@openedx/frontend-base';
 import { appId } from '../constants';
 
 const getApiBaseUrl = () => getAppConfig(appId).LMS_BASE_URL;
@@ -11,5 +11,5 @@ const getApiBaseUrl = () => getAppConfig(appId).LMS_BASE_URL;
 export const getCourseInfo = async (courseId) => {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}`);
-  return data;
+  return camelCaseObject(data);
 };
