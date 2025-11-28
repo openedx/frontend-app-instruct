@@ -8,6 +8,7 @@ import ResetExtensionsModal from './components/ResetExtensionsModal';
 import { LearnerDateExtension } from './types';
 import { useAddDateExtensionMutation, useResetDateExtensionMutation } from './data/apiHook';
 import AddExtensionModal from './components/AddExtensionModal';
+import SelectGradedSubsection from './components/SelectGradedSubsection';
 
 // const successMessage = 'Successfully reset due date for student Phu Nguyen for A subsection with two units (block-v1:SchemaAximWGU+WGU101+1+type@sequential+block@3984030755104708a86592cf23fb1ae4) to 2025-08-21 00:00';
 
@@ -74,7 +75,12 @@ const DateExtensionsPage = () => {
     <Container className="mt-4.5 mb-4 mx-4" fluid="xl">
       <h3>{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
       <div className="d-flex align-items-center justify-content-between mb-3.5">
-        <p>filters</p>
+        <div>
+          <SelectGradedSubsection
+            placeholder={intl.formatMessage(messages.allGradedSubsections)}
+            onChange={() => {}}
+          />
+        </div>
         <Button onClick={handleOpenAddExtension}>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
       </div>
       <DateExtensionsList onResetExtensions={handleResetExtensions} />
