@@ -111,6 +111,11 @@ const messages = defineMessages({
     defaultMessage: 'Select Graded Subsection',
     description: 'Label for the select graded subsection field',
   },
+  allGradedSubsections: {
+    id: 'instruct.dateExtensions.page.filters.allGradedSubsections',
+    defaultMessage: 'All Graded Subsections',
+    description: 'Label for the all graded subsections option in filters',
+  },
 });
 
 export default messages;
