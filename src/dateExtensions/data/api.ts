@@ -33,3 +33,10 @@ export const addDateExtension = async (courseId, extensionData: AddDateExtension
   const { data } = await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/change_due_date`, extensionData);
   return camelCaseObject(data);
 };
+
+export const getGradedSubsections = async (courseId: string) => {
+  const { data } = await getAuthenticatedHttpClient().get(
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/graded_subsections/`
+  );
+  return camelCaseObject(data);
+};
