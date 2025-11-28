@@ -10,6 +10,8 @@ const DATE_EXTENSIONS_PAGE_SIZE = 25;
 
 export interface DateExtensionListProps {
   onResetExtensions?: (user: LearnerDateExtension) => void,
+  searchedLearner?: string,
+  gradedSubsectionFilter?: string,
 }
 
 interface DataTableFetchDataProps {
@@ -18,13 +20,17 @@ interface DataTableFetchDataProps {
 
 const DateExtensionsList = ({
   onResetExtensions = () => {},
+  searchedLearner = '',
+  gradedSubsectionFilter = '',
 }: DateExtensionListProps) => {
   const intl = useIntl();
   const { courseId } = useParams();
   const [page, setPage] = useState(0);
   const { data = { count: 0, results: [] }, isLoading } = useDateExtensions(courseId ?? '', {
     page,
-    pageSize: DATE_EXTENSIONS_PAGE_SIZE
+    pageSize: DATE_EXTENSIONS_PAGE_SIZE,
+    search: searchedLearner,
+    gradedSubsection: gradedSubsectionFilter
   });
 
   const pageCount = Math.ceil(data.count / DATE_EXTENSIONS_PAGE_SIZE);
