@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { AlertModal, Button, Container, Toast } from '@openedx/paragon';
+import { AlertModal, Button, Container, FormControl, Icon, Toast } from '@openedx/paragon';
 import messages from './messages';
 import DateExtensionsList from './components/DateExtensionsList';
 import ResetExtensionsModal from './components/ResetExtensionsModal';
@@ -9,6 +9,7 @@ import { LearnerDateExtension } from './types';
 import { useAddDateExtensionMutation, useResetDateExtensionMutation } from './data/apiHook';
 import AddExtensionModal from './components/AddExtensionModal';
 import SelectGradedSubsection from './components/SelectGradedSubsection';
+import { Search } from '@openedx/paragon/icons';
 
 // const successMessage = 'Successfully reset due date for student Phu Nguyen for A subsection with two units (block-v1:SchemaAximWGU+WGU101+1+type@sequential+block@3984030755104708a86592cf23fb1ae4) to 2025-08-21 00:00';
 
@@ -22,6 +23,8 @@ const DateExtensionsPage = () => {
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isAddExtensionModalOpen, setIsAddExtensionModalOpen] = useState(false);
+  const [searchedLearner, setSearchedLearner] = useState<string>('');
+  const [gradedSubsectionFilter, setGradedSubsectionFilter] = useState<string>('');
 
   const handleResetExtensions = (user: LearnerDateExtension) => {
     setIsResetModalOpen(true);
@@ -75,15 +78,26 @@ const DateExtensionsPage = () => {
     <Container className="mt-4.5 mb-4 mx-4" fluid="xl">
       <h3>{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
       <div className="d-flex align-items-center justify-content-between mb-3.5">
-        <div>
+        <div className="d-flex">
+          <FormControl
+            onChange={(e) => setSearchedLearner(e.target.value)}
+            placeholder={intl.formatMessage(messages.searchLearnerPlaceholder)}
+            trailingElement={<Icon src={Search} />}
+            value={searchedLearner}
+          />
           <SelectGradedSubsection
             placeholder={intl.formatMessage(messages.allGradedSubsections)}
-            onChange={() => {}}
+            onChange={(e) => setGradedSubsectionFilter(e.target.value)}
+            value={gradedSubsectionFilter}
           />
         </div>
         <Button onClick={handleOpenAddExtension}>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
       </div>
-      <DateExtensionsList onResetExtensions={handleResetExtensions} />
+      <DateExtensionsList
+        searchedLearner={searchedLearner}
+        gradedSubsectionFilter={gradedSubsectionFilter}
+        onResetExtensions={handleResetExtensions}
+      />
       <AddExtensionModal
         isOpen={isAddExtensionModalOpen}
         title={intl.formatMessage(messages.addIndividualDueDateExtension)}
