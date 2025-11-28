@@ -10,6 +10,7 @@ import { useAddDateExtensionMutation, useResetDateExtensionMutation } from './da
 import { useAlert } from '@src/providers/AlertProvider';
 import AddExtensionModal from './components/AddExtensionModal';
 import { APIError } from '@src/types';
+import SelectGradedSubsection from './components/SelectGradedSubsection';
 
 const DateExtensionsPage = () => {
   const intl = useIntl();
@@ -85,7 +86,12 @@ const DateExtensionsPage = () => {
     <div className="mt-4.5 mb-4 mx-4">
       <h3>{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
       <div className="d-flex align-items-center justify-content-between mb-3.5">
-        <p>filters</p>
+        <div>
+          <SelectGradedSubsection
+            placeholder={intl.formatMessage(messages.allGradedSubsections)}
+            onChange={() => {}}
+          />
+        </div>
         <Button onClick={() => setIsAddExtensionModalOpen(true)}>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
       </div>
       <DateExtensionsList onResetExtensions={handleResetExtensions} />
