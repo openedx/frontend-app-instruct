@@ -10,6 +10,8 @@ const DATE_EXTENSIONS_PAGE_SIZE = 25;
 
 export interface DateExtensionListProps {
   onResetExtensions?: (user: LearnerDateExtension) => void,
+  emailOrUsername?: string,
+  blockId?: string,
 }
 
 interface DataTableFetchDataProps {
@@ -18,13 +20,17 @@ interface DataTableFetchDataProps {
 
 const DateExtensionsList = ({
   onResetExtensions = () => {},
+  emailOrUsername = '',
+  blockId = '',
 }: DateExtensionListProps) => {
   const intl = useIntl();
-  const { courseId } = useParams();
+  const { courseId = '' } = useParams<{ courseId: string }>();
   const [page, setPage] = useState(0);
   const { data = { count: 0, results: [], numPages: 0 }, isLoading } = useDateExtensions(courseId ?? '', {
     page,
-    pageSize: DATE_EXTENSIONS_PAGE_SIZE
+    pageSize: DATE_EXTENSIONS_PAGE_SIZE,
+    emailOrUsername,
+    blockId
   });
 
   const tableColumns = [
