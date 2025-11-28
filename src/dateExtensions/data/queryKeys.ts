@@ -6,3 +6,8 @@ export const dateExtensionsQueryKeys = {
   byCourse: (courseId: string) => [...dateExtensionsQueryKeys.all, courseId] as const,
   byCoursePaginated: (courseId: string, pagination: PaginationQueryKeys) => [...dateExtensionsQueryKeys.byCourse(courseId), pagination.page] as const,
 };
+
+export const gradedSubsectionsQueryKeys = {
+  all: [appId, 'gradedSubsections'] as const,
+  byCourse: (courseId: string) => [...gradedSubsectionsQueryKeys.all, courseId] as const,
+};
