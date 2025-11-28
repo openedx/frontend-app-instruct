@@ -9,6 +9,11 @@ export interface PaginationQueryKeys {
   pageSize: number,
 }
 
+export interface DateExtensionQueryParams extends PaginationQueryKeys {
+  search?: string,
+  gradedSubsection?: string,
+}
+
 /**
  * Get course settings.
  * @param {string} courseId
@@ -22,10 +27,25 @@ export const getCourseInfo = async (courseId) => {
 
 export const getDateExtensions = async (
   courseId: string,
-  pagination: PaginationQueryKeys
+  params: DateExtensionQueryParams
 ): Promise<DateExtensionsResponse> => {
+  const queryParams = new URLSearchParams({
+    page: params.page.toString(),
+    page_size: params.pageSize.toString(),
+  });
+
+  // Add optional search parameter
+  if (params.search) {
+    queryParams.append('search', params.search);
+  }
+
+  // Add optional graded subsection filter
+  if (params.gradedSubsection) {
+    queryParams.append('graded_subsection', params.gradedSubsection);
+  }
+
   const { data } = await getAuthenticatedHttpClient().get(
-    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/unit_extensions/?page=${pagination.page}&page_size=${pagination.pageSize}`
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/unit_extensions/?${queryParams.toString()}`
   );
   return camelCaseObject(data);
 };

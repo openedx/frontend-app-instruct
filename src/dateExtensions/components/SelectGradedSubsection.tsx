@@ -5,6 +5,7 @@ import { useParams } from 'react-router';
 interface SelectGradedSubsectionProps {
   label?: string,
   placeholder: string,
+  value?: string,
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void,
 }
 
@@ -14,10 +15,11 @@ interface SelectGradedSubsectionProps {
 //   { displayName: 'another example', subsectionId: 'another' }
 // ];
 
-const SelectGradedSubsection = ({ label, placeholder, onChange }: SelectGradedSubsectionProps) => {
+const SelectGradedSubsection = ({ label, placeholder, value, onChange }: SelectGradedSubsectionProps) => {
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const { data = { results: [] } } = useGradedSubsections(courseId);
-  const selectOptions = [{ displayName: placeholder, subsectionId: '' }, ...data.results];
+  const { data = { items: [] } } = useGradedSubsections(courseId);
+  const selectOptions = [{ displayName: placeholder, subsectionId: '' }, ...data.items];
+
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(event);
   };
@@ -25,7 +27,14 @@ const SelectGradedSubsection = ({ label, placeholder, onChange }: SelectGradedSu
   return (
     <FormGroup size="sm">
       {label && <FormLabel>{label}</FormLabel>}
-      <FormControl placeholder={placeholder} name="block_id" as="select" onChange={handleChange} size="md">
+      <FormControl
+        as="select"
+        name="block_id"
+        placeholder={placeholder}
+        size="md"
+        value={value}
+        onChange={handleChange}
+      >
         {
           selectOptions.map((option) => (
             <option key={option.subsectionId} value={option.subsectionId}>
