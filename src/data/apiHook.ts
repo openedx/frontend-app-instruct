@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCourseInfo, getDateExtensions, resetDateExtension, PaginationQueryKeys, addDateExtension } from './api';
+import { getCourseInfo, getDateExtensions, resetDateExtension, PaginationQueryKeys, addDateExtension, getGradedSubsections } from './api';
 import { appId } from '../constants';
 
 const courseInfoQueryKeys = {
@@ -11,6 +11,11 @@ const dateExtensionsQueryKeys = {
   all: [appId, 'dateExtensions'] as const,
   byCourse: (courseId: string) => [...dateExtensionsQueryKeys.all, courseId] as const,
   byCoursePaginated: (courseId: string, pagination: PaginationQueryKeys) => [...dateExtensionsQueryKeys.byCourse(courseId), pagination.page] as const,
+};
+
+const gradedSubsectionsQueryKeys = {
+  all: [appId, 'gradedSubsections'] as const,
+  byCourse: (courseId: string) => [...gradedSubsectionsQueryKeys.all, courseId] as const,
 };
 
 export const useCourseInfo = (courseId: string) => (
@@ -48,3 +53,10 @@ export const useAddDateExtensionMutation = () => {
     },
   });
 };
+
+export const useGradedSubsections = (courseId: string) => (
+  useQuery({
+    queryKey: gradedSubsectionsQueryKeys.byCourse(courseId),
+    queryFn: () => getGradedSubsections(courseId),
+  })
+);
