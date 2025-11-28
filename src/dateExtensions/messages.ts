@@ -116,6 +116,11 @@ const messages = defineMessages({
     defaultMessage: 'All Graded Subsections',
     description: 'Label for the all graded subsections option in filters',
   },
+  searchLearnerPlaceholder: {
+    id: 'instruct.dateExtensions.page.filters.searchLearnerPlaceholder',
+    defaultMessage: 'Search for a Learner',
+    description: 'Placeholder text for the search learner input field',
+  }
 });
 
 export default messages;

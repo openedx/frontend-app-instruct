@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DateExtensionsPage from './DateExtensionsPage';
-import { useDateExtensions, useResetDateExtensionMutation } from './data/apiHook';
+import { useDateExtensions, useGradedSubsections, useAddDateExtensionMutation, useResetDateExtensionMutation } from './data/apiHook';
 import { renderWithAlertAndIntl } from '@src/testUtils';
 
 jest.mock('react-router-dom', () => ({
@@ -15,6 +15,7 @@ jest.mock('./data/apiHook', () => ({
   useDateExtensions: jest.fn(),
   useResetDateExtensionMutation: jest.fn(),
   useAddDateExtensionMutation: jest.fn(() => ({ mutate: jest.fn() })),
+  useGradedSubsections: jest.fn(),
 }));
 
 const mockDateExtensions = [
@@ -28,6 +29,13 @@ const mockDateExtensions = [
   },
 ];
 
+const mockGradedSubsections = [
+  {
+    subsectionId: 'subsection-1block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378',
+    displayName: 'Three body diagrams'
+  }
+];
+
 const mutateMock = jest.fn();
 
 describe('DateExtensionsPage', () => {
@@ -38,6 +46,13 @@ describe('DateExtensionsPage', () => {
     });
     (useResetDateExtensionMutation as jest.Mock).mockReturnValue({
       mutate: mutateMock,
+    });
+    (useAddDateExtensionMutation as jest.Mock).mockReturnValue({
+      mutate: jest.fn(),
+    });
+    (useGradedSubsections as jest.Mock).mockReturnValue({
+      data: { items: mockGradedSubsections },
+      isLoading: false,
     });
   });
 
@@ -54,7 +69,7 @@ describe('DateExtensionsPage', () => {
   it('renders date extensions list', () => {
     renderWithAlertAndIntl(<DateExtensionsPage />);
     expect(screen.getByText('Ed Byun')).toBeInTheDocument();
-    expect(screen.getByText('Three body diagrams')).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'Three body diagrams' })).toBeInTheDocument();
   });
 
   it('shows loading state on table when fetching data', () => {
