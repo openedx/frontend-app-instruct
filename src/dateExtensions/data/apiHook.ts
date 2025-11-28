@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getDateExtensions, PaginationQueryKeys, resetDateExtension, addDateExtension } from './api';
-import { dateExtensionsQueryKeys } from './queryKeys';
+import { getDateExtensions, PaginationQueryKeys, resetDateExtension, addDateExtension, getGradedSubsections } from './api';
+import { dateExtensionsQueryKeys, gradedSubsectionsQueryKeys } from './queryKeys';
 
 export const useDateExtensions = (courseId: string, pagination: PaginationQueryKeys) => (
   useQuery({
@@ -30,3 +30,10 @@ export const useAddDateExtensionMutation = () => {
     },
   });
 };
+
+export const useGradedSubsections = (courseId: string) => (
+  useQuery({
+    queryKey: gradedSubsectionsQueryKeys.byCourse(courseId),
+    queryFn: () => getGradedSubsections(courseId),
+  })
+);
