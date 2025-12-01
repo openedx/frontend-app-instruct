@@ -6,5 +6,6 @@ export const useOpenResponsesData = (courseId: string) => (
   useQuery({
     queryKey: openResponsesQueryKeys.byCourse(courseId),
     queryFn: () => getOpenResponsesData(courseId),
+    enabled: !!courseId,
   })
 );
