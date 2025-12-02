@@ -3,14 +3,6 @@
 @use "@openedx/paragon/scss/core/core" as paragon;
 @use "@edx/brand/paragon/overrides";
 
-.flex-1 {
-    flex: 1;
-}
-
-.flex-2 {
-    flex: 2;
-}
-
 .action-card {
     border-radius: 0%;
     box-shadow: none;
