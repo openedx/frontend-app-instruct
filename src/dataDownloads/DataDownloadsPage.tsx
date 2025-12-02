@@ -5,6 +5,7 @@ import { DataDownloadTable } from './components/DataDownloadTable';
 import { useParams } from 'react-router-dom';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
 import { useCallback } from 'react';
+import { GenerateReportsTabs } from './components/GenerateReportsTabs';
 
 // TODO: remove once API is ready
 const mockedData = [
@@ -34,10 +35,17 @@ const DataDownloadsPage = () => {
 
   return (
     <Container className="mt-4.5 mb-4" fluid="xl">
-      <h3>{intl.formatMessage(messages.dataDownloadsTitle)}</h3>
-      <p>{intl.formatMessage(messages.dataDownloadsDescription)}</p>
-      <p>{intl.formatMessage(messages.dataDownloadsReportExpirationPolicyMessage)}</p>
-      <DataDownloadTable data={data} isLoading={isLoading} onDownloadClick={handleDownload} />
+      <section>
+        <h3>{intl.formatMessage(messages.dataDownloadsTitle)}</h3>
+        <p>{intl.formatMessage(messages.dataDownloadsDescription)}</p>
+        <p>{intl.formatMessage(messages.dataDownloadsReportExpirationPolicyMessage)}</p>
+        <DataDownloadTable data={data} isLoading={isLoading} onDownloadClick={handleDownload} />
+      </section>
+      <section className="mt-5">
+        <h3>{intl.formatMessage(messages.dataDownloadsGenerateReportTitle)}</h3>
+        <p>{intl.formatMessage(messages.dataDownloadsGenerateReportDescription)}</p>
+        <GenerateReportsTabs />
+      </section>
     </Container>
   );
 };

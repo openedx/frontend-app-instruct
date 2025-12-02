@@ -4,3 +4,17 @@
     left: unset;
     right: 1.25rem;
 }
+.flex-1 {
+    flex: 1;
+}
+
+.flex-2 {
+    flex: 2;
+}
+
+.action-card {
+    border-radius: 0%;
+    box-shadow: none;
+    border-bottom: paragon.$gray-500 solid 1px;
+    background-color: paragon.$light-200;
+}
