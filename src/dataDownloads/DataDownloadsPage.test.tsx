@@ -1,9 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { IntlProvider } from '@openedx/frontend-base';
-import { MemoryRouter } from 'react-router-dom';
 import { DataDownloadsPage } from './DataDownloadsPage';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
+import { renderWithProviders } from '../testUtils';
 
 jest.mock('./data/apiHook');
 
@@ -18,16 +17,6 @@ const mockReportsData = [
     downloadLink: 'https://example.com/report-a',
   },
 ];
-
-const renderWithProviders = (component: React.ReactElement, courseId = 'course-123') => {
-  return render(
-    <IntlProvider locale="en">
-      <MemoryRouter initialEntries={[`/course/${courseId}/data-downloads`]}>
-        {component}
-      </MemoryRouter>
-    </IntlProvider>
-  );
-};
 
 describe('DataDownloadsPage', () => {
   const mockMutate = jest.fn();
@@ -61,5 +50,16 @@ describe('DataDownloadsPage', () => {
     renderWithProviders(<DataDownloadsPage />);
     await user.click(screen.getByText('Download Report'));
     expect(mockMutate).toHaveBeenCalledWith('https://example.com/report-a');
+  });
+
+  it('should render pending tasks', async () => {
+    mockUseGeneratedReports.mockReturnValue({
+      data: mockReportsData,
+      isLoading: false,
+    } as any);
+
+    renderWithProviders(<DataDownloadsPage />);
+    const pendingTasks = screen.getByText('Pending Tasks');
+    expect(pendingTasks).toBeInTheDocument();
   });
 });
