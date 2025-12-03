@@ -5,6 +5,7 @@ import { DataDownloadTable } from './components/DataDownloadTable';
 import { useParams } from 'react-router-dom';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
 import { useCallback } from 'react';
+import { PendingTasks } from '../components/PendingTasks';
 
 // TODO: remove once API is ready
 const mockedData = [
@@ -38,6 +39,7 @@ const DataDownloadsPage = () => {
       <p>{intl.formatMessage(messages.dataDownloadsDescription)}</p>
       <p>{intl.formatMessage(messages.dataDownloadsReportExpirationPolicyMessage)}</p>
       <DataDownloadTable data={data} isLoading={isLoading} onDownloadClick={handleDownload} />
+      <PendingTasks />
     </Container>
   );
 };
