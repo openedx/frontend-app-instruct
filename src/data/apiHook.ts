@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getCourseInfo, getCohorts, getCohortStatus, toggleCohorts } from './api';
+import { getCourseInfo, getCohorts, getCohortStatus, toggleCohorts, getContentGroups } from './api';
 import { courseInfoQueryKeys, cohortsQueryKeys } from './queryKeys';
 
 export const useCourseInfo = (courseId: string) => (
@@ -34,3 +34,10 @@ export const useToggleCohorts = (courseId: string) => {
     },
   }));
 };
+
+export const useContentGroupsData = (courseId: string) => (
+  useQuery({
+    queryKey: cohortsQueryKeys.contentGroups(courseId),
+    queryFn: () => getContentGroups(courseId),
+  })
+);
