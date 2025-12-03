@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useParams } from 'react-router-dom';
 import { renderWithIntl } from '../../testUtils';
-import { useCohorts } from '../data/apiHook';
+import { useCohorts, useContentGroupsData } from '../data/apiHook';
 import messages from '../messages';
 import EnabledCohortsView from './EnabledCohortsView';
 
@@ -13,6 +13,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('../data/apiHook', () => ({
   useCohorts: jest.fn(),
+  useContentGroupsData: jest.fn(),
 }));
 
 const mockCohorts = [
@@ -46,6 +47,7 @@ describe('EnabledCohortsView', () => {
   // TODO: Modify test when add functionality to button
   it('calls handleAddCohort on button click', async () => {
     (useCohorts as jest.Mock).mockReturnValue({ data: [] });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: [] });
     renderWithIntl(<EnabledCohortsView />);
     const user = userEvent.setup();
     const button = screen.getByRole('button', { name: `+ ${messages.addCohort.defaultMessage}` });
