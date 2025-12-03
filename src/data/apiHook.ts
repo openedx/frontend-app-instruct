@@ -1,6 +1,14 @@
-// TODO: remove next eslint disable when the variables get used
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
+import { fetchPendingTasks } from './api';
+import { appId } from '../constants';
 
 export const queryKeys = {
+  pendingTasks: (courseId: string) => [appId, 'pendingTasks', courseId],
+};
+
+export const usePendingTasks = (courseId: string) => {
+  return useMutation({
+    mutationKey: queryKeys.pendingTasks(courseId),
+    mutationFn: async () => fetchPendingTasks(courseId),
+  });
 };
