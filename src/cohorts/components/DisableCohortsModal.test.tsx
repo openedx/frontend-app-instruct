@@ -20,7 +20,7 @@ describe('DisableCohortsModal', () => {
         onConfirmDisable={onConfirmDisable}
       />
     );
-    expect(screen.getByRole('dialog', { name: messages.modalTitle.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: messages.disableCohorts.defaultMessage })).toBeInTheDocument();
     expect(screen.getByText(messages.disableMessage.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.cancelLabel.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.disableLabel.defaultMessage)).toBeInTheDocument();
@@ -34,7 +34,7 @@ describe('DisableCohortsModal', () => {
         onConfirmDisable={onConfirmDisable}
       />
     );
-    expect(screen.queryByText(messages.modalTitle.defaultMessage)).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.disableCohorts.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('calls onClose when cancel button is clicked', async () => {

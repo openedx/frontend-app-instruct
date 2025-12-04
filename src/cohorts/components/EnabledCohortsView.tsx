@@ -1,13 +1,15 @@
+import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { FormControl, Button } from '@openedx/paragon';
 import messages from '../messages';
+import { useCohorts } from '../../data/apiHook';
 
-interface EnabledCohortsViewProps {
-  cohortsList: { id: string, name: string }[],
-}
-
-const EnabledCohortsView = ({ cohortsList }: EnabledCohortsViewProps) => {
+const EnabledCohortsView = () => {
   const intl = useIntl();
+  const { courseId = '' } = useParams();
+  const { data = [] } = useCohorts(courseId);
+
+  const cohortsList = [{ id: null, name: intl.formatMessage(messages.selectCohortPlaceholder) }, ...data];
 
   const handleAddCohort = () => {
     // Handle adding a new cohort

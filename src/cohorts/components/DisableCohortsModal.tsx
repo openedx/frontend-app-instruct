@@ -12,7 +12,7 @@ const DisableCohortsModal = ({ isOpen, onClose, onConfirmDisable }: DisableCohor
   const intl = useIntl();
 
   return (
-    <ModalDialog title={intl.formatMessage(messages.modalTitle)} onClose={onClose} isOpen={isOpen} size="sm" hasCloseButton={false} isOverflowVisible={false}>
+    <ModalDialog title={intl.formatMessage(messages.disableCohorts)} onClose={onClose} isOpen={isOpen} size="sm" hasCloseButton={false} isOverflowVisible={false}>
       <div className="mx-4 mt-4 mb-2.5">
         <p>{intl.formatMessage(messages.disableMessage)}</p>
       </div>

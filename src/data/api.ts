@@ -1,7 +1,7 @@
 import { camelCaseObject, getAppConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { appId } from '../constants';
 
-const getApiBaseUrl = () => getAppConfig(appId).LMS_BASE_URL;
+const getApiBaseUrl = () => getAppConfig(appId).CMS_BASE_URL;
 
 /**
  * Get course settings.
@@ -14,20 +14,20 @@ export const getCourseInfo = async (courseId) => {
   return camelCaseObject(data);
 };
 
-export const getCohorts = async (courseId: string) => {
-  const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/cohorts/`;
+export const getCohortStatus = async (courseId: string) => {
+  const url = `${getApiBaseUrl()}/api/cohorts/v1/settings/${courseId}`;
   const { data } = await getAuthenticatedHttpClient().get(url);
-  return data;
-};
-
-export const enableCohorts = async (courseId: string) => {
-  const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/cohorts/enable/`;
-  const { data } = await getAuthenticatedHttpClient().post(url);
   return camelCaseObject(data);
 };
 
-export const disableCohorts = async (courseId: string) => {
-  const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/cohorts/disable/`;
-  const { data } = await getAuthenticatedHttpClient().post(url);
+export const getCohorts = async (courseId: string) => {
+  const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/cohorts/`;
+  const { data } = await getAuthenticatedHttpClient().get(url);
+  return camelCaseObject(data);
+};
+
+export const toggleCohorts = async (courseId: string, isCohorted: boolean) => {
+  const url = `${getApiBaseUrl()}/api/cohorts/v1/settings/${courseId}`;
+  const { data } = await getAuthenticatedHttpClient().put(url, { is_cohorted: isCohorted });
   return camelCaseObject(data);
 };

@@ -26,11 +26,6 @@ const messages = defineMessages({
     defaultMessage: 'Disable',
     description: 'Label for the disable button in the disable cohorts modal'
   },
-  modalTitle: {
-    id: 'instruct.cohorts.disableModal.title',
-    defaultMessage: 'Disable Cohorts',
-    description: 'Title for the disable cohorts confirmation modal'
-  },
   noCohortsMessage: {
     id: 'instruct.cohorts.noCohortsMessage',
     defaultMessage: 'You can use Cohorts to create smaller communities in your course, or to design different course experiences for different groups of learners.',
@@ -51,6 +46,11 @@ const messages = defineMessages({
     defaultMessage: 'Disable Cohorts',
     description: 'Label for the disable cohorts button'
   },
+  selectCohortPlaceholder: {
+    id: 'instruct.cohorts.selectCohortPlaceholder',
+    defaultMessage: 'Select a cohort',
+    description: 'Placeholder text for the select cohort dropdown'
+  }
 });
 
 export default messages;
