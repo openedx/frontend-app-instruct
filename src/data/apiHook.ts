@@ -13,6 +13,7 @@ export const useCohortStatus = (courseId: string) => (
   useQuery({
     queryKey: cohortsQueryKeys.enabled(courseId),
     queryFn: () => getCohortStatus(courseId),
+    enabled: !!courseId,
   })
 );
 
@@ -20,6 +21,7 @@ export const useCohorts = (courseId: string) => (
   useQuery({
     queryKey: cohortsQueryKeys.list(courseId),
     queryFn: () => getCohorts(courseId),
+    enabled: !!courseId,
   })
 );
 

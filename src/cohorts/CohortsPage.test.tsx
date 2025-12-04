@@ -63,7 +63,6 @@ describe('CohortsPage', () => {
     renderWithIntl(<CohortsPage />);
     const user = userEvent.setup();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    screen.debug();
     await user.click(screen.getByRole('button', { name: messages.disableCohorts.defaultMessage }));
     expect(screen.getByRole('dialog', { name: messages.disableCohorts.defaultMessage })).toBeInTheDocument();
   });
