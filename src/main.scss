@@ -17,3 +17,9 @@
     border-bottom: paragon.$gray-500 solid 1px;
     background-color: paragon.$light-200;
 }
+
+.toast-container {
+  // Move toast to the right 
+  left: auto;
+  right: 1.25rem;
+}
