@@ -1,14 +1,21 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { IntlProvider } from '@openedx/frontend-base';
-import { MemoryRouter } from 'react-router-dom';
 import { DataDownloadsPage } from './DataDownloadsPage';
-import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
+import { useGeneratedReports, useGenerateReportLink, useTriggerReportGeneration } from './data/apiHook';
+import { renderWithProviders } from '../testUtils';
+
+// Mock ResizeObserver
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
 
 jest.mock('./data/apiHook');
 
 const mockUseGeneratedReports = useGeneratedReports as jest.MockedFunction<typeof useGeneratedReports>;
 const mockUseGenerateReportLink = useGenerateReportLink as jest.MockedFunction<typeof useGenerateReportLink>;
+const mockUseTriggerReportGeneration = useTriggerReportGeneration as jest.MockedFunction<typeof useTriggerReportGeneration>;
 
 const mockReportsData = [
   {
@@ -19,16 +26,6 @@ const mockReportsData = [
   },
 ];
 
-const renderWithProviders = (component: React.ReactElement, courseId = 'course-123') => {
-  return render(
-    <IntlProvider locale="en">
-      <MemoryRouter initialEntries={[`/course/${courseId}/data-downloads`]}>
-        {component}
-      </MemoryRouter>
-    </IntlProvider>
-  );
-};
-
 describe('DataDownloadsPage', () => {
   const mockMutate = jest.fn();
 
@@ -36,6 +33,10 @@ describe('DataDownloadsPage', () => {
     jest.clearAllMocks();
     mockUseGenerateReportLink.mockReturnValue({
       mutate: mockMutate,
+    } as any);
+    mockUseTriggerReportGeneration.mockReturnValue({
+      mutate: mockMutate,
+      isPending: false,
     } as any);
   });
 

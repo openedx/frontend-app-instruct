@@ -246,7 +246,17 @@ const messages = defineMessages({
     id: 'instruct.dataDownloads.page.generate.reports.problemResponse.tab.problemResponse.sectionOrProblemExampleTooltipText',
     defaultMessage: 'Example: block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378',
     description: 'Example text for section or problem input in problem response reports tab',
-  }
+  },
+  reportGenerationSuccessMessage: {
+    id: 'instruct.dataDownloads.page.generate.reports.reportGenerationSuccessMessage',
+    defaultMessage: 'The {reportName} report is being created. To view the status of the report, see Pending Tasks',
+    description: 'Success message shown when report generation is successfully triggered',
+  },
+  reportGenerationErrorMessage: {
+    id: 'instruct.dataDownloads.page.generate.reports.reportGenerationErrorMessage',
+    defaultMessage: 'There was an error generating the report. Please try again later.',
+    description: 'Error message shown when report generation fails',
+  },
 });
 
 export { messages };
