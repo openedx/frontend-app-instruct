@@ -4,11 +4,34 @@ import { useIntl } from '@openedx/frontend-base';
 import { ActionCard } from '../../components/ActionCard';
 import { useTriggerReportGeneration } from '../data/apiHook';
 import { useParams } from 'react-router-dom';
+import { messages } from '../messages';
+import { useToastManager, ToastTypeEnum } from '../../providers/ToastManagerProvider';
 
-export const GenerateReportsTabs = () => {
+export const ReportGenerationTabs = () => {
   const { courseId = '' } = useParams();
   const intl = useIntl();
   const { mutate: triggerReportGeneration, isPending } = useTriggerReportGeneration(courseId);
+  const { showToast } = useToastManager();
+
+  const handleReportGeneration = (report) => {
+    triggerReportGeneration(report.reportKey, {
+      onSuccess: () => {
+        const message = intl.formatMessage(messages.reportGenerationSuccessMessage, { reportName: report.reportName });
+        showToast({
+          message,
+          type: ToastTypeEnum.SUCCESS,
+        });
+      },
+      onError: (error) => {
+        console.log('Error generating report:', error);
+        showToast({
+          message: intl.formatMessage(messages.reportGenerationErrorMessage),
+          type: ToastTypeEnum.ERROR,
+        });
+      },
+    });
+  };
+
   return (
     <Tabs
       className="generate-reports-tabs"
@@ -22,14 +45,13 @@ export const GenerateReportsTabs = () => {
               title={intl.formatMessage(report.reportName)}
               description={intl.formatMessage(report.reportDescription)}
               buttonLabel={intl.formatMessage(report.buttonText)}
-              onButtonClick={() => triggerReportGeneration(report.reportKey)}
-              customActions={report.customAction ? <report.customAction /> : undefined}
+              onButtonClick={() => handleReportGeneration(report)}
+              customAction={report.customAction ? <report.customAction /> : undefined}
               isLoading={isPending}
             />
           )) }
         </Tab>
       ))}
-
     </Tabs>
   );
 };
