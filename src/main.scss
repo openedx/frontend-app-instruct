@@ -1,4 +1,25 @@
-@import "@edx/brand/paragon/fonts";
-@import "@edx/brand/paragon/variables";
-@import "@openedx/paragon/scss/core/core";
-@import "@edx/brand/paragon/overrides";
+@use "@edx/brand/paragon/fonts";
+@use "@edx/brand/paragon/variables";
+@use "@openedx/paragon/scss/core/core" as paragon;
+@use "@edx/brand/paragon/overrides";
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-2 {
+    flex: 2;
+}
+
+.action-card {
+    border-radius: 0%;
+    box-shadow: none;
+    border-bottom: paragon.$gray-500 solid 1px;
+    background-color: paragon.$light-200;
+}
+
+.toast-container {
+  // Move toast to the right 
+  left: auto;
+  right: 1.25rem;
+}
