@@ -48,8 +48,7 @@ const GeneralCourseInfo = () => {
         <div className="x-small mb-1.5">
           <span className="mr-2">{courseInfo.org ?? NOT_SET_FALLBACK}</span>/
           <span className="mx-2">{courseInfo.courseId ?? NOT_SET_FALLBACK}</span>/
-          {/** TODO: This field is not available in the new API response */}
-          <span className="ml-2">{courseInfo.run ?? NOT_SET_FALLBACK}</span>
+          <span className="ml-2">{courseInfo.courseRun ?? NOT_SET_FALLBACK}</span>
         </div>
         <h3 className="text-primary-700 mb-3">{courseInfo.displayName ?? NOT_SET_FALLBACK}</h3>
         <div className="d-flex align-items-center">

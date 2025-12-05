@@ -15,7 +15,7 @@ const mockUseCourseInfo = useCourseInfo as jest.MockedFunction<typeof useCourseI
 const mockCourseInfo = {
   org: 'TestOrg',
   courseId: 'CS101',
-  run: '2024_T1',
+  courseRun: '2024_T1',
   displayName: 'Introduction to Computer Science',
   start: '2024-01-15T00:00:00Z',
   end: '2024-06-15T00:00:00Z',
@@ -57,7 +57,7 @@ describe('GeneralCourseInfo', () => {
 
     expect(screen.getByText(mockCourseInfo.org)).toBeInTheDocument();
     expect(screen.getByText(mockCourseInfo.courseId)).toBeInTheDocument();
-    expect(screen.getByText(mockCourseInfo.run)).toBeInTheDocument();
+    expect(screen.getByText(mockCourseInfo.courseRun)).toBeInTheDocument();
     expect(screen.getByText(mockCourseInfo.displayName)).toBeInTheDocument();
   });
 
