@@ -11,7 +11,7 @@ const app: App = {
   slots: [],
   config: {
     NODE_ENV: 'development',
-    LMS_BASE_URL: 'http://local.openedx.io:8000'
+    CMS_BASE_URL: 'http://local.openedx.io:8000'
   }
 };
 
