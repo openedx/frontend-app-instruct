@@ -18,29 +18,34 @@ const CohortsPage = () => {
   const { isCohorted = false } = cohortStatus ?? {};
 
   const handleEnableCohorts = () => {
-    try {
-      toggleCohortsMutate({ isCohorted: true });
-    } catch (error) {
-      // Handle error
-    }
+    toggleCohortsMutate({ isCohorted: true },
+      {
+        onError: (error) => console.log(error)
+      });
   };
 
   const handleDisableCohorts = () => {
-    try {
-      toggleCohortsMutate({ isCohorted: false });
-      setIsOpenDisableModal(false);
-    } catch (error) {
-      // Handle error
-    }
+    toggleCohortsMutate({ isCohorted: false },
+      {
+        onError: (error) => console.log(error)
+      });
+    setIsOpenDisableModal(false);
   };
 
   return (
     <div className="mt-4.5 mb-4 mx-4">
       <div className="d-inline-flex align-items-center">
-        <h3 className="mb-0">{intl.formatMessage(messages.cohortsTitle)}</h3>
+        <h3 className="mb-0 text-gray-700">{intl.formatMessage(messages.cohortsTitle)}</h3>
         {isCohorted && (
           <div className="small">
-            <IconButton iconAs={Settings} alt={intl.formatMessage(messages.disableCohorts)} variant="secondary" size="sm" onClick={() => setIsOpenDisableModal(true)} iconClassNames="mb-2" />
+            <IconButton
+              alt={intl.formatMessage(messages.disableCohorts)}
+              iconAs={Settings}
+              iconClassNames="mb-2 text-gray-500"
+              size="sm"
+              variant="secondary"
+              onClick={() => setIsOpenDisableModal(true)}
+            />
           </div>
         )}
       </div>
