@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CohortsPage from './CohortsPage';
-import { useCohorts, useCohortStatus, useToggleCohorts } from '../data/apiHook';
+import { useCohorts, useCohortStatus, useToggleCohorts } from './data/apiHook';
 import { renderWithIntl } from '../testUtils';
 import messages from './messages';
 
@@ -10,7 +10,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ courseId: 'course-v1:edX+Test+2024' }),
 }));
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('./data/apiHook', () => ({
   useCohorts: jest.fn(),
   useCohortStatus: jest.fn(),
   useToggleCohorts: jest.fn(),

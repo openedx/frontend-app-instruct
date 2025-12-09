@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { FormControl, Button } from '@openedx/paragon';
 import messages from '../messages';
-import { useCohorts } from '../../data/apiHook';
+import { useCohorts } from '../data/apiHook';
 
 const EnabledCohortsView = () => {
   const intl = useIntl();

@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useParams } from 'react-router-dom';
 import { renderWithIntl } from '../../testUtils';
-import { useCohorts } from '../../data/apiHook';
+import { useCohorts } from '../data/apiHook';
 import messages from '../messages';
 import EnabledCohortsView from './EnabledCohortsView';
 
@@ -11,7 +11,7 @@ jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
 }));
 
-jest.mock('../../data/apiHook', () => ({
+jest.mock('../data/apiHook', () => ({
   useCohorts: jest.fn(),
 }));
 

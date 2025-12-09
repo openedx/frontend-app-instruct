@@ -3,7 +3,7 @@ import { IconButton } from '@openedx/paragon';
 import { Settings } from '@openedx/paragon/icons';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import { useCohortStatus, useToggleCohorts } from '../data/apiHook';
+import { useCohortStatus, useToggleCohorts } from './data/apiHook';
 import DisableCohortsModal from './components/DisableCohortsModal';
 import messages from './messages';
 import DisabledCohortsView from './components/DisabledCohortsView';
