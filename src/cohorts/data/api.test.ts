@@ -21,7 +21,7 @@ describe('getCohortStatus', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetAppConfig.mockReturnValue({ CMS_BASE_URL: mockBaseUrl });
+    mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: mockBaseUrl });
     mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
     mockCamelCaseObject.mockReturnValue(mockCamelCaseCohortStatusData);
     mockHttpClient.get.mockResolvedValue({ data: mockCohortStatusData });
@@ -45,7 +45,7 @@ describe('getCohorts', () => {
   const mockData = [{ id: 1, name: 'Cohort 1' }];
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetAppConfig.mockReturnValue({ CMS_BASE_URL: mockBaseUrl });
+    mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: mockBaseUrl });
     mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
     mockCamelCaseObject.mockReturnValue(mockData);
     mockHttpClient.get.mockResolvedValue({ data: mockData });
@@ -72,7 +72,7 @@ describe('toggleCohorts', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetAppConfig.mockReturnValue({ CMS_BASE_URL: mockBaseUrl });
+    mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: mockBaseUrl });
     mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
     mockCamelCaseObject.mockReturnValue(mockCamelCasedData);
   });

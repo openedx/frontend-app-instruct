@@ -18,7 +18,7 @@ describe('getCourseInfo', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetAppConfig.mockReturnValue({ CMS_BASE_URL: 'https://test-lms.com' });
+    mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: 'https://test-lms.com' });
     mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
     mockCamelCaseObject.mockReturnValue(mockCamelCaseData);
     mockHttpClient.get.mockResolvedValue({ data: mockCourseData });
