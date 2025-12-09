@@ -3,14 +3,16 @@ import { camelCaseObject, getAppConfig, getAuthenticatedHttpClient } from '@open
 
 jest.mock('@openedx/frontend-base');
 
+const mockHttpClient = {
+  get: jest.fn(),
+  put: jest.fn(),
+};
+
 const mockGetAppConfig = getAppConfig as jest.MockedFunction<typeof getAppConfig>;
 const mockGetAuthenticatedHttpClient = getAuthenticatedHttpClient as jest.MockedFunction<typeof getAuthenticatedHttpClient>;
 const mockCamelCaseObject = camelCaseObject as jest.MockedFunction<typeof camelCaseObject>;
 
 describe('getCourseInfo', () => {
-  const mockHttpClient = {
-    get: jest.fn(),
-  };
   const mockCourseData = { course_name: 'Test Course' };
   const mockCamelCaseData = { courseName: 'Test Course' };
 
