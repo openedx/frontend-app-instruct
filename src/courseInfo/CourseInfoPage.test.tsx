@@ -30,4 +30,9 @@ describe('CourseInfoPage', () => {
     renderComponent();
     expect(screen.getByText('General Course Info Component')).toBeInTheDocument();
   });
+
+  it('renders pending tasks section', () => {
+    renderComponent();
+    expect(screen.getByText('Pending Tasks')).toBeInTheDocument();
+  });
 });
