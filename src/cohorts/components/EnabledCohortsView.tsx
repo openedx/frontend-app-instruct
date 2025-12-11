@@ -9,6 +9,7 @@ import CohortsForm from './CohortsForm';
 import { useCohortContext } from './CohortContext';
 import { CohortData } from '../types';
 import { assignmentTypes } from '../constants';
+import SelectedCohortInfo from './SelectedCohortInfo';
 
 const EnabledCohortsView = () => {
   const intl = useIntl();
@@ -82,6 +83,7 @@ const EnabledCohortsView = () => {
           <CohortsForm disableManualAssignment={data.length === 0} onCancel={hideAddForm} onSubmit={handleNewCohort} />
         </Card>
       )}
+      {selectedCohort && <SelectedCohortInfo />}
     </>
   );
 };
