@@ -105,6 +105,31 @@ const messages = defineMessages({
     id: 'instruct.cohorts.addForm.createContentGroup',
     defaultMessage: 'Create a content group',
     description: 'Label for the create a content group link'
+  },
+  addCohortSuccessMessage: {
+    id: 'instruct.cohorts.addForm.successMessage',
+    defaultMessage: 'The {cohortName} cohort has been created. You can manually add students to this cohort below.',
+    description: 'Success message displayed when a new cohort is added'
+  },
+  cohortDisclaimer: {
+    id: 'instruct.cohorts.cohortDisclaimer',
+    defaultMessage: 'To review learner cohort assignments or see the results of uploading a CSV file, download course profile information or cohort results on the',
+    description: 'Disclaimer message for cohorts'
+  },
+  page: {
+    id: 'instruct.cohorts.page',
+    defaultMessage: 'page',
+    description: 'Label for the page link'
+  },
+  settings: {
+    id: 'instruct.cohorts.settings',
+    defaultMessage: 'Settings',
+    description: 'Label for the settings tab'
+  },
+  manageLearners: {
+    id: 'instruct.cohorts.manageLearners',
+    defaultMessage: 'Manage Learners',
+    description: 'Label for the manage learners tab'
   }
 });
 
