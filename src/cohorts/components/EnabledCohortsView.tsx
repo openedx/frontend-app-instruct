@@ -8,6 +8,7 @@ import CohortsForm from './CohortsForm';
 import { useCohortContext, CohortData } from './CohortContext';
 import { assignmentTypes } from '../constants';
 import { CheckCircle } from '@openedx/paragon/icons';
+import SelectedCohortInfo from './SelectedCohortInfo';
 
 const EnabledCohortsView = () => {
   const intl = useIntl();
@@ -81,6 +82,7 @@ const EnabledCohortsView = () => {
           <CohortsForm disableManualAssignment={data.length === 0} onCancel={hideAddForm} onSubmit={handleNewCohort} />
         </Card>
       )}
+      {selectedCohort && <SelectedCohortInfo />}
     </>
   );
 };
