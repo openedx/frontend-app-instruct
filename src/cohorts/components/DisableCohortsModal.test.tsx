@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DisableCohortsModal from './DisableCohortsModal';
-import { renderWithIntl } from '../../testUtils';
+import { renderWithIntl } from '@src/testUtils';
 import messages from '../messages';
 
 describe('DisableCohortsModal', () => {

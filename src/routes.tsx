@@ -1,6 +1,6 @@
-import CohortsPage from './cohorts/CohortsPage';
-import CourseInfoPage from './courseInfo/CourseInfoPage';
-import Main from './Main';
+import CohortsPage from '@src/cohorts/CohortsPage';
+import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
+import Main from '@src/Main';
 
 const routes = [
   {
