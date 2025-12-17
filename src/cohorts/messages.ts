@@ -105,7 +105,12 @@ const messages = defineMessages({
     id: 'instruct.cohorts.addForm.createContentGroup',
     defaultMessage: 'Create a content group',
     description: 'Label for the create a content group link'
-  }
+  },
+  addCohortSuccessMessage: {
+    id: 'instruct.cohorts.addForm.successMessage',
+    defaultMessage: 'The {cohortName} cohort has been created. You can manually add students to this cohort below.',
+    description: 'Success message displayed when a new cohort is added'
+  },
 });
 
 export default messages;

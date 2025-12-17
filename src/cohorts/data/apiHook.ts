@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getCohorts, getCohortStatus, getContentGroups, toggleCohorts } from './api';
+import { getCohorts, getCohortStatus, getContentGroups, toggleCohorts, createCohort } from './api';
 import { cohortsQueryKeys } from './queryKeys';
+import { CohortData } from '../components/CohortContext';
 
 export const useCohortStatus = (courseId: string) => (
   useQuery({
@@ -26,6 +27,16 @@ export const useToggleCohorts = (courseId: string) => {
       queryClient.invalidateQueries({ queryKey: cohortsQueryKeys.enabled(courseId) });
     },
   }));
+};
+
+export const useCreateCohort = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (cohortInfo: Partial<CohortData>) => createCohort(courseId, cohortInfo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: cohortsQueryKeys.list(courseId) });
+    },
+  });
 };
 
 export const useContentGroupsData = (courseId: string) => (

@@ -4,6 +4,7 @@ import CohortsForm from './CohortsForm';
 import messages from '../messages';
 import { renderWithIntl } from '../../testUtils';
 import { useContentGroupsData } from '../data/apiHook';
+import { CohortProvider } from './CohortContext';
 
 jest.mock('react-router-dom', () => ({
   useParams: () => ({ courseId: 'course-v1:edX+DemoX+Demo_Course' }),
@@ -20,7 +21,14 @@ jest.mock('../data/apiHook', () => ({
 
 describe('CohortsForm', () => {
   const onCancel = jest.fn();
-  const onSubmit = jest.fn((e) => e.preventDefault());
+  const onSubmit = jest.fn();
+
+  const renderComponent = () =>
+    renderWithIntl(
+      <CohortProvider>
+        <CohortsForm onCancel={onCancel} onSubmit={onSubmit} />
+      </CohortProvider>
+    );
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -28,20 +36,20 @@ describe('CohortsForm', () => {
 
   it('renders cohort name input', () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
-    renderWithIntl(<CohortsForm onCancel={onCancel} onSubmit={onSubmit} />);
+    renderComponent();
     expect(screen.getByPlaceholderText(messages.cohortName.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders assignment method radios', () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
-    renderWithIntl(<CohortsForm onCancel={onCancel} onSubmit={onSubmit} />);
+    renderComponent();
     expect(screen.getByLabelText(messages.automatic.defaultMessage)).toBeInTheDocument();
     expect(screen.getByLabelText(messages.manual.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders content group radios and select', () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
-    renderWithIntl(<CohortsForm onCancel={onCancel} onSubmit={onSubmit} />);
+    renderComponent();
     expect(screen.getByLabelText(messages.noContentGroup.defaultMessage)).toBeInTheDocument();
     expect(screen.getByLabelText(messages.selectAContentGroup.defaultMessage)).toBeInTheDocument();
     expect(screen.getByRole('combobox')).toBeInTheDocument();
@@ -51,7 +59,7 @@ describe('CohortsForm', () => {
 
   it('calls onCancel when Cancel button is clicked', async () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
-    renderWithIntl(<CohortsForm onCancel={onCancel} onSubmit={onSubmit} />);
+    renderComponent();
     const user = userEvent.setup();
     const cancelButton = screen.getByRole('button', { name: messages.cancelLabel.defaultMessage });
     await user.click(cancelButton);
@@ -60,7 +68,7 @@ describe('CohortsForm', () => {
 
   it('calls onSubmit when Save button is clicked', async () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
-    renderWithIntl(<CohortsForm onCancel={onCancel} onSubmit={onSubmit} />);
+    renderComponent();
     const user = userEvent.setup();
     await user.click(screen.getByText(messages.saveLabel.defaultMessage));
     expect(onSubmit).toHaveBeenCalled();
@@ -68,7 +76,7 @@ describe('CohortsForm', () => {
 
   it('updates cohort name input value', async () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
-    renderWithIntl(<CohortsForm onCancel={onCancel} onSubmit={onSubmit} />);
+    renderComponent();
     const input = screen.getByPlaceholderText(messages.cohortName.defaultMessage);
     const user = userEvent.setup();
     await user.type(input, 'Test Cohort');
@@ -77,7 +85,7 @@ describe('CohortsForm', () => {
 
   it('disables select when "Select a Content Group" is not chosen', () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
-    renderWithIntl(<CohortsForm onCancel={onCancel} onSubmit={onSubmit} />);
+    renderComponent();
     const select = screen.getByRole('combobox');
     expect(select).toBeDisabled();
     fireEvent.click(screen.getByLabelText(messages.selectAContentGroup.defaultMessage));
@@ -86,7 +94,7 @@ describe('CohortsForm', () => {
 
   it('renders warning and create link when no content groups', () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: [] });
-    renderWithIntl(<CohortsForm onCancel={onCancel} onSubmit={onSubmit} />);
+    renderComponent();
     expect(screen.getByText(messages.noContentGroups.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.createContentGroup.defaultMessage)).toBeInTheDocument();
   });

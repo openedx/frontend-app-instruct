@@ -1,5 +1,6 @@
-import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
+import { camelCaseObject, getAuthenticatedHttpClient, snakeCaseObject } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '../../data/api';
+import { CohortData } from '../components/CohortContext';
 
 export const getCohortStatus = async (courseId: string) => {
   const url = `${getApiBaseUrl()}/api/cohorts/v1/settings/${courseId}`;
@@ -19,11 +20,10 @@ export const toggleCohorts = async (courseId: string, isCohorted: boolean) => {
   return camelCaseObject(data);
 };
 
-export const createCohort = async (courseId: string, cohortDetails: string) => {
-  const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/cohorts/`;
-  const { data } = await getAuthenticatedHttpClient().post(url, {
-    name: cohortDetails,
-  });
+export const createCohort = async (courseId: string, cohortDetails: Partial<CohortData>) => {
+  const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/cohorts/`;
+  const cohortDetailsSnakeCase = snakeCaseObject(cohortDetails);
+  const { data } = await getAuthenticatedHttpClient().post(url, cohortDetailsSnakeCase);
   return camelCaseObject(data);
 };
 
