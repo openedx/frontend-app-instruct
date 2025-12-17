@@ -1,6 +1,6 @@
 import { Card, Skeleton } from '@openedx/paragon';
 import { StatusBadge } from './StatusBadge';
-import { useCourseInfo } from '../../../data/apiHook';
+import { useCourseInfo } from '@src/data/apiHook';
 import { useParams } from 'react-router';
 import { FormattedDate, useIntl } from '@openedx/frontend-base';
 import { useCallback } from 'react';
