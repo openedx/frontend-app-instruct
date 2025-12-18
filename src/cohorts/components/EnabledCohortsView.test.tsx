@@ -42,13 +42,15 @@ describe('EnabledCohortsView', () => {
     expect(screen.getByText(mockCohorts[1].name)).toBeInTheDocument();
   });
 
-  // TODO: Modify test when add functionality to select
-  it('calls handleSelectCohort on select change', () => {
+  it('calls handleSelectCohort on select change', async () => {
     (useCohorts as jest.Mock).mockReturnValue({ data: mockCohorts });
     renderWithCohortProvider();
+    const select = screen.getByRole('combobox');
+    const user = userEvent.setup();
+    await user.selectOptions(select, '1');
+    expect((select as HTMLSelectElement).value).toBe('1');
   });
 
-  // TODO: Modify test when add functionality to button
   it('calls handleAddCohort on button click', async () => {
     (useCohorts as jest.Mock).mockReturnValue({ data: [] });
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: [] });
@@ -56,6 +58,8 @@ describe('EnabledCohortsView', () => {
     const user = userEvent.setup();
     const button = screen.getByRole('button', { name: `+ ${messages.addCohort.defaultMessage}` });
     await user.click(button);
+    expect(screen.getByPlaceholderText(messages.cohortName.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: messages.saveLabel.defaultMessage })).toBeInTheDocument();
   });
 
   it('renders correctly when no cohorts are returned', () => {
