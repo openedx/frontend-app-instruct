@@ -8,6 +8,7 @@ import DisableCohortsModal from './components/DisableCohortsModal';
 import messages from './messages';
 import DisabledCohortsView from './components/DisabledCohortsView';
 import EnabledCohortsView from './components/EnabledCohortsView';
+import { CohortProvider } from './components/CohortContext';
 
 const CohortsPage = () => {
   const intl = useIntl();
@@ -33,29 +34,31 @@ const CohortsPage = () => {
   };
 
   return (
-    <div className="mt-4.5 mb-4 mx-4">
-      <div className="d-inline-flex align-items-center">
-        <h3 className="mb-0 text-gray-700">{intl.formatMessage(messages.cohortsTitle)}</h3>
-        {isCohorted && (
-          <div className="small">
-            <IconButton
-              alt={intl.formatMessage(messages.disableCohorts)}
-              iconAs={Settings}
-              iconClassNames="mb-2 text-gray-500"
-              size="sm"
-              variant="secondary"
-              onClick={() => setIsOpenDisableModal(true)}
-            />
-          </div>
+    <CohortProvider>
+      <div className="mt-4.5 mb-4 mx-4">
+        <div className="d-inline-flex align-items-center">
+          <h3 className="mb-0 text-gray-700">{intl.formatMessage(messages.cohortsTitle)}</h3>
+          {isCohorted && (
+            <div className="small">
+              <IconButton
+                alt={intl.formatMessage(messages.disableCohorts)}
+                iconAs={Settings}
+                iconClassNames="mb-2 text-gray-500"
+                size="sm"
+                variant="secondary"
+                onClick={() => setIsOpenDisableModal(true)}
+              />
+            </div>
+          )}
+        </div>
+        {isCohorted ? (
+          <EnabledCohortsView />
+        ) : (
+          <DisabledCohortsView onEnableCohorts={handleEnableCohorts} />
         )}
+        <DisableCohortsModal isOpen={isOpenDisableModal} onClose={() => setIsOpenDisableModal(false)} onConfirmDisable={handleDisableCohorts} />
       </div>
-      {isCohorted ? (
-        <EnabledCohortsView />
-      ) : (
-        <DisabledCohortsView onEnableCohorts={handleEnableCohorts} />
-      )}
-      <DisableCohortsModal isOpen={isOpenDisableModal} onClose={() => setIsOpenDisableModal(false)} onConfirmDisable={handleDisableCohorts} />
-    </div>
+    </CohortProvider>
   );
 };
 
