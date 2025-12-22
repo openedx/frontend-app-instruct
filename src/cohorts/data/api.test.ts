@@ -59,7 +59,7 @@ describe('getCohorts', () => {
 
     expect(getAppConfig).toHaveBeenCalledWith(appId);
     expect(mockHttpClient.get).toHaveBeenCalledWith(
-      `${mockBaseUrl}/api/cohorts/v1/courses/${courseId}/cohorts/`
+      `${mockBaseUrl}/api/cohorts/v1/courses/${courseId}/cohorts`
     );
     expect(camelCaseObject).toHaveBeenCalledWith(mockData);
     expect(result).toEqual(mockData);
