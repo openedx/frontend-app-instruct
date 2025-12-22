@@ -44,6 +44,7 @@ describe('EnabledCohortsView', () => {
 
   it('calls handleSelectCohort on select change', async () => {
     (useCohorts as jest.Mock).mockReturnValue({ data: mockCohorts });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: [] });
     renderWithCohortProvider();
     const select = screen.getByRole('combobox');
     const user = userEvent.setup();
