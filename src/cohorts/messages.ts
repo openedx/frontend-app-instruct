@@ -155,7 +155,37 @@ const messages = defineMessages({
     id: 'instruct.cohorts.cohortUpdateSuccessMessage',
     defaultMessage: 'Settings have been saved.',
     description: 'Success message displayed when a cohort is updated'
-  }
+  },
+  addLearnersTitle: {
+    id: 'instruct.cohorts.addLearnersTitle',
+    defaultMessage: 'Add Learners to this cohort',
+    description: 'Title for the add learners section'
+  },
+  addLearnersSubtitle: {
+    id: 'instruct.cohorts.addLearnersSubtitle',
+    defaultMessage: 'Note: Learners can be in only one cohort. Adding learners to this group overrides any previous group assignment.',
+    description: 'Subtitle for the add learners section'
+  },
+  addLearnersInstructions: {
+    id: 'instruct.cohorts.addLearnersInstructions',
+    defaultMessage: 'Enter email addresses and/or usernames, separated by new lines or commas, for the learners you want to add.*',
+    description: 'Instructions for adding learners to a cohort'
+  },
+  addLearnersFootnote: {
+    id: 'instruct.cohorts.addLearnersFootnote',
+    defaultMessage: 'You will not receive notification for emails that bounce, so double-check your spelling.',
+    description: 'Footnote for adding learners to a cohort'
+  },
+  learnersExample: {
+    id: 'instruct.cohorts.learnersExample',
+    defaultMessage: 'e.g. johndoe@example.com, JaneDoe, Joeydoe@example.com',
+    description: 'Placeholder for the learners example'
+  },
+  addLearnersLabel: {
+    id: 'instruct.cohorts.addLearnersLabel',
+    defaultMessage: 'Add Learners',
+    description: 'Label for the add learners button'
+  },
 });
 
 export default messages;

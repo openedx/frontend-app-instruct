@@ -28,7 +28,7 @@ export const createCohort = async (courseId: string, cohortDetails: BasicCohortD
 };
 
 export const getContentGroups = async (courseId: string) => {
-  const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/content_groups/`;
+  const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/content_groups`;
   const { data } = await getAuthenticatedHttpClient().get(url);
   return camelCaseObject(data);
 };
@@ -37,5 +37,11 @@ export const patchCohort = async (courseId: string, cohortId: number, cohortDeta
   const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/cohorts/${cohortId}`;
   const cohortDetailsSnakeCase = snakeCaseObject(cohortDetails);
   const { data } = await getAuthenticatedHttpClient().patch(url, cohortDetailsSnakeCase);
+  return camelCaseObject(data);
+};
+
+export const addLearnersToCohort = async (courseId: string, cohortId: number, users: string[]) => {
+  const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/cohorts/${cohortId}/users`;
+  const { data } = await getAuthenticatedHttpClient().post(url, { users });
   return camelCaseObject(data);
 };
