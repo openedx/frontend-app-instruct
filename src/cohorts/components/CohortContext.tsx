@@ -14,19 +14,24 @@ interface CohortProviderProps {
   children: ReactNode,
 }
 
+const areCohortsEqual = (prev: CohortData | null, current: CohortData): boolean => {
+  if (!prev) return false;
+  return prev.id !== current.id
+    && prev.name === current.name
+    && prev.assignmentType === current.assignmentType
+    && prev.contentGroupOption === current.contentGroupOption
+    && prev.userPartitionId === current.userPartitionId
+    && prev.userCount === current.userCount
+    && prev.groupId === current.groupId;
+};
+
 export const CohortProvider: FC<CohortProviderProps> = ({ children }) => {
   const [selectedCohort, setSelectedCohortState] = useState<CohortData | null>(null);
 
   const setSelectedCohort = useCallback((cohort: CohortData) => {
     setSelectedCohortState(prev => {
       // Only update if the values actually changed
-      if (!prev
-        || prev.id !== cohort.id
-        || prev.name !== cohort.name
-        || prev.assignmentType !== cohort.assignmentType
-        || prev.contentGroupOption !== cohort.contentGroupOption
-        || prev.userPartitionId !== cohort.userPartitionId
-        || prev.groupId !== cohort.groupId) {
+      if (!areCohortsEqual(prev, cohort)) {
         return cohort;
       }
       return prev;
