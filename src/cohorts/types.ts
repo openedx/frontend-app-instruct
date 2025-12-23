@@ -9,4 +9,5 @@ export interface CohortData {
   contentGroupOption?: string,
   groupId: number | null,
   userPartitionId: number | null,
+  userCount?: number,
 }

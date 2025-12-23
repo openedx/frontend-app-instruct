@@ -41,6 +41,7 @@ const EnabledCohortsView = () => {
         assignmentType: selectedCohortFromApi.assignmentType ?? assignmentTypes.automatic,
         groupId: selectedCohortFromApi.groupId,
         userPartitionId: selectedCohortFromApi.userPartitionId,
+        userCount: selectedCohortFromApi.userCount ?? 0,
       };
       setSelectedCohort(cohortFormData);
     } else {
