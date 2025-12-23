@@ -130,7 +130,22 @@ const messages = defineMessages({
     id: 'instruct.cohorts.manageLearners',
     defaultMessage: 'Manage Learners',
     description: 'Label for the manage learners tab'
-  }
+  },
+  studentsOnCohort: {
+    id: 'instruct.cohorts.studentsOnCohort',
+    defaultMessage: '(contains {users} students)',
+    description: 'Label showing the number of students on this cohort'
+  },
+  automaticCohortWarning: {
+    id: 'instruct.cohorts.automaticCohortWarning',
+    defaultMessage: 'Learners are added to this cohort automatically.',
+    description: 'Warning about automatic cohort assignment'
+  },
+  automaticCohortLink: {
+    id: 'instruct.cohorts.automaticCohortLink',
+    defaultMessage: 'What does this mean?',
+    description: 'Link text for more information about automatic cohort assignment'
+  },
 });
 
 export default messages;
