@@ -1,6 +1,6 @@
 import { camelCaseObject, getAuthenticatedHttpClient, snakeCaseObject } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '../../data/api';
-import { CohortData } from '../components/CohortContext';
+import { CohortData } from '../types';
 
 export const getCohortStatus = async (courseId: string) => {
   const url = `${getApiBaseUrl()}/api/cohorts/v1/settings/${courseId}`;

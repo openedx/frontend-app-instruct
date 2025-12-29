@@ -6,7 +6,8 @@ import messages from '../messages';
 import { useContentGroupsData } from '../data/apiHook';
 import { Warning } from '@openedx/paragon/icons';
 import { assignmentTypes } from '../constants';
-import { CohortData, useCohortContext } from './CohortContext';
+import { useCohortContext } from './CohortContext';
+import { CohortData } from '../types';
 
 interface CohortsFormProps {
   disableManualAssignment?: boolean,

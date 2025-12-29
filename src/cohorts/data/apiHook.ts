@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getCohorts, getCohortStatus, getContentGroups, toggleCohorts, createCohort } from './api';
 import { cohortsQueryKeys } from './queryKeys';
-import { CohortData } from '../components/CohortContext';
+import { CohortData } from '../types';
 
 export const useCohortStatus = (courseId: string) => (
   useQuery({

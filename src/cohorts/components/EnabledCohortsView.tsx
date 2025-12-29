@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { FormControl, Button, Card, Alert } from '@openedx/paragon';
+import { CheckCircle } from '@openedx/paragon/icons';
 import messages from '../messages';
 import { useCohorts, useCreateCohort } from '../data/apiHook';
 import CohortsForm from './CohortsForm';
-import { useCohortContext, CohortData } from './CohortContext';
+import { useCohortContext } from './CohortContext';
+import { CohortData } from '../types';
 import { assignmentTypes } from '../constants';
-import { CheckCircle } from '@openedx/paragon/icons';
 
 const EnabledCohortsView = () => {
   const intl = useIntl();

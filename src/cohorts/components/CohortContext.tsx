@@ -1,13 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-
-export interface CohortData {
-  id: string,
-  name: string,
-  assignmentType: string,
-  contentGroupOption?: string,
-  groupId: number | null,
-  userPartitionId: number | null,
-}
+import { createContext, useContext, useState, ReactNode, useCallback, FC, useMemo } from 'react';
+import { CohortData } from '../types';
 
 interface CohortContextType {
   selectedCohort: CohortData | null,
@@ -22,16 +14,18 @@ interface CohortProviderProps {
   children: ReactNode,
 }
 
-export const CohortProvider: React.FC<CohortProviderProps> = ({ children }) => {
+export const CohortProvider: FC<CohortProviderProps> = ({ children }) => {
   const [selectedCohort, setSelectedCohortState] = useState<CohortData | null>(null);
 
   const setSelectedCohort = useCallback((cohort: CohortData) => {
     setSelectedCohortState(prev => {
       // Only update if the values actually changed
       if (!prev
+        || prev.id !== cohort.id
         || prev.name !== cohort.name
         || prev.assignmentType !== cohort.assignmentType
         || prev.contentGroupOption !== cohort.contentGroupOption
+        || prev.userPartitionId !== cohort.userPartitionId
         || prev.groupId !== cohort.groupId) {
         return cohort;
       }
@@ -49,15 +43,15 @@ export const CohortProvider: React.FC<CohortProviderProps> = ({ children }) => {
     );
   }, []);
 
+  const value = useMemo(() => ({
+    selectedCohort,
+    setSelectedCohort,
+    clearSelectedCohort,
+    updateCohortField
+  }), [selectedCohort, setSelectedCohort, clearSelectedCohort, updateCohortField]);
+
   return (
-    <CohortContext.Provider
-      value={{
-        selectedCohort,
-        setSelectedCohort,
-        clearSelectedCohort,
-        updateCohortField
-      }}
-    >
+    <CohortContext.Provider value={value}>
       {children}
     </CohortContext.Provider>
   );
