@@ -50,7 +50,67 @@ const messages = defineMessages({
     id: 'instruct.cohorts.selectCohortPlaceholder',
     defaultMessage: 'Select a cohort',
     description: 'Placeholder text for the select cohort dropdown'
-  }
+  },
+  cohortName: {
+    id: 'instruct.cohorts.cohortName',
+    defaultMessage: 'Cohort Name',
+    description: 'Label for the cohort name input field'
+  },
+  saveLabel: {
+    id: 'instruct.cohorts.saveLabel',
+    defaultMessage: 'Save',
+    description: 'Label for the save button'
+  },
+  cohortAssignmentMethod: {
+    id: 'instruct.cohorts.addForm.cohortAssignmentMethod',
+    defaultMessage: 'Cohort Assignment Method',
+    description: 'Label for the cohort assignment method section'
+  },
+  automatic: {
+    id: 'instruct.cohorts.addForm.automatic',
+    defaultMessage: 'Automatic',
+    description: 'Label for the automatic cohort assignment method option'
+  },
+  manual: {
+    id: 'instruct.cohorts.addForm.manual',
+    defaultMessage: 'Manual',
+    description: 'Label for the manual cohort assignment method option'
+  },
+  associatedContentGroup: {
+    id: 'instruct.cohorts.addForm.associatedContentGroup',
+    defaultMessage: 'Associated Content Group',
+    description: 'Label for the associated content group section'
+  },
+  noContentGroup: {
+    id: 'instruct.cohorts.addForm.noContentGroup',
+    defaultMessage: 'No Content Group',
+    description: 'Label for the no content group option'
+  },
+  selectAContentGroup: {
+    id: 'instruct.cohorts.addForm.selectAContentGroup',
+    defaultMessage: 'Select a Content Group',
+    description: 'Label for the select a content group option'
+  },
+  notSelected: {
+    id: 'instruct.cohorts.addForm.notSelected',
+    defaultMessage: 'Not Selected',
+    description: 'Label for the not selected content group option'
+  },
+  noContentGroups: {
+    id: 'instruct.cohorts.addForm.noContentGroups',
+    defaultMessage: 'No content groups exist.',
+    description: 'Message displayed when there are no content groups'
+  },
+  createContentGroup: {
+    id: 'instruct.cohorts.addForm.createContentGroup',
+    defaultMessage: 'Create a content group',
+    description: 'Label for the create a content group link'
+  },
+  addCohortSuccessMessage: {
+    id: 'instruct.cohorts.addForm.successMessage',
+    defaultMessage: 'The {cohortName} cohort has been created. You can manually add students to this cohort below.',
+    description: 'Success message displayed when a new cohort is added'
+  },
 });
 
 export default messages;
