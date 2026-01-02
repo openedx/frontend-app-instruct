@@ -19,7 +19,6 @@ const areCohortsEqual = (prev: CohortData | null, current: CohortData): boolean 
   return prev.id !== current.id
     && prev.name === current.name
     && prev.assignmentType === current.assignmentType
-    && prev.contentGroupOption === current.contentGroupOption
     && prev.userPartitionId === current.userPartitionId
     && prev.userCount === current.userCount
     && prev.groupId === current.groupId;

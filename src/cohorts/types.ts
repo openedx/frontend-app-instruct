@@ -2,12 +2,17 @@ import { assignmentTypes } from './constants';
 
 export type AssignmentType = typeof assignmentTypes[keyof typeof assignmentTypes];
 
-export interface CohortData {
-  id: string,
+export interface BasicCohortData {
   name: string,
   assignmentType: AssignmentType,
-  contentGroupOption?: string,
   groupId: number | null,
   userPartitionId: number | null,
-  userCount?: number,
+}
+export interface CohortData extends BasicCohortData {
+  id: number,
+  userCount: number,
+}
+
+export interface CohortForm extends BasicCohortData {
+  contentGroupOption: string,
 }
