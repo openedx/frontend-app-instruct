@@ -1,5 +1,6 @@
 import CohortsPage from './cohorts/CohortsPage';
 import CourseInfoPage from './courseInfo/CourseInfoPage';
+import DateExtensionsPage from './dateExtensions/DateExtensionsPage';
 import Main from './Main';
 
 const routes = [
@@ -23,10 +24,10 @@ const routes = [
         path: 'cohorts',
         element: <CohortsPage />
       },
-      // {
-      //   path: 'extensions',
-      //   element: <ExtensionsPage />
-      // },
+      {
+        path: 'date_extensions',
+        element: <DateExtensionsPage />
+      },
       // {
       //   path: 'student_admin',
       //   element: <StudentAdminPage />
