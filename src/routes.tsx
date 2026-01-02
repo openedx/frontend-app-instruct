@@ -1,6 +1,7 @@
 import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
 import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
+import EnrollmentsPage from '@src/enrollments/EnrollmentsPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 
 const routes = [
@@ -19,10 +20,10 @@ const routes = [
         path: 'course_info',
         element: <CourseInfoPage />
       },
-      // {
-      //   path: 'membership',
-      //   element: <MembershipPage />
-      // },
+      {
+        path: 'enrollments',
+        element: <EnrollmentsPage />
+      },
       {
         path: 'cohorts',
         element: <CohortsPage />
