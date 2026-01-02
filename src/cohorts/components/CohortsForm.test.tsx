@@ -1,6 +1,5 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import CohortsForm from './CohortsForm';
 import messages from '../messages';
 import { renderWithIntl } from '../../testUtils';
@@ -85,12 +84,13 @@ describe('CohortsForm', () => {
     expect(input).toHaveValue('Test Cohort');
   });
 
-  it('disables select when "Select a Content Group" is not chosen', () => {
+  it('disables select when "Select a Content Group" is not chosen', async () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
     renderComponent();
     const select = screen.getByRole('combobox');
     expect(select).toBeDisabled();
-    fireEvent.click(screen.getByLabelText(messages.selectAContentGroup.defaultMessage));
+    const user = userEvent.setup();
+    await user.click(screen.getByLabelText(messages.selectAContentGroup.defaultMessage));
     expect(select).not.toBeDisabled();
   });
 
