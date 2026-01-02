@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
 import { CohortProvider, useCohortContext } from './CohortContext';
+import { assignmentTypes } from '../constants';
 
 const TestComponent: React.FC = () => {
   const {
@@ -16,12 +17,12 @@ const TestComponent: React.FC = () => {
       <button
         onClick={() =>
           setSelectedCohort({
-            id: '1',
+            id: 1,
             name: 'Cohort 1',
-            assignmentType: 'typeA',
-            contentGroupOption: 'optionA',
+            assignmentType: assignmentTypes.automatic,
             groupId: 123,
             userPartitionId: 456,
+            userCount: 0
           })}
       >
         Set Cohort
@@ -102,20 +103,12 @@ describe('CohortContext', () => {
       const { setSelectedCohort } = useCohortContext();
       React.useEffect(() => {
         setSelectedCohort({
-          id: '1',
+          id: 1,
           name: 'Cohort 1',
-          assignmentType: 'typeA',
-          contentGroupOption: 'optionA',
+          assignmentType: assignmentTypes.automatic,
           groupId: 123,
           userPartitionId: 456,
-        });
-        setSelectedCohort({
-          id: '1',
-          name: 'Cohort 1',
-          assignmentType: 'typeA',
-          contentGroupOption: 'optionA',
-          groupId: 123,
-          userPartitionId: 456,
+          userCount: 0
         });
       }, [setSelectedCohort]);
       return null;

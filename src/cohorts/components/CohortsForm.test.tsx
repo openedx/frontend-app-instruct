@@ -142,11 +142,12 @@ describe('CohortsForm', () => {
 
     jest.spyOn(CohortContextModule, 'useCohortContext').mockReturnValue({
       selectedCohort: {
-        id: '1',
+        id: 1,
         name: 'Initial Cohort',
         assignmentType: 'manual',
         groupId: 2,
         userPartitionId: 3,
+        userCount: 0
       },
       setSelectedCohort: jest.fn(),
       clearSelectedCohort: jest.fn(),

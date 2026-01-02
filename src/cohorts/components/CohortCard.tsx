@@ -1,3 +1,5 @@
+import { useParams } from 'react-router-dom';
+import { useRef } from 'react';
 import { getExternalLinkUrl, useIntl } from '@openedx/frontend-base';
 import { Card, Tab, Tabs } from '@openedx/paragon';
 import messages from '../messages';
@@ -5,10 +7,31 @@ import CohortsForm from './CohortsForm';
 import ManageLearners from './ManageLearners';
 import { useCohortContext } from './CohortContext';
 import { assignmentTypes } from '../constants';
+import { usePatchCohort } from '../data/apiHook';
+import { CohortData } from '../types';
 
 const CohortCard = () => {
-  const { selectedCohort } = useCohortContext();
   const intl = useIntl();
+  const { courseId = '' } = useParams<{ courseId: string }>();
+  const { selectedCohort } = useCohortContext();
+  const { mutate: editCohort } = usePatchCohort(courseId);
+  const formRef = useRef<{ resetForm: () => void }>(null);
+
+  if (!selectedCohort) {
+    return null;
+  }
+
+  const handleEditCohort = (updatedCohort: CohortData) => {
+    editCohort({ cohortId: selectedCohort.id, cohortInfo: updatedCohort },
+      {
+        onError: (error) => console.error(error)
+      }
+    );
+  };
+
+  const handleCancelForm = () => {
+    formRef.current?.resetForm();
+  };
 
   return (
     <Card className="bg-light-200 mt-3">
@@ -27,8 +50,9 @@ const CohortCard = () => {
         </Tab>
         <Tab key="settings" eventKey="settings" title={intl.formatMessage(messages.settings)}>
           <CohortsForm
-            onCancel={() => {}}
-            onSubmit={() => {}}
+            ref={formRef}
+            onCancel={handleCancelForm}
+            onSubmit={handleEditCohort}
           />
         </Tab>
       </Tabs>
