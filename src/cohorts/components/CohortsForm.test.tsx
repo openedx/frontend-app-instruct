@@ -67,10 +67,12 @@ describe('CohortsForm', () => {
     expect(onCancel).toHaveBeenCalled();
   });
 
-  it('calls onSubmit when Save button is clicked', async () => {
+  it('calls onSubmit when Save button is enabled and clicked', async () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
     renderComponent();
     const user = userEvent.setup();
+    const input = screen.getByPlaceholderText(messages.cohortName.defaultMessage);
+    await user.type(input, 'Test Cohort');
     await user.click(screen.getByText(messages.saveLabel.defaultMessage));
     expect(onSubmit).toHaveBeenCalled();
   });

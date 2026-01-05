@@ -13,6 +13,7 @@ Currently, the following external URLs are wrapped with `getExternalLinkUrl` in 
 
 - https://openedx.atlassian.net/wiki/spaces/ENG/pages/123456789/Cohorts+Feature+Documentation
 - https://docs.openedx.org/en/latest/educators/how-tos/advanced_features/manage_cohorts.html#assign-learners-to-cohorts-manually
+- https://docs.openedx.org/en/latest/educators/references/advanced_features/managing_cohort_assignment.html#about-auto-cohorts
 
 
 How to Override External URLs
