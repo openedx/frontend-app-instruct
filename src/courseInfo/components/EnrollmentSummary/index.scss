@@ -1,0 +1,7 @@
+@use "@openedx/paragon/scss/core/core" as paragon;
+
+.vertical-separator {
+  border-left: 1px solid paragon.$light-400;
+  height: auto;
+  align-self: stretch;
+}
