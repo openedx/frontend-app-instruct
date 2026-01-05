@@ -141,11 +141,21 @@ const messages = defineMessages({
     defaultMessage: 'Learners are added to this cohort automatically.',
     description: 'Warning about automatic cohort assignment'
   },
-  automaticCohortLink: {
-    id: 'instruct.cohorts.automaticCohortLink',
-    defaultMessage: 'What does this mean?',
-    description: 'Link text for more information about automatic cohort assignment'
+  manualCohortWarning: {
+    id: 'instruct.cohorts.manualCohortWarning',
+    defaultMessage: 'Learners are added to this cohort only when you provide their email addresses or usernames on this page.',
+    description: 'Warning about manual cohort assignment'
   },
+  warningCohortLink: {
+    id: 'instruct.cohorts.warningCohortLink',
+    defaultMessage: 'What does this mean?',
+    description: 'Link text for more information about cohort assignment'
+  },
+  cohortUpdateSuccessMessage: {
+    id: 'instruct.cohorts.cohortUpdateSuccessMessage',
+    defaultMessage: 'Settings have been saved.',
+    description: 'Success message displayed when a cohort is updated'
+  }
 });
 
 export default messages;
