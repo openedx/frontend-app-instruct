@@ -13,9 +13,9 @@ describe('PendingTasks', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUsePendingTasks.mockReturnValue({
-      mutate: mockFetchTasks,
       data: undefined,
       isPending: false,
+      isLoading: false,
     } as any);
   });
 
@@ -28,9 +28,9 @@ describe('PendingTasks', () => {
 
   it('should show loading skeleton when tasks are being fetched', async () => {
     mockUsePendingTasks.mockReturnValue({
-      mutate: mockFetchTasks,
       data: undefined,
       isPending: true,
+      isLoading: true,
     } as any);
 
     const { container } = renderWithProviders(<PendingTasks />);
@@ -76,9 +76,9 @@ describe('PendingTasks', () => {
     ];
 
     mockUsePendingTasks.mockReturnValue({
-      mutate: mockFetchTasks,
       data: mockTasks,
       isPending: false,
+      isLoading: false,
     } as any);
 
     renderWithProviders(<PendingTasks />);
@@ -95,7 +95,7 @@ describe('PendingTasks', () => {
     renderWithProviders(<PendingTasks />);
 
     await waitFor(() => {
-      expect(mockFetchTasks).toHaveBeenCalledTimes(1);
+      expect(mockUsePendingTasks).toHaveBeenCalledTimes(1);
     });
   });
 });
