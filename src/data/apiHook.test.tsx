@@ -71,8 +71,6 @@ describe('api hooks', () => {
 
       const { result } = renderHook(() => usePendingTasks(mockCourseId), { wrapper });
 
-      result.current.mutate();
-
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
