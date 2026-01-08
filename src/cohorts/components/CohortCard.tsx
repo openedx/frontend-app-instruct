@@ -22,7 +22,7 @@ const warningMessage = {
 const CohortCard = () => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const { selectedCohort } = useCohortContext();
+  const { selectedCohort, setSelectedCohort } = useCohortContext();
   const { mutate: editCohort } = usePatchCohort(courseId);
   const formRef = useRef<{ resetForm: () => void }>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
@@ -36,6 +36,7 @@ const CohortCard = () => {
       {
         onSuccess: () => {
           setShowSuccessMessage(true);
+          setSelectedCohort({ ...selectedCohort, ...updatedCohort });
         },
         onError: (error) => console.error(error)
       }

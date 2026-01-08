@@ -51,8 +51,8 @@ export const usePatchCohort = (courseId: string) => {
   return useMutation({
     mutationFn: ({ cohortId, cohortInfo }: { cohortId: number, cohortInfo: CohortData }) =>
       patchCohort(courseId, cohortId, cohortInfo),
-    onSuccess: ({ cohortId }) => {
-      queryClient.invalidateQueries({ queryKey: cohortsQueryKeys.byId(courseId, cohortId) });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: cohortsQueryKeys.byCourse(courseId) });
     },
   });
 };
