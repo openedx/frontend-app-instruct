@@ -16,6 +16,7 @@ jest.mock('../data/apiHook', () => ({
   useCohorts: jest.fn(),
   useContentGroupsData: jest.fn(),
   useCreateCohort: () => ({ mutate: jest.fn() }),
+  usePatchCohort: () => ({ mutate: jest.fn() }),
 }));
 
 const mockCohorts = [
@@ -44,6 +45,7 @@ describe('EnabledCohortsView', () => {
 
   it('calls handleSelectCohort on select change', async () => {
     (useCohorts as jest.Mock).mockReturnValue({ data: mockCohorts });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: [] });
     renderWithCohortProvider();
     const select = screen.getByRole('combobox');
     const user = userEvent.setup();

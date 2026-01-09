@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 import { ActionRow, Button, Form, FormControl, FormGroup, FormLabel, FormRadioSet, Hyperlink, Icon } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
 import messages from '../messages';
@@ -15,7 +15,11 @@ interface CohortsFormProps {
   onSubmit: (data: Partial<CohortData>) => void,
 }
 
-const CohortsForm = ({ disableManualAssignment = false, onCancel, onSubmit }: CohortsFormProps) => {
+export interface CohortsFormRef {
+  resetForm: () => void,
+}
+
+const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManualAssignment = false, onCancel, onSubmit }, ref) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const { data = [] } = useContentGroupsData(courseId);
@@ -31,7 +35,7 @@ const CohortsForm = ({ disableManualAssignment = false, onCancel, onSubmit }: Co
   const [selectedAssignmentType, setSelectedAssignmentType] = useState<string>(initialAssignmentType);
   const [name, setName] = useState<string>(initialCohortName);
 
-  useEffect(() => {
+  const resetToInitialValues = useCallback(() => {
     if (selectedCohort) {
       const contentGroup = selectedCohort.groupId && selectedCohort.userPartitionId ? `${selectedCohort.groupId}:${selectedCohort.userPartitionId}` : 'null';
       setName(selectedCohort.name);
@@ -39,6 +43,15 @@ const CohortsForm = ({ disableManualAssignment = false, onCancel, onSubmit }: Co
       setSelectedContentGroupOption(selectedCohort.groupId ? 'selectContentGroup' : 'noContentGroup');
       setSelectedContentGroup(contentGroup);
     }
+  }, [selectedCohort]);
+
+  useImperativeHandle(ref, () => ({
+    resetForm: resetToInitialValues
+  }));
+
+  useEffect(() => {
+    resetToInitialValues();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCohort]);
 
   const contentGroups = [{ id: 'null', displayName: intl.formatMessage(messages.notSelected) }, ...data];
@@ -111,10 +124,12 @@ const CohortsForm = ({ disableManualAssignment = false, onCancel, onSubmit }: Co
       </FormGroup>
       <ActionRow>
         <Button variant="tertiary" onClick={onCancel}>{intl.formatMessage(messages.cancelLabel)}</Button>
-        <Button type="submit">{intl.formatMessage(messages.saveLabel)}</Button>
+        <Button type="submit" disabled={name.trim() === ''}>{intl.formatMessage(messages.saveLabel)}</Button>
       </ActionRow>
     </Form>
   );
-};
+});
+
+CohortsForm.displayName = 'CohortsForm';
 
 export default CohortsForm;
