@@ -67,7 +67,14 @@ const EnabledCohortsView = () => {
   return (
     <>
       <div className="d-flex mt-4.5">
-        <FormControl placeholder={intl.formatMessage(messages.selectCohortPlaceholder)} name="cohort" as="select" onChange={handleSelectCohort} value={selectedCohort?.id?.toString() ?? 'null'} disabled={displayAddForm}>
+        <FormControl
+          as="select"
+          disabled={displayAddForm || cohortsList.length === 0}
+          name="cohort"
+          placeholder={intl.formatMessage(messages.selectCohortPlaceholder)}
+          value={selectedCohort?.id?.toString() ?? 'null'}
+          onChange={handleSelectCohort}
+        >
           {
             cohortsList.map((cohort) => (
               <option key={cohort.id} value={cohort.id}>
