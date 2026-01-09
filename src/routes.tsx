@@ -1,6 +1,7 @@
 import CohortsPage from './cohorts/CohortsPage';
 import CourseInfoPage from './courseInfo/CourseInfoPage';
 import Main from './Main';
+import OpenResponsesPage from './openResponses/OpenResponsesPage';
 
 const routes = [
   {
@@ -43,10 +44,10 @@ const routes = [
       //   path: 'certificates',
       //   element: <CertificatesPage />
       // },
-      // {
-      //   path: 'open_responses',
-      //   element: <OpenResponsesPage />
-      // }
+      {
+        path: 'open_responses',
+        element: <OpenResponsesPage />
+      }
     ]
   }
 ];
