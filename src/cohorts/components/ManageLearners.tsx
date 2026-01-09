@@ -29,7 +29,13 @@ const ManageLearners = () => {
       <h3 className="text-primary-700">{intl.formatMessage(messages.addLearnersTitle)}</h3>
       <p className="x-small mb-2.5">{intl.formatMessage(messages.addLearnersSubtitle)}</p>
       <p className="mb-2 text-primary-500">{intl.formatMessage(messages.addLearnersInstructions)}</p>
-      <FormControl as="textarea" className="mb-2" placeholder={intl.formatMessage(messages.learnersExample)} onChange={(e) => setUsers(e.target.value)} />
+      <FormControl
+        as="textarea"
+        className="mb-2"
+        rows={4}
+        placeholder={intl.formatMessage(messages.learnersExample)}
+        onChange={(e) => setUsers(e.target.value)}
+      />
       <p className="x-small mb-2.5">{intl.formatMessage(messages.addLearnersFootnote)}</p>
       <Button variant="primary" className="mt-2" onClick={handleAddLearners}>+ {intl.formatMessage(messages.addLearnersLabel)}</Button>
     </div>
