@@ -15,7 +15,7 @@ const DateExtensionsPage = () => {
   };
 
   return (
-    <Container className="mt-4.5 mb-4 mx-4" fluid="xl">
+    <Container className="mt-4.5 mb-4 mx-4">
       <h3>{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
       <div className="d-flex align-items-center justify-content-between mb-3.5">
         <p>filters</p>
