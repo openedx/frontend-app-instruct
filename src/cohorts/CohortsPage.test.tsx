@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CohortsPage from './CohortsPage';
 import { useCohorts, useCohortStatus, useToggleCohorts } from './data/apiHook';
-import { renderWithIntl } from '../testUtils';
+import { renderWithIntl } from '@src/testUtils';
 import messages from './messages';
 import { CohortProvider } from './components/CohortContext';
 
