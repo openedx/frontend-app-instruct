@@ -12,10 +12,10 @@ const mockDateExtensions = [
   {
     id: 1,
     username: 'edByun',
-    fullname: 'Ed Byun',
+    fullName: 'Ed Byun',
     email: 'ed.byun@example.com',
-    graded_subsection: 'Three body diagrams',
-    extended_due_date: '2026-07-15'
+    unitTitle: 'Three body diagrams',
+    extendedDueDate: '2026-07-15'
   },
 ];
 

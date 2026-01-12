@@ -41,6 +41,11 @@ const messages = defineMessages({
     defaultMessage: 'Reset',
     description: 'Label for the reset column in the date extensions table',
   },
+  resetExtensions: {
+    id: 'instruct.dateExtensions.page.button.resetExtensions',
+    defaultMessage: 'Reset Extensions',
+    description: 'Button text for resetting date extensions for a user',
+  }
 });
 
 export default messages;

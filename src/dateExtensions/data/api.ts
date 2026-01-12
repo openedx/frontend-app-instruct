@@ -12,7 +12,7 @@ export const getDateExtensions = async (
   pagination: PaginationQueryKeys
 ): Promise<DateExtensionsResponse> => {
   const { data } = await getAuthenticatedHttpClient().get(
-    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/unit_extensions/?page=${pagination.page}&page_size=${pagination.pageSize}`
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/unit_extensions?page=${pagination.page + 1}&page_size=${pagination.pageSize}`
   );
   return camelCaseObject(data);
 };

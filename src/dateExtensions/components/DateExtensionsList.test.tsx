@@ -8,10 +8,10 @@ const mockData = [
   {
     id: 1,
     username: 'test_user',
-    fullname: 'Test User',
+    fullName: 'Test User',
     email: 'test@example.com',
-    graded_subsection: 'Test Section',
-    extended_due_date: '2024-01-01'
+    unitTitle: 'Test Section',
+    extendedDueDate: '2024-01-01'
   }
 ];
 

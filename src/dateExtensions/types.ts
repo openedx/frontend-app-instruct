@@ -1,10 +1,10 @@
 export interface LearnerDateExtension {
   id: number,
   username: string,
-  fullname: string,
+  fullName: string,
   email: string,
-  graded_subsection: string,
-  extended_due_date: string,
+  unitTitle: string,
+  extendedDueDate: string,
 }
 
 export interface DateExtensionsResponse {
