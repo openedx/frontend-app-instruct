@@ -26,3 +26,23 @@ export const getEnrollmentStatus = async (
   );
   return camelCaseObject(data);
 };
+
+export const enrollLearners = async (
+  courseId: string,
+  users: string[]
+): Promise<void> => {
+  await getAuthenticatedHttpClient().post(
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments/`,
+    { users }
+  );
+};
+
+export const unenrollLearners = async (
+  courseId: string,
+  users: string[]
+): Promise<void> => {
+  await getAuthenticatedHttpClient().delete(
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments/`,
+    { data: { users } }
+  );
+};

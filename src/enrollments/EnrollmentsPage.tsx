@@ -6,11 +6,13 @@ import messages from './messages';
 import EnrollmentsList from './components/EnrollmentsList';
 import EnrollmentStatusModal from './components/EnrollmentStatusModal';
 import UnenrollModal from './components/UnenrollModal';
+import EnrollLearnersModal from './components/EnrollLearnersModal';
 import { Learner } from './types';
 
 const EnrollmentsPage = () => {
   const intl = useIntl();
   const [isEnrollmentStatusModalOpen, setIsEnrollmentStatusModalOpen] = useState(false);
+  const [isEnrollLearnersModalOpen, setIsEnrollLearnersModalOpen] = useState(false);
   const [isUnenrollModalOpen, setIsUnenrollModalOpen] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState<Learner | null>(null);
 
@@ -32,6 +34,10 @@ const EnrollmentsPage = () => {
     setIsEnrollmentStatusModalOpen(false);
   };
 
+  const handleEnrollLearners = () => {
+    setIsEnrollLearnersModalOpen(true);
+  };
+
   return (
     <div className="my-4.5 mx-4">
       <div className="d-flex justify-content-between align-items-center">
@@ -44,12 +50,13 @@ const EnrollmentsPage = () => {
             onClick={handleMoreButton}
           />
           <Button variant="outline-primary">+ {intl.formatMessage(messages.addBetaTesters)}</Button>
-          <Button>+ {intl.formatMessage(messages.enrollLearners)}</Button>
+          <Button onClick={handleEnrollLearners}>+ {intl.formatMessage(messages.enrollLearners)}</Button>
         </ActionRow>
       </div>
       <EnrollmentsList onUnenroll={handleUnenroll} />
       <EnrollmentStatusModal isOpen={isEnrollmentStatusModalOpen} onClose={handleCloseEnrollmentStatusModal} />
       <UnenrollModal isOpen={isUnenrollModalOpen} learner={selectedLearner} onClose={handleUnenrollModalClose} />
+      <EnrollLearnersModal isOpen={isEnrollLearnersModalOpen} onClose={() => setIsEnrollLearnersModalOpen(false)} onSuccess={() => {}} />
     </div>
   );
 };
