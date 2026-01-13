@@ -14,7 +14,7 @@ const messages = defineMessages({
   enrollLearners: {
     id: 'instruct.enrollments.enrollLearners',
     defaultMessage: 'Enroll Learners',
-    description: 'Button label for enrolling learners',
+    description: 'Button label an modal title for enrolling learners',
   },
   checkEnrollmentStatus: {
     id: 'instruct.enrollments.checkEnrollmentStatus',
@@ -62,25 +62,70 @@ const messages = defineMessages({
     description: 'Label for true boolean value',
   },
   addLearnerInstructions: {
-    id: 'instruct.enrollments.checkEnrollmentStatusModal.addLearnerInstructions',
+    id: 'instruct.enrollments.modals.checkEnrollmentStatus.addLearnerInstructions',
     defaultMessage: 'Learner’s My Open edX email address or username',
     description: 'Instructions for enroll learners to the course',
   },
-  enrollLearnersPlaceholder: {
-    id: 'instruct.enrollments.checkEnrollmentStatusModal.enrollLearnersPlaceholder',
+  enrollmentStatusPlaceholder: {
+    id: 'instruct.enrollments.modals.checkEnrollmentStatus.enrollmentStatusPlaceholder',
     defaultMessage: 'Learner email address or username',
     description: 'Placeholder text for enrolling learners textarea',
   },
   closeButton: {
-    id: 'instruct.enrollments.checkEnrollmentStatusModal.closeButton',
+    id: 'instruct.enrollments.modals.closeButton',
     defaultMessage: 'Close',
     description: 'Label for close button in modals',
   },
   statusResponseMessage: {
-    id: 'instruct.enrollments.checkEnrollmentStatusModal.statusResponseMessage',
+    id: 'instruct.enrollments.modals.checkEnrollmentStatus.statusResponseMessage',
     defaultMessage: 'Enrollment status for {learnerIdentifier}: {status}',
     description: 'Message displaying the enrollment status for a learner',
-  }
+  },
+  userIdentifierPlaceholder: {
+    id: 'instruct.enrollments.modals.enrollLearners.userIdentifierPlaceholder',
+    defaultMessage: 'Email addresses / Usernames',
+    description: 'Placeholder text for enrolling learners textarea',
+  },
+  enrollLearnerInstructions: {
+    id: 'instruct.enrollments.modals.enrollLearners.enrollLearnerInstructions',
+    defaultMessage: 'Enter email addresses and/or usernames separated by new lines or commas. You will not get notification for emails that bounce, so please double-check spelling.',
+    description: 'Instructions for enrolling learners to the course',
+  },
+  unenrollLearners: {
+    id: 'instruct.enrollments.modals.unenrollLearners',
+    defaultMessage: 'Unenroll Learners',
+    description: 'Title for unenroll learners modal',
+  },
+  unenrollLearnersConfirmation: {
+    id: 'instruct.enrollments.modals.unenrollLearnersConfirmation',
+    defaultMessage: 'Unenroll {name} from course?',
+    description: 'Confirmation message for unenrolling learners',
+  },
+  unenrollLearnerTitle: {
+    id: 'instruct.enrollments.modals.unenrollLearnerTitle',
+    defaultMessage: 'Unenroll Learner?',
+    description: 'Title for unenroll learner modal',
+  },
+  saveButton: {
+    id: 'instruct.enrollments.modals.saveButton',
+    defaultMessage: 'Save',
+    description: 'Label for save button in modals',
+  },
+  cancelButton: {
+    id: 'instruct.enrollments.modals.cancelButton',
+    defaultMessage: 'Cancel',
+    description: 'Label for cancel button in modals',
+  },
+  autoEnrollCheckbox: {
+    id: 'instruct.enrollments.modals.autoEnrollCheckbox',
+    defaultMessage: 'Auto Enroll',
+    description: 'Label for auto enroll checkbox in enroll learners modal',
+  },
+  notifyUsersCheckbox: {
+    id: 'instruct.enrollments.modals.notifyUsersCheckbox',
+    defaultMessage: 'Notify Users by Email',
+    description: 'Label for notify users by email checkbox in enroll learners modal',
+  },
 });
 
 export default messages;
