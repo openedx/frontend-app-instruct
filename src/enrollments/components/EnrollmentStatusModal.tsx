@@ -26,7 +26,7 @@ const EnrollmentStatusModal = ({ isOpen, onClose }: EnrollmentStatusModalProps) 
       <ModalDialog.Body className="py-4">
         <p>{intl.formatMessage(messages.addLearnerInstructions)}</p>
         <FormControl
-          placeholder={intl.formatMessage(messages.enrollLearnersPlaceholder)}
+          placeholder={intl.formatMessage(messages.enrollmentStatusPlaceholder)}
           value={learnerIdentifier}
           onChange={(e) => setLearnerIdentifier(e.target.value)}
         />
