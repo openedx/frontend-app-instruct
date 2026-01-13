@@ -1,0 +1,173 @@
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import UnenrollModal from './UnenrollModal';
+import { renderWithAlertAndIntl } from '@src/testUtils';
+import { useUnenrollLearners } from '../data/apiHook';
+import messages from '../messages';
+
+const learner = {
+  fullName: 'Jane Doe',
+  email: 'jane@example.com',
+  isBetaTester: false,
+  username: 'jane.doe',
+  mode: 'verified',
+};
+
+const defaultProps = {
+  learner,
+  isOpen: true,
+  onClose: jest.fn(),
+  onSuccess: jest.fn(),
+};
+
+const mockShowModal = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({ courseId: 'test-course-id' }),
+}));
+
+jest.mock('../data/apiHook', () => ({
+  useUnenrollLearners: jest.fn(),
+}));
+
+jest.mock('@src/providers/AlertProvider', () => ({
+  useAlert: () => ({
+    showModal: mockShowModal,
+  }),
+  AlertProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+describe('UnenrollModal', () => {
+  const mutateMock = jest.fn();
+
+  beforeEach(() => {
+    (useUnenrollLearners as jest.Mock).mockReturnValue({
+      mutate: mutateMock,
+      isPending: false
+    });
+    mockShowModal.mockClear();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders modal with correct title and confirmation message', () => {
+    renderWithAlertAndIntl(
+      <UnenrollModal {...defaultProps} />
+    );
+    expect(screen.getByRole('heading', { name: /unenroll learner/i })).toBeInTheDocument();
+    expect(screen.getByText(messages.unenrollLearnersConfirmation.defaultMessage.replace('{name}', learner.fullName))).toBeInTheDocument();
+  });
+
+  it('renders Cancel and Unenroll buttons', () => {
+    renderWithAlertAndIntl(
+      <UnenrollModal {...defaultProps} />
+    );
+    expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^unenroll$/i })).toBeInTheDocument();
+  });
+
+  it('calls onClose when Cancel button is clicked', async () => {
+    const onClose = jest.fn();
+    renderWithAlertAndIntl(
+      <UnenrollModal {...defaultProps} onClose={onClose} />
+    );
+    await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('calls unenrollLearners when Unenroll button is clicked', async () => {
+    renderWithAlertAndIntl(
+      <UnenrollModal {...defaultProps} />
+    );
+    await userEvent.click(screen.getByRole('button', { name: /^unenroll$/i }));
+    expect(mutateMock).toHaveBeenCalledWith([learner.email], {
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function),
+    });
+  });
+
+  it('calls onSuccess and onClose when unenrollment succeeds', async () => {
+    const mutateWithCallback = (_users: string[], callbacks: any) => {
+      callbacks.onSuccess();
+    };
+    mutateMock.mockImplementation(mutateWithCallback);
+
+    renderWithAlertAndIntl(
+      <UnenrollModal {...defaultProps} />
+    );
+    await userEvent.click(screen.getByRole('button', { name: /^unenroll$/i }));
+
+    expect(defaultProps.onSuccess).toHaveBeenCalled();
+    expect(defaultProps.onClose).toHaveBeenCalled();
+  });
+
+  it('shows error alert when unenrollment fails', async () => {
+    const errorMessage = 'Unenrollment failed';
+    const mutateWithError = (_users: string[], callbacks: any) => {
+      callbacks.onError({ message: errorMessage });
+    };
+    mutateMock.mockImplementation(mutateWithError);
+
+    renderWithAlertAndIntl(
+      <UnenrollModal {...defaultProps} />
+    );
+    await userEvent.click(screen.getByRole('button', { name: /^unenroll$/i }));
+
+    expect(mockShowModal).toHaveBeenCalledWith({
+      message: errorMessage,
+      variant: 'danger',
+    });
+  });
+
+  it('shows default error message when error has no message', async () => {
+    const mutateWithError = (_users: string[], callbacks: any) => {
+      callbacks.onError({});
+    };
+    mutateMock.mockImplementation(mutateWithError);
+
+    renderWithAlertAndIntl(
+      <UnenrollModal {...defaultProps} />
+    );
+    await userEvent.click(screen.getByRole('button', { name: /^unenroll$/i }));
+
+    expect(mockShowModal).toHaveBeenCalledWith({
+      message: messages.unenrollLearnerError.defaultMessage,
+      variant: 'danger',
+    });
+  });
+
+  it('disables unenroll button when pending', () => {
+    (useUnenrollLearners as jest.Mock).mockReturnValue({
+      mutate: mutateMock,
+      isPending: true
+    });
+
+    renderWithAlertAndIntl(
+      <UnenrollModal {...defaultProps} />
+    );
+
+    const unenrollButton = screen.getByRole('button', { name: messages.unenrollButton.defaultMessage });
+    expect(unenrollButton).toBeDisabled();
+  });
+
+  it('does not render modal when isOpen is false', () => {
+    renderWithAlertAndIntl(
+      <UnenrollModal {...defaultProps} isOpen={false} />
+    );
+    expect(screen.queryByText(messages.unenrollLearners.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  it('calls onClose when modal close button is clicked', async () => {
+    const onClose = jest.fn();
+    renderWithAlertAndIntl(
+      <UnenrollModal {...defaultProps} onClose={onClose} />
+    );
+    // ModalDialog close button should have aria-label="Close"
+    const closeButton = screen.getByLabelText(/close/i);
+    await userEvent.click(closeButton);
+    expect(onClose).toHaveBeenCalled();
+  });
+});

@@ -1,10 +1,22 @@
-import React from 'react';
-import { render, screen, within } from '@testing-library/react';
-import { IntlProvider } from '@openedx/frontend-base';
+import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import EnrollmentsPage from './EnrollmentsPage';
 import { EnrolledLearner } from './types';
-import userEvent from '@testing-library/user-event';
 import messages from './messages';
+import { useEnrollmentByUserId, useEnrollments, useEnrollLearners, useUnenrollLearners } from './data/apiHook';
+import { renderWithAlertAndIntl } from '@src/testUtils';
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({ courseId: 'test-course-id' }),
+}));
+
+jest.mock('./data/apiHook', () => ({
+  useEnrollments: jest.fn(),
+  useEnrollmentByUserId: jest.fn(),
+  useEnrollLearners: jest.fn(),
+  useUnenrollLearners: jest.fn(),
+}));
 
 jest.mock('./components/EnrollmentsList', () => {
   return function MockEnrollmentsList({ onUnenroll }: { onUnenroll: (learner: EnrolledLearner) => void }) {
@@ -25,55 +37,46 @@ jest.mock('./components/EnrollmentsList', () => {
   };
 });
 
-jest.mock('./components/EnrollmentStatusModal', () => {
-  return function MockEnrollmentStatusModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
-    return isOpen ? (
-      <div role="dialog">
-        <button onClick={onClose}>Close Modal</button>
-      </div>
-    ) : null;
-  };
-});
-
-jest.mock('./components/UnenrollModal', () => {
-  return function MockUnenrollModal({ isOpen, learner, onClose }: { isOpen: boolean, learner: EnrolledLearner | null, onClose: () => void }) {
-    return isOpen ? (
-      <div role="dialog">
-        <span>Unenroll {learner?.fullName}</span>
-        <button onClick={onClose}>Close Unenroll Modal</button>
-      </div>
-    ) : null;
-  };
-});
-
-const renderWithIntl = (component: React.ReactElement) => {
-  return render(
-    <IntlProvider locale="en">
-      {component}
-    </IntlProvider>
-  );
-};
-
 describe('EnrollmentsPage', () => {
+  beforeAll(() => {
+    (useEnrollments as jest.Mock).mockReturnValue({
+      data: { count: 1, numPages: 1, results: [{ username: 'testuser', fullName: 'Test User', email: 'test@example.com', mode: 'audit', isBetaTester: false }] },
+      isLoading: false,
+    });
+    (useEnrollmentByUserId as jest.Mock).mockReturnValue({
+      data: { enrollmentStatus: 'enrolled' },
+      refetch: jest.fn(),
+    });
+    (useEnrollLearners as jest.Mock).mockReturnValue({
+      mutate: jest.fn(),
+      isLoading: false,
+      error: null,
+    });
+    (useUnenrollLearners as jest.Mock).mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
+    });
+  });
+
   it('renders the page title', () => {
-    renderWithIntl(<EnrollmentsPage />);
+    renderWithAlertAndIntl(<EnrollmentsPage />);
     expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
   });
 
   it('renders action buttons', () => {
-    renderWithIntl(<EnrollmentsPage />);
+    renderWithAlertAndIntl(<EnrollmentsPage />);
     expect(screen.getByRole('button', { name: messages.checkEnrollmentStatus.defaultMessage })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: new RegExp(messages.addBetaTesters.defaultMessage) })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: new RegExp(messages.enrollLearners.defaultMessage) })).toBeInTheDocument();
   });
 
   it('renders EnrollmentsList component', () => {
-    renderWithIntl(<EnrollmentsPage />);
+    renderWithAlertAndIntl(<EnrollmentsPage />);
     expect(screen.getByRole('table')).toBeInTheDocument();
   });
 
   it('opens enrollment status modal when more button is clicked', async () => {
-    renderWithIntl(<EnrollmentsPage />);
+    renderWithAlertAndIntl(<EnrollmentsPage />);
 
     const moreButton = screen.getByRole('button', { name: messages.checkEnrollmentStatus.defaultMessage });
     const user = userEvent.setup();
@@ -83,20 +86,20 @@ describe('EnrollmentsPage', () => {
   });
 
   it('closes enrollment status modal', async () => {
-    renderWithIntl(<EnrollmentsPage />);
+    renderWithAlertAndIntl(<EnrollmentsPage />);
 
     const moreButton = screen.getByRole('button', { name: messages.checkEnrollmentStatus.defaultMessage });
     const user = userEvent.setup();
     await user.click(moreButton);
 
-    const closeButton = screen.getByText('Close Modal');
+    const closeButton = screen.getByText('Close');
     await user.click(closeButton);
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('opens unenroll modal when unenroll is triggered', async () => {
-    renderWithIntl(<EnrollmentsPage />);
+    renderWithAlertAndIntl(<EnrollmentsPage />);
 
     const unenrollButton = screen.getByText('Unenroll Test Learner');
     const user = userEvent.setup();
@@ -109,20 +112,20 @@ describe('EnrollmentsPage', () => {
   });
 
   it('closes unenroll modal and clears selected learner', async () => {
-    renderWithIntl(<EnrollmentsPage />);
+    renderWithAlertAndIntl(<EnrollmentsPage />);
 
     const unenrollButton = screen.getByText('Unenroll Test Learner');
     const user = userEvent.setup();
     await user.click(unenrollButton);
 
-    const closeUnenrollButton = screen.getByText('Close Unenroll Modal');
+    const closeUnenrollButton = screen.getByText('Cancel');
     await user.click(closeUnenrollButton);
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('modals are closed by default', () => {
-    renderWithIntl(<EnrollmentsPage />);
+    renderWithAlertAndIntl(<EnrollmentsPage />);
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
