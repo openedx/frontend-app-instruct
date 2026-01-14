@@ -33,7 +33,7 @@ const DataDownloadsPage = () => {
   }, [generateReportLinkMutate]);
 
   return (
-    <Container className="mt-4.5 mb-4" fluid="xl">
+    <Container className="mt-4.5 mb-4" fluid>
       <h3>{intl.formatMessage(messages.dataDownloadsTitle)}</h3>
       <p>{intl.formatMessage(messages.dataDownloadsDescription)}</p>
       <p>{intl.formatMessage(messages.dataDownloadsReportExpirationPolicyMessage)}</p>
