@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { enrollLearners, getEnrollments, getEnrollmentStatus, PaginationParams } from './api';
+import { addBetaTesters, enrollLearners, getEnrollments, getEnrollmentStatus, PaginationParams } from './api';
 import { enrollmentsQueryKeys } from './queryKeys';
 
 export const useEnrollments = (courseId: string, pagination: PaginationParams) => (
@@ -21,6 +21,16 @@ export const useEnrollLearners = (courseId: string) => {
   const queryClient = useQueryClient();
   return (useMutation({
     mutationFn: (users: string[]) => enrollLearners(courseId, users),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: enrollmentsQueryKeys.byCourse(courseId) });
+    },
+  }));
+};
+
+export const useAddBetaTesters = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return (useMutation({
+    mutationFn: (users: string[]) => addBetaTesters(courseId, users),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: enrollmentsQueryKeys.byCourse(courseId) });
     },

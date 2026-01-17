@@ -8,11 +8,13 @@ import EnrollmentStatusModal from './components/EnrollmentStatusModal';
 import UnenrollModal from './components/UnenrollModal';
 import EnrollLearnersModal from './components/EnrollLearnersModal';
 import { Learner } from './types';
+import AddBetaTestersModal from './components/AddBetaTestersModal';
 
 const EnrollmentsPage = () => {
   const intl = useIntl();
   const [isEnrollmentStatusModalOpen, setIsEnrollmentStatusModalOpen] = useState(false);
   const [isEnrollLearnersModalOpen, setIsEnrollLearnersModalOpen] = useState(false);
+  const [isAddBetaTestersModalOpen, setIsAddBetaTestersModalOpen] = useState(false);
   const [isUnenrollModalOpen, setIsUnenrollModalOpen] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState<Learner | null>(null);
 
@@ -38,6 +40,10 @@ const EnrollmentsPage = () => {
     setIsEnrollLearnersModalOpen(true);
   };
 
+  const handleAddBetaTesters = () => {
+    setIsAddBetaTestersModalOpen(true);
+  };
+
   return (
     <div className="my-4.5 mx-4">
       <div className="d-flex justify-content-between align-items-center">
@@ -49,7 +55,7 @@ const EnrollmentsPage = () => {
             iconAs={MoreVert}
             onClick={handleMoreButton}
           />
-          <Button variant="outline-primary">+ {intl.formatMessage(messages.addBetaTesters)}</Button>
+          <Button variant="outline-primary" onClick={handleAddBetaTesters}>+ {intl.formatMessage(messages.addBetaTesters)}</Button>
           <Button onClick={handleEnrollLearners}>+ {intl.formatMessage(messages.enrollLearners)}</Button>
         </ActionRow>
       </div>
@@ -57,6 +63,7 @@ const EnrollmentsPage = () => {
       <EnrollmentStatusModal isOpen={isEnrollmentStatusModalOpen} onClose={handleCloseEnrollmentStatusModal} />
       <UnenrollModal isOpen={isUnenrollModalOpen} learner={selectedLearner} onClose={handleUnenrollModalClose} />
       <EnrollLearnersModal isOpen={isEnrollLearnersModalOpen} onClose={() => setIsEnrollLearnersModalOpen(false)} onSuccess={() => {}} />
+      <AddBetaTestersModal isOpen={isAddBetaTestersModalOpen} onClose={() => setIsAddBetaTestersModalOpen(false)} onSuccess={() => {}} />
     </div>
   );
 };
