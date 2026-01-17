@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { ActionRow, Button, DataTable, FormControl, Icon, IconButton } from '@openedx/paragon';
+import { ActionRow, Button, DataTable, FormControl, Icon, IconButton, OverlayTrigger, Popover } from '@openedx/paragon';
 import { FilterList, MoreVert, Search } from '@openedx/paragon/icons';
 import messages from '@src/enrollments/messages';
 import { useEnrollments } from '@src/enrollments/data/apiHook';
@@ -19,6 +19,7 @@ const betaTesterOptions = [
 
 interface EnrollmentsListProps {
   onUnenroll: (learner: EnrolledLearner) => void,
+  onBetaTesterChange: (learner: EnrolledLearner) => void,
 }
 
 const UsernameFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
@@ -71,7 +72,7 @@ const BetaTesterFilter = ({ column: { filterValue, setFilter } }: { column: { fi
   );
 };
 
-const EnrollmentsList = ({ onUnenroll }: EnrollmentsListProps) => {
+const EnrollmentsList = ({ onUnenroll, onBetaTesterChange }: EnrollmentsListProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams();
   const [filters, setFilters] = useState({ page: 0, username: '', isBetaTester: '' });
@@ -104,11 +105,6 @@ const EnrollmentsList = ({ onUnenroll }: EnrollmentsListProps) => {
     }
   };
 
-  const handleMoreButton = () => {
-    // Handle more button click
-    console.log('More button clicked');
-  };
-
   const tableColumns = [
     { accessor: 'username', Header: intl.formatMessage(messages.username), Filter: UsernameFilter },
     { accessor: 'fullName', Header: intl.formatMessage(messages.fullName), disableFilters: true },
@@ -129,21 +125,48 @@ const EnrollmentsList = ({ onUnenroll }: EnrollmentsListProps) => {
     },
   ];
 
-  const actionCustomCell = useCallback(({ row: { original } }: TableCellValue<EnrolledLearner>) => {
+  const ActionCustomCell = useCallback(({ row: { original } }: TableCellValue<EnrolledLearner>) => {
+    const popoverContent = (
+      <Popover
+        id={`popover-${original.username}`}
+        className="border-0 shadow-sm"
+      >
+        <Popover.Content className="p-0 border-0">
+          <div className="dropdown-menu show position-static border shadow-sm">
+            <button
+              type="button"
+              className="dropdown-item"
+              onClick={() => onBetaTesterChange(original)}
+            >
+              {original.isBetaTester
+                ? intl.formatMessage(messages.revokeBetaTester)
+                : intl.formatMessage(messages.grantBetaTester)}
+            </button>
+          </div>
+        </Popover.Content>
+      </Popover>
+    );
+
     return (
       <ActionRow className="justify-content-start">
         <Button className="pl-0" onClick={() => onUnenroll(original)} variant="link">
           {intl.formatMessage(messages.unenrollButton)}
         </Button>
-        <IconButton
-          alt={intl.formatMessage(messages.changeBetaTesterStatus)}
-          className="lead"
-          iconAs={MoreVert}
-          onClick={handleMoreButton}
-        />
+        <OverlayTrigger
+          trigger="click"
+          placement="bottom-end"
+          overlay={popoverContent}
+          rootClose
+        >
+          <IconButton
+            alt={intl.formatMessage(messages.changeBetaTesterStatus)}
+            className="lead"
+            iconAs={MoreVert}
+          />
+        </OverlayTrigger>
       </ActionRow>
     );
-  }, [onUnenroll, intl]);
+  }, [intl, onBetaTesterChange, onUnenroll]);
 
   return (
     <DataTable
@@ -153,7 +176,7 @@ const EnrollmentsList = ({ onUnenroll }: EnrollmentsListProps) => {
         {
           id: 'actions',
           Header: intl.formatMessage(messages.actions),
-          Cell: actionCustomCell,
+          Cell: ActionCustomCell,
         }
       ]}
       data={data.results}

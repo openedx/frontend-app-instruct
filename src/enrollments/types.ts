@@ -20,3 +20,24 @@ export interface UpdateEnrollmentsParams {
   autoEnroll?: boolean,
   emailStudents?: boolean,
 }
+
+export interface UpdateBetaTestersParams {
+  identifier: string[],
+  action: 'add' | 'remove',
+  autoEnroll?: boolean,
+  emailStudents?: boolean,
+}
+
+export interface UpdateEnrollmentsResponse {
+  results: {
+    identifier: string,
+    invalidIdentifier: boolean,
+  }[],
+}
+
+export interface UpdateBetaTestersResponse {
+  results: {
+    identifier: string,
+    userDoesNotExist: boolean,
+  }[],
+}

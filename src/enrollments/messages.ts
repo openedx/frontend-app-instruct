@@ -63,7 +63,7 @@ const messages = defineMessages({
   },
   addLearnerInstructions: {
     id: 'instruct.enrollments.modals.checkEnrollmentStatus.addLearnerInstructions',
-    defaultMessage: 'Learner\'s My Open edX email address or username',
+    defaultMessage: 'Enter email addresses and/or usernames separated by new lines or commas. You will not get notification for emails that bounce, so please double-check spelling.',
     description: 'Instructions for enroll learners to the course',
   },
   enrollmentStatusPlaceholder: {
@@ -90,6 +90,16 @@ const messages = defineMessages({
     id: 'instruct.enrollments.changeBetaTesterStatus',
     defaultMessage: 'Change Beta Tester Status',
     description: 'Alt text for change beta tester status icon button',
+  },
+  grantBetaTester: {
+    id: 'instruct.enrollments.grantBetaTester',
+    defaultMessage: 'Grant Beta Tester Role',
+    description: 'Menu option to grant beta tester status',
+  },
+  revokeBetaTester: {
+    id: 'instruct.enrollments.revokeBetaTester',
+    defaultMessage: 'Remove Beta Tester Role',
+    description: 'Menu option to revoke beta tester status',
   },
   allEnrollees: {
     id: 'instruct.enrollments.allEnrollees',
@@ -170,6 +180,51 @@ const messages = defineMessages({
     id: 'instruct.enrollments.modals.enrollLearnerNotFoundError',
     defaultMessage: 'One or more learners were not found. Please check the email addresses or usernames and try again.',
     description: 'Error message displayed when enrolling learners fails due to learner not found',
+  },
+  addBetaTestersInstructions: {
+    id: 'instruct.enrollments.modals.addBetaTesters.addBetaTestersInstructions',
+    defaultMessage: 'Enter email addresses and/or usernames separated by new lines or commas. Note: Users must have an activated My Open edX account before they can be enrolled as beta testers.',
+    description: 'Instructions for adding beta testers to the course',
+  },
+  failedEnrollLearners: {
+    id: 'instruct.enrollments.modals.enrollLearners.failedEnrollLearners',
+    defaultMessage: 'The following usernames and/or email addresses are invalid. All other learners have been enrolled.',
+    description: 'Message displaying the learners that could not be enrolled',
+  },
+  unknownLearner: {
+    id: 'instruct.enrollments.unknownLearner',
+    defaultMessage: 'Unknown learner: {learner}',
+    description: 'Displayed when a learner does not have a full name or username available',
+  },
+  removeBetaTesterError: {
+    id: 'instruct.enrollments.modals.removeBetaTesters.removeBetaTesterError',
+    defaultMessage: 'Error removing user as beta tester.',
+    description: 'Error message displayed when removing beta testers fails',
+  },
+  failedBetaTesters: {
+    id: 'instruct.enrollments.modals.addBetaTesters.failedBetaTesters',
+    defaultMessage: 'The following usernames and/or email addresses are invalid. All other beta testers have been added.',
+    description: 'Message displaying the learners that could not be added as beta testers',
+  },
+  addBetaTesterError: {
+    id: 'instruct.enrollments.modals.addBetaTesters.addBetaTesterError',
+    defaultMessage: 'Error adding users as beta testers.',
+    description: 'Error message displayed when adding beta testers fails',
+  },
+  removeBetaTesterTitle: {
+    id: 'instruct.enrollments.modals.removeBetaTester',
+    defaultMessage: 'Revoke access?',
+    description: 'Title for remove beta tester modal',
+  },
+  removeBetaTesterDescription: {
+    id: 'instruct.enrollments.modals.removeBetaTesterDescription',
+    defaultMessage: 'Revoke Beta Tester access?',
+    description: 'Description for remove beta tester modal',
+  },
+  revoke: {
+    id: 'instruct.enrollments.revoke',
+    defaultMessage: 'Revoke',
+    description: 'Button label for revoking access',
   }
 });
 

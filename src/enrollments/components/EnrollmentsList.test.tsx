@@ -31,9 +31,9 @@ const mockLearners = [
   },
 ];
 
-const renderComponent = (onUnenroll = jest.fn()) => {
+const renderComponent = (onUnenroll = jest.fn(), onBetaTesterChange = jest.fn()) => {
   return renderWithIntl(
-    <EnrollmentsList onUnenroll={onUnenroll} />
+    <EnrollmentsList onUnenroll={onUnenroll} onBetaTesterChange={onBetaTesterChange} />
   );
 };
 

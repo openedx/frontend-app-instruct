@@ -3,16 +3,17 @@ import { useParams } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, FormControl, ModalDialog, Form } from '@openedx/paragon';
-import { useUpdateEnrollments } from '@src/enrollments/data/apiHook';
+import { useUpdateBetaTesters } from '@src/enrollments/data/apiHook';
 import messages from '@src/enrollments/messages';
 import { useAlert } from '@src/providers/AlertProvider';
+import { useDebouncedFilter } from '@src/hooks/useDebouncedFilter';
 
 export interface EnrollLearnersModalProps {
   isOpen: boolean,
   onClose: () => void,
 }
 
-const EnrollLearnersModal = ({
+const AddBetaTestersModal = ({
   isOpen,
   onClose
 }: EnrollLearnersModalProps) => {
@@ -21,18 +22,26 @@ const EnrollLearnersModal = ({
   const [emails, setEmails] = useState('');
   const [autoEnroll, setAutoEnroll] = useState(true);
   const [emailStudents, setEmailStudents] = useState(true);
-  const { mutate: enrollLearners } = useUpdateEnrollments(courseId);
+  const { mutate: addBetaTesters } = useUpdateBetaTesters(courseId);
   const { showModal, addAlert } = useAlert();
+  const { inputValue, handleChange } = useDebouncedFilter({
+    filterValue: emails,
+    setFilter: setEmails,
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleChange(e.target.value);
+  };
 
   const handleSave = () => {
-    const identifier = emails.split(',').map(email => email.trim()).filter(email => email);
-    enrollLearners({ identifier, action: 'enroll', autoEnroll, emailStudents }, {
+    const identifier = inputValue.split(',').map(email => email.trim()).filter(email => email);
+    addBetaTesters({ identifier, action: 'add', autoEnroll, emailStudents }, {
       onSuccess: (data) => {
-        const failedUsernames = data.results?.filter(user => user.invalidIdentifier).map(user => user.identifier) || [];
+        const failedUsernames = data.results?.filter(user => user.userDoesNotExist).map(user => user.identifier) || [];
         if (failedUsernames.length > 0) {
           addAlert({
             type: 'danger',
-            message: intl.formatMessage(messages.failedEnrollLearners),
+            message: intl.formatMessage(messages.failedBetaTesters),
             extraContent: (
               failedUsernames.map((learner: string) => (
                 <p key={learner} className="mb-0">• {intl.formatMessage(messages.unknownLearner, { learner })}</p>
@@ -40,7 +49,7 @@ const EnrollLearnersModal = ({
             )
           });
         }
-        setEmails('');
+        handleChange('');
         setAutoEnroll(true);
         setEmailStudents(true);
         onClose();
@@ -60,19 +69,20 @@ const EnrollLearnersModal = ({
   };
 
   return (
-    <ModalDialog isOpen={isOpen} onClose={onClose} isOverflowVisible={false} title={intl.formatMessage(messages.enrollLearners)}>
+    <ModalDialog isOpen={isOpen} onClose={onClose} isOverflowVisible={false} title={intl.formatMessage(messages.addBetaTesters)}>
       <ModalDialog.Header className="border-light-700 border-bottom">
-        <h3 className="text-primary-500">{intl.formatMessage(messages.enrollLearners)}</h3>
+        <h3 className="text-primary-500">{intl.formatMessage(messages.addBetaTesters)}</h3>
       </ModalDialog.Header>
       <div className="position-relative overflow-auto">
         <ModalDialog.Body className="py-4">
-          <p className="text-gray-700 x-small mb-2">{intl.formatMessage(messages.addLearnerInstructions)}</p>
+          <p className="text-gray-700 x-small mb-2">{intl.formatMessage(messages.addBetaTestersInstructions)}</p>
           <FormControl
             name="identifier"
             as="textarea"
             rows={4}
             placeholder={intl.formatMessage(messages.userIdentifierPlaceholder)}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEmails(e.target.value)}
+            onChange={handleInputChange}
+            value={inputValue}
           />
           <div className="d-flex mt-3 text-primary-500">
             <Form.Checkbox
@@ -95,7 +105,7 @@ const EnrollLearnersModal = ({
         <Button variant="tertiary" onClick={onClose}>
           {intl.formatMessage(messages.cancelButton)}
         </Button>
-        <Button className="ml-2" variant="primary" onClick={handleSave} disabled={emails.trim().length === 0}>
+        <Button className="ml-2" variant="primary" onClick={handleSave} disabled={inputValue.trim().length === 0}>
           {intl.formatMessage(messages.saveButton)}
         </Button>
       </ModalDialog.Footer>
@@ -103,4 +113,4 @@ const EnrollLearnersModal = ({
   );
 };
 
-export default EnrollLearnersModal;
+export default AddBetaTestersModal;

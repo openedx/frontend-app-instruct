@@ -3,18 +3,24 @@ import { useIntl } from '@openedx/frontend-base';
 import { ActionRow, Button, IconButton } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import messages from '@src/enrollments/messages';
+import AddBetaTestersModal from '@src/enrollments/components/AddBetaTestersModal';
+import EnrollLearnersModal from '@src/enrollments/components/EnrollLearnersModal';
 import EnrollmentsList from '@src/enrollments/components/EnrollmentsList';
 import EnrollmentStatusModal from '@src/enrollments/components/EnrollmentStatusModal';
 import UnenrollModal from '@src/enrollments/components/UnenrollModal';
-import EnrollLearnersModal from '@src/enrollments/components/EnrollLearnersModal';
 import { EnrolledLearner } from '@src/enrollments/types';
+import { AlertOutlet, useAlert } from '@src/providers/AlertProvider';
+import UpdateBetaTesterModal from './components/UpdateBetaTesterModal';
 
 const EnrollmentsPage = () => {
   const intl = useIntl();
   const [isEnrollmentStatusModalOpen, setIsEnrollmentStatusModalOpen] = useState(false);
   const [isEnrollLearnersModalOpen, setIsEnrollLearnersModalOpen] = useState(false);
+  const [isAddBetaTestersModalOpen, setIsAddBetaTestersModalOpen] = useState(false);
   const [isUnenrollModalOpen, setIsUnenrollModalOpen] = useState(false);
+  const [isUpdateBetaTesterModalOpen, setIsUpdateBetaTesterModalOpen] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState<EnrolledLearner | null>(null);
+  const { clearAlerts } = useAlert();
 
   const handleMoreButton = () => {
     setIsEnrollmentStatusModalOpen(true);
@@ -36,10 +42,26 @@ const EnrollmentsPage = () => {
 
   const handleEnrollLearners = () => {
     setIsEnrollLearnersModalOpen(true);
+    clearAlerts();
   };
 
   const handleCloseEnrollLearnersModal = () => {
     setIsEnrollLearnersModalOpen(false);
+  };
+
+  const handleAddBetaTesters = () => {
+    setIsAddBetaTestersModalOpen(true);
+    clearAlerts();
+  };
+
+  const handleBetaTesterChange = (learner: EnrolledLearner) => {
+    setIsUpdateBetaTesterModalOpen(true);
+    setSelectedLearner(learner);
+  };
+
+  const handleCloseUpdateBetaTesterModal = () => {
+    setIsUpdateBetaTesterModalOpen(false);
+    setSelectedLearner(null);
   };
 
   return (
@@ -53,14 +75,17 @@ const EnrollmentsPage = () => {
             iconAs={MoreVert}
             onClick={handleMoreButton}
           />
-          <Button variant="outline-primary">+ {intl.formatMessage(messages.addBetaTesters)}</Button>
+          <Button variant="outline-primary" onClick={handleAddBetaTesters}>+ {intl.formatMessage(messages.addBetaTesters)}</Button>
           <Button onClick={handleEnrollLearners}>+ {intl.formatMessage(messages.enrollLearners)}</Button>
         </ActionRow>
       </div>
-      <EnrollmentsList onUnenroll={handleUnenroll} />
+      <AlertOutlet />
+      <EnrollmentsList onUnenroll={handleUnenroll} onBetaTesterChange={handleBetaTesterChange} />
       <EnrollmentStatusModal isOpen={isEnrollmentStatusModalOpen} onClose={handleCloseEnrollmentStatusModal} />
-      {selectedLearner && <UnenrollModal isOpen={isUnenrollModalOpen} learner={selectedLearner} onClose={handleUnenrollModalClose} onSuccess={handleUnenrollModalClose} />}
-      <EnrollLearnersModal isOpen={isEnrollLearnersModalOpen} onClose={handleCloseEnrollLearnersModal} onSuccess={handleCloseEnrollLearnersModal} />
+      {selectedLearner && <UnenrollModal isOpen={isUnenrollModalOpen} learner={selectedLearner} onClose={handleUnenrollModalClose} />}
+      <EnrollLearnersModal isOpen={isEnrollLearnersModalOpen} onClose={handleCloseEnrollLearnersModal} />
+      <AddBetaTestersModal isOpen={isAddBetaTestersModalOpen} onClose={() => setIsAddBetaTestersModalOpen(false)} />
+      {selectedLearner && <UpdateBetaTesterModal isOpen={isUpdateBetaTesterModalOpen} learner={selectedLearner} onClose={handleCloseUpdateBetaTesterModal} />}
     </>
   );
 };
