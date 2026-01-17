@@ -116,6 +116,26 @@ const messages = defineMessages({
     defaultMessage: 'Cancel',
     description: 'Label for cancel button in modals',
   },
+  autoEnrollCheckbox: {
+    id: 'instruct.enrollments.modals.autoEnrollCheckbox',
+    defaultMessage: 'Auto Enroll',
+    description: 'Label for auto enroll checkbox in enroll learners modal',
+  },
+  notifyUsersCheckbox: {
+    id: 'instruct.enrollments.modals.notifyUsersCheckbox',
+    defaultMessage: 'Notify Users by Email',
+    description: 'Label for notify users by email checkbox in enroll learners modal',
+  },
+  addBetaTestersInstructions: {
+    id: 'instruct.enrollments.modals.addBetaTesters.addBetaTestersInstructions',
+    defaultMessage: 'Enter email addresses and/or usernames separated by new lines or commas. Note: Users must have an activated My Open edX account before they can be enrolled as beta testers.',
+    description: 'Instructions for adding beta testers to the course',
+  },
+  // uploadCSV: {
+  //   id: 'instruct.enrollments.modals.uploadCSV',
+  //   defaultMessage: 'Upload CSV',
+  //   description: 'Title for upload CSV tab in add modal',
+  // },
 });
 
 export default messages;
