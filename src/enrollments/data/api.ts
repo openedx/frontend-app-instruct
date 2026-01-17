@@ -46,3 +46,13 @@ export const unenrollLearners = async (
     { data: { users } }
   );
 };
+
+export const addBetaTesters = async (
+  courseId: string,
+  users: string[]
+): Promise<void> => {
+  await getAuthenticatedHttpClient().post(
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/beta-testers/`,
+    { users }
+  );
+};
