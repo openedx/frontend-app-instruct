@@ -26,6 +26,8 @@ export interface CourseInfoResponse {
     dataResearcher: boolean,
     [key: string]: boolean,
   },
+  gradebookUrl: string,
+  studioGradingUrl?: string,
 }
 
 interface EnrollmentCounts extends Record<string, number> {
