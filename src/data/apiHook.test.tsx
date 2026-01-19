@@ -29,6 +29,7 @@ const mockCourseData = {
   gradeCutoffs: null,
   staffCount: 5,
   learnerCount: 145,
+  gradebookUrl: 'http://example.com/gradebook',
 };
 
 const createWrapper = () => {
