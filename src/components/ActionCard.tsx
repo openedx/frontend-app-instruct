@@ -1,24 +1,26 @@
 import { Button, Card } from '@openedx/paragon';
 
 interface ActionCardProps {
-  title: string,
-  description: string,
   buttonLabel: string,
-  onButtonClick?: () => void,
   customAction?: React.ReactNode,
+  description: string,
+  hasBorderBottom?: boolean,
   isLoading?: boolean,
+  title: string,
+  onButtonClick?: () => void,
 }
 
 const ActionCard = ({
-  title,
-  description,
   buttonLabel,
-  onButtonClick,
   customAction,
-  isLoading = false
+  description,
+  hasBorderBottom = true,
+  isLoading = false,
+  title,
+  onButtonClick,
 }: ActionCardProps) => {
   return (
-    <Card className="action-card py-2" orientation="horizontal">
+    <Card className={`bg-light-200 py-2 border-gray-500 rounded-0 shadow-none ${hasBorderBottom ? 'border-bottom' : ''}`} orientation="horizontal">
       <Card.Body className="flex-grow-1">
         <Card.Section>
           <h4 className="mb-2">{title}</h4>
