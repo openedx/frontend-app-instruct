@@ -15,7 +15,7 @@ const mockResults = [
   {
     id: '1',
     unitName: 'Unit 1',
-    assessment: 'Assessment 1',
+    displayName: 'Assessment 1',
     totalResponses: 2,
     training: 0,
     peer: 1,
@@ -44,7 +44,7 @@ describe('DetailAssessmentsList', () => {
     });
     renderWithIntl(<DetailAssessmentsList />);
     expect(screen.getByText(mockResults[0].unitName)).toBeInTheDocument();
-    expect(screen.getByText(mockResults[0].assessment)).toBeInTheDocument();
+    expect(screen.getByText(mockResults[0].displayName)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /View and Grade Responses/i })).toBeInTheDocument();
   });
 
