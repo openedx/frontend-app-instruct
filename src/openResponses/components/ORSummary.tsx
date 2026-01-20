@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { Icon } from '@openedx/paragon';
 import { EditNote, ViewDay } from '@openedx/paragon/icons';
-import { useOpenResponsesData } from '../../data/apiHook';
+import { useOpenResponsesData } from '../data/apiHook';
 import messages from '../messages';
 
 const ORSummary = () => {
