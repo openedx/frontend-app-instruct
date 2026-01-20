@@ -11,27 +11,10 @@ interface DataTableFetchDataProps {
   pageIndex: number,
 }
 
-// Example of api response to test on UI
-// const mockResults = [
-//   {
-//     id: '1',
-//     unitName: 'Example Unit',
-//     assessment: 'ORA block number 1',
-//     totalResponses: 2,
-//     training: 0,
-//     peer: 1,
-//     self: 0,
-//     waiting: 0,
-//     staff: 0,
-//     finalGradeReceived: 1,
-//     url: 'http://apps.local.openedx.io:8080/instructor/course-v1:DV-edtech+check+2025-05/open_responses'
-//   }
-// ];
-
 const DetailAssessmentsList = () => {
   const intl = useIntl();
   const { courseId } = useParams();
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const { data = { count: 0, results: [] }, isLoading } = useDetailAssessmentsData(courseId ?? '', {
     page,
     pageSize: DETAILS_PAGE_SIZE
@@ -41,7 +24,7 @@ const DetailAssessmentsList = () => {
 
   const tableColumns = [
     { accessor: 'unitName', Header: intl.formatMessage(messages.unitName) },
-    { accessor: 'assessment', Header: intl.formatMessage(messages.assessment) },
+    { accessor: 'displayName', Header: intl.formatMessage(messages.assessment) },
     { accessor: 'totalResponses', Header: intl.formatMessage(messages.totalResponses) },
     { accessor: 'training', Header: intl.formatMessage(messages.training) },
     { accessor: 'peer', Header: intl.formatMessage(messages.peer) },
@@ -63,7 +46,7 @@ const DetailAssessmentsList = () => {
 
   return (
     <div className="mt-4.5">
-      <h3>{intl.formatMessage(messages.details)}</h3>
+      <h3 className="text-primary-700">{intl.formatMessage(messages.details)}</h3>
       <DataTable
         columns={tableColumns}
         data={tableData}
