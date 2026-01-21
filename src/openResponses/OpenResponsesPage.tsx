@@ -1,10 +1,10 @@
 import { Container } from '@openedx/paragon';
-import ORSummary from './components/ORSummary';
+import OpenResponsesSummary from './components/OpenResponsesSummary';
 
 const OpenResponsesPage = () => {
   return (
     <Container fluid>
-      <ORSummary />
+      <OpenResponsesSummary />
     </Container>
   );
 };

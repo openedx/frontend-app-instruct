@@ -4,7 +4,7 @@ import { openResponsesQueryKeys } from './queryKeys';
 
 export const useOpenResponsesData = (courseId: string) => (
   useQuery({
-    queryKey: openResponsesQueryKeys.byCourse(courseId),
+    queryKey: openResponsesQueryKeys.summary(courseId),
     queryFn: () => getOpenResponsesData(courseId),
     enabled: !!courseId,
   })

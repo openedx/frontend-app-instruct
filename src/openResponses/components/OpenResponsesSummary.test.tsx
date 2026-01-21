@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import { useParams } from 'react-router-dom';
-import ORSummary from './ORSummary';
+import OpenResponsesSummary from './OpenResponsesSummary';
 import { useOpenResponsesData } from '../data/apiHook';
 import messages from '../messages';
 import { renderWithIntl } from '../../testUtils';
@@ -25,14 +25,14 @@ const mockData = {
   finalGradeReceived: '7',
 };
 
-describe('ORSummary', () => {
+describe('OpenResponsesSummary', () => {
   beforeEach(() => {
     (useParams as jest.Mock).mockReturnValue({ courseId: 'course-v1:edX+Test+2024' });
   });
 
   it('renders all summary titles', () => {
     (useOpenResponsesData as jest.Mock).mockReturnValue({ data: {} });
-    renderWithIntl(<ORSummary />);
+    renderWithIntl(<OpenResponsesSummary />);
     expect(screen.getByText(messages.summaryTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.totalUnits.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.totalAssessments.defaultMessage)).toBeInTheDocument();
@@ -47,7 +47,7 @@ describe('ORSummary', () => {
 
   it('renders default values when data is empty', () => {
     (useOpenResponsesData as jest.Mock).mockReturnValue({ data: {} });
-    renderWithIntl(<ORSummary />);
+    renderWithIntl(<OpenResponsesSummary />);
     expect(screen.getAllByText('0').length).toBe(9);
   });
 
@@ -55,7 +55,7 @@ describe('ORSummary', () => {
     (useOpenResponsesData as jest.Mock).mockReturnValue({
       data: mockData,
     });
-    renderWithIntl(<ORSummary />);
+    renderWithIntl(<OpenResponsesSummary />);
     expect(screen.getByText('5')).toBeInTheDocument();
     expect(screen.getByText('10')).toBeInTheDocument();
     expect(screen.getByText('15')).toBeInTheDocument();
@@ -69,14 +69,14 @@ describe('ORSummary', () => {
 
   it('renders icons', () => {
     (useOpenResponsesData as jest.Mock).mockReturnValue({ data: mockData });
-    renderWithIntl(<ORSummary />);
+    renderWithIntl(<OpenResponsesSummary />);
     expect(screen.getAllByRole('img', { hidden: true }).length).toBe(2);
   });
 
   it('uses courseId from params', () => {
     (useParams as jest.Mock).mockReturnValue({ courseId: 'course-v1:edX+Another+2024' });
     (useOpenResponsesData as jest.Mock).mockReturnValue({ data: {} });
-    renderWithIntl(<ORSummary />);
+    renderWithIntl(<OpenResponsesSummary />);
     expect(useOpenResponsesData).toHaveBeenCalledWith('course-v1:edX+Another+2024');
   });
 });

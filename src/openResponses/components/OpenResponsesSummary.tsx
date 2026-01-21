@@ -5,7 +5,7 @@ import { EditNote, ViewDay } from '@openedx/paragon/icons';
 import { useOpenResponsesData } from '../data/apiHook';
 import messages from '../messages';
 
-const ORSummary = () => {
+const OpenResponsesSummary = () => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const { data = {} } = useOpenResponsesData(courseId);
@@ -96,4 +96,4 @@ const ORSummary = () => {
   );
 };
 
-export default ORSummary;
+export default OpenResponsesSummary;
