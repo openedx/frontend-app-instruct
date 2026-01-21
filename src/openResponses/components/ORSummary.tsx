@@ -23,9 +23,9 @@ const ORSummary = () => {
 
   return (
     <>
-      <h3>{intl.formatMessage(messages.summaryTitle)}</h3>
+      <h3 className="text-primary-700">{intl.formatMessage(messages.summaryTitle)}</h3>
       <div className="container-mw-xl">
-        <div className="row">
+        <div className="row x-small">
           <div className="col-sm-3 col-md-2 col-xl-1">
             <p className="mb-2">{intl.formatMessage(messages.totalUnits)}</p>
           </div>
@@ -36,16 +36,16 @@ const ORSummary = () => {
         <div className="row lead">
           <div className="col-sm-3 col-md-2 col-xl-1 d-flex align-items-center">
             <Icon src={ViewDay} />
-            <p className="ml-2 mb-0">{totalUnits}</p>
+            <p className="ml-2 mb-0 text-primary-500">{totalUnits}</p>
           </div>
           <div className="col-sm-4 col-md-3 col-xl-2 d-flex align-items-center">
             <Icon src={EditNote} size="lg" />
-            <p className="ml-2 mb-0">{totalAssessments}</p>
+            <p className="ml-2 mb-0 text-primary-500">{totalAssessments}</p>
           </div>
         </div>
       </div>
       <div className="container-mw-xl mt-3">
-        <div className="row align-items-end">
+        <div className="row align-items-end x-small">
           <div className="col-sm-2 col-lg-1">
             <p className="mb-2">{intl.formatMessage(messages.totalResponses)}</p>
           </div>
@@ -68,7 +68,7 @@ const ORSummary = () => {
             <p className="mb-2">{intl.formatMessage(messages.finalGradeReceived)}</p>
           </div>
         </div>
-        <div className="row lead">
+        <div className="row lead text-primary-500">
           <div className="col-sm-2 col-lg-1">
             <p>{totalResponses}</p>
           </div>
