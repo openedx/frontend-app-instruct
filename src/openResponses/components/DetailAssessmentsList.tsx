@@ -41,7 +41,7 @@ const DetailAssessmentsList = () => {
 
   const tableData = data.results.map(item => ({
     ...item,
-    staffGrader: <Button variant="link" size="inline" href={item.url}>View and Grade Responses</Button>,
+    staffGrader: <Button variant="link" size="inline" href={item.url}>{intl.formatMessage(messages.viewAndGradeResponses)}</Button>,
   }));
 
   return (
