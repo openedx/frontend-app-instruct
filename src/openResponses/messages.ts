@@ -70,7 +70,12 @@ const messages = defineMessages({
     id: 'instruct.openResponses.table.header.staffGrader',
     defaultMessage: 'Staff Grader',
     description: 'Label for the staff grader header'
-  }
+  },
+  viewAndGradeResponses: {
+    id: 'instruct.openResponses.button.viewAndGradeResponses',
+    defaultMessage: 'View and Grade Responses',
+    description: 'Label for the link to view and grade responses'
+  },
 });
 
 export default messages;
