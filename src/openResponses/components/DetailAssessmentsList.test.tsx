@@ -23,7 +23,7 @@ const mockResults = [
     waiting: 0,
     staff: 0,
     finalGradeReceived: 1,
-    url: 'http://test-url.com',
+    staffOraGradingUrl: 'http://test-url.com',
   },
 ];
 

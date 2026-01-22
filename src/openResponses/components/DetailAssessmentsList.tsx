@@ -32,7 +32,7 @@ const DetailAssessmentsList = () => {
     { accessor: 'waiting', Header: intl.formatMessage(messages.waiting) },
     { accessor: 'staff', Header: intl.formatMessage(messages.staff) },
     { accessor: 'finalGradeReceived', Header: intl.formatMessage(messages.finalGradeReceived) },
-    { accessor: 'staffGrader', Header: intl.formatMessage(messages.staffGrader) }
+    { accessor: 'staffOraGradingUrl', Header: intl.formatMessage(messages.staffGrader) }
   ];
 
   const handleFetchData = (data: DataTableFetchDataProps) => {
@@ -41,7 +41,7 @@ const DetailAssessmentsList = () => {
 
   const tableData = data.results.map(item => ({
     ...item,
-    staffGrader: <Button variant="link" size="inline" href={item.url}>View and Grade Responses</Button>,
+    staffOraGradingUrl: item.staffOraGradingUrl && <Button variant="link" size="inline" href={item.staffOraGradingUrl}>{intl.formatMessage(messages.viewAndGradeResponses)}</Button>,
   }));
 
   return (
