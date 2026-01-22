@@ -1,2 +1,6 @@
-@use "@openedx/paragon/dist/core.min.css" as paragonCore;
-@use "@openedx/paragon/dist/light.min.css" as paragonLight;
+@use "@openedx/frontend-base/shell/app.scss";
+
+.toast-container {
+    left: unset;
+    right: 1.25rem;
+}

@@ -1,6 +1,6 @@
 import { camelCaseObject, getAuthenticatedHttpClient, snakeCaseObject } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '../../data/api';
-import { CohortData } from '../types';
+import { CohortData, BasicCohortData } from '../types';
 
 export const getCohortStatus = async (courseId: string) => {
   const url = `${getApiBaseUrl()}/api/cohorts/v1/settings/${courseId}`;
@@ -20,7 +20,7 @@ export const toggleCohorts = async (courseId: string, isCohorted: boolean) => {
   return camelCaseObject(data);
 };
 
-export const createCohort = async (courseId: string, cohortDetails: Partial<CohortData>) => {
+export const createCohort = async (courseId: string, cohortDetails: BasicCohortData) => {
   const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/cohorts/`;
   const cohortDetailsSnakeCase = snakeCaseObject(cohortDetails);
   const { data } = await getAuthenticatedHttpClient().post(url, cohortDetailsSnakeCase);
@@ -30,5 +30,12 @@ export const createCohort = async (courseId: string, cohortDetails: Partial<Coho
 export const getContentGroups = async (courseId: string) => {
   const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/content_groups/`;
   const { data } = await getAuthenticatedHttpClient().get(url);
+  return camelCaseObject(data);
+};
+
+export const patchCohort = async (courseId: string, cohortId: number, cohortDetails: CohortData) => {
+  const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/cohorts/${cohortId}`;
+  const cohortDetailsSnakeCase = snakeCaseObject(cohortDetails);
+  const { data } = await getAuthenticatedHttpClient().patch(url, cohortDetailsSnakeCase);
   return camelCaseObject(data);
 };
