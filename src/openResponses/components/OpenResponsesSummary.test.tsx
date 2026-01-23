@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import { useParams } from 'react-router-dom';
-import OpenResponsesSummary from './OpenResponsesSummary';
-import { useOpenResponsesData } from '../data/apiHook';
-import messages from '../messages';
-import { renderWithIntl } from '../../testUtils';
+import OpenResponsesSummary from '@src/openResponses/components/OpenResponsesSummary';
+import { useOpenResponsesData } from '@src/openResponses/data/apiHook';
+import messages from '@src/openResponses/messages';
+import { renderWithIntl } from '@src/testUtils';
 
 jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
