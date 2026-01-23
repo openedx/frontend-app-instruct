@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useParams } from 'react-router-dom';
-import { renderWithIntl } from '../../testUtils';
+import { renderWithIntl } from '@src/testUtils';
 import { useCohorts, useContentGroupsData } from '../data/apiHook';
 import messages from '../messages';
 import EnabledCohortsView from './EnabledCohortsView';
