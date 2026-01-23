@@ -2,23 +2,23 @@ import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { Icon } from '@openedx/paragon';
 import { EditNote, ViewDay } from '@openedx/paragon/icons';
-import { useOpenResponsesData } from '../data/apiHook';
-import messages from '../messages';
+import { useOpenResponsesData } from '@src/openResponses/data/apiHook';
+import messages from '@src/openResponses/messages';
 
 const OpenResponsesSummary = () => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const { data = {} } = useOpenResponsesData(courseId);
   const {
-    totalUnits = '0',
-    totalAssessments = '0',
-    totalResponses = '0',
-    training = '0',
-    peer = '0',
-    self = '0',
-    waiting = '0',
-    staff = '0',
-    finalGradeReceived = '0',
+    totalUnits = 0,
+    totalAssessments = 0,
+    totalResponses = 0,
+    training = 0,
+    peer = 0,
+    self = 0,
+    waiting = 0,
+    staff = 0,
+    finalGradeReceived = 0,
   } = data;
 
   return (

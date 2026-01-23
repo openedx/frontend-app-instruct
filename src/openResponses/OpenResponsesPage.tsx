@@ -1,5 +1,5 @@
 import { Container } from '@openedx/paragon';
-import OpenResponsesSummary from './components/OpenResponsesSummary';
+import OpenResponsesSummary from '@src/openResponses/components/OpenResponsesSummary';
 
 const OpenResponsesPage = () => {
   return (
