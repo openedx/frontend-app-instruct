@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, FormControl } from '@openedx/paragon';
-import { useParams } from 'react-router-dom';
-import { useAddLearnersToCohort } from '../data/apiHook';
-import messages from '../messages';
-import { useCohortContext } from './CohortContext';
+import { useCohortContext } from '@src/cohorts/components/CohortContext';
+import { useAddLearnersToCohort } from '@src/cohorts/data/apiHook';
+import messages from '@src/cohorts/messages';
 
 const ManageLearners = () => {
   const { courseId = '' } = useParams();

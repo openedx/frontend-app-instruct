@@ -1,18 +1,18 @@
+import { useParams } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useParams } from 'react-router-dom';
 import { renderWithIntl } from '@src/testUtils';
-import { useCohorts, useContentGroupsData } from '../data/apiHook';
-import messages from '../messages';
-import EnabledCohortsView from './EnabledCohortsView';
-import { CohortProvider } from './CohortContext';
+import { CohortProvider } from '@src/cohorts/components/CohortContext';
+import EnabledCohortsView from '@src/cohorts/components/EnabledCohortsView';
+import { useCohorts, useContentGroupsData } from '@src/cohorts/data/apiHook';
+import messages from '@src/cohorts/messages';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('@src/cohorts/data/apiHook', () => ({
   useCohorts: jest.fn(),
   useContentGroupsData: jest.fn(),
   useCreateCohort: () => ({ mutate: jest.fn() }),
