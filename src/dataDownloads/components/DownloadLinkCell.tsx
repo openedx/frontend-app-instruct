@@ -4,15 +4,16 @@ import { messages } from '../messages';
 import { DataDownloadsCellProps } from '../types';
 
 interface DownloadLinkCellProps extends DataDownloadsCellProps {
-  onDownloadClick: (downloadLink: string) => void,
+  onDownloadClick: (downloadLink: string, reportName: string) => void,
 }
 
 const DownloadLinkCell = ({ row, onDownloadClick }: DownloadLinkCellProps) => {
   const intl = useIntl();
   const downloadLink = row.original?.downloadLink ?? '';
+  const reportName = row.original?.reportName ?? '';
 
   return (
-    <Button variant="link" size="sm" onClick={() => onDownloadClick(downloadLink)}>
+    <Button variant="link" size="sm" onClick={() => onDownloadClick(downloadLink, reportName)}>
       {intl.formatMessage(messages.downloadLinkLabel)}
     </Button>
   );

@@ -33,7 +33,7 @@ const routes = [
       //   element: <StudentAdminPage />
       // },
       {
-        path: 'data_download',
+        path: 'data_downloads',
         element: <DataDownloadsPage />
       },
       // {

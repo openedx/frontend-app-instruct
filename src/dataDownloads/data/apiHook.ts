@@ -16,6 +16,7 @@ export const useGeneratedReports = (courseId: string) => (
 export const useGenerateReportLink = (courseId: string) => (
   useMutation({
     mutationKey: queryKeys.generateReportLink(courseId),
-    mutationFn: (reportType: string) => generateReportLink(courseId, reportType),
+    mutationFn: ({ reportType, problemLocation }: { reportType: string; problemLocation?: string }) =>
+      generateReportLink(courseId, reportType, problemLocation),
   })
 );

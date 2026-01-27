@@ -9,7 +9,7 @@ import { ReportNameCell } from './ReportNameCell';
 interface DataDownloadTableProps {
   data: DownloadReportData[],
   isLoading: boolean,
-  onDownloadClick: (downloadLink: string) => void,
+  onDownloadClick: (downloadLink: string, reportName: string) => void,
 }
 
 const DataDownloadTable = ({ data, isLoading, onDownloadClick }: DataDownloadTableProps) => {

@@ -78,13 +78,32 @@ describe('dataDownloads apiHook', () => {
         { wrapper: createWrapper() }
       );
 
-      result.current.mutate('report-type-a');
+      result.current.mutate({ reportType: 'report-type-a' });
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(mockGenerateReportLink).toHaveBeenCalledWith('course-123', 'report-type-a');
+      expect(mockGenerateReportLink).toHaveBeenCalledWith('course-123', 'report-type-a', undefined);
+      expect(result.current.data).toEqual(mockResponse);
+    });
+
+    it('should generate report link with problem location', async () => {
+      const mockResponse = { downloadUrl: 'http://example.com/report' };
+      mockGenerateReportLink.mockResolvedValue(mockResponse);
+
+      const { result } = renderHook(
+        () => useGenerateReportLink('course-123'),
+        { wrapper: createWrapper() }
+      );
+
+      result.current.mutate({ reportType: 'problem_responses', problemLocation: 'block-v1:test+course+run' });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockGenerateReportLink).toHaveBeenCalledWith('course-123', 'problem_responses', 'block-v1:test+course+run');
       expect(result.current.data).toEqual(mockResponse);
     });
 
@@ -96,7 +115,7 @@ describe('dataDownloads apiHook', () => {
         { wrapper: createWrapper() }
       );
 
-      result.current.mutate('report-type-a');
+      result.current.mutate({ reportType: 'report-type-a' });
 
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
