@@ -1,11 +1,11 @@
 import { Tabs, Tab } from '@openedx/paragon';
 import { REPORTS_TABS } from '../constants';
 import { useIntl } from '@openedx/frontend-base';
-import { ActionCard } from '../../components/ActionCard';
+import ActionCard from '@src/components/ActionCard';
 import { useTriggerReportGeneration } from '../data/apiHook';
 import { useParams } from 'react-router-dom';
 import { messages } from '../messages';
-import { useToastManager, ToastTypeEnum } from '../../providers/ToastManagerProvider';
+import { useToastManager, ToastTypeEnum } from '@src/providers/ToastManagerProvider';
 
 export const ReportGenerationTabs = () => {
   const { courseId = '' } = useParams();
