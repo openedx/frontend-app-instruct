@@ -1,10 +1,11 @@
-import { Container, Button, Tabs, Tab, Form, Card } from '@openedx/paragon';
+import { Container } from '@openedx/paragon';
 import { messages } from './messages';
 import { useIntl, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { DataDownloadTable } from './components/DataDownloadTable';
+import { GenerateReports } from './components/GenerateReports';
 import { useParams } from 'react-router-dom';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { getApiBaseUrl } from '../data/api';
 import { getReportTypeDisplayName } from './utils';
 
@@ -29,40 +30,6 @@ const DataDownloadsPage = () => {
   const { courseId } = useParams();
   const { data: reportsData, isLoading } = useGeneratedReports(courseId ?? '');
   const { mutate: generateReportLinkMutate, isPending: isGenerating } = useGenerateReportLink(courseId ?? '');
-  const [problemLocation, setProblemLocation] = useState('');
-
-  interface ReportSectionProps {
-    titleMessage: { id: string, defaultMessage: string, description?: string },
-    descriptionMessage: { id: string, defaultMessage: string, description?: string },
-    buttonMessage: { id: string, defaultMessage: string, description?: string },
-    onGenerate: () => void,
-    isFirst?: boolean,
-    isLast?: boolean,
-  }
-
-  const ReportSection = ({
-    titleMessage,
-    descriptionMessage,
-    buttonMessage,
-    onGenerate,
-    isFirst = false,
-    isLast = false
-  }: ReportSectionProps) => (
-    <div className={`d-lg-flex justify-content-between align-items-center ${isFirst ? 'pt-2.5' : 'pt-4.5'} pb-3.5 ${!isLast ? 'border-bottom' : ''}`}>
-      <div className="mr-lg-3">
-        <h4 className="text-primary-700">{intl.formatMessage(titleMessage)}</h4>
-        <p className="text-primary-700 m-0">{intl.formatMessage(descriptionMessage)}</p>
-      </div>
-      <Button
-        variant="primary"
-        onClick={onGenerate}
-        disabled={isGenerating}
-        className="text-nowrap"
-      >
-        {intl.formatMessage(buttonMessage)}
-      </Button>
-    </div>
-  );
 
   // Extract downloads array from API response and transform to match expected format
   const data = reportsData?.downloads?.map(report => ({
@@ -112,12 +79,12 @@ const DataDownloadsPage = () => {
     generateReportLinkMutate({ reportType });
   }, [generateReportLinkMutate]);
 
-  const handleGenerateProblemResponsesReport = useCallback(() => {
+  const handleGenerateProblemResponsesReport = useCallback((problemLocation?: string) => {
     generateReportLinkMutate({
       reportType: 'problem_responses',
-      problemLocation: problemLocation || undefined,
+      problemLocation,
     });
-  }, [generateReportLinkMutate, problemLocation]);
+  }, [generateReportLinkMutate]);
 
   return (
     <Container className="mt-4.5 mb-4" fluid>
@@ -126,124 +93,11 @@ const DataDownloadsPage = () => {
       <p className="text-primary-700">{intl.formatMessage(messages.dataDownloadsReportExpirationPolicyMessage)}</p>
       <DataDownloadTable data={data} isLoading={isLoading} onDownloadClick={handleDownload} />
 
-      <h3 className="mt-5 text-primary-700">{intl.formatMessage(messages.generateReportsTitle)}</h3>
-      <p className="text-primary-700">{intl.formatMessage(messages.generateReportsDescription)}</p>
-      <Card variant="muted">
-        <Tabs defaultActiveKey="enrollment" className="mb-3">
-          <Tab eventKey="enrollment" title={intl.formatMessage(messages.enrollmentReportsTabTitle)}>
-            <div className="d-flex flex-column px-3.5">
-              <ReportSection
-                titleMessage={messages.enrolledStudentsReportTitle}
-                descriptionMessage={messages.enrolledStudentsReportDescription}
-                buttonMessage={messages.generateEnrolledStudentsReport}
-                onGenerate={() => handleGenerateReport('enrolled_students')}
-                isFirst
-              />
-
-              <ReportSection
-                titleMessage={messages.pendingEnrollmentsReportTitle}
-                descriptionMessage={messages.pendingEnrollmentsReportDescription}
-                buttonMessage={messages.generatePendingEnrollmentsReport}
-                onGenerate={() => handleGenerateReport('pending_enrollments')}
-              />
-
-              <ReportSection
-                titleMessage={messages.pendingActivationsReportTitle}
-                descriptionMessage={messages.pendingActivationsReportDescription}
-                buttonMessage={messages.generatePendingActivationsReport}
-                onGenerate={() => handleGenerateReport('pending_activations')}
-              />
-
-              <ReportSection
-                titleMessage={messages.anonymizedStudentIdsReportTitle}
-                descriptionMessage={messages.anonymizedStudentIdsReportDescription}
-                buttonMessage={messages.generateAnonymizedStudentIdsReport}
-                onGenerate={() => handleGenerateReport('anonymized_student_ids')}
-                isLast
-              />
-            </div>
-          </Tab>
-
-          <Tab eventKey="grading" title={intl.formatMessage(messages.gradingReportsTabTitle)}>
-            <div className="d-flex flex-column px-3.5">
-              <ReportSection
-                titleMessage={messages.gradeReportTitle}
-                descriptionMessage={messages.gradeReportDescription}
-                buttonMessage={messages.generateGradeReport}
-                onGenerate={() => handleGenerateReport('grade')}
-                isFirst
-              />
-
-              <ReportSection
-                titleMessage={messages.problemGradeReportTitle}
-                descriptionMessage={messages.problemGradeReportDescription}
-                buttonMessage={messages.generateProblemGradeReport}
-                onGenerate={() => handleGenerateReport('problem_grade')}
-                isLast
-              />
-            </div>
-          </Tab>
-
-          <Tab eventKey="problemResponse" title={intl.formatMessage(messages.problemResponseReportsTabTitle)}>
-            <div className="d-flex flex-column px-3.5">
-              <ReportSection
-                titleMessage={messages.ora2SummaryReportTitle}
-                descriptionMessage={messages.ora2SummaryReportDescription}
-                buttonMessage={messages.generateOra2SummaryReport}
-                onGenerate={() => handleGenerateReport('ora2_summary')}
-                isFirst
-              />
-
-              <ReportSection
-                titleMessage={messages.ora2DataReportTitle}
-                descriptionMessage={messages.ora2DataReportDescription}
-                buttonMessage={messages.generateOra2DataReport}
-                onGenerate={() => handleGenerateReport('ora2_data')}
-              />
-
-              <ReportSection
-                titleMessage={messages.submissionFilesArchiveTitle}
-                descriptionMessage={messages.submissionFilesArchiveDescription}
-                buttonMessage={messages.generateSubmissionFilesArchive}
-                onGenerate={() => handleGenerateReport('ora2_submission_files')}
-              />
-
-              <div>
-                <h5 className="text-primary-700">{intl.formatMessage(messages.problemResponsesReportTitle)}</h5>
-                <p className="text-primary-700">{intl.formatMessage(messages.problemResponsesReportDescription)}</p>
-                <p className="small">{intl.formatMessage(messages.problemResponsesReportNote)}</p>
-                <Form.Group className="mb-3">
-                  <Form.Label>
-                    {intl.formatMessage(messages.specifyProblemLocation)}
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder={intl.formatMessage(messages.problemLocationPlaceholder)}
-                    value={problemLocation}
-                    onChange={(e) => setProblemLocation(e.target.value)}
-                  />
-                </Form.Group>
-                <Button
-                  variant="primary"
-                  onClick={handleGenerateProblemResponsesReport}
-                  disabled={isGenerating}
-                >
-                  {intl.formatMessage(messages.generateProblemResponsesReport)}
-                </Button>
-              </div>
-            </div>
-          </Tab>
-
-          <Tab eventKey="certificates" title={intl.formatMessage(messages.certificateReportsTabTitle)}>
-            <div className="d-flex flex-column px-3.5">
-              <div>
-                <h5 className="text-primary-700">{intl.formatMessage(messages.issuedCertificatesTitle)}</h5>
-                <p className="text-primary-700">{intl.formatMessage(messages.issuedCertificatesDescription)}</p>
-              </div>
-            </div>
-          </Tab>
-        </Tabs>
-      </Card>
+      <GenerateReports
+        onGenerateReport={handleGenerateReport}
+        onGenerateProblemResponsesReport={handleGenerateProblemResponsesReport}
+        isGenerating={isGenerating}
+      />
     </Container>
   );
 };
