@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import { renderWithIntl } from '../../testUtils';
+import { renderWithIntl } from '@src/testUtils';
 import messages from '../messages';
 import DisabledCohortsView from './DisabledCohortsView';
 import userEvent from '@testing-library/user-event';

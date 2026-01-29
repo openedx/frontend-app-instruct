@@ -1,39 +1,98 @@
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { FormControl, Button } from '@openedx/paragon';
-import messages from '../messages';
-import { useCohorts } from '../data/apiHook';
+import { FormControl, Button, Card, Alert } from '@openedx/paragon';
+import { CheckCircle } from '@openedx/paragon/icons';
+import { useCohortContext } from '@src/cohorts/components/CohortContext';
+import CohortsForm from '@src/cohorts/components/CohortsForm';
+import SelectedCohortInfo from '@src/cohorts/components/SelectedCohortInfo';
+import { useCohorts, useCreateCohort } from '@src/cohorts/data/apiHook';
+import { assignmentTypes } from '@src/cohorts/constants';
+import messages from '@src/cohorts/messages';
+import { CohortData, BasicCohortData } from '@src/cohorts/types';
 
 const EnabledCohortsView = () => {
   const intl = useIntl();
   const { courseId = '' } = useParams();
   const { data = [] } = useCohorts(courseId);
+  const { mutate: createCohort } = useCreateCohort(courseId);
+  const { clearSelectedCohort, selectedCohort, setSelectedCohort } = useCohortContext();
+  const [displayAddForm, setDisplayAddForm] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
-  const cohortsList = [{ id: null, name: intl.formatMessage(messages.selectCohortPlaceholder) }, ...data];
+  const cohortsList = [{ id: 'null', name: intl.formatMessage(messages.selectCohortPlaceholder) }, ...data];
 
   const handleAddCohort = () => {
-    // Handle adding a new cohort
-    console.log('Add Cohort');
+    clearSelectedCohort();
+    setShowSuccessAlert(false);
+    setDisplayAddForm(true);
   };
 
   const handleSelectCohort = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    // Handle cohort selection
-    console.log(event);
+    setShowSuccessAlert(false);
+    const selectedValue = event.target.value;
+    const selectedCohortFromApi = cohortsList.find(cohort => cohort.id?.toString() === selectedValue);
+    setDisplayAddForm(false);
+
+    if (selectedCohortFromApi && selectedCohortFromApi.id !== 'null') {
+      const cohortFormData: CohortData = {
+        id: selectedCohortFromApi.id,
+        name: selectedCohortFromApi.name,
+        assignmentType: selectedCohortFromApi.assignmentType ?? assignmentTypes.automatic,
+        groupId: selectedCohortFromApi.groupId,
+        userPartitionId: selectedCohortFromApi.userPartitionId,
+        userCount: selectedCohortFromApi.userCount ?? 0,
+      };
+      setSelectedCohort(cohortFormData);
+    } else {
+      clearSelectedCohort();
+    }
+  };
+
+  const handleNewCohort = (newCohort: BasicCohortData) => {
+    createCohort(newCohort, {
+      onSuccess: (newCohort: CohortData) => {
+        setShowSuccessAlert(true);
+        setSelectedCohort(newCohort);
+        hideAddForm();
+      },
+      onError: (error) => console.error(error)
+    });
+  };
+
+  const hideAddForm = () => {
+    setDisplayAddForm(false);
   };
 
   return (
-    <div className="d-flex mt-4.5">
-      <FormControl placeholder="Select a cohort" name="cohort" as="select" onChange={handleSelectCohort}>
-        {
-          cohortsList.map((cohort) => (
-            <option key={cohort.id} value={cohort.id}>
-              {cohort.name}
-            </option>
-          ))
-        }
-      </FormControl>
-      <Button onClick={handleAddCohort}>+ {intl.formatMessage(messages.addCohort)}</Button>
-    </div>
+    <>
+      <div className="d-flex mt-4.5">
+        <FormControl
+          as="select"
+          disabled={displayAddForm || cohortsList.length === 0}
+          name="cohort"
+          placeholder={intl.formatMessage(messages.selectCohortPlaceholder)}
+          value={selectedCohort?.id?.toString() ?? 'null'}
+          onChange={handleSelectCohort}
+        >
+          {
+            cohortsList.map((cohort) => (
+              <option key={cohort.id} value={cohort.id}>
+                {cohort.name}
+              </option>
+            ))
+          }
+        </FormControl>
+        <Button onClick={handleAddCohort} disabled={displayAddForm}>+ {intl.formatMessage(messages.addCohort)}</Button>
+      </div>
+      {showSuccessAlert && <Alert className="mt-3" icon={CheckCircle} variant="success">{intl.formatMessage(messages.addCohortSuccessMessage, { cohortName: selectedCohort?.name })}</Alert>}
+      {displayAddForm && (
+        <Card className="mt-3 bg-light-200">
+          <CohortsForm disableManualAssignment={data.length === 0} onCancel={hideAddForm} onSubmit={handleNewCohort} />
+        </Card>
+      )}
+      {selectedCohort && <SelectedCohortInfo />}
+    </>
   );
 };
 

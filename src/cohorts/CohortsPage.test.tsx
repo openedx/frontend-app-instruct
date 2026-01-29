@@ -2,8 +2,9 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CohortsPage from './CohortsPage';
 import { useCohorts, useCohortStatus, useToggleCohorts } from './data/apiHook';
-import { renderWithIntl } from '../testUtils';
+import { renderWithIntl } from '@src/testUtils';
 import messages from './messages';
+import { CohortProvider } from './components/CohortContext';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -14,9 +15,11 @@ jest.mock('./data/apiHook', () => ({
   useCohorts: jest.fn(),
   useCohortStatus: jest.fn(),
   useToggleCohorts: jest.fn(),
+  useCreateCohort: () => ({ mutate: jest.fn() }),
 }));
 
 describe('CohortsPage', () => {
+  const renderWithCohortsProvider = () => renderWithIntl(<CohortProvider><CohortsPage /></CohortProvider>);
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -26,7 +29,7 @@ describe('CohortsPage', () => {
     (useCohortStatus as jest.Mock).mockReturnValue({ data: { isCohorted: true } });
     (useToggleCohorts as jest.Mock).mockReturnValue({ mutate: jest.fn() });
 
-    renderWithIntl(<CohortsPage />);
+    renderWithCohortsProvider();
     expect(screen.getByText(messages.cohortsTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Cohort 1' })).toBeInTheDocument();
     expect(screen.getByText(`+ ${messages.addCohort.defaultMessage}`)).toBeInTheDocument();
@@ -37,7 +40,7 @@ describe('CohortsPage', () => {
     (useCohortStatus as jest.Mock).mockReturnValue({ data: { isCohorted: false } });
     (useToggleCohorts as jest.Mock).mockReturnValue({ mutate: jest.fn() });
 
-    renderWithIntl(<CohortsPage />);
+    renderWithCohortsProvider();
     expect(screen.getByText(messages.noCohortsMessage.defaultMessage)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: messages.enableCohorts.defaultMessage })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: messages.learnMore.defaultMessage })).toBeInTheDocument();
@@ -49,7 +52,7 @@ describe('CohortsPage', () => {
     (useCohortStatus as jest.Mock).mockReturnValue({ data: { isCohorted: false } });
     (useToggleCohorts as jest.Mock).mockReturnValue({ mutate: enableMock });
 
-    renderWithIntl(<CohortsPage />);
+    renderWithCohortsProvider();
     const user = userEvent.setup();
     await user.click(screen.getByRole('button', { name: messages.enableCohorts.defaultMessage }));
     expect(enableMock).toHaveBeenCalled();
@@ -60,7 +63,7 @@ describe('CohortsPage', () => {
     (useCohortStatus as jest.Mock).mockReturnValue({ data: { isCohorted: true } });
     (useToggleCohorts as jest.Mock).mockReturnValue({ mutate: jest.fn() });
 
-    renderWithIntl(<CohortsPage />);
+    renderWithCohortsProvider();
     const user = userEvent.setup();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: messages.disableCohorts.defaultMessage }));
@@ -73,7 +76,7 @@ describe('CohortsPage', () => {
     (useCohortStatus as jest.Mock).mockReturnValue({ data: { isCohorted: true } });
     (useToggleCohorts as jest.Mock).mockReturnValue({ mutate: disableMock });
 
-    renderWithIntl(<CohortsPage />);
+    renderWithCohortsProvider();
     const user = userEvent.setup();
     await user.click(screen.getByRole('button', { name: messages.disableCohorts.defaultMessage }));
     await user.click(screen.getByRole('button', { name: messages.disableLabel.defaultMessage }));

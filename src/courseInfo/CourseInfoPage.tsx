@@ -1,10 +1,10 @@
 import { Container } from '@openedx/paragon';
-import { GeneralCourseInfo } from './components/generalCourseInfo';
-import { PendingTasks } from '../components/PendingTasks';
+import { PendingTasks } from '@src/components/PendingTasks';
+import { GeneralCourseInfo } from '@src/courseInfo/components/generalCourseInfo';
 
 const CourseInfoPage = () => {
   return (
-    <Container className="mt-4.5 mb-4" fluid="xl">
+    <Container className="mt-4.5 mb-4" fluid>
       <GeneralCourseInfo />
       <PendingTasks />
     </Container>

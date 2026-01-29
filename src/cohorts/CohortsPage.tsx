@@ -3,18 +3,20 @@ import { IconButton } from '@openedx/paragon';
 import { Settings } from '@openedx/paragon/icons';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import { useCohortStatus, useToggleCohorts } from './data/apiHook';
-import DisableCohortsModal from './components/DisableCohortsModal';
-import messages from './messages';
-import DisabledCohortsView from './components/DisabledCohortsView';
-import EnabledCohortsView from './components/EnabledCohortsView';
+import { CohortProvider, useCohortContext } from '@src/cohorts/components/CohortContext';
+import DisableCohortsModal from '@src/cohorts/components/DisableCohortsModal';
+import DisabledCohortsView from '@src/cohorts/components/DisabledCohortsView';
+import EnabledCohortsView from '@src/cohorts/components/EnabledCohortsView';
+import { useCohortStatus, useToggleCohorts } from '@src/cohorts/data/apiHook';
+import messages from '@src/cohorts/messages';
 
-const CohortsPage = () => {
+const CohortsPageContent = () => {
   const intl = useIntl();
   const { courseId = '' } = useParams();
   const { data: cohortStatus } = useCohortStatus(courseId);
   const { mutate: toggleCohortsMutate } = useToggleCohorts(courseId);
   const [isOpenDisableModal, setIsOpenDisableModal] = useState(false);
+  const { clearSelectedCohort } = useCohortContext();
   const { isCohorted = false } = cohortStatus ?? {};
 
   const handleEnableCohorts = () => {
@@ -27,6 +29,7 @@ const CohortsPage = () => {
   const handleDisableCohorts = () => {
     toggleCohortsMutate({ isCohorted: false },
       {
+        onSuccess: () => clearSelectedCohort(),
         onError: (error) => console.log(error)
       });
     setIsOpenDisableModal(false);
@@ -56,6 +59,15 @@ const CohortsPage = () => {
       )}
       <DisableCohortsModal isOpen={isOpenDisableModal} onClose={() => setIsOpenDisableModal(false)} onConfirmDisable={handleDisableCohorts} />
     </div>
+  );
+};
+
+// It was necessary to wrap the entire content with CohortProvider here to avoid errors in the use of cohort hooks within a provider
+const CohortsPage = () => {
+  return (
+    <CohortProvider>
+      <CohortsPageContent />
+    </CohortProvider>
   );
 };
 

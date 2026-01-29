@@ -50,7 +50,142 @@ const messages = defineMessages({
     id: 'instruct.cohorts.selectCohortPlaceholder',
     defaultMessage: 'Select a cohort',
     description: 'Placeholder text for the select cohort dropdown'
-  }
+  },
+  cohortName: {
+    id: 'instruct.cohorts.cohortName',
+    defaultMessage: 'Cohort Name',
+    description: 'Label for the cohort name input field'
+  },
+  saveLabel: {
+    id: 'instruct.cohorts.saveLabel',
+    defaultMessage: 'Save',
+    description: 'Label for the save button'
+  },
+  cohortAssignmentMethod: {
+    id: 'instruct.cohorts.addForm.cohortAssignmentMethod',
+    defaultMessage: 'Cohort Assignment Method',
+    description: 'Label for the cohort assignment method section'
+  },
+  automatic: {
+    id: 'instruct.cohorts.addForm.automatic',
+    defaultMessage: 'Automatic',
+    description: 'Label for the automatic cohort assignment method option'
+  },
+  manual: {
+    id: 'instruct.cohorts.addForm.manual',
+    defaultMessage: 'Manual',
+    description: 'Label for the manual cohort assignment method option'
+  },
+  associatedContentGroup: {
+    id: 'instruct.cohorts.addForm.associatedContentGroup',
+    defaultMessage: 'Associated Content Group',
+    description: 'Label for the associated content group section'
+  },
+  noContentGroup: {
+    id: 'instruct.cohorts.addForm.noContentGroup',
+    defaultMessage: 'No Content Group',
+    description: 'Label for the no content group option'
+  },
+  selectAContentGroup: {
+    id: 'instruct.cohorts.addForm.selectAContentGroup',
+    defaultMessage: 'Select a Content Group',
+    description: 'Label for the select a content group option'
+  },
+  notSelected: {
+    id: 'instruct.cohorts.addForm.notSelected',
+    defaultMessage: 'Not Selected',
+    description: 'Label for the not selected content group option'
+  },
+  noContentGroups: {
+    id: 'instruct.cohorts.addForm.noContentGroups',
+    defaultMessage: 'No content groups exist.',
+    description: 'Message displayed when there are no content groups'
+  },
+  createContentGroup: {
+    id: 'instruct.cohorts.addForm.createContentGroup',
+    defaultMessage: 'Create a content group',
+    description: 'Label for the create a content group link'
+  },
+  addCohortSuccessMessage: {
+    id: 'instruct.cohorts.addForm.successMessage',
+    defaultMessage: 'The {cohortName} cohort has been created. You can manually add students to this cohort below.',
+    description: 'Success message displayed when a new cohort is added'
+  },
+  cohortDisclaimer: {
+    id: 'instruct.cohorts.cohortDisclaimer',
+    defaultMessage: 'To review learner cohort assignments or see the results of uploading a CSV file, download course profile information or cohort results on the',
+    description: 'Disclaimer message for cohorts'
+  },
+  page: {
+    id: 'instruct.cohorts.page',
+    defaultMessage: 'page',
+    description: 'Label for the page link'
+  },
+  settings: {
+    id: 'instruct.cohorts.settings',
+    defaultMessage: 'Settings',
+    description: 'Label for the settings tab'
+  },
+  manageLearners: {
+    id: 'instruct.cohorts.manageLearners',
+    defaultMessage: 'Manage Learners',
+    description: 'Label for the manage learners tab'
+  },
+  studentsOnCohort: {
+    id: 'instruct.cohorts.studentsOnCohort',
+    defaultMessage: '(contains {users} students)',
+    description: 'Label showing the number of students on this cohort'
+  },
+  automaticCohortWarning: {
+    id: 'instruct.cohorts.automaticCohortWarning',
+    defaultMessage: 'Learners are added to this cohort automatically.',
+    description: 'Warning about automatic cohort assignment'
+  },
+  manualCohortWarning: {
+    id: 'instruct.cohorts.manualCohortWarning',
+    defaultMessage: 'Learners are added to this cohort only when you provide their email addresses or usernames on this page.',
+    description: 'Warning about manual cohort assignment'
+  },
+  warningCohortLink: {
+    id: 'instruct.cohorts.warningCohortLink',
+    defaultMessage: 'What does this mean?',
+    description: 'Link text for more information about cohort assignment'
+  },
+  cohortUpdateSuccessMessage: {
+    id: 'instruct.cohorts.cohortUpdateSuccessMessage',
+    defaultMessage: 'Settings have been saved.',
+    description: 'Success message displayed when a cohort is updated'
+  },
+  addLearnersTitle: {
+    id: 'instruct.cohorts.addLearnersTitle',
+    defaultMessage: 'Add Learners to this cohort',
+    description: 'Title for the add learners section'
+  },
+  addLearnersSubtitle: {
+    id: 'instruct.cohorts.addLearnersSubtitle',
+    defaultMessage: 'Note: Learners can be in only one cohort. Adding learners to this group overrides any previous group assignment.',
+    description: 'Subtitle for the add learners section'
+  },
+  addLearnersInstructions: {
+    id: 'instruct.cohorts.addLearnersInstructions',
+    defaultMessage: 'Enter email addresses and/or usernames, separated by new lines or commas, for the learners you want to add.*',
+    description: 'Instructions for adding learners to a cohort'
+  },
+  addLearnersFootnote: {
+    id: 'instruct.cohorts.addLearnersFootnote',
+    defaultMessage: 'You will not receive notification for emails that bounce, so double-check your spelling.',
+    description: 'Footnote for adding learners to a cohort'
+  },
+  learnersExample: {
+    id: 'instruct.cohorts.learnersExample',
+    defaultMessage: 'e.g. johndoe@example.com, JaneDoe, Joeydoe@example.com',
+    description: 'Placeholder for the learners example'
+  },
+  addLearnersLabel: {
+    id: 'instruct.cohorts.addLearnersLabel',
+    defaultMessage: 'Add Learners',
+    description: 'Label for the add learners button'
+  },
 });
 
 export default messages;
