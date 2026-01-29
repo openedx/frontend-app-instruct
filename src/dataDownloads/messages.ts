@@ -302,6 +302,21 @@ const messages = defineMessages({
     defaultMessage: 'Issued Certificates',
     description: 'Display name for issued certificates report type in table',
   },
+  generateReportSuccess: {
+    id: 'instruct.dataDownloads.generateReport.success',
+    defaultMessage: 'Generating {reportType}. To view the status of the report, see Pending Tasks',
+    description: 'Success message displayed when a report generation is initiated',
+  },
+  generateReportError: {
+    id: 'instruct.dataDownloads.generateReport.error',
+    defaultMessage: 'Failed to generate report. Please try again.',
+    description: 'Error message displayed when report generation fails',
+  },
+  noReportsFound: {
+    id: 'instruct.dataDownloads.noReportsFound',
+    defaultMessage: 'No reports found',
+    description: 'Message displayed when no reports are found in the data downloads table',
+  },
 });
 
 export { messages };

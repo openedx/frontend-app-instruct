@@ -6,10 +6,19 @@ export const queryKeys = {
   generateReportLink: (courseId: string) => ['report-link', courseId],
 };
 
-export const useGeneratedReports = (courseId: string) => (
+export const useGeneratedReports = (courseId: string, options?: { enablePolling?: boolean }) => (
   useQuery({
     queryKey: queryKeys.generatedReports(courseId),
     queryFn: () => getGeneratedReports(courseId),
+    retry: (failureCount, error: any) => {
+      // Don't retry on 404 errors
+      if (error?.response?.status === 404) {
+        return false;
+      }
+      return failureCount < 3;
+    },
+    // Poll every 10 seconds when polling is enabled
+    refetchInterval: options?.enablePolling ? 3000 : false,
   })
 );
 

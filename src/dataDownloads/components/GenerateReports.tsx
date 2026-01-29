@@ -63,7 +63,7 @@ const GenerateReports = ({
 
   return (
     <>
-      <h3 className="mt-2 text-primary-700">{intl.formatMessage(messages.generateReportsTitle)}</h3>
+      <h3 id="generate-reports" className="mt-2 text-primary-700">{intl.formatMessage(messages.generateReportsTitle)}</h3>
       <p className="text-primary-700">{intl.formatMessage(messages.generateReportsDescription)}</p>
       <Card variant="muted">
         <Tabs defaultActiveKey="enrollment" className="mb-3">

@@ -5,15 +5,70 @@ import { DataDownloadTable } from './components/DataDownloadTable';
 import { GenerateReports } from './components/GenerateReports';
 import { useParams } from 'react-router-dom';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
-import { useCallback } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { getApiBaseUrl } from '../data/api';
 import { getReportTypeDisplayName } from './utils';
+import PageNotFound from '../generic/PageNotFound';
+import { ToastProvider, useToast } from './ToastContext';
 
-const DataDownloadsPage = () => {
+const DataDownloadsPageContent = () => {
   const intl = useIntl();
   const { courseId } = useParams();
-  const { data: reportsData, isLoading } = useGeneratedReports(courseId ?? '');
+  const [isPolling, setIsPolling] = useState(false);
+  const { showToast } = useToast();
+  const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const initialReportCountRef = useRef<number | null>(null);
+
+  const { data: reportsData, isLoading, error } = useGeneratedReports(courseId ?? '', { enablePolling: isPolling });
   const { mutate: generateReportLinkMutate, isPending: isGenerating } = useGenerateReportLink(courseId ?? '');
+
+  // Check if we got a 404 error
+  const is404 = (error as any)?.response?.status === 404;
+
+  // Cleanup polling timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Stop polling when new reports appear
+  useEffect(() => {
+    if (!isPolling || !reportsData?.downloads) {
+      return;
+    }
+
+    const currentCount = reportsData.downloads.length;
+
+    // If we have a baseline count and it has increased, stop polling
+    if (initialReportCountRef.current !== null && currentCount > initialReportCountRef.current) {
+      setIsPolling(false);
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+        pollingTimeoutRef.current = null;
+      }
+      initialReportCountRef.current = null;
+    }
+  }, [reportsData?.downloads, isPolling]);
+
+  const startPolling = useCallback(() => {
+    // Clear any existing timeout before starting new one
+    if (pollingTimeoutRef.current) {
+      clearTimeout(pollingTimeoutRef.current);
+    }
+
+    // Store the current report count as baseline
+    initialReportCountRef.current = reportsData?.downloads?.length ?? 0;
+
+    setIsPolling(true);
+    pollingTimeoutRef.current = setTimeout(() => {
+      setIsPolling(false);
+      pollingTimeoutRef.current = null;
+      initialReportCountRef.current = null;
+    }, 60000);
+  }, [reportsData?.downloads?.length]);
 
   // Extract downloads array from API response and transform to match expected format
   const data = reportsData?.downloads?.map(report => ({
@@ -60,15 +115,53 @@ const DataDownloadsPage = () => {
   }, []);
 
   const handleGenerateReport = useCallback((reportType: string) => {
-    generateReportLinkMutate({ reportType });
-  }, [generateReportLinkMutate]);
+    generateReportLinkMutate(
+      { reportType },
+      {
+        onSuccess: () => {
+          const reportTypeName = getReportTypeDisplayName(reportType, intl);
+          showToast(
+            intl.formatMessage(messages.generateReportSuccess, { reportType: reportTypeName }),
+            'success'
+          );
+          // Start polling for 60 seconds to check for the new report
+          startPolling();
+        },
+        onError: (error) => {
+          console.error('Error generating report:', error);
+          showToast(intl.formatMessage(messages.generateReportError), 'error');
+        }
+      }
+    );
+  }, [generateReportLinkMutate, intl, showToast, startPolling]);
 
   const handleGenerateProblemResponsesReport = useCallback((problemLocation?: string) => {
-    generateReportLinkMutate({
-      reportType: 'problem_responses',
-      problemLocation,
-    });
-  }, [generateReportLinkMutate]);
+    generateReportLinkMutate(
+      {
+        reportType: 'problem_responses',
+        problemLocation,
+      },
+      {
+        onSuccess: () => {
+          const reportTypeName = getReportTypeDisplayName('problem_responses', intl);
+          showToast(
+            intl.formatMessage(messages.generateReportSuccess, { reportType: reportTypeName }),
+            'success'
+          );
+          // Start polling for 60 seconds to check for the new report
+          startPolling();
+        },
+        onError: (error) => {
+          console.error('Error generating report:', error);
+          showToast(intl.formatMessage(messages.generateReportError), 'error');
+        }
+      }
+    );
+  }, [generateReportLinkMutate, intl, showToast, startPolling]);
+
+  if (is404) {
+    return <PageNotFound />;
+  }
 
   return (
     <Container className="mt-4.5 mb-4" fluid>
@@ -85,5 +178,11 @@ const DataDownloadsPage = () => {
     </Container>
   );
 };
+
+const DataDownloadsPage = () => (
+  <ToastProvider>
+    <DataDownloadsPageContent />
+  </ToastProvider>
+);
 
 export { DataDownloadsPage };
