@@ -1,22 +1,23 @@
-import { Button, Tabs, Tab, Form, Card } from '@openedx/paragon';
+import { Button, Tabs, Tab, Form, Card, Icon } from '@openedx/paragon';
+import { InfoOutline } from '@openedx/paragon/icons';
 import { useIntl } from '@openedx/frontend-base';
 import { useState, useCallback } from 'react';
 import { messages } from '../messages';
 
 interface GenerateReportsProps {
-  onGenerateReport: (reportType: string) => void;
-  onGenerateProblemResponsesReport: (problemLocation?: string) => void;
-  isGenerating: boolean;
+  onGenerateReport: (reportType: string) => void,
+  onGenerateProblemResponsesReport: (problemLocation?: string) => void,
+  isGenerating: boolean,
 }
 
 interface ReportSectionProps {
-  titleMessage: { id: string, defaultMessage: string, description?: string };
-  descriptionMessage: { id: string, defaultMessage: string, description?: string };
-  buttonMessage: { id: string, defaultMessage: string, description?: string };
-  onGenerate: () => void;
-  isFirst?: boolean;
-  isLast?: boolean;
-  isGenerating: boolean;
+  titleMessage: { id: string, defaultMessage: string, description?: string },
+  descriptionMessage: { id: string, defaultMessage: string, description?: string },
+  buttonMessage: { id: string, defaultMessage: string, description?: string },
+  onGenerate: () => void,
+  isFirst?: boolean,
+  isLast?: boolean,
+  isGenerating: boolean,
 }
 
 const ReportSection = ({
@@ -34,7 +35,7 @@ const ReportSection = ({
     <div className={`d-lg-flex justify-content-between align-items-center ${isFirst ? 'pt-2.5' : 'pt-4.5'} pb-3.5 ${!isLast ? 'border-bottom' : ''}`}>
       <div className="mr-lg-3">
         <h4 className="text-primary-700">{intl.formatMessage(titleMessage)}</h4>
-        <p className="text-primary-700 m-0">{intl.formatMessage(descriptionMessage)}</p>
+        <p className="text-primary-700 m-lg-0">{intl.formatMessage(descriptionMessage)}</p>
       </div>
       <Button
         variant="primary"
@@ -153,28 +154,32 @@ const GenerateReports = ({
                 isGenerating={isGenerating}
               />
 
-              <div>
-                <h5 className="text-primary-700">{intl.formatMessage(messages.problemResponsesReportTitle)}</h5>
+              <div className="pt-4.5 pb-3.5">
+                <h4 className="text-primary-700">{intl.formatMessage(messages.problemResponsesReportTitle)}</h4>
                 <p className="text-primary-700">{intl.formatMessage(messages.problemResponsesReportDescription)}</p>
                 <p className="small">{intl.formatMessage(messages.problemResponsesReportNote)}</p>
-                <Form.Group className="mb-3">
-                  <Form.Label>
-                    {intl.formatMessage(messages.specifyProblemLocation)}
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder={intl.formatMessage(messages.problemLocationPlaceholder)}
-                    value={problemLocation}
-                    onChange={(e) => setProblemLocation(e.target.value)}
-                  />
-                </Form.Group>
-                <Button
-                  variant="primary"
-                  onClick={handleGenerateProblemResponsesReport}
-                  disabled={isGenerating}
-                >
-                  {intl.formatMessage(messages.generateProblemResponsesReport)}
-                </Button>
+                <div className="d-flex align-items-end gap-3">
+                  <Form.Group className="flex-grow-1">
+                    <Form.Label className="d-flex align-items-center gap-2">
+                      {intl.formatMessage(messages.specifyProblemLocation)}
+                      <Icon src={InfoOutline} size="sm" />
+                    </Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder={intl.formatMessage(messages.problemLocationPlaceholder)}
+                      value={problemLocation}
+                      onChange={(e) => setProblemLocation(e.target.value)}
+                    />
+                  </Form.Group>
+                  <Button
+                    variant="primary"
+                    onClick={handleGenerateProblemResponsesReport}
+                    disabled={isGenerating}
+                    className="text-nowrap"
+                  >
+                    {intl.formatMessage(messages.generateProblemResponsesReport)}
+                  </Button>
+                </div>
               </div>
             </div>
           </Tab>
