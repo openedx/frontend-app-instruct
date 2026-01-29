@@ -51,7 +51,7 @@ const DataDownloadTable = ({ data, isLoading, onDownloadClick }: DataDownloadTab
     <DataTable
       columns={tableColumns}
       data={isLoading ? skeletonData : data}
-      isLoading={false}
+      isLoading={isLoading}
       additionalColumns={[
         {
           id: 'reportName',
