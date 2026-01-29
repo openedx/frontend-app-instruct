@@ -1,6 +1,6 @@
 import { Container } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
-import messages from './messages';
+import { messages } from '../messages';
 
 const PageNotFound = () => {
   const intl = useIntl();
