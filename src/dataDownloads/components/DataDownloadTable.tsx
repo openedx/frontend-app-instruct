@@ -1,5 +1,5 @@
 import { useIntl } from '@openedx/frontend-base';
-import { DataTable } from '@openedx/paragon';
+import { DataTable, Skeleton } from '@openedx/paragon';
 import { useCallback, useMemo } from 'react';
 import { messages } from '../messages';
 import { DownloadLinkCell } from './DownloadLinkCell';
@@ -12,28 +12,51 @@ interface DataDownloadTableProps {
   onDownloadClick: (downloadLink: string, reportName: string) => void,
 }
 
+// Skeleton data for loading state
+const skeletonData = [
+  { dateGenerated: 'skeleton-1', reportType: 'skeleton-1', reportName: 'skeleton-1', downloadLink: '' },
+  { dateGenerated: 'skeleton-2', reportType: 'skeleton-2', reportName: 'skeleton-2', downloadLink: '' },
+  { dateGenerated: 'skeleton-3', reportType: 'skeleton-3', reportName: 'skeleton-3', downloadLink: '' },
+  { dateGenerated: 'skeleton-4', reportType: 'skeleton-4', reportName: 'skeleton-4', downloadLink: '' },
+  { dateGenerated: 'skeleton-5', reportType: 'skeleton-5', reportName: 'skeleton-5', downloadLink: '' },
+];
+
 const DataDownloadTable = ({ data, isLoading, onDownloadClick }: DataDownloadTableProps) => {
   const intl = useIntl();
 
   const tableColumns = useMemo(() => [
-    { accessor: 'dateGenerated', Header: intl.formatMessage(messages.dateGeneratedColumnName) },
-    { accessor: 'reportType', Header: intl.formatMessage(messages.reportTypeColumnName) },
-  ], [intl]);
+    {
+      accessor: 'dateGenerated',
+      Header: intl.formatMessage(messages.dateGeneratedColumnName),
+      Cell: ({ row }: { row: any }) => isLoading ? <Skeleton width={120} /> : row.original.dateGenerated,
+    },
+    {
+      accessor: 'reportType',
+      Header: intl.formatMessage(messages.reportTypeColumnName),
+      Cell: ({ row }: { row: any }) => isLoading ? <Skeleton width={row.index === 0 ? 180 : row.index === 1 ? 150 : 200} /> : row.original.reportType,
+    },
+  ], [intl, isLoading]);
 
-  const DownloadCustomCell = useCallback(({ row }) => {
+  const DownloadCustomCell = useCallback(({ row }: { row: any }) => {
+    if (isLoading) return <Skeleton width={80} />;
     return <DownloadLinkCell row={row} onDownloadClick={onDownloadClick} />;
-  }, [onDownloadClick]);
+  }, [onDownloadClick, isLoading]);
+
+  const SkeletonReportNameCell = useCallback(({ row }: { row: any }) => {
+    if (isLoading) return <Skeleton width={row.index === 0 ? 300 : row.index === 1 ? 250 : 280} />;
+    return <ReportNameCell row={row} />;
+  }, [isLoading]);
 
   return (
     <DataTable
       columns={tableColumns}
-      data={data}
-      isLoading={isLoading}
+      data={isLoading ? skeletonData : data}
+      isLoading={false}
       additionalColumns={[
         {
           id: 'reportName',
           Header: intl.formatMessage(messages.reportNameColumnName),
-          Cell: ReportNameCell,
+          Cell: SkeletonReportNameCell,
         },
         {
           id: 'downloadLink',

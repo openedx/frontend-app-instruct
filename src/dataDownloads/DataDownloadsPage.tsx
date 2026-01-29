@@ -9,22 +9,6 @@ import { useCallback } from 'react';
 import { getApiBaseUrl } from '../data/api';
 import { getReportTypeDisplayName } from './utils';
 
-// TODO: remove once API is ready
-const mockedData = [
-  {
-    dateGenerated: '2025-10-01T12:00:00Z',
-    reportType: 'Type A',
-    reportName: 'Axim_ID101_2_student_state_from_block-v1_Axim+ID101+2+type@chapter+block@f9e8e1ec0d284c48a03cdc9d285563aa_2025-09-08-1934 (1)',
-    downloadLink: 'https://example.com/report-a',
-  },
-  {
-    dateGenerated: '2025-10-01T12:00:00Z',
-    reportType: 'Type B',
-    reportName: 'Axim_ID101_2_student_state_from_block-v1_Axim+ID101+2+type@chapter+block@f9e8e1ec0d284c48a03cdc9d285563aa_2025-09-08-1934 (1)',
-    downloadLink: 'https://example.com/report-b',
-  },
-];
-
 const DataDownloadsPage = () => {
   const intl = useIntl();
   const { courseId } = useParams();
@@ -37,7 +21,7 @@ const DataDownloadsPage = () => {
     reportType: getReportTypeDisplayName(report.reportType, intl),
     reportName: report.reportName,
     downloadLink: report.reportUrl, // Map reportUrl to downloadLink
-  })) ?? mockedData;
+  })) ?? [];
 
   const handleDownload = useCallback(async (downloadLink: string, reportName: string) => {
     console.log('Download link:', downloadLink);
