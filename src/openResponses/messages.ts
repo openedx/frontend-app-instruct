@@ -50,7 +50,32 @@ const messages = defineMessages({
     id: 'instruct.openResponses.label.finalGradeReceived',
     defaultMessage: 'Final Grade Received',
     description: 'Label for the final grade received count'
-  }
+  },
+  details: {
+    id: 'instruct.openResponses.title.details',
+    defaultMessage: 'Details',
+    description: 'Title for the details section in open responses'
+  },
+  unitName: {
+    id: 'instruct.openResponses.table.header.unitName',
+    defaultMessage: 'Unit Name',
+    description: 'Label for the unit name header'
+  },
+  assessment: {
+    id: 'instruct.openResponses.table.header.assessment',
+    defaultMessage: 'Assessment',
+    description: 'Label for the assessment header'
+  },
+  staffGrader: {
+    id: 'instruct.openResponses.table.header.staffGrader',
+    defaultMessage: 'Staff Grader',
+    description: 'Label for the staff grader header'
+  },
+  viewAndGradeResponses: {
+    id: 'instruct.openResponses.button.viewAndGradeResponses',
+    defaultMessage: 'View and Grade Responses',
+    description: 'Label for the link to view and grade responses'
+  },
 });
 
 export default messages;
