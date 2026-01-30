@@ -10,7 +10,7 @@ const PageNotFound = () => {
       <main
         className="d-flex justify-content-center align-items-center flex-column"
         style={{
-          height: '50vh',
+          minHeight: '50vh',
         }}
       >
         <h1 className="h3">

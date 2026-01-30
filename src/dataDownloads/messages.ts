@@ -312,9 +312,14 @@ const messages = defineMessages({
     defaultMessage: 'Failed to generate report. Please try again.',
     description: 'Error message displayed when report generation fails',
   },
-  noReportsFound: {
-    id: 'instruct.dataDownloads.noReportsFound',
+  noReportsFoundHeader: {
+    id: 'instruct.dataDownloads.noReportsFoundHeader',
     defaultMessage: 'No reports found',
+    description: 'Message displayed when no reports are found in the data downloads table',
+  },
+  noReportsFoundBody: {
+    id: 'instruct.dataDownloads.noReportsFoundBody',
+    defaultMessage: 'Try generating a report using the options below and your reports will appear here.',
     description: 'Message displayed when no reports are found in the data downloads table',
   },
 });

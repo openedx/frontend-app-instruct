@@ -8,7 +8,7 @@ import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
 import { useCallback, useState, useRef, useEffect } from 'react';
 import { getApiBaseUrl } from '../data/api';
 import { getReportTypeDisplayName } from './utils';
-import PageNotFound from './components/PageNotFound';
+import PageNotFound from '../components/PageNotFound';
 import { ToastProvider, useToast } from './ToastContext';
 
 const DataDownloadsPageContent = () => {
