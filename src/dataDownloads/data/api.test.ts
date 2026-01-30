@@ -26,7 +26,7 @@ describe('dataDownloads api', () => {
     const mockReportsData = { reports: ['report1', 'report2'] };
     mockGet.mockResolvedValue({ data: mockReportsData });
     const reportsResult = await getGeneratedReports('course-123');
-    expect(mockGet).toHaveBeenCalledWith('http://localhost:8000/api/instructor/v1/courses/course-123');
+    expect(mockGet).toHaveBeenCalledWith('http://localhost:8000/api/instructor/v2/courses/course-123/reports');
     expect(mockCamelCaseObject).toHaveBeenCalledWith(mockReportsData);
     expect(reportsResult).toEqual(mockReportsData);
   });
@@ -35,7 +35,7 @@ describe('dataDownloads api', () => {
     const mockGenerateData = { success: true };
     mockPost.mockResolvedValue({ data: mockGenerateData });
     const generateResult = await generateReportLink('course-456', 'type-a');
-    expect(mockPost).toHaveBeenCalledWith('http://localhost:8000/api/instructor/v1/courses/course-456/reports/type-a/generate/');
+    expect(mockPost).toHaveBeenCalledWith('http://localhost:8000/api/instructor/v2/courses/course-456/reports/type-a/generate', {});
     expect(mockCamelCaseObject).toHaveBeenCalledWith(mockGenerateData);
     expect(generateResult).toEqual(mockGenerateData);
   });

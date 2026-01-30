@@ -40,7 +40,7 @@ describe('DownloadLinkCell', () => {
     expect(button).toBeInTheDocument();
 
     await user.click(button);
-    expect(mockOnDownloadClick).toHaveBeenCalledWith(downloadLink);
+    expect(mockOnDownloadClick).toHaveBeenCalledWith(downloadLink, 'Test Report');
   });
 
   it('should handle click with empty download link when downloadLink is undefined', async () => {
@@ -52,7 +52,7 @@ describe('DownloadLinkCell', () => {
     const button = screen.getByRole('button', { name: 'Download Report' });
     await user.click(button);
 
-    expect(mockOnDownloadClick).toHaveBeenCalledWith('');
+    expect(mockOnDownloadClick).toHaveBeenCalledWith('', 'Test Report');
   });
 
   it('should handle click with empty download link when original is undefined', async () => {
@@ -64,6 +64,6 @@ describe('DownloadLinkCell', () => {
     const button = screen.getByRole('button', { name: 'Download Report' });
     await user.click(button);
 
-    expect(mockOnDownloadClick).toHaveBeenCalledWith('');
+    expect(mockOnDownloadClick).toHaveBeenCalledWith('', '');
   });
 });

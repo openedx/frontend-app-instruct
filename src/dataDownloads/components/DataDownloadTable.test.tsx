@@ -49,7 +49,7 @@ describe('DataDownloadTable', () => {
     expect(downloadButtons).toHaveLength(2);
 
     await user.click(downloadButtons[0]);
-    expect(mockOnDownloadClick).toHaveBeenCalledWith('https://example.com/report-a.pdf');
+    expect(mockOnDownloadClick).toHaveBeenCalledWith('https://example.com/report-a.pdf', 'Test Report A');
   });
 
   it('should render loading state', () => {

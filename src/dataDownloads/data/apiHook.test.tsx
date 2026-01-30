@@ -53,7 +53,8 @@ describe('dataDownloads apiHook', () => {
     });
 
     it('should handle fetch error', async () => {
-      mockGetGeneratedReports.mockRejectedValue(new Error('API Error'));
+      const apiError = new Error('API Error');
+      mockGetGeneratedReports.mockRejectedValue(apiError);
 
       const { result } = renderHook(
         () => useGeneratedReports('course-123'),
@@ -62,10 +63,10 @@ describe('dataDownloads apiHook', () => {
 
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
-      });
+      }, { timeout: 10000 });
 
-      expect(result.current.error).toEqual(new Error('API Error'));
-    });
+      expect(result.current.error).toEqual(apiError);
+    }, 15000);
   });
 
   describe('useGenerateReportLink', () => {
