@@ -5,7 +5,6 @@ import { messages } from '../messages';
 import { DownloadLinkCell } from './DownloadLinkCell';
 import { DownloadReportData } from '../types';
 import { ReportNameCell } from './ReportNameCell';
-import { EmptyTable } from '../../components/EmptyTable';
 
 interface DataDownloadTableProps {
   data: DownloadReportData[],
@@ -62,13 +61,7 @@ const DataDownloadTable = ({ data, isLoading, onDownloadClick }: DataDownloadTab
       RowStatusComponent={() => null}
     >
       <DataTable.Table />
-      <DataTable.EmptyTable content={(
-        <EmptyTable
-          header={intl.formatMessage(messages.noReportsFoundHeader)}
-          body={intl.formatMessage(messages.noReportsFoundBody)}
-        />
-      )}
-      />
+      <DataTable.EmptyTable content={intl.formatMessage(messages.noReportsFoundMessage)} />
       {pageCount > 1 && (
         <DataTable.TableFooter>
           <DataTable.RowStatus />
