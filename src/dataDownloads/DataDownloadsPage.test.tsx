@@ -1,4 +1,4 @@
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { MemoryRouter } from 'react-router-dom';
@@ -85,7 +85,6 @@ describe('DataDownloadsPage', () => {
   });
 
   it('should handle download report click', async () => {
-    const user = userEvent.setup();
     mockUseGeneratedReports.mockReturnValue({
       data: { downloads: mockReportsData },
       isLoading: false,
@@ -155,7 +154,7 @@ describe('DataDownloadsPage', () => {
     const user = userEvent.setup();
     let capturedCallbacks: any;
 
-    mockMutate.mockImplementation((data, callbacks) => {
+    mockMutate.mockImplementation((_, callbacks) => {
       capturedCallbacks = callbacks;
     });
 
@@ -183,7 +182,7 @@ describe('DataDownloadsPage', () => {
     let capturedCallbacks: any;
     const consoleError = jest.spyOn(console, 'error').mockImplementation();
 
-    mockMutate.mockImplementation((data, callbacks) => {
+    mockMutate.mockImplementation((_, callbacks) => {
       capturedCallbacks = callbacks;
     });
 
@@ -242,7 +241,7 @@ describe('DataDownloadsPage', () => {
     const user = userEvent.setup();
     let capturedCallbacks: any;
 
-    mockMutate.mockImplementation((data, callbacks) => {
+    mockMutate.mockImplementation((_, callbacks) => {
       capturedCallbacks = callbacks;
     });
 
@@ -274,7 +273,7 @@ describe('DataDownloadsPage', () => {
     let capturedCallbacks: any;
     const consoleError = jest.spyOn(console, 'error').mockImplementation();
 
-    mockMutate.mockImplementation((data, callbacks) => {
+    mockMutate.mockImplementation((_, callbacks) => {
       capturedCallbacks = callbacks;
     });
 
@@ -399,32 +398,34 @@ describe('DataDownloadsPage', () => {
     jest.useRealTimers();
   });
 
-  it('should stop polling when report count increases', () => {
+  it('should stop polling when report count increases', async () => {
     jest.useFakeTimers();
+    const user = userEvent.setup({ delay: null });
+    let capturedCallbacks: any;
 
-    const { rerender } = render(
-      <IntlProvider locale="en">
-        <MemoryRouter initialEntries={['/course/test/data-downloads']}>
-          <DataDownloadsPage />
-        </MemoryRouter>
-      </IntlProvider>
-    );
+    mockMutate.mockImplementation((_, callbacks) => {
+      capturedCallbacks = callbacks;
+    });
 
-    // Initial state
     mockUseGeneratedReports.mockReturnValue({
       data: { downloads: [] },
       isLoading: false,
     } as any);
 
-    rerender(
-      <IntlProvider locale="en">
-        <MemoryRouter initialEntries={['/course/test/data-downloads']}>
-          <DataDownloadsPage />
-        </MemoryRouter>
-      </IntlProvider>
-    );
+    const { rerender } = renderWithProviders(<DataDownloadsPage />);
 
-    // Simulate report added
+    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    await user.click(generateButton);
+
+    // Trigger the onSuccess callback to start polling
+    capturedCallbacks.onSuccess();
+
+    // Wait for toast to appear
+    await waitFor(() => {
+      expect(screen.getByText(/Generating.*Enrolled Students Report/)).toBeInTheDocument();
+    });
+
+    // Simulate report added by updating the mock and rerendering
     mockUseGeneratedReports.mockReturnValue({
       data: { downloads: mockReportsData },
       isLoading: false,
@@ -432,13 +433,70 @@ describe('DataDownloadsPage', () => {
 
     rerender(
       <IntlProvider locale="en">
-        <MemoryRouter initialEntries={['/course/test/data-downloads']}>
+        <MemoryRouter initialEntries={['/course/course-123/data-downloads']}>
           <DataDownloadsPage />
         </MemoryRouter>
       </IntlProvider>
     );
 
-    jest.runAllTimers();
     jest.useRealTimers();
   });
+
+  it('should stop polling after 60 seconds timeout', async () => {
+    jest.useFakeTimers();
+    const user = userEvent.setup({ delay: null });
+    let capturedCallbacks: any;
+
+    mockMutate.mockImplementation((_, callbacks) => {
+      capturedCallbacks = callbacks;
+    });
+
+    mockUseGeneratedReports.mockReturnValue({
+      data: { downloads: [] },
+      isLoading: false,
+    } as any);
+
+    renderWithProviders(<DataDownloadsPage />);
+
+    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    await user.click(generateButton);
+
+    // Trigger the onSuccess callback to start polling
+    capturedCallbacks.onSuccess();
+
+    // Fast-forward 60 seconds
+    jest.advanceTimersByTime(60000);
+
+    jest.useRealTimers();
+  });
+
+  it('should clear existing timeout when starting new polling', async () => {
+    jest.useFakeTimers();
+    const user = userEvent.setup({ delay: null });
+    let capturedCallbacks: any;
+
+    mockMutate.mockImplementation((_, callbacks) => {
+      capturedCallbacks = callbacks;
+    });
+
+    mockUseGeneratedReports.mockReturnValue({
+      data: { downloads: [] },
+      isLoading: false,
+    } as any);
+
+    renderWithProviders(<DataDownloadsPage />);
+
+    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+
+    // Start first polling
+    await user.click(generateButton);
+    capturedCallbacks.onSuccess();
+
+    // Start second polling before first completes
+    await user.click(generateButton);
+    capturedCallbacks.onSuccess();
+
+    jest.useRealTimers();
+  });
+
 });
