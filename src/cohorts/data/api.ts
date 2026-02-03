@@ -28,7 +28,7 @@ export const createCohort = async (courseId: string, cohortDetails: BasicCohortD
 };
 
 export const getContentGroups = async (courseId: string) => {
-  const url = `${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/group_configurations`;
+  const url = `${getApiBaseUrl()}/api/cohorts/v2/courses/${courseId}/group_configurations`;
   const { data } = await getAuthenticatedHttpClient().get(url);
   return camelCaseObject(data);
 };

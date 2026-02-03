@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import CohortCard from './CohortCard';
 import messages from '../messages';
 import dataDownloadsMessages from '@src/dataDownloads/messages';
+import { Hyperlink } from '@openedx/paragon';
 
 const SelectedCohortInfo = () => {
   const intl = useIntl();
@@ -12,7 +13,7 @@ const SelectedCohortInfo = () => {
     <>
       <CohortCard />
       <p className="mt-3">
-        {intl.formatMessage(messages.cohortDisclaimer)} <a href={`/instructor/${courseId}/data_downloads`}>{intl.formatMessage(dataDownloadsMessages.pageTitle)}</a> {intl.formatMessage(messages.page)}
+        {intl.formatMessage(messages.cohortDisclaimer)} <Hyperlink destination={`/instructor/${courseId}/data_downloads`} showLaunchIcon={false}>{intl.formatMessage(dataDownloadsMessages.pageTitle)}</Hyperlink> {intl.formatMessage(messages.page)}
       </p>
     </>
   );

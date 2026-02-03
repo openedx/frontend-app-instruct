@@ -9,6 +9,7 @@ import DisabledCohortsView from '@src/cohorts/components/DisabledCohortsView';
 import EnabledCohortsView from '@src/cohorts/components/EnabledCohortsView';
 import { useCohortStatus, useToggleCohorts } from '@src/cohorts/data/apiHook';
 import messages from '@src/cohorts/messages';
+import './CohortsPage.scss';
 
 const CohortsPageContent = () => {
   const intl = useIntl();
