@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { FormattedMessage, getExternalLinkUrl, useIntl } from '@openedx/frontend-base';
-import { Card, Tab, Tabs, Toast } from '@openedx/paragon';
+import { Card, Hyperlink, Tab, Tabs, Toast } from '@openedx/paragon';
 import messages from '../messages';
 import CohortsForm from './CohortsForm';
 import ManageLearners from './ManageLearners';
@@ -56,7 +56,7 @@ const CohortCard = () => {
             <p className="ml-3 text-primary-700 mb-0">{intl.formatMessage(messages.studentsOnCohort, { users: selectedCohort?.userCount ?? 0 })}</p>
           </div>
           <p className="x-small mb-0 mt-2">
-            <FormattedMessage {...warningMessage[selectedCohort.assignmentType]} /> <a href={getExternalLinkUrl(assignmentLink[selectedCohort.assignmentType])}>{intl.formatMessage(messages.warningCohortLink)}</a>
+            <FormattedMessage {...warningMessage[selectedCohort.assignmentType]} /> <Hyperlink showLaunchIcon={false} target="_blank" destination={getExternalLinkUrl(assignmentLink[selectedCohort.assignmentType])}>{intl.formatMessage(messages.warningCohortLink)}</Hyperlink>
           </p>
         </div>
         <Tabs id="cohort-management-tabs" className="mx-0" onSelect={() => {}}>

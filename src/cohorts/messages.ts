@@ -186,6 +186,11 @@ const messages = defineMessages({
     defaultMessage: 'Add Learners',
     description: 'Label for the add learners button'
   },
+  manualAssignmentDisabledTooltip: {
+    id: 'instruct.cohorts.manualAssignmentDisabledTooltip',
+    defaultMessage: 'There must be one cohort to which students can automatically be assigned.',
+    description: 'Tooltip message when manual assignment is disabled'
+  }
 });
 
 export default messages;
