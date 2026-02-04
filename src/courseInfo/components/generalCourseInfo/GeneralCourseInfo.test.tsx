@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { GeneralCourseInfo } from './GeneralCourseInfo';
-import { useCourseInfo } from '../../../data/apiHook';
+import { useCourseInfo } from '@src/data/apiHook';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createQueryMock, renderWithIntl } from '../../../testUtils';
+import { createQueryMock, renderWithIntl } from '@src/testUtils';
 
-jest.mock('../../../data/apiHook');
+jest.mock('@src/data/apiHook');
 jest.mock('react-router', () => ({
   useParams: () => ({ courseId: 'test-course-id' }),
 }));

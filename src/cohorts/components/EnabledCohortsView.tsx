@@ -3,12 +3,13 @@ import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { FormControl, Button, Card, Alert } from '@openedx/paragon';
 import { CheckCircle } from '@openedx/paragon/icons';
-import messages from '../messages';
-import { useCohorts, useCreateCohort } from '../data/apiHook';
-import CohortsForm from './CohortsForm';
-import { useCohortContext } from './CohortContext';
-import { CohortData } from '../types';
-import { assignmentTypes } from '../constants';
+import { useCohortContext } from '@src/cohorts/components/CohortContext';
+import CohortsForm from '@src/cohorts/components/CohortsForm';
+import SelectedCohortInfo from '@src/cohorts/components/SelectedCohortInfo';
+import { useCohorts, useCreateCohort } from '@src/cohorts/data/apiHook';
+import { assignmentTypes } from '@src/cohorts/constants';
+import messages from '@src/cohorts/messages';
+import { CohortData, BasicCohortData } from '@src/cohorts/types';
 
 const EnabledCohortsView = () => {
   const intl = useIntl();
@@ -40,6 +41,7 @@ const EnabledCohortsView = () => {
         assignmentType: selectedCohortFromApi.assignmentType ?? assignmentTypes.automatic,
         groupId: selectedCohortFromApi.groupId,
         userPartitionId: selectedCohortFromApi.userPartitionId,
+        userCount: selectedCohortFromApi.userCount ?? 0,
       };
       setSelectedCohort(cohortFormData);
     } else {
@@ -47,7 +49,7 @@ const EnabledCohortsView = () => {
     }
   };
 
-  const handleNewCohort = (newCohort: Partial<CohortData>) => {
+  const handleNewCohort = (newCohort: BasicCohortData) => {
     createCohort(newCohort, {
       onSuccess: (newCohort: CohortData) => {
         setShowSuccessAlert(true);
@@ -65,7 +67,14 @@ const EnabledCohortsView = () => {
   return (
     <>
       <div className="d-flex mt-4.5">
-        <FormControl placeholder="Select a cohort" name="cohort" as="select" onChange={handleSelectCohort} value={selectedCohort?.id?.toString() ?? 'null'} disabled={displayAddForm}>
+        <FormControl
+          as="select"
+          disabled={displayAddForm || cohortsList.length === 0}
+          name="cohort"
+          placeholder={intl.formatMessage(messages.selectCohortPlaceholder)}
+          value={selectedCohort?.id?.toString() ?? 'null'}
+          onChange={handleSelectCohort}
+        >
           {
             cohortsList.map((cohort) => (
               <option key={cohort.id} value={cohort.id}>
@@ -82,6 +91,7 @@ const EnabledCohortsView = () => {
           <CohortsForm disableManualAssignment={data.length === 0} onCancel={hideAddForm} onSubmit={handleNewCohort} />
         </Card>
       )}
+      {selectedCohort && <SelectedCohortInfo />}
     </>
   );
 };

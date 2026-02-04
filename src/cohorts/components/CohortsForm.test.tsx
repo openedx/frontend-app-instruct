@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CohortsForm from './CohortsForm';
 import messages from '../messages';
-import { renderWithIntl } from '../../testUtils';
+import { renderWithIntl } from '@src/testUtils';
 import { useContentGroupsData } from '../data/apiHook';
 import { CohortProvider } from './CohortContext';
 import * as CohortContextModule from './CohortContext';
@@ -67,10 +67,12 @@ describe('CohortsForm', () => {
     expect(onCancel).toHaveBeenCalled();
   });
 
-  it('calls onSubmit when Save button is clicked', async () => {
+  it('calls onSubmit when Save button is enabled and clicked', async () => {
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
     renderComponent();
     const user = userEvent.setup();
+    const input = screen.getByPlaceholderText(messages.cohortName.defaultMessage);
+    await user.type(input, 'Test Cohort');
     await user.click(screen.getByText(messages.saveLabel.defaultMessage));
     expect(onSubmit).toHaveBeenCalled();
   });
@@ -142,11 +144,12 @@ describe('CohortsForm', () => {
 
     jest.spyOn(CohortContextModule, 'useCohortContext').mockReturnValue({
       selectedCohort: {
-        id: '1',
+        id: 1,
         name: 'Initial Cohort',
         assignmentType: 'manual',
         groupId: 2,
         userPartitionId: 3,
+        userCount: 0
       },
       setSelectedCohort: jest.fn(),
       clearSelectedCohort: jest.fn(),

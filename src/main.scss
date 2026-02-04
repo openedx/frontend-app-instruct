@@ -1,4 +1,6 @@
-@import "@edx/brand/paragon/fonts";
-@import "@edx/brand/paragon/variables";
-@import "@openedx/paragon/scss/core/core";
-@import "@edx/brand/paragon/overrides";
+@use "@openedx/frontend-base/shell/app.scss";
+
+.toast-container {
+    left: unset;
+    right: 1.25rem;
+}
