@@ -4,6 +4,7 @@ import { IntlProvider, getAuthenticatedHttpClient } from '@openedx/frontend-base
 import { MemoryRouter } from 'react-router-dom';
 import { DataDownloadsPage } from './DataDownloadsPage';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
+import { AlertProvider } from '../providers/AlertProvider';
 
 jest.mock('./data/apiHook');
 jest.mock('../components/PageNotFound', () => ({
@@ -31,9 +32,11 @@ const mockReportsData = [
 const renderWithProviders = (component: React.ReactElement, courseId = 'course-123') => {
   return render(
     <IntlProvider locale="en">
-      <MemoryRouter initialEntries={[`/course/${courseId}/data-downloads`]}>
-        {component}
-      </MemoryRouter>
+      <AlertProvider>
+        <MemoryRouter initialEntries={[`/course/${courseId}/data-downloads`]}>
+          {component}
+        </MemoryRouter>
+      </AlertProvider>
     </IntlProvider>
   );
 };
@@ -201,7 +204,8 @@ describe('DataDownloadsPage', () => {
 
     // Should show error toast
     await waitFor(() => {
-      expect(screen.getByText('Failed to generate report. Please try again.')).toBeInTheDocument();
+      const errorElements = screen.getAllByText('Failed to generate report. Please try again.');
+      expect(errorElements.length).toBeGreaterThan(0);
     });
 
     consoleError.mockRestore();
@@ -296,7 +300,8 @@ describe('DataDownloadsPage', () => {
 
     // Should show error toast
     await waitFor(() => {
-      expect(screen.getByText('Failed to generate report. Please try again.')).toBeInTheDocument();
+      const errorElements = screen.getAllByText('Failed to generate report. Please try again.');
+      expect(errorElements.length).toBeGreaterThan(0);
     });
 
     consoleError.mockRestore();
@@ -433,9 +438,11 @@ describe('DataDownloadsPage', () => {
 
     rerender(
       <IntlProvider locale="en">
-        <MemoryRouter initialEntries={['/course/course-123/data-downloads']}>
-          <DataDownloadsPage />
-        </MemoryRouter>
+        <AlertProvider>
+          <MemoryRouter initialEntries={['/course/course-123/data-downloads']}>
+            <DataDownloadsPage />
+          </MemoryRouter>
+        </AlertProvider>
       </IntlProvider>
     );
 
