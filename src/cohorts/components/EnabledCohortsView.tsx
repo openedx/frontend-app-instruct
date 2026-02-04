@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { FormControl, Button, Card, Alert } from '@openedx/paragon';
-import { CheckCircle } from '@openedx/paragon/icons';
+import { useAlert } from '@src/components/AlertContext';
+import { CheckCircle, Error, WarningFilled } from '@openedx/paragon/icons';
 import { useCohortContext } from '@src/cohorts/components/CohortContext';
 import CohortsForm from '@src/cohorts/components/CohortsForm';
 import SelectedCohortInfo from '@src/cohorts/components/SelectedCohortInfo';
@@ -11,25 +12,31 @@ import { assignmentTypes } from '@src/cohorts/constants';
 import messages from '@src/cohorts/messages';
 import { CohortData, BasicCohortData } from '@src/cohorts/types';
 
+const alertIcons = {
+  success: CheckCircle,
+  error: Error,
+  warning: WarningFilled,
+};
+
 const EnabledCohortsView = () => {
   const intl = useIntl();
-  const { courseId = '' } = useParams();
+  const { courseId = '' } = useParams<{ courseId: string }>();
   const { data = [] } = useCohorts(courseId);
   const { mutate: createCohort } = useCreateCohort(courseId);
   const { clearSelectedCohort, selectedCohort, setSelectedCohort } = useCohortContext();
   const [displayAddForm, setDisplayAddForm] = useState(false);
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const { alerts, addAlert, removeAlert, clearAlerts } = useAlert();
 
   const cohortsList = [{ id: 'null', name: intl.formatMessage(messages.selectCohortPlaceholder) }, ...data];
 
   const handleAddCohort = () => {
     clearSelectedCohort();
-    setShowSuccessAlert(false);
+    clearAlerts();
     setDisplayAddForm(true);
   };
 
   const handleSelectCohort = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setShowSuccessAlert(false);
+    clearAlerts();
     const selectedValue = event.target.value;
     const selectedCohortFromApi = cohortsList.find(cohort => cohort.id?.toString() === selectedValue);
     setDisplayAddForm(false);
@@ -52,11 +59,16 @@ const EnabledCohortsView = () => {
   const handleNewCohort = (newCohort: BasicCohortData) => {
     createCohort(newCohort, {
       onSuccess: (newCohort: CohortData) => {
-        setShowSuccessAlert(true);
+        addAlert({
+          type: 'success',
+          message: intl.formatMessage(messages.addCohortSuccessMessage, { cohortName: newCohort.name })
+        });
         setSelectedCohort(newCohort);
         hideAddForm();
       },
-      onError: (error) => console.error(error)
+      onError: (error) => {
+        console.error(error);
+      }
     });
   };
 
@@ -85,7 +97,19 @@ const EnabledCohortsView = () => {
         </FormControl>
         <Button onClick={handleAddCohort} disabled={displayAddForm}>+ {intl.formatMessage(messages.addCohort)}</Button>
       </div>
-      {showSuccessAlert && <Alert className="mt-3" icon={CheckCircle} variant="success">{intl.formatMessage(messages.addCohortSuccessMessage, { cohortName: selectedCohort?.name })}</Alert>}
+      {alerts.map(alert => (
+        <Alert
+          key={alert.id}
+          className="mt-3"
+          icon={alertIcons[alert.type]}
+          variant={alert.type === 'error' ? 'danger' : alert.type}
+          dismissible
+          onClose={() => removeAlert(alert.id)}
+        >
+          <p className="mb-0">{alert.message}</p>
+          {alert.extraContent}
+        </Alert>
+      ))}
       {displayAddForm && (
         <Card className="mt-3 bg-light-200">
           <CohortsForm disableManualAssignment={data.length === 0} onCancel={hideAddForm} onSubmit={handleNewCohort} />

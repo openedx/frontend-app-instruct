@@ -190,7 +190,32 @@ const messages = defineMessages({
     id: 'instruct.cohorts.manualAssignmentDisabledTooltip',
     defaultMessage: 'There must be one cohort to which students can automatically be assigned.',
     description: 'Tooltip message when manual assignment is disabled'
-  }
+  },
+  addLearnersSuccessMessage: {
+    id: 'instruct.cohorts.addLearnersSuccessMessage',
+    defaultMessage: '{countLearners} learners have been added to this cohort.',
+    description: 'Success message displayed when learners are added to a cohort'
+  },
+  addLearnersErrorMessage: {
+    id: 'instruct.cohorts.addLearnersErrorMessage',
+    defaultMessage: '{countLearners} learners could not be added to this cohort.',
+    description: 'Error message displayed when there is an issue adding learners to a cohort'
+  },
+  addLearnersWarningMessage: {
+    id: 'instruct.cohorts.addLearnersWarningMessage',
+    defaultMessage: '{countLearners} were pre-assigned for this cohort. This learner will automatically be added to the cohort when they enroll in the course.',
+    description: 'Warning message displayed when some learners could not be added to a cohort'
+  },
+  existingLearner: {
+    id: 'instruct.cohorts.existingLearner',
+    defaultMessage: '{learner} learner was already in the cohort.',
+    description: 'Message indicating that a learner is already assigned to a cohort'
+  },
+  unknownLearner: {
+    id: 'instruct.cohorts.unknownLearner',
+    defaultMessage: 'Unknown username or email: {learner}',
+    description: 'Message indicating that a learner is not recognized in the course'
+  },
 });
 
 export default messages;
