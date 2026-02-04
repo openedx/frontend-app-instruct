@@ -1,73 +1,71 @@
 import { createContext, useContext, useState, ReactNode, useCallback, useMemo, FC } from 'react';
-import { Toast, AlertModal, Alert, ActionRow, Button } from '@openedx/paragon';
+import { Toast, AlertModal, ActionRow, Button } from '@openedx/paragon';
 import { InfoOutline, WarningFilled, ErrorOutline, CheckCircle } from '@openedx/paragon/icons';
 
 // Toast Alert Types
 interface ToastAlert {
-  id: string;
-  type: 'toast';
-  message: string;
-  variant: 'success' | 'error' | 'warning' | 'info';
-  visible: boolean;
+  id: string,
+  type: 'toast',
+  message: string,
+  variant: 'success' | 'error' | 'warning' | 'info',
+  visible: boolean,
 }
 
 // Modal Alert Types
 interface ModalAlert {
-  id: string;
-  type: 'modal';
-  title: string;
-  message: string;
-  variant: 'default' | 'warning' | 'danger' | 'success';
-  isOpen: boolean;
-  confirmText?: string;
-  cancelText?: string;
-  onConfirm?: () => void;
-  onCancel?: () => void;
+  id: string,
+  type: 'modal',
+  title: string,
+  message: string,
+  variant: 'default' | 'warning' | 'danger' | 'success',
+  isOpen: boolean,
+  confirmText?: string,
+  cancelText?: string,
+  onConfirm?: () => void,
+  onCancel?: () => void,
 }
 
 export type AlertType = 'success' | 'error' | 'info' | 'warning' | 'danger';
 
 export interface AlertProps {
-  id: string;
-  type: AlertType;
-  message: string;
-  extraContent?: ReactNode;
+  id: string,
+  type: AlertType,
+  message: string,
+  extraContent?: ReactNode,
 }
 
 interface InlineAlert {
-  id: string;
-  type: 'inline';
-  message: string;
-  variant: 'success' | 'danger' | 'warning' | 'info';
-  dismissible?: boolean;
+  id: string,
+  type: 'inline',
+  message: string,
+  variant: 'success' | 'danger' | 'warning' | 'info',
+  dismissible?: boolean,
 }
 
-type AppAlert = ToastAlert | ModalAlert | InlineAlert;
-
 interface AlertContextType {
-  showToast: (message: string, variant?: 'success' | 'error' | 'warning' | 'info') => void;
+  showToast: (message: string, variant?: 'success' | 'error' | 'warning' | 'info') => void,
   showModal: (options: {
-    title: string;
-    message: string;
-    variant?: 'default' | 'warning' | 'danger' | 'success';
-    confirmText?: string;
-    cancelText?: string;
-    onConfirm?: () => void;
-    onCancel?: () => void;
-  }) => void;
-  showInlineAlert: (message: string, variant?: 'success' | 'danger' | 'warning' | 'info', dismissible?: boolean) => string;
-  dismissInlineAlert: (id: string) => void;
-  inlineAlerts: InlineAlert[];
-  alerts: AlertProps[];
-  addAlert: (alert: Omit<AlertProps, 'id'>) => void;
-  removeAlert: (id: string) => void;
-  clearAlerts: () => void;
+    title: string,
+    message: string,
+    variant?: 'default' | 'warning' | 'danger' | 'success',
+    confirmText?: string,
+    cancelText?: string,
+    onConfirm?: () => void,
+    onCancel?: () => void,
+  }) => void,
+  showInlineAlert: (message: string, variant?: 'success' | 'danger' | 'warning' | 'info', dismissible?: boolean) => string,
+  dismissInlineAlert: (id: string) => void,
+  inlineAlerts: InlineAlert[],
+  alerts: AlertProps[],
+  addAlert: (alert: Omit<AlertProps, 'id'>) => void,
+  removeAlert: (id: string) => void,
+  clearAlerts: () => void,
 }
 
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
 interface AlertProviderProps {
-  children: ReactNode;
+  children: ReactNode,
 }
 
 const variantIcons = {
@@ -101,13 +99,13 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
 
   // Modal Methods
   const showModal = useCallback((options: {
-    title: string;
-    message: string;
-    variant?: 'default' | 'warning' | 'danger' | 'success';
-    confirmText?: string;
-    cancelText?: string;
-    onConfirm?: () => void;
-    onCancel?: () => void;
+    title: string,
+    message: string,
+    variant?: 'default' | 'warning' | 'danger' | 'success',
+    confirmText?: string,
+    cancelText?: string,
+    onConfirm?: () => void,
+    onCancel?: () => void,
   }) => {
     const id = `modal-${Date.now()}`;
     const newModal: ModalAlert = {
@@ -213,7 +211,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
           onClose={() => closeModal(modal.id, true)}
           variant={modal.variant}
           icon={variantIcons[modal.variant]}
-          footerNode={
+          footerNode={(
             <ActionRow>
               {modal.cancelText && (
                 <Button variant="tertiary" onClick={() => closeModal(modal.id, true)}>
@@ -229,7 +227,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
                 </Button>
               )}
             </ActionRow>
-          }
+          )}
         >
           <p>{modal.message}</p>
         </AlertModal>
