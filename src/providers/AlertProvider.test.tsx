@@ -32,7 +32,8 @@ const TestComponent = () => {
         cancelText: 'Cancel',
         onConfirm: () => console.log('confirmed'),
         onCancel: () => console.log('cancelled'),
-      })}>
+      })}
+      >
         Show Modal
       </button>
 
