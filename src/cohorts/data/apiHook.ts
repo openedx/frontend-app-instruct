@@ -43,6 +43,7 @@ export const useContentGroupsData = (courseId: string) => (
   useQuery({
     queryKey: cohortsQueryKeys.contentGroups(courseId),
     queryFn: () => getContentGroups(courseId),
+    enabled: !!courseId,
   })
 );
 
