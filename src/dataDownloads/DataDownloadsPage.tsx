@@ -9,13 +9,13 @@ import { useCallback, useState, useRef, useEffect } from 'react';
 import { getApiBaseUrl } from '../data/api';
 import { getReportTypeDisplayName } from './utils';
 import PageNotFound from '../components/PageNotFound';
-import { ToastProvider, useToast } from './ToastContext';
+import { useAlert } from '../providers/AlertProvider';
 
 const DataDownloadsPageContent = () => {
   const intl = useIntl();
   const { courseId } = useParams();
   const [isPolling, setIsPolling] = useState(false);
-  const { showToast } = useToast();
+  const { showToast, showModal } = useAlert();
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const initialReportCountRef = useRef<number | null>(null);
 
@@ -127,13 +127,19 @@ const DataDownloadsPageContent = () => {
           // Start polling for 60 seconds to check for the new report
           startPolling();
         },
-        onError: (error) => {
+        onError: (error: any) => {
           console.error('Error generating report:', error);
-          showToast(intl.formatMessage(messages.generateReportError), 'error');
+          const errorMessage = error?.response?.data?.error || intl.formatMessage(messages.generateReportError);
+          showModal({
+            title: intl.formatMessage(messages.generateReportError),
+            message: errorMessage,
+            variant: 'danger',
+            confirmText: 'OK',
+          });
         }
       }
     );
-  }, [generateReportLinkMutate, intl, showToast, startPolling]);
+  }, [generateReportLinkMutate, intl, showToast, showModal, startPolling]);
 
   const handleGenerateProblemResponsesReport = useCallback((problemLocation?: string) => {
     generateReportLinkMutate(
@@ -151,13 +157,19 @@ const DataDownloadsPageContent = () => {
           // Start polling for 60 seconds to check for the new report
           startPolling();
         },
-        onError: (error) => {
+        onError: (error: any) => {
           console.error('Error generating report:', error);
-          showToast(intl.formatMessage(messages.generateReportError), 'error');
+          const errorMessage = error?.response?.data?.error || intl.formatMessage(messages.generateReportError);
+          showModal({
+            title: intl.formatMessage(messages.generateReportError),
+            message: errorMessage,
+            variant: 'danger',
+            confirmText: 'OK',
+          });
         }
       }
     );
-  }, [generateReportLinkMutate, intl, showToast, startPolling]);
+  }, [generateReportLinkMutate, intl, showToast, showModal, startPolling]);
 
   if (is404) {
     return <PageNotFound />;
@@ -179,10 +191,4 @@ const DataDownloadsPageContent = () => {
   );
 };
 
-const DataDownloadsPage = () => (
-  <ToastProvider>
-    <DataDownloadsPageContent />
-  </ToastProvider>
-);
-
-export { DataDownloadsPage };
+export { DataDownloadsPageContent as DataDownloadsPage };

@@ -1,4 +1,4 @@
-import { Button, Tabs, Tab, Form, Card, Icon } from '@openedx/paragon';
+import { Button, Tabs, Tab, Form, Card, Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { InfoOutline } from '@openedx/paragon/icons';
 import { useIntl } from '@openedx/frontend-base';
 import { useState, useCallback } from 'react';
@@ -154,21 +154,33 @@ const GenerateReports = ({
                 isGenerating={isGenerating}
               />
 
-              <div className="pt-4.5 pb-3.5">
-                <h4 className="text-primary-700">{intl.formatMessage(messages.problemResponsesReportTitle)}</h4>
-                <p className="text-primary-700">{intl.formatMessage(messages.problemResponsesReportDescription)}</p>
-                <p className="small">{intl.formatMessage(messages.problemResponsesReportNote)}</p>
-                <div className="d-flex align-items-end gap-3">
-                  <Form.Group className="flex-grow-1">
-                    <Form.Label className="d-flex align-items-center gap-2">
+              <div className="pt-4.5 pb-3.5 d-lg-flex w-100 gap-4">
+                <div className="mw-xs w-lg-50">
+                  <h4 className="text-primary-700">{intl.formatMessage(messages.problemResponsesReportTitle)}</h4>
+                  <p className="text-primary-700 mb-0">{intl.formatMessage(messages.problemResponsesReportDescription)}</p>
+                  <p className="text-primary-700">{intl.formatMessage(messages.problemResponsesReportNote)}</p>
+                </div>
+                <div className="d-flex align-items-end gap-3 flex-grow-1">
+                  <Form.Group className="m-0 flex-grow-1">
+                    <Form.Label className="d-flex align-content-end align-items-center gap-2">
                       {intl.formatMessage(messages.specifyProblemLocation)}
-                      <Icon src={InfoOutline} size="sm" />
+                      <OverlayTrigger
+                        placement="top"
+                        overlay={(
+                          <Tooltip id="problem-location-tooltip">
+                            Example: block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378
+                          </Tooltip>
+                        )}
+                      >
+                        <Icon src={InfoOutline} size="sm" />
+                      </OverlayTrigger>
                     </Form.Label>
                     <Form.Control
                       type="text"
                       placeholder={intl.formatMessage(messages.problemLocationPlaceholder)}
                       value={problemLocation}
                       onChange={(e) => setProblemLocation(e.target.value)}
+                      className="flex-grow-1"
                     />
                   </Form.Group>
                   <Button
