@@ -6,6 +6,7 @@ import { CohortProvider } from '@src/cohorts/components/CohortContext';
 import EnabledCohortsView from '@src/cohorts/components/EnabledCohortsView';
 import { useCohorts, useContentGroupsData } from '@src/cohorts/data/apiHook';
 import messages from '@src/cohorts/messages';
+import { AlertProvider } from '@src/components/AlertContext';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -25,11 +26,17 @@ const mockCohorts = [
   { id: 2, name: 'Cohort 2' },
 ];
 
+const mockContentGroups = [
+  { id: '2', name: 'Group 1' },
+  { id: '3', name: 'Group 2' },
+];
+
 describe('EnabledCohortsView', () => {
-  const renderWithCohortProvider = () => renderWithIntl(<CohortProvider><EnabledCohortsView /></CohortProvider>);
+  const renderWithCohortProvider = () => renderWithIntl(<CohortProvider><AlertProvider><EnabledCohortsView /></AlertProvider></CohortProvider>);
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { allGroupConfigurations: [{ groups: mockContentGroups }] } });
     (useParams as jest.Mock).mockReturnValue({ courseId: 'course-v1:edX+Test+2024' });
   });
 
@@ -46,7 +53,6 @@ describe('EnabledCohortsView', () => {
 
   it('calls handleSelectCohort on select change', async () => {
     (useCohorts as jest.Mock).mockReturnValue({ data: mockCohorts });
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: [] });
     renderWithCohortProvider();
     const select = screen.getByRole('combobox');
     const user = userEvent.setup();
@@ -56,7 +62,6 @@ describe('EnabledCohortsView', () => {
 
   it('calls handleAddCohort on button click', async () => {
     (useCohorts as jest.Mock).mockReturnValue({ data: [] });
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: [] });
     renderWithCohortProvider();
     const user = userEvent.setup();
     const button = screen.getByRole('button', { name: `+ ${messages.addCohort.defaultMessage}` });
