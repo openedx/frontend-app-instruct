@@ -7,6 +7,7 @@
  * 3. Inline Alerts - Persistent messages displayed inline in the UI
  *
  * Import this component anywhere you want to show example usage.
+ * Note: This component can be removed once the alert system is integrated into real features.
  */
 
 import { Alert, Button, Card } from '@openedx/paragon';
