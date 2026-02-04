@@ -1,7 +1,7 @@
-import CohortsPage from '@src/cohorts/CohortsPage';
-import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
-import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
-import Main from '@src/Main';
+import CohortsPage from './cohorts/CohortsPage';
+import CourseInfoPage from './courseInfo/CourseInfoPage';
+import OpenResponsesPage from './openResponses/OpenResponsesPage';
+import Main from './Main';
 
 const routes = [
   {

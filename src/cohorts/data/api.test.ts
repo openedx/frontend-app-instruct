@@ -1,6 +1,6 @@
 import { getCohortStatus, getCohorts, toggleCohorts } from './api';
 import { camelCaseObject, getAppConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
-import { appId } from '@src/constants';
+import { appId } from '../../constants';
 
 jest.mock('@openedx/frontend-base');
 

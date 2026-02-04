@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CohortsForm from './CohortsForm';
 import messages from '../messages';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithIntl } from '../../testUtils';
 import { useContentGroupsData } from '../data/apiHook';
 import { CohortProvider } from './CohortContext';
 import * as CohortContextModule from './CohortContext';

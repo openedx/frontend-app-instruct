@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, FormControl } from '@openedx/paragon';
-import { useCohortContext } from '@src/cohorts/components/CohortContext';
-import { useAddLearnersToCohort } from '@src/cohorts/data/apiHook';
-import messages from '@src/cohorts/messages';
+import { useCohortContext } from '../../cohorts/components/CohortContext';
+import { useAddLearnersToCohort } from '../../cohorts/data/apiHook';
+import messages from '../../cohorts/messages';
 
 const ManageLearners = () => {
   const { courseId = '' } = useParams();
