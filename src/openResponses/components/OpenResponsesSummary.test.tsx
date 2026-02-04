@@ -1,15 +1,15 @@
 import { screen } from '@testing-library/react';
 import { useParams } from 'react-router-dom';
-import OpenResponsesSummary from '@src/openResponses/components/OpenResponsesSummary';
-import { useOpenResponsesData } from '@src/openResponses/data/apiHook';
-import messages from '@src/openResponses/messages';
-import { renderWithIntl } from '@src/testUtils';
+import OpenResponsesSummary from '../../openResponses/components/OpenResponsesSummary';
+import { useOpenResponsesData } from '../../openResponses/data/apiHook';
+import messages from '../../openResponses/messages';
+import { renderWithIntl } from '../../testUtils';
 
 jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
 }));
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('../../openResponses/data/apiHook', () => ({
   useOpenResponsesData: jest.fn(),
 }));
 

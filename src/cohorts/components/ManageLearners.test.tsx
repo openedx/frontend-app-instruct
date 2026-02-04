@@ -1,20 +1,20 @@
 import { screen, fireEvent } from '@testing-library/react';
 import { useParams } from 'react-router-dom';
-import { useAddLearnersToCohort } from '@src/cohorts/data/apiHook';
-import { useCohortContext } from '@src/cohorts/components/CohortContext';
-import ManageLearners from '@src/cohorts/components/ManageLearners';
-import messages from '@src/cohorts/messages';
-import { renderWithIntl } from '@src/testUtils';
+import { useAddLearnersToCohort } from '../../cohorts/data/apiHook';
+import { useCohortContext } from '../../cohorts/components/CohortContext';
+import ManageLearners from '../../cohorts/components/ManageLearners';
+import messages from '../../cohorts/messages';
+import { renderWithIntl } from '../../testUtils';
 
 jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
 }));
 
-jest.mock('@src/cohorts/data/apiHook', () => ({
+jest.mock('../../cohorts/data/apiHook', () => ({
   useAddLearnersToCohort: jest.fn(),
 }));
 
-jest.mock('@src/cohorts/components/CohortContext', () => ({
+jest.mock('../../cohorts/components/CohortContext', () => ({
   useCohortContext: jest.fn(),
 }));
 

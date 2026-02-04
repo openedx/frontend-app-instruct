@@ -2,7 +2,7 @@ import { useIntl } from '@openedx/frontend-base';
 import { useParams } from 'react-router-dom';
 import CohortCard from './CohortCard';
 import messages from '../messages';
-import dataDownloadsMessages from '@src/dataDownloads/messages';
+import dataDownloadsMessages from '../../dataDownloads/messages';
 
 const SelectedCohortInfo = () => {
   const intl = useIntl();

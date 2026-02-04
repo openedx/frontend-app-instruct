@@ -3,12 +3,12 @@ import { IconButton } from '@openedx/paragon';
 import { Settings } from '@openedx/paragon/icons';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import { CohortProvider, useCohortContext } from '@src/cohorts/components/CohortContext';
-import DisableCohortsModal from '@src/cohorts/components/DisableCohortsModal';
-import DisabledCohortsView from '@src/cohorts/components/DisabledCohortsView';
-import EnabledCohortsView from '@src/cohorts/components/EnabledCohortsView';
-import { useCohortStatus, useToggleCohorts } from '@src/cohorts/data/apiHook';
-import messages from '@src/cohorts/messages';
+import { CohortProvider, useCohortContext } from '../cohorts/components/CohortContext';
+import DisableCohortsModal from '../cohorts/components/DisableCohortsModal';
+import DisabledCohortsView from '../cohorts/components/DisabledCohortsView';
+import EnabledCohortsView from '../cohorts/components/EnabledCohortsView';
+import { useCohortStatus, useToggleCohorts } from '../cohorts/data/apiHook';
+import messages from '../cohorts/messages';
 
 const CohortsPageContent = () => {
   const intl = useIntl();

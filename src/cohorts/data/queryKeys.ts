@@ -1,4 +1,4 @@
-import { appId } from '@src/constants';
+import { appId } from '../../constants';
 
 export const cohortsQueryKeys = {
   all: [appId, 'cohorts'] as const,

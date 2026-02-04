@@ -1,5 +1,5 @@
 import { camelCaseObject, getAppConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
-import { appId } from '@src/constants';
+import { appId } from '../constants';
 
 export const getApiBaseUrl = () => getAppConfig(appId).LMS_BASE_URL;
 
