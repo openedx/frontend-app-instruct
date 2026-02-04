@@ -7,6 +7,7 @@ import { CohortProvider, useCohortContext } from '@src/cohorts/components/Cohort
 import DisableCohortsModal from '@src/cohorts/components/DisableCohortsModal';
 import DisabledCohortsView from '@src/cohorts/components/DisabledCohortsView';
 import EnabledCohortsView from '@src/cohorts/components/EnabledCohortsView';
+import { AlertProvider } from '@src/components/AlertContext';
 import { useCohortStatus, useToggleCohorts } from '@src/cohorts/data/apiHook';
 import messages from '@src/cohorts/messages';
 import './CohortsPage.scss';
@@ -67,7 +68,9 @@ const CohortsPageContent = () => {
 const CohortsPage = () => {
   return (
     <CohortProvider>
-      <CohortsPageContent />
+      <AlertProvider>
+        <CohortsPageContent />
+      </AlertProvider>
     </CohortProvider>
   );
 };

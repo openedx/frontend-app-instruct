@@ -2,12 +2,13 @@ import { useParams } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { FormattedMessage, getExternalLinkUrl, useIntl } from '@openedx/frontend-base';
 import { Card, Hyperlink, Tab, Tabs, Toast } from '@openedx/paragon';
-import messages from '../messages';
-import CohortsForm from './CohortsForm';
-import ManageLearners from './ManageLearners';
-import { useCohortContext } from './CohortContext';
-import { usePatchCohort } from '../data/apiHook';
-import { CohortData } from '../types';
+import { useAlert } from '@src/components/AlertContext';
+import messages from '@src/cohorts/messages';
+import { CohortData } from '@src/cohorts/types';
+import { usePatchCohort } from '@src/cohorts/data/apiHook';
+import CohortsForm from '@src/cohorts/components/CohortsForm';
+import ManageLearners from '@src/cohorts/components/ManageLearners';
+import { useCohortContext } from '@src/cohorts/components/CohortContext';
 
 const assignmentLink = {
   random: 'https://docs.openedx.org/en/latest/educators/references/advanced_features/managing_cohort_assignment.html#about-auto-cohorts',
@@ -26,19 +27,24 @@ const CohortCard = () => {
   const { mutate: editCohort } = usePatchCohort(courseId);
   const formRef = useRef<{ resetForm: () => void }>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+  const { clearAlerts } = useAlert();
 
   if (!selectedCohort) {
     return null;
   }
 
   const handleEditCohort = (updatedCohort: CohortData) => {
+    clearAlerts();
     editCohort({ cohortId: selectedCohort.id, cohortInfo: updatedCohort },
       {
         onSuccess: () => {
           setShowSuccessMessage(true);
           setSelectedCohort({ ...selectedCohort, ...updatedCohort });
         },
-        onError: (error) => console.error(error)
+        onError: (error) => {
+          // TODO: add modal error
+          console.error(error);
+        }
       }
     );
   };
