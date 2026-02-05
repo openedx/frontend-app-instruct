@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useCallback, useMemo, FC } from 'react';
 import { Toast, AlertModal, ActionRow, Button, Alert } from '@openedx/paragon';
-import { InfoOutline, WarningFilled, ErrorOutline, CheckCircle } from '@openedx/paragon/icons';
+import { WarningFilled, Error, CheckCircle } from '@openedx/paragon/icons';
 
 // Toast Alert Types
 interface ToastAlert {
@@ -68,13 +68,11 @@ interface AlertProviderProps {
   children: ReactNode,
 }
 
-const variantIcons = {
+const variantIcons: Record<string, any> = {
   success: CheckCircle,
-  error: ErrorOutline,
+  error: Error,
   warning: WarningFilled,
-  info: InfoOutline,
-  danger: ErrorOutline,
-  default: InfoOutline,
+  danger: Error,
 };
 
 export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
@@ -209,6 +207,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
       {/* Modal Alerts - Only show the first modal in the queue */}
       {modals.length > 0 && (() => {
         const modal = modals[0];
+        const icon = variantIcons[modal.variant];
         return (
           <AlertModal
             key={modal.id}
@@ -216,7 +215,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
             isOpen={modal.isOpen}
             onClose={() => closeModal(modal.id, true)}
             variant={modal.variant}
-            icon={variantIcons[modal.variant]}
+            {...(icon && { icon })}
             hasHeader={!!modal.title}
             footerNode={(
               <ActionRow>

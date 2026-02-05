@@ -9,6 +9,7 @@ import DisabledCohortsView from '@src/cohorts/components/DisabledCohortsView';
 import EnabledCohortsView from '@src/cohorts/components/EnabledCohortsView';
 import { useCohortStatus, useToggleCohorts } from '@src/cohorts/data/apiHook';
 import messages from '@src/cohorts/messages';
+import { AlertExamples } from '@src/components/AlertExamples';
 
 const CohortsPageContent = () => {
   const intl = useIntl();
@@ -38,6 +39,7 @@ const CohortsPageContent = () => {
   return (
     <div className="mt-4.5 mb-4 mx-4">
       <div className="d-inline-flex align-items-center">
+        <AlertExamples />
         <h3 className="mb-0 text-gray-700">{intl.formatMessage(messages.cohortsTitle)}</h3>
         {isCohorted && (
           <div className="small">
