@@ -505,5 +505,4 @@ describe('DataDownloadsPage', () => {
 
     jest.useRealTimers();
   });
-
 });
