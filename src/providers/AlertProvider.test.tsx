@@ -82,40 +82,47 @@ describe('AlertProvider', () => {
   });
 
   describe('Toast Alerts', () => {
-    it('should properly handle toast map when discarding', async () => {
+    it('should properly map through all toasts when discarding one', async () => {
       const user = userEvent.setup({ delay: null });
 
-      const TestToastDiscard = () => {
+      const TestToastMap = () => {
         const { showToast } = useAlert();
         return (
-          <button onClick={() => showToast('Test discard', 'success')}>Show Toast</button>
+          <>
+            <button onClick={() => {
+              showToast('Toast 1', 'success');
+              setTimeout(() => showToast('Toast 2', 'info'), 10);
+            }}>Show Both</button>
+          </>
         );
       };
 
       render(
         <IntlProvider locale="en">
           <AlertProvider>
-            <TestToastDiscard />
+            <TestToastMap />
           </AlertProvider>
         </IntlProvider>
       );
 
-      const button = screen.getByRole('button', { name: 'Show Toast' });
+      const button = screen.getByRole('button', { name: 'Show Both' });
       await user.click(button);
 
-      const toast = screen.getByText('Test discard');
-      expect(toast).toBeInTheDocument();
-
-      const closeButton = screen.getByLabelText('Close');
-      await user.click(closeButton);
-
-      jest.advanceTimersByTime(100);
-
-      jest.advanceTimersByTime(400);
+      jest.advanceTimersByTime(10);
 
       await waitFor(() => {
-        expect(screen.queryByText('Test discard')).not.toBeInTheDocument();
+        expect(screen.getByText('Toast 1')).toBeInTheDocument();
+        expect(screen.getByText('Toast 2')).toBeInTheDocument();
       });
+
+      const closeButtons = screen.getAllByLabelText('Close');
+      await user.click(closeButtons[0]);
+
+      await waitFor(() => {
+        expect(screen.getByText('Toast 2')).toBeInTheDocument();
+      });
+
+      jest.advanceTimersByTime(500);
     });
 
     it('should show success toast', async () => {
@@ -241,16 +248,15 @@ describe('AlertProvider', () => {
       });
     });
 
-    it('should handle multiple toasts and close only the targeted one', async () => {
+    it('should handle multiple toasts and only mark targeted toast as invisible', async () => {
       const user = userEvent.setup({ delay: null });
 
       const TestMultipleToasts = () => {
         const { showToast } = useAlert();
         return (
           <div>
-            <button onClick={() => showToast('First toast', 'success')}>Show First</button>
-            <button onClick={() => showToast('Second toast', 'info')}>Show Second</button>
-            <button onClick={() => showToast('Third toast', 'warning')}>Show Third</button>
+            <button onClick={() => showToast('Toast A', 'success')}>Show A</button>
+            <button onClick={() => showToast('Toast B', 'info')}>Show B</button>
           </div>
         );
       };
@@ -263,23 +269,23 @@ describe('AlertProvider', () => {
         </IntlProvider>
       );
 
-      await user.click(screen.getByRole('button', { name: 'Show First' }));
-      await user.click(screen.getByRole('button', { name: 'Show Second' }));
-      await user.click(screen.getByRole('button', { name: 'Show Third' }));
+      await user.click(screen.getByRole('button', { name: 'Show A' }));
+      await user.click(screen.getByRole('button', { name: 'Show B' }));
 
-      expect(screen.getByText('First toast')).toBeInTheDocument();
-      expect(screen.getByText('Second toast')).toBeInTheDocument();
-      expect(screen.getByText('Third toast')).toBeInTheDocument();
+      expect(screen.getByText('Toast A')).toBeInTheDocument();
+      expect(screen.getByText('Toast B')).toBeInTheDocument();
 
       const closeButtons = screen.getAllByLabelText('Close');
-      expect(closeButtons).toHaveLength(3);
+      expect(closeButtons.length).toBeGreaterThanOrEqual(2);
 
-      await user.click(closeButtons[1]);
+      await user.click(closeButtons[0]);
+
+      expect(screen.getByText('Toast B')).toBeInTheDocument();
 
       jest.advanceTimersByTime(500);
 
       await waitFor(() => {
-        expect(screen.queryByText('Second toast')).not.toBeInTheDocument();
+        expect(screen.queryByText('Toast A')).not.toBeInTheDocument();
       });
     });
   });

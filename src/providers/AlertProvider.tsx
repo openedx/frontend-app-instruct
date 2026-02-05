@@ -122,7 +122,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
     setModals(prev => [...prev, newModal]);
   }, []);
 
-  const closeModal = useCallback((id: string, callOnCancel = false) => {
+  const closeModal = useCallback((id: string, callOnCancel?: boolean) => {
     setModals(prev => {
       const modal = prev.find(m => m.id === id);
       if (modal && callOnCancel && modal.onCancel) {
