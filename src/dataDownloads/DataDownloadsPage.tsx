@@ -10,6 +10,7 @@ import { getApiBaseUrl } from '../data/api';
 import { getReportTypeDisplayName } from './utils';
 import PageNotFound from '../components/PageNotFound';
 import { useAlert } from '../providers/AlertProvider';
+import { AlertExamples } from '../components/AlertExamples';
 
 const DataDownloadsPageContent = () => {
   const intl = useIntl();
@@ -187,6 +188,8 @@ const DataDownloadsPageContent = () => {
         onGenerateProblemResponsesReport={handleGenerateProblemResponsesReport}
         isGenerating={isGenerating}
       />
+
+      <AlertExamples />
     </Container>
   );
 };
