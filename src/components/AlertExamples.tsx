@@ -86,7 +86,7 @@ export const AlertExamples = () => {
 
   const handleDefaultModal = () => {
     showModal({
-      title: 'Defaultrmation',
+      title: 'Default Modal',
       message: 'This is a default modal with standard styling.',
       variant: 'default',
       confirmText: 'OK',
