@@ -1,14 +1,17 @@
 /**
  * AlertExamples Component
  *
- * This component demonstrates how to use all alert types from the AlertProvider:
+ * This temporary component demonstrates how to use all alert types from the AlertProvider:
  * 1. Toast Alerts - Temporary notifications that appear and auto-dismiss
  * 2. Modal Alerts - Blocking dialogs that require user action (with/without titles)
  * 3. Inline Alerts - Persistent messages you control the rendering for
  * 4. Standard Alerts - Alerts rendered automatically via AlertOutlet
  *
  * Import this component anywhere you want to show example usage.
- */
+ *
+ * NOTE: This component is for demonstration purposes only and should be removed
+ * once the AlertProvider is fully integrated into the application.
+*/
 
 import { Button, Card } from '@openedx/paragon';
 import { useAlert, AlertOutlet } from '../providers/AlertProvider';
@@ -26,19 +29,19 @@ export const AlertExamples = () => {
 
   // Toast Alert Examples
   const handleSuccessToast = () => {
-    showToast('Report generated successfully!', 'success');
+    showToast('Report generated successfully!', 10000);
   };
 
   const handleDangerToast = () => {
-    showToast('Failed to generate report. Please try again.', 'error');
+    showToast('Failed to generate report. Please try again.');
   };
 
   const handleWarningToast = () => {
-    showToast('This action will take a few minutes to complete.', 'warning');
+    showToast('This action will take a few minutes to complete.');
   };
 
   const handleDefaultToast = () => {
-    showToast('Your report is being processed in the background.', 'info');
+    showToast('Your report is being processed in the background.');
   };
 
   // Modal Alert Examples
@@ -51,7 +54,7 @@ export const AlertExamples = () => {
       cancelText: 'Cancel',
       onConfirm: () => {
         console.log('Report deleted');
-        showToast('Report deleted successfully', 'success');
+        showToast('Report deleted successfully');
       },
       onCancel: () => {
         console.log('Delete cancelled');
@@ -67,7 +70,7 @@ export const AlertExamples = () => {
       confirmText: 'Continue',
       cancelText: 'Cancel',
       onConfirm: () => {
-        showToast('Download started', 'info');
+        showToast('Download started');
       },
     });
   };
@@ -124,7 +127,7 @@ export const AlertExamples = () => {
       confirmText: 'Finish',
       onConfirm: () => {
         console.log('Third modal confirmed');
-        showToast('All modals completed!', 'success');
+        showToast('All modals completed!');
       },
     });
   };
@@ -138,7 +141,7 @@ export const AlertExamples = () => {
       cancelText: 'Cancel',
       onConfirm: () => {
         console.log('Report deleted');
-        showToast('Report deleted successfully', 'success');
+        showToast('Report deleted successfully');
       },
       onCancel: () => {
         console.log('Delete cancelled');
@@ -153,7 +156,7 @@ export const AlertExamples = () => {
       confirmText: 'Continue',
       cancelText: 'Cancel',
       onConfirm: () => {
-        showToast('Download started', 'info');
+        showToast('Download started');
       },
     });
   };
@@ -197,7 +200,7 @@ export const AlertExamples = () => {
         <Card.Section>
           <div className="d-flex gap-2 flex-wrap">
             <Button variant="success" onClick={handleSuccessToast}>
-              Success Toast
+              Success Toast (10s)
             </Button>
             <Button variant="warning" onClick={handleWarningToast}>
               Warning Toast

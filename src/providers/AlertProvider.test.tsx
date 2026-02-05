@@ -16,10 +16,10 @@ const TestComponent = () => {
   return (
     <div>
       {/* Toast Buttons */}
-      <button onClick={() => showToast('Success toast', 'success')}>
+      <button onClick={() => showToast('Success toast')}>
         Show Success Toast
       </button>
-      <button onClick={() => showToast('Error toast', 'error')}>
+      <button onClick={() => showToast('Error toast')}>
         Show Error Toast
       </button>
 
@@ -90,9 +90,11 @@ describe('AlertProvider', () => {
         return (
           <>
             <button onClick={() => {
-              showToast('Toast 1', 'success');
-              setTimeout(() => showToast('Toast 2', 'info'), 10);
-            }}>Show Both</button>
+              showToast('Toast 1');
+              setTimeout(() => showToast('Toast 2'), 10);
+            }}
+            >Show Both
+            </button>
           </>
         );
       };
@@ -184,7 +186,7 @@ describe('AlertProvider', () => {
 
       const TestWarningToast = () => {
         const { showToast } = useAlert();
-        return <button onClick={() => showToast('Warning toast', 'warning')}>Show Warning Toast</button>;
+        return <button onClick={() => showToast('Warning toast')}>Show Warning Toast</button>;
       };
 
       render(
@@ -206,7 +208,7 @@ describe('AlertProvider', () => {
 
       const TestInfoToast = () => {
         const { showToast } = useAlert();
-        return <button onClick={() => showToast('Info toast', 'info')}>Show Info Toast</button>;
+        return <button onClick={() => showToast('Info toast')}>Show Info Toast</button>;
       };
 
       render(
@@ -255,8 +257,8 @@ describe('AlertProvider', () => {
         const { showToast } = useAlert();
         return (
           <div>
-            <button onClick={() => showToast('Toast A', 'success')}>Show A</button>
-            <button onClick={() => showToast('Toast B', 'info')}>Show B</button>
+            <button onClick={() => showToast('Toast A')}>Show A</button>
+            <button onClick={() => showToast('Toast B')}>Show B</button>
           </div>
         );
       };
