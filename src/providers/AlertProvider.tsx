@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useCallback, useMemo, FC } from 'react';
 import { Toast, AlertModal, ActionRow, Button, Alert } from '@openedx/paragon';
-import { WarningFilled, Error, CheckCircle } from '@openedx/paragon/icons';
+import { WarningFilled, Error as ErrorIcon, Info as InfoIcon, CheckCircle } from '@openedx/paragon/icons';
 
 // Toast Alert Types
 interface ToastAlert {
@@ -70,9 +70,10 @@ interface AlertProviderProps {
 
 const variantIcons: Record<string, any> = {
   success: CheckCircle,
-  error: Error,
+  error: ErrorIcon,
   warning: WarningFilled,
-  danger: Error,
+  info: InfoIcon,
+  danger: ErrorIcon,
 };
 
 export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
