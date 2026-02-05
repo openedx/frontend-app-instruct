@@ -7,8 +7,8 @@ interface ToastAlert {
   id: string,
   type: 'toast',
   message: string,
-  variant: 'success' | 'error' | 'warning' | 'info',
   visible: boolean,
+  delay?: number,
 }
 
 // Modal Alert Types
@@ -43,7 +43,7 @@ interface InlineAlert {
 }
 
 interface AlertContextType {
-  showToast: (message: string, variant?: 'success' | 'error' | 'warning' | 'info') => void,
+  showToast: (message: string, delay?: number) => void,
   showModal: (options: {
     title?: string,
     message: string,
@@ -83,9 +83,9 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
   const [alerts, setAlerts] = useState<AlertProps[]>([]); // PR #113 compatible state
 
   // Toast Methods
-  const showToast = useCallback((message: string, variant: 'success' | 'error' | 'warning' | 'info' = 'success') => {
+  const showToast = useCallback((message: string, delay?: number) => {
     const id = `toast-${Date.now()}`;
-    const newToast: ToastAlert = { id, type: 'toast', message, variant, visible: true };
+    const newToast: ToastAlert = { id, type: 'toast', message, visible: true, delay };
     setToasts(prev => [...prev, newToast]);
   }, []);
 
@@ -122,7 +122,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
     setModals(prev => [...prev, newModal]);
   }, []);
 
-  const closeModal = useCallback((id: string, callOnCancel = false) => {
+  const closeModal = useCallback((id: string, callOnCancel?: boolean) => {
     setModals(prev => {
       const modal = prev.find(m => m.id === id);
       if (modal && callOnCancel && modal.onCancel) {
@@ -198,6 +198,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
             key={toast.id}
             show={toast.visible}
             onClose={() => discardToast(toast.id)}
+            delay={toast.delay}
             className="text-break"
           >
             {toast.message}

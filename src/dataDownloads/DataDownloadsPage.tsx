@@ -15,6 +15,7 @@ const DataDownloadsPageContent = () => {
   const intl = useIntl();
   const { courseId } = useParams();
   const [isPolling, setIsPolling] = useState(false);
+  const [problemResponsesError, setProblemResponsesError] = useState<string | undefined>(undefined);
   const { showToast, showModal } = useAlert();
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const initialReportCountRef = useRef<number | null>(null);
@@ -122,7 +123,6 @@ const DataDownloadsPageContent = () => {
           const reportTypeName = getReportTypeDisplayName(reportType, intl);
           showToast(
             intl.formatMessage(messages.generateReportSuccess, { reportType: reportTypeName }),
-            'success'
           );
           // Start polling for 60 seconds to check for the new report
           startPolling();
@@ -142,6 +142,9 @@ const DataDownloadsPageContent = () => {
   }, [generateReportLinkMutate, intl, showToast, showModal, startPolling]);
 
   const handleGenerateProblemResponsesReport = useCallback((problemLocation?: string) => {
+    // Clear any previous error
+    setProblemResponsesError(undefined);
+
     generateReportLinkMutate(
       {
         reportType: 'problem_responses',
@@ -152,7 +155,6 @@ const DataDownloadsPageContent = () => {
           const reportTypeName = getReportTypeDisplayName('problem_responses', intl);
           showToast(
             intl.formatMessage(messages.generateReportSuccess, { reportType: reportTypeName }),
-            'success'
           );
           // Start polling for 60 seconds to check for the new report
           startPolling();
@@ -160,16 +162,11 @@ const DataDownloadsPageContent = () => {
         onError: (error: any) => {
           console.error('Error generating report:', error);
           const errorMessage = error?.response?.data?.error || intl.formatMessage(messages.generateReportError);
-          showModal({
-            title: intl.formatMessage(messages.generateReportError),
-            message: errorMessage,
-            variant: 'danger',
-            confirmText: 'OK',
-          });
+          setProblemResponsesError(errorMessage);
         }
       }
     );
-  }, [generateReportLinkMutate, intl, showToast, showModal, startPolling]);
+  }, [generateReportLinkMutate, intl, showToast, startPolling]);
 
   if (is404) {
     return <PageNotFound />;
@@ -186,6 +183,7 @@ const DataDownloadsPageContent = () => {
         onGenerateReport={handleGenerateReport}
         onGenerateProblemResponsesReport={handleGenerateProblemResponsesReport}
         isGenerating={isGenerating}
+        problemResponsesError={problemResponsesError}
       />
     </Container>
   );

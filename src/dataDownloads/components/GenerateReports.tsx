@@ -8,6 +8,7 @@ interface GenerateReportsProps {
   onGenerateReport: (reportType: string) => void,
   onGenerateProblemResponsesReport: (problemLocation?: string) => void,
   isGenerating: boolean,
+  problemResponsesError?: string,
 }
 
 interface ReportSectionProps {
@@ -53,6 +54,7 @@ const GenerateReports = ({
   onGenerateReport,
   onGenerateProblemResponsesReport,
   isGenerating,
+  problemResponsesError,
 }: GenerateReportsProps) => {
   const intl = useIntl();
   const [problemLocation, setProblemLocation] = useState('');
@@ -161,7 +163,7 @@ const GenerateReports = ({
                   <p className="text-primary-700">{intl.formatMessage(messages.problemResponsesReportNote)}</p>
                 </div>
                 <div className="d-flex align-items-end gap-3 flex-grow-1">
-                  <Form.Group className="m-0 flex-grow-1">
+                  <Form.Group className="m-0 flex-grow-1" isInvalid={!!problemResponsesError}>
                     <Form.Label className="d-flex align-content-end align-items-center gap-2">
                       {intl.formatMessage(messages.specifyProblemLocation)}
                       <OverlayTrigger
@@ -182,6 +184,11 @@ const GenerateReports = ({
                       onChange={(e) => setProblemLocation(e.target.value)}
                       className="flex-grow-1"
                     />
+                    {problemResponsesError && (
+                      <Form.Control.Feedback type="invalid">
+                        {problemResponsesError}
+                      </Form.Control.Feedback>
+                    )}
                   </Form.Group>
                   <Button
                     variant="primary"
