@@ -1,0 +1,70 @@
+import { render, screen } from '@testing-library/react';
+import { IntlProvider } from '@openedx/frontend-base';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import DateExtensionsPage from './DateExtensionsPage';
+import { useDateExtensions } from './data/apiHook';
+
+jest.mock('./data/apiHook', () => ({
+  useDateExtensions: jest.fn(),
+}));
+
+const mockDateExtensions = [
+  {
+    id: 1,
+    username: 'edByun',
+    fullName: 'Ed Byun',
+    email: 'ed.byun@example.com',
+    unitTitle: 'Three body diagrams',
+    extendedDueDate: '2026-07-15'
+  },
+];
+
+describe('DateExtensionsPage', () => {
+  beforeEach(() => {
+    (useDateExtensions as jest.Mock).mockReturnValue({
+      data: { count: mockDateExtensions.length, results: mockDateExtensions },
+      isLoading: false,
+    });
+  });
+
+  const RenderWithRouter = () => (
+    <IntlProvider messages={{}}>
+      <MemoryRouter initialEntries={['/course-v1:edX+DemoX+Demo_Course']}>
+        <Routes>
+          <Route path="/:courseId" element={<DateExtensionsPage />} />
+        </Routes>
+      </MemoryRouter>
+    </IntlProvider>
+  );
+
+  it('renders page title', () => {
+    render(<RenderWithRouter />);
+    expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
+  });
+
+  it('renders add extension button', () => {
+    render(<RenderWithRouter />);
+    expect(screen.getByRole('button', { name: /add individual extension/i })).toBeInTheDocument();
+  });
+
+  it('renders date extensions list', () => {
+    render(<RenderWithRouter />);
+    expect(screen.getByText('Ed Byun')).toBeInTheDocument();
+    expect(screen.getByText('Three body diagrams')).toBeInTheDocument();
+  });
+
+  it('shows loading state on table when fetching data', () => {
+    (useDateExtensions as jest.Mock).mockReturnValue({
+      data: { count: 0, results: [] },
+      isLoading: true,
+    });
+    render(<RenderWithRouter />);
+    expect(screen.getByRole('status')).toBeInTheDocument();
+  });
+
+  it('renders reset link for each row', () => {
+    render(<RenderWithRouter />);
+    const resetLinks = screen.getAllByRole('button', { name: 'Reset Extensions' });
+    expect(resetLinks).toHaveLength(mockDateExtensions.length);
+  });
+});
