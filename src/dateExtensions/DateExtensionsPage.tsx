@@ -8,8 +8,6 @@ import ResetExtensionsModal from './components/ResetExtensionsModal';
 import { LearnerDateExtension } from './types';
 import { useResetDateExtensionMutation } from './data/apiHook';
 
-// const successMessage = 'Successfully reset due date for student Phu Nguyen for A subsection with two units (block-v1:SchemaAximWGU+WGU101+1+type@sequential+block@3984030755104708a86592cf23fb1ae4) to 2025-08-21 00:00';
-
 const DateExtensionsPage = () => {
   const intl = useIntl();
   const { courseId } = useParams<{ courseId: string }>();
@@ -33,9 +31,8 @@ const DateExtensionsPage = () => {
     setErrorMessage(error.message);
   };
 
-  const handleSuccessOnReset = (response: any) => {
-    const { message } = response;
-    setSuccessMessage(message);
+  const handleSuccessOnReset = (response: string) => {
+    setSuccessMessage(response);
     handleCloseModal();
   };
 
@@ -43,7 +40,10 @@ const DateExtensionsPage = () => {
     if (selectedUser && courseId) {
       resetMutation({
         courseId,
-        userId: selectedUser.id
+        params: {
+          student: selectedUser.username,
+          url: selectedUser.unitLocation,
+        }
       }, {
         onError: handleErrorOnReset,
         onSuccess: handleSuccessOnReset
@@ -67,7 +67,7 @@ const DateExtensionsPage = () => {
         onClose={handleCloseModal}
         onConfirmReset={handleConfirmReset}
       />
-      <Toast show={!!successMessage} onClose={() => {}} className="text-break">
+      <Toast show={!!successMessage} onClose={() => setSuccessMessage('')} className="text-break">
         {successMessage}
       </Toast>
       <AlertModal title={errorMessage} isOpen={!!errorMessage} footerNode={<Button onClick={() => setErrorMessage('')}>{intl.formatMessage(messages.close)}</Button>}>

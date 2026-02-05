@@ -1,6 +1,6 @@
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '../../data/api';
-import { DateExtensionsResponse } from '../types';
+import { DateExtensionsResponse, ResetDueDateParams } from '../types';
 
 export interface PaginationQueryKeys {
   page: number,
@@ -17,7 +17,7 @@ export const getDateExtensions = async (
   return camelCaseObject(data);
 };
 
-export const resetDateExtension = async (courseId, userId) => {
-  const { data } = await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}/api/instructor/v1/courses/${courseId}/date-extensions/${userId}/reset`);
+export const resetDateExtension = async (courseId: string, params: ResetDueDateParams) => {
+  const { data } = await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}/courses/${courseId}/instructor/api/reset_due_date`, params);
   return camelCaseObject(data);
 };
