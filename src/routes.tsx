@@ -2,7 +2,6 @@ import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
 import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
-import Main from '@src/Main';
 
 const routes = [
   {
@@ -11,7 +10,10 @@ const routes = [
     handle: {
       role: 'org.openedx.frontend.role.instructor'
     },
-    Component: Main,
+    async lazy() {
+      const module = await import('./Main');
+      return { Component: module.default };
+    },
     children: [
       {
         path: 'course_info',
