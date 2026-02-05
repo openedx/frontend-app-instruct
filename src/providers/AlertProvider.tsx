@@ -21,7 +21,7 @@ interface ModalAlert {
   isOpen: boolean,
   confirmText?: string,
   cancelText?: string,
-  onConfirm?: () => void,
+  onConfirm?: (id: string) => void,
   onCancel?: () => void,
 }
 
@@ -50,7 +50,7 @@ interface AlertContextType {
     variant?: 'default' | 'warning' | 'danger' | 'success',
     confirmText?: string,
     cancelText?: string,
-    onConfirm?: () => void,
+    onConfirm?: (id: string) => void,
     onCancel?: () => void,
   }) => void,
   showInlineAlert: (message: string, variant?: 'success' | 'danger' | 'warning' | 'info', dismissible?: boolean) => string,
@@ -103,7 +103,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
     variant?: 'default' | 'warning' | 'danger' | 'success',
     confirmText?: string,
     cancelText?: string,
-    onConfirm?: () => void,
+    onConfirm?: (id: string) => void,
     onCancel?: () => void,
   }) => {
     const id = `modal-${Date.now()}-${Math.random()}`;
@@ -136,7 +136,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
     setModals(prev => {
       const modal = prev.find(m => m.id === id);
       if (modal?.onConfirm) {
-        modal.onConfirm();
+        modal.onConfirm(id);
       }
       return prev.filter(m => m.id !== id);
     });

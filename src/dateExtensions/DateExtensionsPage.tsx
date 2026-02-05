@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { AlertModal, Button, Toast } from '@openedx/paragon';
+import { Button } from '@openedx/paragon';
 import messages from './messages';
 import DateExtensionsList from './components/DateExtensionsList';
 import ResetExtensionsModal from './components/ResetExtensionsModal';
 import { LearnerDateExtension } from './types';
 import { useResetDateExtensionMutation } from './data/apiHook';
+import { useAlert } from '@src/providers/AlertProvider';
 
 const DateExtensionsPage = () => {
   const intl = useIntl();
@@ -14,10 +15,10 @@ const DateExtensionsPage = () => {
   const { mutate: resetMutation } = useResetDateExtensionMutation();
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<LearnerDateExtension | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const { showToast, showModal, removeAlert, clearAlerts } = useAlert();
 
   const handleResetExtensions = (user: LearnerDateExtension) => {
+    clearAlerts();
     setIsResetModalOpen(true);
     setSelectedUser(user);
   };
@@ -28,11 +29,16 @@ const DateExtensionsPage = () => {
   };
 
   const handleErrorOnReset = (error: any) => {
-    setErrorMessage(error.message);
+    showModal({
+      confirmText: intl.formatMessage(messages.close),
+      message: error.message,
+      variant: 'danger',
+      onConfirm: (id) => removeAlert(id)
+    });
   };
 
   const handleSuccessOnReset = (response: string) => {
-    setSuccessMessage(response);
+    showToast(response);
     handleCloseModal();
   };
 
@@ -67,12 +73,6 @@ const DateExtensionsPage = () => {
         onClose={handleCloseModal}
         onConfirmReset={handleConfirmReset}
       />
-      <Toast show={!!successMessage} onClose={() => setSuccessMessage('')} className="text-break">
-        {successMessage}
-      </Toast>
-      <AlertModal title={errorMessage} isOpen={!!errorMessage} footerNode={<Button onClick={() => setErrorMessage('')}>{intl.formatMessage(messages.close)}</Button>}>
-        {errorMessage}
-      </AlertModal>
     </div>
   );
 };

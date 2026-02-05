@@ -1,8 +1,19 @@
 import { render } from '@testing-library/react';
 import { IntlProvider } from '@openedx/frontend-base';
+import { AlertProvider } from './providers/AlertProvider';
 
 export const renderWithIntl = (component) => {
   return render(<IntlProvider locale="en" messages={{}}>{ component }</IntlProvider>);
+};
+
+export const renderWithAlertAndIntl = (component) => {
+  return render(
+    <AlertProvider>
+      <IntlProvider locale="en" messages={{}}>
+        {component}
+      </IntlProvider>
+    </AlertProvider>
+  );
 };
 
 export const createQueryMock = (data: any = undefined, isLoading = false) => ({
