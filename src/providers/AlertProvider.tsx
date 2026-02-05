@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode, useCallback, useMemo, FC } from 'react';
-import { Toast, AlertModal, ActionRow, Button } from '@openedx/paragon';
+import { Toast, AlertModal, ActionRow, Button, Alert } from '@openedx/paragon';
 import { InfoOutline, WarningFilled, ErrorOutline, CheckCircle } from '@openedx/paragon/icons';
 
 // Toast Alert Types
@@ -15,7 +15,7 @@ interface ToastAlert {
 interface ModalAlert {
   id: string,
   type: 'modal',
-  title: string,
+  title?: string,
   message: string,
   variant: 'default' | 'warning' | 'danger' | 'success',
   isOpen: boolean,
@@ -45,7 +45,7 @@ interface InlineAlert {
 interface AlertContextType {
   showToast: (message: string, variant?: 'success' | 'error' | 'warning' | 'info') => void,
   showModal: (options: {
-    title: string,
+    title?: string,
     message: string,
     variant?: 'default' | 'warning' | 'danger' | 'success',
     confirmText?: string,
@@ -99,7 +99,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
 
   // Modal Methods
   const showModal = useCallback((options: {
-    title: string,
+    title?: string,
     message: string,
     variant?: 'default' | 'warning' | 'danger' | 'success',
     confirmText?: string,
@@ -107,7 +107,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
     onConfirm?: () => void,
     onCancel?: () => void,
   }) => {
-    const id = `modal-${Date.now()}`;
+    const id = `modal-${Date.now()}-${Math.random()}`;
     const newModal: ModalAlert = {
       id,
       type: 'modal',
@@ -124,20 +124,24 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
   }, []);
 
   const closeModal = useCallback((id: string, callOnCancel = false) => {
-    const modal = modals.find(m => m.id === id);
-    if (modal && callOnCancel && modal.onCancel) {
-      modal.onCancel();
-    }
-    setModals(prev => prev.filter(m => m.id !== id));
-  }, [modals]);
+    setModals(prev => {
+      const modal = prev.find(m => m.id === id);
+      if (modal && callOnCancel && modal.onCancel) {
+        modal.onCancel();
+      }
+      return prev.filter(m => m.id !== id);
+    });
+  }, []);
 
   const confirmModal = useCallback((id: string) => {
-    const modal = modals.find(m => m.id === id);
-    if (modal?.onConfirm) {
-      modal.onConfirm();
-    }
-    setModals(prev => prev.filter(m => m.id !== id));
-  }, [modals]);
+    setModals(prev => {
+      const modal = prev.find(m => m.id === id);
+      if (modal?.onConfirm) {
+        modal.onConfirm();
+      }
+      return prev.filter(m => m.id !== id);
+    });
+  }, []);
 
   // Inline Alert Methods
   const showInlineAlert = useCallback((
@@ -202,37 +206,63 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
         ))}
       </div>
 
-      {/* Modal Alerts */}
-      {modals.map(modal => (
-        <AlertModal
-          key={modal.id}
-          title={modal.title}
-          isOpen={modal.isOpen}
-          onClose={() => closeModal(modal.id, true)}
-          variant={modal.variant}
-          icon={variantIcons[modal.variant]}
-          footerNode={(
-            <ActionRow>
-              {modal.cancelText && (
-                <Button variant="tertiary" onClick={() => closeModal(modal.id, true)}>
-                  {modal.cancelText}
-                </Button>
-              )}
-              {modal.confirmText && (
-                <Button
-                  variant={modal.variant === 'danger' ? 'danger' : 'primary'}
-                  onClick={() => confirmModal(modal.id)}
-                >
-                  {modal.confirmText}
-                </Button>
-              )}
-            </ActionRow>
-          )}
-        >
-          <p>{modal.message}</p>
-        </AlertModal>
-      ))}
+      {/* Modal Alerts - Only show the first modal in the queue */}
+      {modals.length > 0 && (() => {
+        const modal = modals[0];
+        return (
+          <AlertModal
+            key={modal.id}
+            title={modal.title}
+            isOpen={modal.isOpen}
+            onClose={() => closeModal(modal.id, true)}
+            variant={modal.variant}
+            icon={variantIcons[modal.variant]}
+            hasHeader={!!modal.title}
+            footerNode={(
+              <ActionRow>
+                {modal.cancelText && (
+                  <Button variant="tertiary" onClick={() => closeModal(modal.id, true)}>
+                    {modal.cancelText}
+                  </Button>
+                )}
+                {modal.confirmText && (
+                  <Button
+                    variant={modal.variant === 'danger' ? 'danger' : 'primary'}
+                    onClick={() => confirmModal(modal.id)}
+                  >
+                    {modal.confirmText}
+                  </Button>
+                )}
+              </ActionRow>
+            )}
+          >
+            <p>{modal.message}</p>
+          </AlertModal>
+        );
+      })()}
     </AlertContext.Provider>
+  );
+};
+
+export const AlertOutlet: FC = () => {
+  const { alerts, removeAlert } = useAlert();
+
+  return (
+    <div className="alert-outlet">
+      {alerts.map(alert => (
+        <Alert
+          key={alert.id}
+          className="mt-3"
+          icon={variantIcons[alert.type]}
+          variant={alert.type === 'error' ? 'danger' : alert.type}
+          dismissible
+          onClose={() => removeAlert(alert.id)}
+        >
+          {alert.message}
+          {alert.extraContent}
+        </Alert>
+      ))}
+    </div>
   );
 };
 
