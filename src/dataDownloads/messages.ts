@@ -246,6 +246,11 @@ const messages = defineMessages({
     defaultMessage: 'Report of Certificates Issued',
     description: 'Description for issued certificates report',
   },
+  generateCertificatesReport: {
+    id: 'instruct.dataDownloads.reports.issuedCertificates.generate',
+    defaultMessage: 'Generate Certificates Report',
+    description: 'Button text to generate issued certificates report',
+  },
   // Report type display names for the data downloads table
   reportTypeEnrolledStudents: {
     id: 'instruct.dataDownloads.reportType.enrolledStudents',
@@ -309,7 +314,7 @@ const messages = defineMessages({
   },
   generateReportError: {
     id: 'instruct.dataDownloads.generateReport.error',
-    defaultMessage: 'Failed to generate report. Please try again.',
+    defaultMessage: 'Failed to generate report.',
     description: 'Error message displayed when report generation fails',
   },
   noReportsFoundMessage: {

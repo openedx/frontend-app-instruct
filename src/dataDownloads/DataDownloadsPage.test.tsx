@@ -204,7 +204,7 @@ describe('DataDownloadsPage', () => {
 
     // Should show error toast
     await waitFor(() => {
-      const errorElements = screen.getAllByText('Failed to generate report. Please try again.');
+      const errorElements = screen.getAllByText('Failed to generate report.');
       expect(errorElements.length).toBeGreaterThan(0);
     });
 
@@ -300,7 +300,7 @@ describe('DataDownloadsPage', () => {
 
     // Should show error toast
     await waitFor(() => {
-      const errorElements = screen.getAllByText('Failed to generate report. Please try again.');
+      const errorElements = screen.getAllByText('Failed to generate report.');
       expect(errorElements.length).toBeGreaterThan(0);
     });
 

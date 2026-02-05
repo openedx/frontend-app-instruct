@@ -205,10 +205,15 @@ const GenerateReports = ({
 
           <Tab eventKey="certificates" title={intl.formatMessage(messages.certificateReportsTabTitle)}>
             <div className="d-flex flex-column px-3.5">
-              <div>
-                <h5 className="text-primary-700">{intl.formatMessage(messages.issuedCertificatesTitle)}</h5>
-                <p className="text-primary-700">{intl.formatMessage(messages.issuedCertificatesDescription)}</p>
-              </div>
+              <ReportSection
+                titleMessage={messages.issuedCertificatesTitle}
+                descriptionMessage={messages.issuedCertificatesDescription}
+                buttonMessage={messages.generateCertificatesReport}
+                onGenerate={() => onGenerateReport('issued_certificates')}
+                isFirst
+                isLast
+                isGenerating={isGenerating}
+              />
             </div>
           </Tab>
         </Tabs>
