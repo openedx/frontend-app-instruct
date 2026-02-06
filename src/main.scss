@@ -2,5 +2,5 @@
 
 .toast-container {
     left: unset;
-    right: 1.25rem;
+    right: var(--pgn-spacing-toast-container-gutter-lg);
 }

@@ -11,7 +11,7 @@ const mockData = [
     fullName: 'Test User',
     email: 'test@example.com',
     unitTitle: 'Test Section',
-    extendedDueDate: '2024-01-01'
+    extendedDueDate: '2025-11-07T00:00:00Z'
   }
 ];
 
@@ -36,11 +36,11 @@ describe('DateExtensionsList', () => {
     (useDateExtensions as jest.Mock).mockReturnValue({ isLoading: false, data: { count: mockData.length, results: mockData } });
     renderComponent({ onResetExtensions: mockResetExtensions });
     const user = userEvent.setup();
-    expect(screen.getByText('test_user')).toBeInTheDocument();
-    expect(screen.getByText('Test User')).toBeInTheDocument();
-    expect(screen.getByText('test@example.com')).toBeInTheDocument();
-    expect(screen.getByText('Test Section')).toBeInTheDocument();
-    expect(screen.getByText('2024-01-01')).toBeInTheDocument();
+    expect(screen.getByText(mockData[0].username)).toBeInTheDocument();
+    expect(screen.getByText(mockData[0].fullName)).toBeInTheDocument();
+    expect(screen.getByText(mockData[0].email)).toBeInTheDocument();
+    expect(screen.getByText(mockData[0].unitTitle)).toBeInTheDocument();
+    expect(screen.getByText('11/07/2025, 12:00 AM')).toBeInTheDocument();
     const resetExtensions = screen.getByRole('button', { name: /reset extensions/i });
     expect(resetExtensions).toBeInTheDocument();
     await user.click(resetExtensions);
@@ -50,7 +50,7 @@ describe('DateExtensionsList', () => {
   it('renders empty table when no data provided', () => {
     (useDateExtensions as jest.Mock).mockReturnValue({ data: { count: 0, results: [] } });
     renderComponent({});
-    expect(screen.queryByText('test_user')).not.toBeInTheDocument();
+    expect(screen.queryByText(mockData[0].username)).not.toBeInTheDocument();
     expect(screen.getByText('No results found')).toBeInTheDocument();
   });
 });

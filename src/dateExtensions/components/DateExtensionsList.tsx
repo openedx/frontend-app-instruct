@@ -34,7 +34,13 @@ const DateExtensionsList = ({
     { accessor: 'fullName', Header: intl.formatMessage(messages.fullname) },
     { accessor: 'email', Header: intl.formatMessage(messages.email) },
     { accessor: 'unitTitle', Header: intl.formatMessage(messages.gradedSubsection) },
-    { accessor: 'extendedDueDate', Header: intl.formatMessage(messages.extendedDueDate) },
+    {
+      accessor: 'extendedDueDate',
+      Header: intl.formatMessage(messages.extendedDueDate),
+      Cell: ({ value }: { value: string }) => (
+        intl.formatDate(value, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })
+      )
+    },
   ];
 
   const additionalColumns = [{

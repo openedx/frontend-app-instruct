@@ -45,6 +45,36 @@ const messages = defineMessages({
     id: 'instruct.dateExtensions.page.button.resetExtensions',
     defaultMessage: 'Reset Extensions',
     description: 'Button text for resetting date extensions for a user',
+  },
+  resetConfirmationHeader: {
+    id: 'instruct.dateExtensions.page.resetModal.confirmationHeader',
+    defaultMessage: 'Reset extensions for {username}?',
+    description: 'Header for the reset confirmation modal',
+  },
+  resetConfirmationMessage: {
+    id: 'instruct.dateExtensions.page.resetModal.confirmationMessage',
+    defaultMessage: 'Resetting a problem\'s due date rescinds a due date extension for a student on a particular subsection. This will revert the due date for the student back to the problem\'s original due date.',
+    description: 'Confirmation message for resetting extensions in the reset modal',
+  },
+  cancel: {
+    id: 'instruct.dateExtensions.page.resetModal.cancel',
+    defaultMessage: 'Cancel',
+    description: 'Label for the cancel button in the reset modal',
+  },
+  confirm: {
+    id: 'instruct.dateExtensions.page.resetModal.confirm',
+    defaultMessage: 'Reset Due Date for Student',
+    description: 'Label for the confirm button in the reset modal',
+  },
+  close: {
+    id: 'instruct.dateExtensions.page.resetModal.close',
+    defaultMessage: 'Close',
+    description: 'Label for the close button in the reset modal',
+  },
+  missingUserOrCourseIdError: {
+    id: 'instruct.dateExtensions.page.error.missingUserOrCourseId',
+    defaultMessage: 'Unable to reset extension: missing user or course ID.',
+    description: 'Error message shown when user or course ID is missing during reset',
   }
 });
 
