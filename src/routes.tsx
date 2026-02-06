@@ -1,7 +1,43 @@
+import { useParams, Navigate } from 'react-router-dom';
 import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
+import CertificatesPage from '@src/certificates/CertificatesPage';
+import CourseTeamPage from '@src/courseTeam/CourseTeamPage';
+import DataDownloadsPage from '@src/dataDownloads/DataDownloadsPage';
 import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
+import EnrollmentsPage from '@src/enrollments/EnrollmentsPage';
+import GradingPage from '@src/grading/GradingPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
+import SpecialExamsPage from '@src/specialExams/SpecialExamsPage';
+
+const TabContent = () => {
+  const { tabId } = useParams<{ tabId: string }>();
+
+  switch (tabId) {
+    case 'course_info':
+      return <CourseInfoPage />;
+    case 'enrollments':
+      return <EnrollmentsPage />;
+    case 'course_team':
+      return <CourseTeamPage />;
+    case 'cohorts':
+      return <CohortsPage />;
+    case 'date_extensions':
+      return <DateExtensionsPage />;
+    case 'grading':
+      return <GradingPage />;
+    case 'data_downloads':
+      return <DataDownloadsPage />;
+    case 'special_exams':
+      return <SpecialExamsPage />;
+    case 'certificates':
+      return <CertificatesPage />;
+    case 'open_responses':
+      return <OpenResponsesPage />;
+    default:
+      return <Navigate to="course_info" replace />;
+  }
+};
 
 const routes = [
   {
@@ -16,40 +52,12 @@ const routes = [
     },
     children: [
       {
-        path: 'course_info',
-        element: <CourseInfoPage />
-      },
-      // {
-      //   path: 'membership',
-      //   element: <MembershipPage />
-      // },
-      {
-        path: 'cohorts',
-        element: <CohortsPage />
+        path: ':tabId',
+        element: <TabContent />
       },
       {
-        path: 'date_extensions',
-        element: <DateExtensionsPage />
-      },
-      // {
-      //   path: 'student_admin',
-      //   element: <StudentAdminPage />
-      // },
-      // {
-      //   path: 'data_download',
-      //   element: <DataDownloadPage />
-      // },
-      // {
-      //   path: 'special_exams',
-      //   element: <SpecialExamsPage />
-      // },
-      // {
-      //   path: 'certificates',
-      //   element: <CertificatesPage />
-      // },
-      {
-        path: 'open_responses',
-        element: <OpenResponsesPage />
+        path: '',
+        element: <Navigate to="course_info" replace />
       }
     ]
   }
