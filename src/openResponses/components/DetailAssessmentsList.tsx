@@ -4,6 +4,7 @@ import { useIntl } from '@openedx/frontend-base';
 import { Button, DataTable } from '@openedx/paragon';
 import messages from '../messages';
 import { useDetailAssessmentsData } from '../data/apiHook';
+import { ORARecord } from '../types';
 
 const DETAILS_PAGE_SIZE = 25;
 
@@ -14,13 +15,11 @@ interface DataTableFetchDataProps {
 const DetailAssessmentsList = () => {
   const intl = useIntl();
   const { courseId } = useParams();
-  const [page, setPage] = useState(1);
-  const { data = { count: 0, results: [] }, isLoading } = useDetailAssessmentsData(courseId ?? '', {
+  const [page, setPage] = useState(0);
+  const { data = { count: 0, results: [], numPages: 1 }, isLoading } = useDetailAssessmentsData(courseId ?? '', {
     page,
     pageSize: DETAILS_PAGE_SIZE
   });
-
-  const pageCount = Math.ceil(data.count / DETAILS_PAGE_SIZE);
 
   const tableColumns = [
     { accessor: 'unitName', Header: intl.formatMessage(messages.unitName) },
@@ -32,24 +31,27 @@ const DetailAssessmentsList = () => {
     { accessor: 'waiting', Header: intl.formatMessage(messages.waiting) },
     { accessor: 'staff', Header: intl.formatMessage(messages.staff) },
     { accessor: 'finalGradeReceived', Header: intl.formatMessage(messages.finalGradeReceived) },
-    { accessor: 'staffOraGradingUrl', Header: intl.formatMessage(messages.staffGrader) }
+  ];
+
+  const additionalColumns = [
+    {
+      id: 'staffOraGradingUrl',
+      Header: intl.formatMessage(messages.staffGrader),
+      Cell: ({ row }: { row: { original: ORARecord } }) => row.original.staffOraGradingUrl && <Button variant="link" size="inline" href={row.original.staffOraGradingUrl}>{intl.formatMessage(messages.viewAndGradeResponses)}</Button>,
+    }
   ];
 
   const handleFetchData = (data: DataTableFetchDataProps) => {
     setPage(data.pageIndex);
   };
 
-  const tableData = data.results.map(item => ({
-    ...item,
-    staffOraGradingUrl: item.staffOraGradingUrl && <Button variant="link" size="inline" href={item.staffOraGradingUrl}>{intl.formatMessage(messages.viewAndGradeResponses)}</Button>,
-  }));
-
   return (
     <div className="mt-4.5">
       <h3 className="text-primary-700">{intl.formatMessage(messages.details)}</h3>
       <DataTable
         columns={tableColumns}
-        data={tableData}
+        additionalColumns={additionalColumns}
+        data={data.results}
         fetchData={handleFetchData}
         initialState={{
           pageIndex: page,
@@ -60,7 +62,7 @@ const DetailAssessmentsList = () => {
         itemCount={data.count}
         manualFilters
         manualPagination
-        pageCount={pageCount}
+        pageCount={data.numPages}
         pageSize={DETAILS_PAGE_SIZE}
       />
     </div>
