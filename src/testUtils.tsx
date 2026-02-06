@@ -1,6 +1,16 @@
 import { render } from '@testing-library/react';
 import { IntlProvider } from '@openedx/frontend-base';
 import { AlertProvider } from './providers/AlertProvider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+
+export const renderWithQueryClient = (ui: React.ReactElement) =>
+  renderWithIntl(
+    <QueryClientProvider client={queryClient}>
+      {ui}
+    </QueryClientProvider>
+  );
 
 export const renderWithIntl = (component) => {
   return render(<IntlProvider locale="en" messages={{}}>{ component }</IntlProvider>);
