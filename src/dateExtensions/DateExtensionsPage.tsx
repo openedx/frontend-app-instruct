@@ -9,6 +9,7 @@ import { LearnerDateExtension } from './types';
 import { useAddDateExtensionMutation, useResetDateExtensionMutation } from './data/apiHook';
 import { useAlert } from '@src/providers/AlertProvider';
 import AddExtensionModal from './components/AddExtensionModal';
+import { APIError } from '@src/types';
 
 const DateExtensionsPage = () => {
   const intl = useIntl();
@@ -29,10 +30,10 @@ const DateExtensionsPage = () => {
     setSelectedUser(null);
   };
 
-  const handleErrorOnReset = (error: Error) => {
+  const handleErrorOnReset = (error: APIError | Error) => {
     showModal({
       confirmText: intl.formatMessage(messages.close),
-      message: error.message,
+      message: 'response' in error ? error.response.data.error : error.message,
       variant: 'danger',
       onConfirm: (id) => removeAlert(id)
     });
@@ -65,19 +66,18 @@ const DateExtensionsPage = () => {
     }
   };
 
-  const handleOpenAddExtension = () => {
-    setIsAddExtensionModalOpen(true);
-  };
-
-  const handleAddExtension = ({ email_or_username, block_id, due_datetime, reason }) => {
+  const handleAddExtension = ({ emailOrUsername, blockId, dueDatetime, reason }) => {
     addExtensionMutation({ courseId, extensionData: {
-      email_or_username,
-      block_id,
-      due_datetime,
+      emailOrUsername,
+      blockId,
+      dueDatetime,
       reason
     } }, {
       onError: handleErrorOnReset,
-      onSuccess: handleSuccessOnReset
+      onSuccess: (response) => {
+        setIsAddExtensionModalOpen(false);
+        showToast(response.message);
+      }
     });
   };
 
@@ -86,7 +86,7 @@ const DateExtensionsPage = () => {
       <h3>{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
       <div className="d-flex align-items-center justify-content-between mb-3.5">
         <p>filters</p>
-        <Button onClick={handleOpenAddExtension}>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
+        <Button onClick={() => setIsAddExtensionModalOpen(true)}>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
       </div>
       <DateExtensionsList onResetExtensions={handleResetExtensions} />
       <AddExtensionModal

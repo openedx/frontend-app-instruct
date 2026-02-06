@@ -1,5 +1,5 @@
+import { PaginationQueryKeys } from '@src/types';
 import { appId } from '../../constants';
-import { PaginationQueryKeys } from './api';
 
 export const dateExtensionsQueryKeys = {
   all: [appId, 'dateExtensions'] as const,
