@@ -71,6 +71,11 @@ const messages = defineMessages({
     defaultMessage: 'Close',
     description: 'Label for the close button in the reset modal',
   },
+  missingUserOrCourseIdError: {
+    id: 'instruct.dateExtensions.page.error.missingUserOrCourseId',
+    defaultMessage: 'Unable to reset extension: missing user or course ID.',
+    description: 'Error message shown when user or course ID is missing during reset',
+  }
 });
 
 export default messages;

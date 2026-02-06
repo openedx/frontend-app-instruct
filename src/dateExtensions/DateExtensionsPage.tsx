@@ -13,22 +13,20 @@ const DateExtensionsPage = () => {
   const intl = useIntl();
   const { courseId } = useParams<{ courseId: string }>();
   const { mutate: resetMutation } = useResetDateExtensionMutation();
-  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<LearnerDateExtension | null>(null);
+  const isResetModalOpen = selectedUser !== null;
   const { showToast, showModal, removeAlert, clearAlerts } = useAlert();
 
   const handleResetExtensions = (user: LearnerDateExtension) => {
     clearAlerts();
-    setIsResetModalOpen(true);
     setSelectedUser(user);
   };
 
   const handleCloseModal = () => {
-    setIsResetModalOpen(false);
     setSelectedUser(null);
   };
 
-  const handleErrorOnReset = (error: any) => {
+  const handleErrorOnReset = (error: Error) => {
     showModal({
       confirmText: intl.formatMessage(messages.close),
       message: error.message,
@@ -53,6 +51,13 @@ const DateExtensionsPage = () => {
       }, {
         onError: handleErrorOnReset,
         onSuccess: handleSuccessOnReset
+      });
+    } else {
+      showModal({
+        confirmText: intl.formatMessage(messages.close),
+        message: intl.formatMessage(messages.missingUserOrCourseIdError),
+        variant: 'danger',
+        onConfirm: (id) => removeAlert(id)
       });
     }
   };

@@ -15,7 +15,7 @@ export const useResetDateExtensionMutation = () => {
   return useMutation({
     mutationFn: ({ courseId, params }: { courseId: string, params: ResetDueDateParams }) =>
       resetDateExtension(courseId, params),
-    onSuccess: ({ courseId }) => {
+    onSuccess: (_, { courseId }) => {
       queryClient.invalidateQueries({ queryKey: dateExtensionsQueryKeys.byCourse(courseId), exact: false });
     },
   });
