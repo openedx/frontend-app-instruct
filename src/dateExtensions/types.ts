@@ -7,15 +7,15 @@ export interface LearnerDateExtension {
   unitLocation: string,
 }
 
-export interface DateExtensionsResponse {
-  count: number,
-  next: string | null,
-  previous: string | null,
-  results: LearnerDateExtension[],
-}
-
 export interface ResetDueDateParams {
   student: string,
   url: string,
   reason?: string,
+}
+
+export interface AddDateExtensionParams {
+  emailOrUsername: string,
+  blockId: string,
+  dueDatetime: string,
+  reason: string,
 }

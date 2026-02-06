@@ -22,12 +22,10 @@ const DateExtensionsList = ({
   const intl = useIntl();
   const { courseId } = useParams();
   const [page, setPage] = useState(0);
-  const { data = { count: 0, results: [] }, isLoading } = useDateExtensions(courseId ?? '', {
+  const { data = { count: 0, results: [], numPages: 0 }, isLoading } = useDateExtensions(courseId ?? '', {
     page,
     pageSize: DATE_EXTENSIONS_PAGE_SIZE
   });
-
-  const pageCount = Math.ceil(data.count / DATE_EXTENSIONS_PAGE_SIZE);
 
   const tableColumns = [
     { accessor: 'username', Header: intl.formatMessage(messages.username) },
@@ -77,7 +75,7 @@ const DateExtensionsList = ({
       manualFilters
       manualPagination
       pageSize={DATE_EXTENSIONS_PAGE_SIZE}
-      pageCount={pageCount}
+      pageCount={data.numPages}
     />
   );
 };
