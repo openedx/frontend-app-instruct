@@ -81,7 +81,7 @@ const DateExtensionsPage = () => {
   };
 
   return (
-    <div className="mt-4.5 mb-4 mx-4">
+    <>
       <h3 className="mb-4.5">{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
       <DateExtensionsList
         onClickAdd={() => setIsAddExtensionModalOpen(true)}
@@ -101,7 +101,7 @@ const DateExtensionsPage = () => {
         onClose={handleCloseModal}
         onConfirmReset={handleConfirmReset}
       />
-    </div>
+    </>
   );
 };
 
