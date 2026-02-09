@@ -1,15 +1,18 @@
 import { useIntl } from '@openedx/frontend-base';
 import messages from './messages';
 import InstructorTabsSlot from '../slots/instructorTabsSlot/InstructorTabsSlot';
+import { Container } from '@openedx/paragon';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   const { formatMessage } = useIntl();
   return (
-    <div className="container-xl">
-      <h2>{formatMessage(messages.pageTitle)}</h2>
+    <Container size="xl" fluid>
+      <h2 className="text-primary-700">{formatMessage(messages.pageTitle)}</h2>
       <InstructorTabsSlot />
-      {children}
-    </div>
+      <div className="mt-4.5 mb-4 mx-4">
+        {children}
+      </div>
+    </Container>
   );
 };
 

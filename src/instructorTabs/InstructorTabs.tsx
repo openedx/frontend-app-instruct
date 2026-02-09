@@ -35,7 +35,7 @@ const InstructorTabs = () => {
   const apiTabs: TabProps[] = courseInfo?.tabs ?? [];
   const allTabs = [...apiTabs];
 
-  // Tabs added via slot take priority over (read: replace) tabs from the API
+  // Tabs added via slot take priority over (read: src/slots/README.md) tabs from the API
   // All tabs added via slot are placed at the end of the tabs array
   widgetPropsArray.forEach(slotTab => {
     if (!apiTabs.find(apiTab => apiTab.tabId === slotTab.tabId)) {
