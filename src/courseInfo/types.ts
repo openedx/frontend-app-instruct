@@ -1,3 +1,5 @@
+import { TabProps } from '@src/instructorTabs/InstructorTabs';
+
 export interface CourseInfoResponse {
   courseId: string,
   displayName: string,
@@ -6,6 +8,7 @@ export interface CourseInfoResponse {
   enrollmentCounts: EnrollmentCounts,
   start: string | null,
   end: string | null,
+  tabs?: TabProps[],
   totalEnrollment: number,
   studioUrl: string,
   pacing: string,
