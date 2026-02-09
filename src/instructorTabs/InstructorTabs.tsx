@@ -8,6 +8,7 @@ export interface TabProps {
   tabId: string,
   url: string,
   title: string,
+  sort_order: number,
 }
 
 const extractWidgetProps = (widget: React.ReactNode): TabProps | null => {
