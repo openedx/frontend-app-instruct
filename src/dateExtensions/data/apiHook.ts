@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getDateExtensions, PaginationQueryKeys, resetDateExtension } from './api';
-import { dateExtensionsQueryKeys } from './queryKeys';
+import { getDateExtensions, resetDateExtension, addDateExtension, getGradedSubsections } from './api';
+import { dateExtensionsQueryKeys, gradedSubsectionsQueryKeys } from './queryKeys';
 import { ResetDueDateParams } from '../types';
+import { PaginationQueryKeys } from '@src/types';
 
 export const useDateExtensions = (courseId: string, pagination: PaginationQueryKeys) => (
   useQuery({
@@ -20,3 +21,21 @@ export const useResetDateExtensionMutation = () => {
     },
   });
 };
+
+export const useAddDateExtensionMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, extensionData }: { courseId: string, extensionData: any }) =>
+      addDateExtension(courseId, extensionData),
+    onSuccess: ({ courseId }) => {
+      queryClient.invalidateQueries({ queryKey: dateExtensionsQueryKeys.byCourse(courseId) });
+    },
+  });
+};
+
+export const useGradedSubsections = (courseId: string) => (
+  useQuery({
+    queryKey: gradedSubsectionsQueryKeys.byCourse(courseId),
+    queryFn: () => getGradedSubsections(courseId),
+  })
+);
