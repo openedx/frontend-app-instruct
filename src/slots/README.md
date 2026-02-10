@@ -21,7 +21,7 @@ import { SlotOperation, WidgetOperationTypes } from '@openedx/frontend-base';
 import { PlaceholderSlot } from 'src/slots/instructorTabsSlot/InstructorTabsSlot';
 
 // Tab configuration data
-const tabData = { tabId: 'my_tab', url: 'my_tab', title: 'New Tab' };
+const tabData = { tabId: 'my_tab', url: 'my_tab', title: 'New Tab', sortOrder={25} };
 
 // Create slot operations for tabs
 export const tabSlots: SlotOperation[] = [{
@@ -65,8 +65,8 @@ const InstructorTabs = () => {
   return (
     <Tabs>
       {widgets.map((widget, index) => {
-        const { tabId, title } = widget.element.props;
-        return <Tab key={tabId} eventKey={tabId} title={title} />;
+        const { tabId, title, sortOrder } = widget.element.props;
+        return <Tab key={tabId} eventKey={tabId} title={title} sortOrder={sortOrder} />;
       })}
     </Tabs>
   );
