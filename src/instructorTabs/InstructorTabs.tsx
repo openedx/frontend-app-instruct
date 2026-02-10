@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Tab, Tabs } from '@openedx/paragon';
-import { SlotContext, useWidgetsForId } from '@openedx/frontend-base';
+import { SlotContext } from '@openedx/frontend-base';
 import { useCourseInfo } from '../data/apiHook';
+import { useWidgetProps } from './TabUtils';
 
 export interface TabProps {
   tabId: string,
@@ -11,27 +12,12 @@ export interface TabProps {
   sort_order: number,
 }
 
-const extractWidgetProps = (widget: React.ReactNode): TabProps | null => {
-  if (widget && typeof widget === 'object' && 'props' in widget) {
-    const props = widget.props.children.props as TabProps;
-    if (props?.tabId && props?.url && props?.title) {
-      return props;
-    }
-  }
-  return null;
-};
-
-const useWidgetProps = (slotId: string): TabProps[] => {
-  const widgets = useWidgetsForId(slotId);
-  return widgets.map(extractWidgetProps).filter((props): props is TabProps => props !== null);
-};
-
 const InstructorTabs = () => {
   const navigate = useNavigate();
   const { courseId, tabId } = useParams<{ courseId: string, tabId?: string }>();
   const { id: slotId } = useContext(SlotContext);
   const { data: courseInfo, isLoading } = useCourseInfo(courseId ?? '');
-  const widgetPropsArray = useWidgetProps(slotId);
+  const widgetPropsArray = useWidgetProps(slotId) as TabProps[];
 
   const apiTabs: TabProps[] = courseInfo?.tabs ?? [];
   const allTabs = [...apiTabs];
