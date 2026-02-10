@@ -18,32 +18,37 @@ Slots in `frontend-app-instruct` use the slot system from `@openedx/frontend-bas
 
 ```tsx
 import { SlotOperation, WidgetOperationTypes } from '@openedx/frontend-base';
-import { InstructorTab } from 'src/slots/instructorTabsSlot/InstructorTabsSlot';
+import { PlaceholderSlot } from 'src/slots/instructorTabsSlot/InstructorTabsSlot';
 
 // Tab configuration data
-const tabData = { tabId: 'course_info', url: 'course_info', title: 'Course Info' };
+const tabData = { tabId: 'my_tab', url: 'my_tab', title: 'New Tab' };
 
-// Create slot operations
+// Create slot operations for tabs
 export const tabSlots: SlotOperation[] = [{
   slotId: `org.openedx.frontend.slot.instructor.tabs.v1`,
   id: `org.openedx.frontend.widget.instructor.tab.${tabId}`,
   op: WidgetOperationTypes.APPEND,
-  element: <InstructorTab tabId={tabData.tabId} title={tabData.title} url={tabData.url} />,
+  element: <PlaceholderSlot tabId={tabData.tabId} title={tabData.title} url={tabData.url} />,
 }];
+
+// Create slot operations for route and content
+const routeSlots: SlotOperation[] = [
+  {
+    slotId: 'org.openedx.frontend.slot.instructor.routes.v1',
+    id: 'org.openedx.frontend.widget.instructor.route.my_tab',
+    op: WidgetOperationTypes.APPEND,
+    element: <PlaceholderSlot tabId="my_tab" content={<MyTabContent />} />,
+  },
+];
 ```
+
 
 ### 2. Slot Element
 
-The `TabSlot` component acts as a placeholder that maintains the necessary props:
+The `PlaceholderSlot` component acts as a placeholder that maintains the necessary props:
 
 ```tsx
-import { TabProps } from '../../instructorTabs/InstructorTabs';
-
-const TabSlot = (_props: TabProps) => {
-  return null; // Placeholder component
-};
-
-export default TabSlot;
+export const PlaceholderSlot = (_props: Record<string, any>) => null;
 ```
 
 ### 3. Slot Consumer
@@ -51,11 +56,11 @@ export default TabSlot;
 The `InstructorTabs` component consumes the registered slots:
 
 ```tsx
-import { SlotContext, useSlotOperations } from '@openedx/frontend-base';
+import { SlotContext } from '@openedx/frontend-base';
 
 const InstructorTabs = () => {
   const { id: slotId } = useContext(SlotContext);
-  const widgets = useSlotOperations(slotId);
+  const widgets = useWidgetProps(slotId);
 
   return (
     <Tabs>
@@ -65,5 +70,23 @@ const InstructorTabs = () => {
       })}
     </Tabs>
   );
+};
+```
+
+And `TabContent` in `routes.tsx` consume the registered slots for the content.
+
+```tsx
+const TabContent = () => {
+  const { tabId } = useParams<{ tabId: string }>();
+  const routeWidgets = useWidgetProps('org.openedx.frontend.slot.instructor.routes.v1') as InstructorRouteProps[];
+
+  const tabRoutes = [
+    ...defaultTabs.filter(
+      defaultTab => !routeWidgets.some(slotTab => slotTab.tabId === defaultTab.tabId)
+    ),
+    ...routeWidgets
+  ];
+
+  return tabRoutes.find(tab => tab.tabId === tabId)?.content;
 };
 ```
