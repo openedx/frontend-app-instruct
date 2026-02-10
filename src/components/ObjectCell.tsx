@@ -6,7 +6,7 @@ interface ObjectCellProps {
 
 const ObjectCell = ({ value }: ObjectCellProps) => {
   return (
-    <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+    <pre className="text-prewrap text-break">
       {parseObject(value ?? {})}
     </pre>
   );

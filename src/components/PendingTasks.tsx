@@ -39,7 +39,6 @@ const PendingTasks = () => {
       <DataTable
         columns={tableColumns}
         data={tasks}
-        isLoading={isLoading}
         RowStatusComponent={() => null}
       />
     );
