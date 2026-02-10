@@ -1,4 +1,5 @@
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { defineMessages, useIntl } from '@openedx/frontend-base';
 import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
 import CertificatesPage from '@src/certificates/CertificatesPage';
@@ -9,34 +10,46 @@ import EnrollmentsPage from '@src/enrollments/EnrollmentsPage';
 import GradingPage from '@src/grading/GradingPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 import SpecialExamsPage from '@src/specialExams/SpecialExamsPage';
+import { useWidgetProps } from './instructorTabs/TabUtils';
+
+const messages = defineMessages({
+  tabContentNotAvailable: {
+    defaultMessage: 'Tab content not available',
+    description: 'Message displayed when the content for a tab cannot be found.',
+  },
+});
+
+interface InstructorRouteProps {
+  tabId: string,
+  content: React.ReactNode,
+}
+
+const defaultTabs: InstructorRouteProps[] = [
+  { tabId: 'course_info', content: <CourseInfoPage /> },
+  { tabId: 'enrollments', content: <EnrollmentsPage /> },
+  { tabId: 'course_team', content: <CourseTeamPage /> },
+  { tabId: 'cohorts', content: <CohortsPage /> },
+  { tabId: 'date_extensions', content: <DateExtensionsPage /> },
+  { tabId: 'grading', content: <GradingPage /> },
+  { tabId: 'data_downloads', content: <DataDownloadsPage /> },
+  { tabId: 'special_exams', content: <SpecialExamsPage /> },
+  { tabId: 'certificates', content: <CertificatesPage /> },
+  { tabId: 'open_responses', content: <OpenResponsesPage /> },
+];
 
 const TabContent = () => {
   const { tabId } = useParams<{ tabId: string }>();
+  const intl = useIntl();
+  const routeWidgets = useWidgetProps('org.openedx.frontend.slot.instructor.routes.v1') as InstructorRouteProps[];
 
-  switch (tabId) {
-    case 'course_info':
-      return <CourseInfoPage />;
-    case 'enrollments':
-      return <EnrollmentsPage />;
-    case 'course_team':
-      return <CourseTeamPage />;
-    case 'cohorts':
-      return <CohortsPage />;
-    case 'date_extensions':
-      return <DateExtensionsPage />;
-    case 'grading':
-      return <GradingPage />;
-    case 'data_downloads':
-      return <DataDownloadsPage />;
-    case 'special_exams':
-      return <SpecialExamsPage />;
-    case 'certificates':
-      return <CertificatesPage />;
-    case 'open_responses':
-      return <OpenResponsesPage />;
-    default:
-      return <Navigate to="course_info" replace />;
-  }
+  const tabRoutes = [
+    ...defaultTabs.filter(
+      defaultTab => !routeWidgets.some(slotTab => slotTab.tabId === defaultTab.tabId)
+    ),
+    ...routeWidgets
+  ];
+
+  return tabRoutes.find(tab => tab.tabId === tabId)?.content || <div>{intl.formatMessage(messages.tabContentNotAvailable)}</div>;
 };
 
 const routes = [
@@ -55,10 +68,6 @@ const routes = [
         path: ':tabId',
         element: <TabContent />
       },
-      {
-        path: '',
-        element: <Navigate to="course_info" replace />
-      }
     ]
   }
 ];
