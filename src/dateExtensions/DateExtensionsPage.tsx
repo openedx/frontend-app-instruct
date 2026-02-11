@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { Button, FormControl, Icon } from '@openedx/paragon';
 import messages from './messages';
 import DateExtensionsList from './components/DateExtensionsList';
 import ResetExtensionsModal from './components/ResetExtensionsModal';
@@ -10,8 +9,6 @@ import { useAddDateExtensionMutation, useResetDateExtensionMutation } from './da
 import { useAlert } from '@src/providers/AlertProvider';
 import AddExtensionModal from './components/AddExtensionModal';
 import { APIError } from '@src/types';
-import SelectGradedSubsection from './components/SelectGradedSubsection';
-import { Search } from '@openedx/paragon/icons';
 
 const DateExtensionsPage = () => {
   const intl = useIntl();
@@ -22,8 +19,6 @@ const DateExtensionsPage = () => {
   const isResetModalOpen = selectedUser !== null;
   const { showToast, showModal, removeAlert, clearAlerts } = useAlert();
   const [isAddExtensionModalOpen, setIsAddExtensionModalOpen] = useState(false);
-  const [searchedLearner, setSearchedLearner] = useState<string>('');
-  const [gradedSubsectionFilter, setGradedSubsectionFilter] = useState<string>('');
 
   const handleResetExtensions = (user: LearnerDateExtension) => {
     clearAlerts();
@@ -87,26 +82,9 @@ const DateExtensionsPage = () => {
 
   return (
     <div className="mt-4.5 mb-4 mx-4">
-      <h3>{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
-      <div className="d-flex align-items-center justify-content-between mb-3.5">
-        <div className="d-flex">
-          <FormControl
-            onChange={(e) => setSearchedLearner(e.target.value)}
-            placeholder={intl.formatMessage(messages.searchLearnerPlaceholder)}
-            trailingElement={<Icon src={Search} />}
-            value={searchedLearner}
-          />
-          <SelectGradedSubsection
-            placeholder={intl.formatMessage(messages.allGradedSubsections)}
-            onChange={(e) => setGradedSubsectionFilter(e.target.value)}
-            value={gradedSubsectionFilter}
-          />
-        </div>
-        <Button onClick={() => setIsAddExtensionModalOpen(true)}>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
-      </div>
+      <h3 className="mb-4.5">{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
       <DateExtensionsList
-        emailOrUsername={searchedLearner}
-        blockId={gradedSubsectionFilter}
+        onClickAdd={() => setIsAddExtensionModalOpen(true)}
         onResetExtensions={handleResetExtensions}
       />
       <AddExtensionModal
