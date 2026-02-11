@@ -1,17 +1,18 @@
 import { useIntl } from '@openedx/frontend-base';
-import { Button, DataTable } from '@openedx/paragon';
+import { Button, DataTable, FormControl, Icon } from '@openedx/paragon';
 import messages from '../messages';
 import { LearnerDateExtension } from '../types';
 import { useDateExtensions } from '../data/apiHook';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
+import { Search } from '@openedx/paragon/icons';
+import SelectGradedSubsection from './SelectGradedSubsection';
 
 const DATE_EXTENSIONS_PAGE_SIZE = 25;
 
 export interface DateExtensionListProps {
   onResetExtensions?: (user: LearnerDateExtension) => void,
-  emailOrUsername?: string,
-  blockId?: string,
+  onClickAdd?: () => void,
 }
 
 interface DataTableFetchDataProps {
@@ -20,17 +21,19 @@ interface DataTableFetchDataProps {
 
 const DateExtensionsList = ({
   onResetExtensions = () => {},
-  emailOrUsername = '',
-  blockId = '',
+  onClickAdd = () => {},
 }: DateExtensionListProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [page, setPage] = useState(0);
+  const [searchedLearner, setSearchedLearner] = useState<string>('');
+  const [gradedSubsectionFilter, setGradedSubsectionFilter] = useState<string>('');
+
   const { data = { count: 0, results: [], numPages: 0 }, isLoading } = useDateExtensions(courseId ?? '', {
     page,
     pageSize: DATE_EXTENSIONS_PAGE_SIZE,
-    emailOrUsername,
-    blockId
+    emailOrUsername: searchedLearner,
+    blockId: gradedSubsectionFilter,
   });
 
   const tableColumns = [
@@ -82,7 +85,30 @@ const DateExtensionsList = ({
       manualPagination
       pageSize={DATE_EXTENSIONS_PAGE_SIZE}
       pageCount={data.numPages}
-    />
+    >
+      <div className="pt-3 mx-3 mb-3">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <div className="d-flex">
+            <FormControl
+              className="mb-0"
+              onChange={(e) => setSearchedLearner(e.target.value)}
+              placeholder={intl.formatMessage(messages.searchLearnerPlaceholder)}
+              trailingElement={<Icon src={Search} />}
+              value={searchedLearner}
+            />
+            <SelectGradedSubsection
+              placeholder={intl.formatMessage(messages.allGradedSubsections)}
+              onChange={(e) => setGradedSubsectionFilter(e.target.value)}
+              value={gradedSubsectionFilter}
+            />
+          </div>
+          <Button onClick={onClickAdd}>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
+        </div>
+        <DataTable.TableControlBar />
+      </div>
+      <DataTable.Table />
+      <DataTable.TableFooter />
+    </DataTable>
   );
 };
 

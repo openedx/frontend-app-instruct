@@ -19,7 +19,7 @@ const SelectGradedSubsection = ({ label, placeholder, value, onChange }: SelectG
   };
 
   return (
-    <FormGroup size="sm">
+    <FormGroup className="mb-0" size="sm">
       {label && <FormLabel>{label}</FormLabel>}
       <FormControl
         as="select"
