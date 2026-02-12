@@ -21,14 +21,14 @@ import { SlotOperation, WidgetOperationTypes } from '@openedx/frontend-base';
 import { PlaceholderSlot } from 'src/slots/instructorTabsSlot/InstructorTabsSlot';
 
 // Tab configuration data
-const tabData = { tabId: 'my_tab', url: 'my_tab', title: 'New Tab', sortOrder={25} };
+const tabData = { tabId: 'my_tab', url: 'my_tab', title: 'New Tab', sortOrder: 25 };
 
 // Create slot operations for tabs
 export const tabSlots: SlotOperation[] = [{
   slotId: `org.openedx.frontend.slot.instructor.tabs.v1`,
   id: `org.openedx.frontend.widget.instructor.tab.${tabId}`,
   op: WidgetOperationTypes.APPEND,
-  element: <PlaceholderSlot tabId={tabData.tabId} title={tabData.title} url={tabData.url} />,
+  element: <PlaceholderSlot tabId={tabData.tabId} title={tabData.title} url={tabData.url} sortOrder={tabData.sortOrder} />,
 }];
 
 // Create slot operations for route and content
