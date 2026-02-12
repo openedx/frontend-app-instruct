@@ -40,3 +40,15 @@ pull_translations:
 
 	$(intl_imports) frontend-base paragon frontend-component-header frontend-component-footer frontend-app-instruct
 
+clean:
+	rm -rf dist
+
+build: clean
+	tsc --project tsconfig.build.json
+	tsc-alias -p tsconfig.build.json
+	find src -type f -name '*.scss' -exec sh -c '\
+	  for f in "$$@"; do \
+	    d="dist/$${f#src/}"; \
+	    mkdir -p "$$(dirname "$$d")"; \
+	    cp "$$f" "$$d"; \
+	  done' sh {} +
