@@ -120,7 +120,12 @@ const messages = defineMessages({
     id: 'instruct.dateExtensions.page.filters.searchLearnerPlaceholder',
     defaultMessage: 'Search for a Learner',
     description: 'Placeholder text for the search learner input field',
-  }
+  },
+  noDateExtensions: {
+    id: 'instruct.dateExtensions.page.noDateExtensions',
+    defaultMessage: 'No results found',
+    description: 'Message shown when there are no date extensions to display in the table',
+  },
 });
 
 export default messages;
