@@ -1,6 +1,6 @@
 import { useIntl } from '@openedx/frontend-base';
 import messages from './messages';
-import InstructorTabsSlot from '../slots/instructorTabsSlot/InstructorTabsSlot';
+import InstructorTabsSlot from '../slots/instructorTabsSlot/instructorTabsSlot';
 import { Container } from '@openedx/paragon';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
