@@ -78,7 +78,7 @@ describe('DateExtensionsPage', () => {
       isLoading: true,
     });
     renderWithAlertAndIntl(<DateExtensionsPage />);
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(document.querySelectorAll('.react-loading-skeleton')).toHaveLength(6);
   });
 
   it('renders reset link for each row', () => {
