@@ -14,22 +14,30 @@ Slots in `frontend-app-instruct` use the slot system from `@openedx/frontend-bas
 
 ## Instructor Tabs Slot
 
+### Description
+We created following slots to handle Instructor Tabs:
+- Instructor Slots uses the slot context to render tab widgets.
+- Route Slots uses registered slots to render tab content dynamically.
+
+
 ### 1. Slot Operations Definition
 
-```tsx
-import { SlotOperation, WidgetOperationTypes } from '@openedx/frontend-base';
-import { PlaceholderSlot } from 'src/slots/instructorTabsSlot/InstructorTabsSlot';
+For a working example add in `src/slots.tsx` following code:
 
-// Tab configuration data
-const tabData = { tabId: 'my_tab', url: 'my_tab', title: 'New Tab', sortOrder: 25 };
+```tsx
+import { SlotOperation } from '@openedx/frontend-base';
+import { WidgetOperationTypes } from '@openedx/frontend-base';
+import { PlaceholderSlot } from './slots/instructorTabsSlot/instructorTabsSlot';
 
 // Create slot operations for tabs
-export const tabSlots: SlotOperation[] = [{
-  slotId: `org.openedx.frontend.slot.instructor.tabs.v1`,
-  id: `org.openedx.frontend.widget.instructor.tab.${tabId}`,
-  op: WidgetOperationTypes.APPEND,
-  element: <PlaceholderSlot tabId={tabData.tabId} title={tabData.title} url={tabData.url} sortOrder={tabData.sortOrder} />,
-}];
+const tabSlots: SlotOperation[] = [
+  {
+    slotId: 'org.openedx.frontend.slot.instructor.tabs.v1',
+    id: 'org.openedx.frontend.widget.instructor.tab.my_tab',
+    op: WidgetOperationTypes.APPEND,
+    element: <PlaceholderSlot tabId="my_tab" title="New Tab" url="my_tab" sortOrder={25} />,
+  },
+];
 
 // Create slot operations for route and content
 const routeSlots: SlotOperation[] = [
@@ -37,13 +45,25 @@ const routeSlots: SlotOperation[] = [
     slotId: 'org.openedx.frontend.slot.instructor.routes.v1',
     id: 'org.openedx.frontend.widget.instructor.route.my_tab',
     op: WidgetOperationTypes.APPEND,
-    element: <PlaceholderSlot tabId="my_tab" content={<MyTabContent />} />,
+    element: <PlaceholderSlot tabId="my_tab" content={<div>Dynamic Content</div>} />,
   },
 ];
+
+const slots: SlotOperation[] = [
+  ...tabSlots,
+  ...routeSlots,
+];
+
+export default slots;
 ```
 
+#### UI with New Tab Selected and Dynamic Content Displayed
 
-### 2. Slot Element
+![Instructor Tabs with New Tab and Dynamic Content Displayed](./instructorTabsSlot/NewTabSlot.png)
+
+
+### 2. How it works
+#### 2.1 Explanation on Slot Element
 
 The `PlaceholderSlot` component acts as a placeholder that maintains the necessary props:
 
@@ -51,7 +71,7 @@ The `PlaceholderSlot` component acts as a placeholder that maintains the necessa
 export const PlaceholderSlot = (_props: Record<string, any>) => null;
 ```
 
-### 3. Slot Consumer
+#### 2.2 Explanation of Slot Consumer
 
 The `InstructorTabs` component consumes the registered slots:
 
