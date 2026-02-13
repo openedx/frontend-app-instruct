@@ -14,9 +14,11 @@ const createWrapper = () => {
       mutations: { retry: false },
     },
   });
+
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+
   Wrapper.displayName = 'TestWrapper';
   return Wrapper;
 };
@@ -27,7 +29,27 @@ describe('useCourseInfo', () => {
   });
 
   it('fetches course info successfully', async () => {
-    const mockCourseData = { courseName: 'Test Course' };
+    const mockCourseData = {
+      courseId: 'test-course-123',
+      displayName: 'Test Course',
+      courseNumber: '123',
+      courseRun: '2024',
+      enrollmentCounts: { total: 100, audit: 50 },
+      start: null,
+      end: null,
+      tabs: [],
+      totalEnrollment: 150,
+      studioUrl: 'http://studio.example.com',
+      pacing: 'self-paced',
+      org: 'Test Org',
+      numSections: 10,
+      hasStarted: true,
+      hasEnded: false,
+      enrollmentEnd: null,
+      enrollmentStart: null,
+      gradeCutoffs: null
+    };
+
     mockGetCourseInfo.mockResolvedValue(mockCourseData);
 
     const { result } = renderHook(() => useCourseInfo('test-course-123'), {
