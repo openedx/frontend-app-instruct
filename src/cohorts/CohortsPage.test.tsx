@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CohortsPage from './CohortsPage';
 import { useCohorts, useCohortStatus, useToggleCohorts } from './data/apiHook';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithAlertAndIntl } from '@src/testUtils';
 import messages from './messages';
 import { CohortProvider } from './components/CohortContext';
 
@@ -19,7 +19,7 @@ jest.mock('./data/apiHook', () => ({
 }));
 
 describe('CohortsPage', () => {
-  const renderWithCohortsProvider = () => renderWithIntl(<CohortProvider><CohortsPage /></CohortProvider>);
+  const renderWithCohortsProvider = () => renderWithAlertAndIntl(<CohortProvider><CohortsPage /></CohortProvider>);
   beforeEach(() => {
     jest.clearAllMocks();
   });

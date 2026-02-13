@@ -2,10 +2,9 @@ import { screen } from '@testing-library/react';
 import SelectedCohortInfo from './SelectedCohortInfo';
 import messages from '../messages';
 import dataDownloadsMessages from '@src/dataDownloads/messages';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithAlertAndIntl } from '@src/testUtils';
 import * as CohortContextModule from '@src/cohorts/components/CohortContext';
 import { CohortProvider } from './CohortContext';
-import { AlertProvider } from '@src/components/AlertContext';
 import { useCohorts, useContentGroupsData } from '../data/apiHook';
 
 jest.mock('react-router-dom', () => ({
@@ -44,11 +43,9 @@ jest.mock('@src/cohorts/data/apiHook', () => ({
 }));
 
 function renderWithProviders() {
-  return renderWithIntl(
+  return renderWithAlertAndIntl(
     <CohortProvider>
-      <AlertProvider>
-        <SelectedCohortInfo />
-      </AlertProvider>
+      <SelectedCohortInfo />
     </CohortProvider>
   );
 }

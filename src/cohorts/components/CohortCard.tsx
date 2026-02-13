@@ -2,13 +2,13 @@ import { useParams } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { FormattedMessage, getExternalLinkUrl, useIntl } from '@openedx/frontend-base';
 import { Card, Hyperlink, Tab, Tabs, Toast } from '@openedx/paragon';
-import { useAlert } from '@src/components/AlertContext';
 import messages from '@src/cohorts/messages';
 import { CohortData } from '@src/cohorts/types';
 import { usePatchCohort } from '@src/cohorts/data/apiHook';
 import CohortsForm from '@src/cohorts/components/CohortsForm';
 import ManageLearners from '@src/cohorts/components/ManageLearners';
 import { useCohortContext } from '@src/cohorts/components/CohortContext';
+import { useAlert } from '@src/providers/AlertProvider';
 
 const assignmentLink = {
   random: 'https://docs.openedx.org/en/latest/educators/references/advanced_features/managing_cohort_assignment.html#about-auto-cohorts',

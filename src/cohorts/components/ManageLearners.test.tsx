@@ -4,8 +4,7 @@ import { useAddLearnersToCohort } from '@src/cohorts/data/apiHook';
 import { useCohortContext } from '@src/cohorts/components/CohortContext';
 import ManageLearners from '@src/cohorts/components/ManageLearners';
 import messages from '@src/cohorts/messages';
-import { renderWithIntl } from '@src/testUtils';
-import { AlertProvider } from '@src/components/AlertContext';
+import { renderWithAlertAndIntl } from '@src/testUtils';
 
 jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
@@ -19,7 +18,7 @@ jest.mock('@src/cohorts/components/CohortContext', () => ({
   useCohortContext: jest.fn(),
 }));
 
-const renderWithAlertProvider = () => renderWithIntl(<AlertProvider><ManageLearners /></AlertProvider>);
+const renderWithAlertProvider = () => renderWithAlertAndIntl(<ManageLearners />);
 
 describe('ManageLearners', () => {
   const mutateMock = jest.fn();

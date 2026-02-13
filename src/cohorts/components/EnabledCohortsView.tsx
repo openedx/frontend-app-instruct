@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { FormControl, Button, Card, Alert } from '@openedx/paragon';
-import { useAlert } from '@src/components/AlertContext';
 import { CheckCircle, Error, WarningFilled } from '@openedx/paragon/icons';
 import { useCohortContext } from '@src/cohorts/components/CohortContext';
 import CohortsForm from '@src/cohorts/components/CohortsForm';
@@ -11,6 +10,7 @@ import { useCohorts, useCreateCohort } from '@src/cohorts/data/apiHook';
 import { assignmentTypes } from '@src/cohorts/constants';
 import messages from '@src/cohorts/messages';
 import { CohortData, BasicCohortData } from '@src/cohorts/types';
+import { useAlert } from '@src/providers/AlertProvider';
 
 const alertIcons = {
   success: CheckCircle,
