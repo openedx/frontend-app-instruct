@@ -3,6 +3,9 @@ import { appId } from './constants';
 import routes from './routes';
 import messages from './i18n';
 import providers from './providers';
+import { appId } from '@src/constants';
+import routes from '@src/routes';
+import messages from '@src/i18n';
 
 const app: App = {
   appId,

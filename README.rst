@@ -88,6 +88,72 @@ internationalization.
 
 .. _frontend-base i18n howto: https://github.com/openedx/frontend-base/blob/master/docs/how_tos/i18n.rst
 
+AlertsProvider
+==============
+
+The AlertsProvider is a centralized alert management system that provides four types of alerts:
+
+**Toast Alerts**
+  Temporary notifications that appear in the corner and auto-dismiss after 5 seconds (customizable).
+
+  .. code-block:: jsx
+
+    import { useAlert } from './providers/AlertProvider';
+
+    const { showToast } = useAlert();
+    showToast('Report generated successfully!', 10000); // 10 second duration
+
+**Modal Alerts**
+  Blocking dialogs that require user action. Supports queuing multiple modals and optional titles.
+
+  .. code-block:: jsx
+
+    import { useAlert } from './providers/AlertProvider';
+
+    const { showModal } = useAlert();
+    showModal({
+      title: 'Delete Report',  // Optional
+      message: 'Are you sure you want to delete this report?',
+      variant: 'danger',  // 'default' | 'success' | 'warning' | 'danger'
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      onConfirm: () => console.log('Confirmed'),
+      onCancel: () => console.log('Cancelled'),
+    });
+
+**Standard Alerts (with AlertOutlet)**
+  Drop-in replacement for AlertContext from PR #113. Alerts are rendered via the ``AlertOutlet`` component.
+
+  .. code-block:: jsx
+
+    import { useAlert, AlertOutlet } from './providers/AlertProvider';
+
+    const { addAlert } = useAlert();
+    addAlert({ type: 'success', message: 'Cohort created!' });
+
+    // Place AlertOutlet where you want alerts to appear
+    <AlertOutlet />
+
+**Inline Alerts**
+  Persistent messages you control the rendering for. Useful for form validation or contextual messages.
+
+  .. code-block:: jsx
+
+    import { useAlert } from './providers/AlertProvider';
+
+    const { showInlineAlert, dismissInlineAlert, inlineAlerts } = useAlert();
+    showInlineAlert('This is an inline message', 'info', true);
+
+    // Render inline alerts manually
+    {inlineAlerts.map(alert => (
+      <div key={alert.id}>
+        {alert.message}
+        {alert.dismissible && (
+          <button onClick={() => dismissInlineAlert(alert.id)}>Dismiss</button>
+        )}
+      </div>
+    ))}
+
 Getting Help
 ************
 

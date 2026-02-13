@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import CohortCard from './CohortCard';
 import messages from '../messages';
 import { messages as dataDownloadsMessages } from '../../dataDownloads/messages';
+import dataDownloadsMessages from '@src/dataDownloads/messages';
 
 const SelectedCohortInfo = () => {
   const intl = useIntl();

@@ -1,5 +1,5 @@
 import { Container } from '@openedx/paragon';
-import { GeneralCourseInfo } from './components/generalCourseInfo';
+import { GeneralCourseInfo } from '@src/courseInfo/components/generalCourseInfo';
 
 const CourseInfoPage = () => {
   return (
