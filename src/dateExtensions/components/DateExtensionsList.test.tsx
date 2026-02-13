@@ -17,6 +17,7 @@ const mockData = [
 
 jest.mock('../data/apiHook', () => ({
   useDateExtensions: jest.fn(),
+  useGradedSubsections: jest.fn().mockReturnValue({ data: { items: [] } }),
 }));
 
 const mockResetExtensions = jest.fn();
@@ -26,10 +27,10 @@ describe('DateExtensionsList', () => {
     <DateExtensionsList {...props} />
   );
 
-  it('renders loading state on the table', () => {
+  it('renders skeletons when loading', () => {
     (useDateExtensions as jest.Mock).mockReturnValue({ isLoading: true, data: { count: 0, results: [] } });
     renderComponent({});
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(document.querySelectorAll('.react-loading-skeleton')).toHaveLength(6);
   });
 
   it('renders table with data', async () => {

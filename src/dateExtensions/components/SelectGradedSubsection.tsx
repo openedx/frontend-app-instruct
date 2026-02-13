@@ -5,21 +5,30 @@ import { useGradedSubsections } from '../data/apiHook';
 interface SelectGradedSubsectionProps {
   label?: string,
   placeholder: string,
+  value?: string,
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void,
 }
 
-const SelectGradedSubsection = ({ label, placeholder, onChange }: SelectGradedSubsectionProps) => {
+const SelectGradedSubsection = ({ label, placeholder, value, onChange }: SelectGradedSubsectionProps) => {
   const { courseId = '' } = useParams<{ courseId: string }>();
   const { data = { items: [] } } = useGradedSubsections(courseId);
   const selectOptions = [{ displayName: placeholder, subsectionId: '' }, ...data.items];
+
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(event);
   };
 
   return (
-    <FormGroup size="sm">
+    <FormGroup className="mb-0" size="sm">
       {label && <FormLabel>{label}</FormLabel>}
-      <FormControl placeholder={placeholder} name="blockId" as="select" onChange={handleChange} size="md">
+      <FormControl
+        as="select"
+        name="blockId"
+        placeholder={placeholder}
+        size="md"
+        value={value}
+        onChange={handleChange}
+      >
         {
           selectOptions.map((option) => (
             <option key={option.subsectionId} value={option.subsectionId}>
