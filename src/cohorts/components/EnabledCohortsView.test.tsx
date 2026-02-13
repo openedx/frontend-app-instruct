@@ -1,12 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithAlertAndIntl } from '@src/testUtils';
 import { CohortProvider } from '@src/cohorts/components/CohortContext';
 import EnabledCohortsView from '@src/cohorts/components/EnabledCohortsView';
 import { useCohorts, useContentGroupsData } from '@src/cohorts/data/apiHook';
 import messages from '@src/cohorts/messages';
-import { AlertProvider } from '@src/components/AlertContext';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -32,7 +31,7 @@ const mockContentGroups = [
 ];
 
 describe('EnabledCohortsView', () => {
-  const renderWithCohortProvider = () => renderWithIntl(<CohortProvider><AlertProvider><EnabledCohortsView /></AlertProvider></CohortProvider>);
+  const renderWithCohortProvider = () => renderWithAlertAndIntl(<CohortProvider><EnabledCohortsView /></CohortProvider>);
 
   beforeEach(() => {
     jest.clearAllMocks();

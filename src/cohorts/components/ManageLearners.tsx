@@ -5,7 +5,7 @@ import { Button, FormControl } from '@openedx/paragon';
 import { useCohortContext } from '@src/cohorts/components/CohortContext';
 import { useAddLearnersToCohort } from '@src/cohorts/data/apiHook';
 import messages from '@src/cohorts/messages';
-import { useAlert } from '@src/components/AlertContext';
+import { useAlert } from '@src/providers/AlertProvider';
 
 interface AddLearnersResponse {
   added: string[],
