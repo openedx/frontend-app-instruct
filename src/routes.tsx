@@ -6,7 +6,7 @@ import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 const routes = [
   {
     id: 'org.openedx.frontend.route.instructor.main',
-    path: ':courseId',
+    path: 'instructor/:courseId',
     handle: {
       role: 'org.openedx.frontend.role.instructor'
     },
