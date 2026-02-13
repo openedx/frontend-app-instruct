@@ -7,5 +7,7 @@ export const useCourseInfo = (courseId: string) => (
     queryKey: courseInfoQueryKeys.byCourse(courseId),
     queryFn: () => getCourseInfo(courseId),
     enabled: !!courseId,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   })
 );
