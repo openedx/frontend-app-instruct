@@ -1,6 +1,7 @@
 import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
 import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
+import { DataDownloadsPage } from '@src/dataDownloads/DataDownloadsPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 
 const routes = [
@@ -35,10 +36,10 @@ const routes = [
       //   path: 'student_admin',
       //   element: <StudentAdminPage />
       // },
-      // {
-      //   path: 'data_download',
-      //   element: <DataDownloadPage />
-      // },
+      {
+        path: 'data_downloads',
+        element: <DataDownloadsPage />
+      },
       // {
       //   path: 'special_exams',
       //   element: <SpecialExamsPage />
