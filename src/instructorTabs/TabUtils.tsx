@@ -15,5 +15,14 @@ export function useWidgetProps<T>(slotId: string, validate?: (props: T) => boole
   const widgets = useWidgetsForId(slotId);
   return widgets
     .map(widget => extractWidgetProps<T>(widget, validate))
-    .filter((props): props is T => props !== null);
+    .filter((props): props is T => props !== null) || [];
 }
+
+// Utility function to extract path after courseId from URL
+export const extractAfterCourseId = (url: string, courseId: string): string => {
+  const courseIndex = url.indexOf(courseId);
+  if (courseIndex === -1) return url; // courseId not found, return the original URL
+
+  const afterCourseId = url.substring(courseIndex + courseId.length);
+  return afterCourseId.startsWith('/') ? afterCourseId.substring(1) : afterCourseId;
+};

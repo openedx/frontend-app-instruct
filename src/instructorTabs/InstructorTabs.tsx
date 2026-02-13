@@ -1,9 +1,9 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Skeleton, Tab, Tabs } from '@openedx/paragon';
 import { SlotContext } from '@openedx/frontend-base';
 import { useCourseInfo } from '../data/apiHook';
-import { useWidgetProps } from './TabUtils';
+import { extractAfterCourseId, useWidgetProps } from './TabUtils';
 import { useAlert } from '@src/providers/AlertProvider';
 
 export interface TabProps {
@@ -15,35 +15,42 @@ export interface TabProps {
 
 const InstructorTabs = () => {
   const navigate = useNavigate();
-  const { courseId, tabId } = useParams<{ courseId: string, tabId?: string }>();
+  const { courseId = '', tabId } = useParams<{ courseId: string, tabId?: string }>();
   const { id: slotId } = useContext(SlotContext);
-  const { data: courseInfo, isLoading } = useCourseInfo(courseId ?? '');
+  const { data: courseInfo, isLoading } = useCourseInfo(courseId);
   const widgetPropsArray = useWidgetProps(slotId) as TabProps[];
   const { addAlert, clearAlerts } = useAlert();
 
-  const apiTabs: TabProps[] = courseInfo?.tabs ?? [];
-  const allTabs = [...apiTabs];
+  const sortedTabs = useMemo(() => {
+    if (isLoading) return [];
+    const apiTabs: TabProps[] = courseInfo?.tabs ?? [];
+    const tabMap = new Map<string, TabProps>();
 
-  // Tabs added via slot take priority over (read: src/slots/README.md) tabs from the API
-  widgetPropsArray.forEach(slotTab => {
-    if (!apiTabs.find(apiTab => apiTab.tabId === slotTab.tabId)) {
-      allTabs.push(slotTab);
-    } else {
-      const indexToRemove = allTabs.findIndex(({ tabId }) => tabId === slotTab.tabId);
-      if (indexToRemove !== -1) {
-        allTabs.splice(indexToRemove, 1);
+    // Adding tabs from API and from slot into a map to avoid duplicates
+    apiTabs.forEach(tab => {
+      tabMap.set(tab.tabId, tab);
+    });
+
+    widgetPropsArray.forEach(slotTab => {
+      // If the slotTab doesn't have a tabId or title, we can't render it properly, so we skip it.
+      if (!slotTab.tabId || !slotTab.title) {
+        return;
       }
-      allTabs.push(slotTab);
-    }
-  });
 
-  // Tabs are sorted by sortOrder, with a fallback to 1000 to be placed at the end for tabs that don't have sortOrder defined (to avoid NaN issues)
-  const sortedTabs = [...allTabs].sort((a, b) => (a.sortOrder ?? 1000) - (b.sortOrder ?? 1000));
+      tabMap.set(slotTab.tabId, slotTab);
+    });
 
-  const activeKey = tabId ?? 'course_info';
+    const allTabs = Array.from(tabMap.values());
+
+    // Tabs are sorted by sortOrder, with a fallback to 1000 to be placed at the end for tabs that don't have sortOrder defined (to avoid NaN issues)
+    return allTabs.sort((a, b) => (a.sortOrder ?? 1000) - (b.sortOrder ?? 1000));
+  }, [courseInfo?.tabs, isLoading, widgetPropsArray]);
+
+  const activeKey = tabId ?? '';
+
   const handleSelect = (eventKey: string | null) => {
     clearAlerts();
-    if (eventKey && courseId) {
+    if (eventKey) {
       const selectedTab = sortedTabs.find(({ tabId }) => tabId === eventKey);
       if (!selectedTab) return addAlert({ type: 'error', message: 'Selected tab url not found' });
 
@@ -52,11 +59,12 @@ const InstructorTabs = () => {
       const isAUrl = /^https?:\/\//i.test(selectedTab.url);
       const isInternalNav = isAUrl && new URL(selectedTab?.url ?? '').origin === window.location.origin;
       if (isInternalNav || !isAUrl) {
-        navigate(`/${courseId}/${eventKey}`);
+        const pathAfterCourseId = extractAfterCourseId(selectedTab.url, courseId);
+        navigate(`/${courseId}/${pathAfterCourseId}`);
       } else {
         window.location.assign(selectedTab.url);
       }
-    }
+    };
   };
 
   if (isLoading) {
