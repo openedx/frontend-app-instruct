@@ -4,7 +4,7 @@ import { useAddLearnersToCohort } from '@src/cohorts/data/apiHook';
 import { useCohortContext } from '@src/cohorts/components/CohortContext';
 import ManageLearners from '@src/cohorts/components/ManageLearners';
 import messages from '@src/cohorts/messages';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithAlertAndIntl } from '@src/testUtils';
 
 jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
@@ -18,6 +18,8 @@ jest.mock('@src/cohorts/components/CohortContext', () => ({
   useCohortContext: jest.fn(),
 }));
 
+const renderWithAlertProvider = () => renderWithAlertAndIntl(<ManageLearners />);
+
 describe('ManageLearners', () => {
   const mutateMock = jest.fn();
 
@@ -29,7 +31,7 @@ describe('ManageLearners', () => {
   });
 
   it('render all static texts', () => {
-    renderWithIntl(<ManageLearners />);
+    renderWithAlertProvider();
     expect(screen.getByRole('heading', { name: messages.addLearnersTitle.defaultMessage })).toBeInTheDocument();
     expect(screen.getByText(messages.addLearnersSubtitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.addLearnersInstructions.defaultMessage)).toBeInTheDocument();
@@ -39,7 +41,7 @@ describe('ManageLearners', () => {
   });
 
   it('updates textarea value and calls mutate on button click', () => {
-    renderWithIntl(<ManageLearners />);
+    renderWithAlertProvider();
     const textarea = screen.getByPlaceholderText(messages.learnersExample.defaultMessage);
     fireEvent.change(textarea, { target: { value: 'user1@example.com,user2@example.com' } });
     fireEvent.click(screen.getByRole('button', { name: /\+ Add Learners/i }));
@@ -53,10 +55,10 @@ describe('ManageLearners', () => {
   });
 
   it('handles empty input gracefully', () => {
-    renderWithIntl(<ManageLearners />);
+    renderWithAlertProvider();
     fireEvent.click(screen.getByRole('button', { name: /\+ Add Learners/i }));
     expect(mutateMock).toHaveBeenCalledWith(
-      [''],
+      [],
       expect.objectContaining({
         onSuccess: expect.any(Function),
         onError: expect.any(Function),
@@ -65,7 +67,7 @@ describe('ManageLearners', () => {
   });
 
   it('calls onError if mutate fails', () => {
-    renderWithIntl(<ManageLearners />);
+    renderWithAlertProvider();
     const textarea = screen.getByPlaceholderText(messages.learnersExample.defaultMessage);
     fireEvent.change(textarea, { target: { value: 'user@example.com' } });
     fireEvent.click(screen.getByRole('button', { name: /\+ Add Learners/i }));
@@ -79,7 +81,7 @@ describe('ManageLearners', () => {
 
   it('uses default cohort id 0 if selectedCohort is missing', () => {
     (useCohortContext as jest.Mock).mockReturnValue({ selectedCohort: undefined });
-    renderWithIntl(<ManageLearners />);
+    renderWithAlertProvider();
     fireEvent.click(screen.getByRole('button', { name: /\+ Add Learners/i }));
     expect(mutateMock).toHaveBeenCalled();
   });

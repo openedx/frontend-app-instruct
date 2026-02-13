@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithAlertAndIntl } from '@src/testUtils';
 import { CohortProvider } from '@src/cohorts/components/CohortContext';
 import EnabledCohortsView from '@src/cohorts/components/EnabledCohortsView';
 import { useCohorts, useContentGroupsData } from '@src/cohorts/data/apiHook';
@@ -25,11 +25,17 @@ const mockCohorts = [
   { id: 2, name: 'Cohort 2' },
 ];
 
+const mockContentGroups = [
+  { id: '2', name: 'Group 1' },
+  { id: '3', name: 'Group 2' },
+];
+
 describe('EnabledCohortsView', () => {
-  const renderWithCohortProvider = () => renderWithIntl(<CohortProvider><EnabledCohortsView /></CohortProvider>);
+  const renderWithCohortProvider = () => renderWithAlertAndIntl(<CohortProvider><EnabledCohortsView /></CohortProvider>);
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { allGroupConfigurations: [{ groups: mockContentGroups }] } });
     (useParams as jest.Mock).mockReturnValue({ courseId: 'course-v1:edX+Test+2024' });
   });
 
@@ -46,7 +52,6 @@ describe('EnabledCohortsView', () => {
 
   it('calls handleSelectCohort on select change', async () => {
     (useCohorts as jest.Mock).mockReturnValue({ data: mockCohorts });
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: [] });
     renderWithCohortProvider();
     const select = screen.getByRole('combobox');
     const user = userEvent.setup();
@@ -56,7 +61,6 @@ describe('EnabledCohortsView', () => {
 
   it('calls handleAddCohort on button click', async () => {
     (useCohorts as jest.Mock).mockReturnValue({ data: [] });
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: [] });
     renderWithCohortProvider();
     const user = userEvent.setup();
     const button = screen.getByRole('button', { name: `+ ${messages.addCohort.defaultMessage}` });
