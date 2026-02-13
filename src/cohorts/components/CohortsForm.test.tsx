@@ -2,11 +2,10 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CohortsForm from '@src/cohorts/components/CohortsForm';
 import messages from '@src/cohorts/messages';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithAlertAndIntl, renderWithIntl } from '@src/testUtils';
 import { useContentGroupsData } from '@src/cohorts/data/apiHook';
 import { CohortProvider } from '@src/cohorts/components/CohortContext';
 import * as CohortContextModule from '@src/cohorts/components/CohortContext';
-import { AlertProvider } from '@src/components/AlertContext';
 
 jest.mock('react-router-dom', () => ({
   useParams: () => ({ courseId: 'course-v1:edX+DemoX+Demo_Course' }),
@@ -26,11 +25,9 @@ describe('CohortsForm', () => {
   const onSubmit = jest.fn();
 
   const renderComponent = () =>
-    renderWithIntl(
+    renderWithAlertAndIntl(
       <CohortProvider>
-        <AlertProvider>
-          <CohortsForm onCancel={onCancel} onSubmit={onSubmit} />
-        </AlertProvider>
+        <CohortsForm onCancel={onCancel} onSubmit={onSubmit} />
       </CohortProvider>
     );
 
