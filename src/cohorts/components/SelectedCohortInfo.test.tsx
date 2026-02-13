@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SelectedCohortInfo from './SelectedCohortInfo';
 import messages from '../messages';
 import dataDownloadsMessages from '@src/dataDownloads/messages';
@@ -6,6 +7,7 @@ import { renderWithAlertAndIntl } from '@src/testUtils';
 import * as CohortContextModule from '@src/cohorts/components/CohortContext';
 import { CohortProvider } from './CohortContext';
 import { useCohorts, useContentGroupsData } from '../data/apiHook';
+import { assignmentTypes } from '../constants';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -16,13 +18,15 @@ const mockCohorts = [
   {
     id: 1,
     name: 'Initial Cohort',
-    assignmentType: 'manual',
+    assignmentType: assignmentTypes.manual,
     groupId: 2,
     userPartitionId: 3,
     userCount: 0
   },
-  { id: 2, name: 'Cohort 2',
-    assignmentType: 'automatic',
+  {
+    id: 2,
+    name: 'Cohort 2',
+    assignmentType: assignmentTypes.automatic,
     groupId: null,
     userPartitionId: null,
     userCount: 5
@@ -51,32 +55,103 @@ function renderWithProviders() {
 }
 
 describe('SelectedCohortInfo', () => {
+  const mockSetSelectedCohort = jest.fn();
+  const mockClearSelectedCohort = jest.fn();
+  const mockUpdateCohortField = jest.fn();
+
   beforeEach(() => {
+    jest.clearAllMocks();
     (useCohorts as jest.Mock).mockReturnValue({ data: mockCohorts });
     (useContentGroupsData as jest.Mock).mockReturnValue({ data: { allGroupConfigurations: [{ groups: mockContentGroups }] } });
     jest.spyOn(CohortContextModule, 'useCohortContext').mockReturnValue({
       selectedCohort: mockCohorts[0],
-      setSelectedCohort: jest.fn(),
-      clearSelectedCohort: jest.fn(),
-      updateCohortField: jest.fn(),
+      setSelectedCohort: mockSetSelectedCohort,
+      clearSelectedCohort: mockClearSelectedCohort,
+      updateCohortField: mockUpdateCohortField,
     });
   });
 
-  it('if a cohort is selected renders CohortCard', () => {
-    renderWithProviders();
-    expect(screen.getByRole('tablist')).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: messages.manageLearners.defaultMessage })).toBeInTheDocument();
+  describe('Basic Rendering with Selected Cohort', () => {
+    it('renders CohortCard when a cohort is selected', () => {
+      renderWithProviders();
+      expect(screen.getByRole('tablist')).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: messages.manageLearners.defaultMessage })).toBeInTheDocument();
+    });
+
+    it('renders data downloads hyperlink with correct destination', () => {
+      renderWithProviders();
+      const link = screen.getByRole('link', { name: dataDownloadsMessages.pageTitle.defaultMessage });
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute('href', '/instructor/course-v1:edX+DemoX+Demo_Course/data_downloads');
+    });
+
+    it('renders complete disclaimer paragraph with correct structure', () => {
+      renderWithProviders();
+      const paragraph = screen.getByText(new RegExp(messages.cohortDisclaimer.defaultMessage)).closest('p');
+      expect(paragraph).toBeInTheDocument();
+      expect(paragraph).toHaveTextContent(messages.cohortDisclaimer.defaultMessage);
+      expect(paragraph).toHaveTextContent(dataDownloadsMessages.pageTitle.defaultMessage);
+      expect(paragraph).toHaveTextContent(messages.page.defaultMessage);
+    });
   });
 
-  it('renders cohort disclaimer message', () => {
-    renderWithProviders();
-    expect(screen.getByText(new RegExp(messages.cohortDisclaimer.defaultMessage))).toBeInTheDocument();
+  describe('No Selected Cohort', () => {
+    it('still renders disclaimer when no cohort is selected', () => {
+      jest.spyOn(CohortContextModule, 'useCohortContext').mockReturnValue({
+        selectedCohort: null,
+        setSelectedCohort: mockSetSelectedCohort,
+        clearSelectedCohort: mockClearSelectedCohort,
+        updateCohortField: mockUpdateCohortField,
+      });
+
+      renderWithProviders();
+      expect(screen.getByText(new RegExp(messages.cohortDisclaimer.defaultMessage))).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: dataDownloadsMessages.pageTitle.defaultMessage })).toBeInTheDocument();
+    });
+
+    it('do not render CohortCard component even when no cohort selected', () => {
+      jest.spyOn(CohortContextModule, 'useCohortContext').mockReturnValue({
+        selectedCohort: null,
+        setSelectedCohort: mockSetSelectedCohort,
+        clearSelectedCohort: mockClearSelectedCohort,
+        updateCohortField: mockUpdateCohortField,
+      });
+
+      renderWithProviders();
+      expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
+    });
   });
 
-  it('renders data downloads hyperlink with correct destination', () => {
-    renderWithProviders();
-    const link = screen.getByRole('link', { name: dataDownloadsMessages.pageTitle.defaultMessage });
-    expect(link).toBeInTheDocument();
-    expect(link).toHaveAttribute('href', '/instructor/course-v1:edX+DemoX+Demo_Course/data_downloads');
+  describe('Integration with CohortCard', () => {
+    it('renders with manual cohort type and content group', async () => {
+      jest.spyOn(CohortContextModule, 'useCohortContext').mockReturnValue({
+        selectedCohort: mockCohorts[0],
+        setSelectedCohort: mockSetSelectedCohort,
+        clearSelectedCohort: mockClearSelectedCohort,
+        updateCohortField: mockUpdateCohortField,
+      });
+
+      renderWithProviders();
+      expect(screen.getByRole('tablist')).toBeInTheDocument();
+      expect(screen.getByText(messages.manualCohortWarning.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(messages.cohortDisclaimer.defaultMessage))).toBeInTheDocument();
+      const settingsTab = screen.getByRole('tab', { name: 'Settings' });
+      await userEvent.click(settingsTab);
+      const selectElement = screen.getByRole('combobox');
+      expect(selectElement).toHaveValue('2');
+    });
+
+    it('renders with automatic cohort type and without content group', () => {
+      jest.spyOn(CohortContextModule, 'useCohortContext').mockReturnValue({
+        selectedCohort: mockCohorts[1],
+        setSelectedCohort: mockSetSelectedCohort,
+        clearSelectedCohort: mockClearSelectedCohort,
+        updateCohortField: mockUpdateCohortField,
+      });
+
+      renderWithProviders();
+      expect(screen.getByRole('tablist')).toBeInTheDocument();
+      expect(screen.getByText(messages.automaticCohortWarning.defaultMessage)).toBeInTheDocument();
+    });
   });
 });
