@@ -10,7 +10,7 @@ import ManageLearners from '@src/cohorts/components/ManageLearners';
 import { useCohortContext } from '@src/cohorts/components/CohortContext';
 import { useAlert } from '@src/providers/AlertProvider';
 
-const assignmentLink = {
+export const assignmentLink = {
   random: 'https://docs.openedx.org/en/latest/educators/references/advanced_features/managing_cohort_assignment.html#about-auto-cohorts',
   manual: 'https://docs.openedx.org/en/latest/educators/how-tos/advanced_features/manage_cohorts.html#assign-learners-to-cohorts-manually',
 };
@@ -27,7 +27,7 @@ const CohortCard = () => {
   const { mutate: editCohort } = usePatchCohort(courseId);
   const formRef = useRef<{ resetForm: () => void }>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
-  const { clearAlerts } = useAlert();
+  const { clearAlerts, showToast } = useAlert();
 
   if (!selectedCohort) {
     return null;
@@ -41,9 +41,8 @@ const CohortCard = () => {
           setShowSuccessMessage(true);
           setSelectedCohort({ ...selectedCohort, ...updatedCohort });
         },
-        onError: (error) => {
-          // TODO: add modal error
-          console.error(error);
+        onError: (error: Error) => {
+          showToast(error.message);
         }
       }
     );
