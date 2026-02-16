@@ -9,7 +9,7 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
     <Container size="xl" fluid>
       <h2 className="text-primary-700">{formatMessage(messages.pageTitle)}</h2>
       <InstructorTabsSlot />
-      <div className="mt-4.5 mb-4 mx-4">
+      <div className="m-4 px-3">
         {children}
       </div>
     </Container>
