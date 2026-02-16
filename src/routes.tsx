@@ -10,7 +10,7 @@ import EnrollmentsPage from '@src/enrollments/EnrollmentsPage';
 import GradingPage from '@src/grading/GradingPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 import SpecialExamsPage from '@src/specialExams/SpecialExamsPage';
-import { useWidgetProps } from './instructorTabs/TabUtils';
+import { useWidgetProps } from './slots/SlotUtils';
 
 const messages = defineMessages({
   tabContentNotAvailable: {

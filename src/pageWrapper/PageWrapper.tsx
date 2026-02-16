@@ -1,7 +1,7 @@
 import { useIntl } from '@openedx/frontend-base';
 import messages from './messages';
 import { Container } from '@openedx/paragon';
-import InstructorNav from '@src/instructorTabs/InstructorNav';
+import InstructorNav from '@src/instructorNav/InstructorNav';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   const { formatMessage } = useIntl();
