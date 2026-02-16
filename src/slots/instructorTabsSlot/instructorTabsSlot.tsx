@@ -1,16 +1,5 @@
-import { Slot } from '@openedx/frontend-base';
-import InstructorNav from '@src/instructorTabs/InstructorNav';
-
-// This component will be a placeholder/dummy component just to retrieve Tab props
-// Since we are using a slot-based architecture and Paragon is passing Tabs/Tab through
-// We can't have context provider between Tabs and Tab when rendering it should be direct parent/children relation
+// This component will be a placeholder/dummy component just to retrieve Tab/Route props
+// Since we need sortOrder prop (is not native on nav item/link) and we need tabId to identify content on routes
+// We need to retrieve the props needed instead of rendering the Slot directly
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const PlaceholderSlot = (_props: Record<string, any>) => null;
-
-export const InstructorTabsSlot = () => (
-  <Slot id="org.openedx.frontend.slot.instructor.tabs.v1">
-    <InstructorNav />
-  </Slot>
-);
-
-export default InstructorTabsSlot;

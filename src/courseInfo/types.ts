@@ -1,4 +1,4 @@
-import { TabProps } from '@src/instructorTabs/InstructorTabs';
+import { TabProps } from '@src/instructorTabs/InstructorNav';
 
 export interface CourseInfoResponse {
   courseId: string,
