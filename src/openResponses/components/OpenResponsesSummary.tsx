@@ -29,7 +29,7 @@ const OpenResponsesSummary = () => {
       <Alert variant="danger" show={isError} className="my-3" dismissible>
         {error instanceof Object && 'message' in error ? String(error.message) : String(error)}
       </Alert>
-      <h3 className="text-primary-700">{intl.formatMessage(messages.summaryTitle)}</h3>
+      <h3 className="text-primary-700 mb-3">{intl.formatMessage(messages.summaryTitle)}</h3>
       <Stack direction="horizontal" gap={3}>
         <div>
           <div className="x-small text-gray-500">

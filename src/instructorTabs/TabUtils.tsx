@@ -15,7 +15,7 @@ export function useWidgetProps<T>(slotId: string, validate?: (props: T) => boole
   const widgets = useWidgetsForId(slotId);
   return widgets
     .map(widget => extractWidgetProps<T>(widget, validate))
-    .filter((props): props is T => props !== null) || [];
+    .filter((props): props is T => props !== null && props !== undefined) || [];
 }
 
 // Utility function to extract path after courseId from URL
