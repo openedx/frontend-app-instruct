@@ -1,17 +1,21 @@
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { SlotContext } from '@openedx/frontend-base';
 import { Nav, Navbar, Skeleton } from '@openedx/paragon';
 import { useCourseInfo } from '@src/data/apiHook';
 import { useAlert } from '@src/providers/AlertProvider';
-import { TabProps } from './InstructorTabs';
 import { useWidgetProps } from './TabUtils';
+
+export interface TabProps {
+  tabId: string,
+  url: string,
+  title: string,
+  sortOrder: number,
+}
 
 const InstructorNav = () => {
   const { courseId = '', tabId } = useParams<{ courseId: string, tabId?: string }>();
-  const { id: slotId } = useContext(SlotContext);
   const { data: courseInfo, isLoading } = useCourseInfo(courseId);
-  const widgetPropsArray = useWidgetProps(slotId) as TabProps[];
+  const widgetPropsArray = useWidgetProps('org.openedx.frontend.slot.instructor.tabs.v1') as TabProps[];
   const { clearAlerts } = useAlert();
 
   const sortedTabs = useMemo(() => {
