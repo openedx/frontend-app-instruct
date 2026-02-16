@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Nav, Navbar, Skeleton } from '@openedx/paragon';
 import { useCourseInfo } from '@src/data/apiHook';
 import { useAlert } from '@src/providers/AlertProvider';
-import { useWidgetProps } from './TabUtils';
+import { useWidgetProps } from '../slots/SlotUtils';
 
 export interface TabProps {
   tabId: string,
@@ -13,7 +13,7 @@ export interface TabProps {
 }
 
 const InstructorNav = () => {
-  const { courseId = '', tabId } = useParams<{ courseId: string, tabId?: string }>();
+  const { courseId = '', tabId = '' } = useParams<{ courseId: string, tabId?: string }>();
   const { data: courseInfo, isLoading } = useCourseInfo(courseId);
   const widgetPropsArray = useWidgetProps('org.openedx.frontend.slot.instructor.tabs.v1') as TabProps[];
   const { clearAlerts } = useAlert();
@@ -43,8 +43,6 @@ const InstructorNav = () => {
     return allTabs.sort((a, b) => (a.sortOrder ?? 1000) - (b.sortOrder ?? 1000));
   }, [courseInfo?.tabs, isLoading, widgetPropsArray]);
 
-  const activeKey = tabId ?? '';
-
   if (isLoading) {
     return <Skeleton className="lead" />;
   }
@@ -55,24 +53,20 @@ const InstructorNav = () => {
     <Navbar>
       <Nav
         variant="tabs"
-        activeKey={activeKey}
+        activeKey={tabId}
         onSelect={() => clearAlerts()}
       >
         {
-          sortedTabs.map((tab) => {
-            const { tabId, title, url } = tab;
-
-            return (
-              <Nav.Item key={tabId}>
-                <Nav.Link
-                  href={url}
-                  active={tabId === activeKey}
-                >
-                  {title}
-                </Nav.Link>
-              </Nav.Item>
-            );
-          })
+          sortedTabs.map((tab) => (
+            <Nav.Item key={tab.tabId}>
+              <Nav.Link
+                href={tab.url}
+                active={tab.tabId === tabId}
+              >
+                {tab.title}
+              </Nav.Link>
+            </Nav.Item>
+          ))
         }
       </Nav>
     </Navbar>

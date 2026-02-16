@@ -16,7 +16,7 @@ Slots in `frontend-app-instruct` use the slot system from `@openedx/frontend-bas
 
 ### Description
 We created following slots to handle Instructor Tabs:
-- Instructor Slots uses the slot context to render tab widgets.
+- Tab Slots uses the slot context to render tab widgets.
 - Route Slots uses registered slots to render tab content dynamically.
 
 
@@ -73,27 +73,9 @@ export const PlaceholderSlot = (_props: Record<string, any>) => null;
 
 #### 2.2 Explanation of Slot Consumer
 
-The `InstructorTabs` component consumes the registered slots:
+[`InstructorNav`](../instructorTabsSlot/InstructorNav.tsx) component consumes the registered slots and tabs coming from the endpoint, orders them, and renders them.
 
-```tsx
-import { SlotContext } from '@openedx/frontend-base';
-
-const InstructorTabs = () => {
-  const { id: slotId } = useContext(SlotContext);
-  const widgets = useWidgetProps(slotId);
-
-  return (
-    <Tabs>
-      {widgets.map((widget, index) => {
-        const { tabId, title, sortOrder } = widget.element.props;
-        return <Tab key={tabId} eventKey={tabId} title={title} sortOrder={sortOrder} />;
-      })}
-    </Tabs>
-  );
-};
-```
-
-And `TabContent` in `routes.tsx` consume the registered slots for the content.
+[`TabContent`](../instructorTabsSlot/routes.tsx) consumes the registered slots for the content of each tab.
 
 ```tsx
 const TabContent = () => {
