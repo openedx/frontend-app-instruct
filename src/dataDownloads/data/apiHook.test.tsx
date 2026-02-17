@@ -35,6 +35,33 @@ describe('dataDownloads apiHook', () => {
   });
 
   describe('useGeneratedReports', () => {
+    it('should not retry on 404 errors', async () => {
+      const error404 = { response: { status: 404 } };
+      mockGetGeneratedReports.mockRejectedValue(error404);
+
+      // Create a wrapper that allows retries so the retry function is actually invoked
+      const queryClient = new QueryClient({
+        defaultOptions: {
+          queries: { retry: 3 },
+        },
+      });
+      const Wrapper = ({ children }: { children: ReactNode }) => (
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      );
+
+      const { result } = renderHook(
+        () => useGeneratedReports('course-404'),
+        { wrapper: Wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      }, { timeout: 5000 });
+
+      // Should have only been called once (no retries for 404)
+      expect(mockGetGeneratedReports).toHaveBeenCalledTimes(1);
+    }, 10000);
+
     it('should fetch generated reports successfully', async () => {
       const mockData = { reports: ['report1', 'report2'] };
       mockGetGeneratedReports.mockResolvedValue(mockData);

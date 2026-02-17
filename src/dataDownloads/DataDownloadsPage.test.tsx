@@ -6,6 +6,7 @@ import DataDownloadsPage from './DataDownloadsPage';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
 import { AlertProvider } from '@src/providers/AlertProvider';
 import { renderWithIntl } from '@src/testUtils';
+import * as dataApi from '@src/data/api';
 
 jest.mock('./data/apiHook');
 jest.mock('@src/components/PageNotFound', () => ({
@@ -15,6 +16,9 @@ jest.mock('@src/components/PageNotFound', () => ({
 jest.mock('@openedx/frontend-base', () => ({
   ...jest.requireActual('@openedx/frontend-base'),
   getAuthenticatedHttpClient: jest.fn(),
+}));
+jest.mock('@src/data/api', () => ({
+  getApiBaseUrl: jest.fn(() => 'http://lms.example.com'),
 }));
 
 const mockUseGeneratedReports = useGeneratedReports as jest.MockedFunction<typeof useGeneratedReports>;
@@ -366,7 +370,6 @@ describe('DataDownloadsPage', () => {
 
   it('should handle download error', async () => {
     const user = userEvent.setup();
-    const consoleError = jest.spyOn(console, 'error').mockImplementation();
     mockHttpGet.mockRejectedValueOnce(new Error('Download failed'));
 
     mockUseGeneratedReports.mockReturnValue({
@@ -380,10 +383,8 @@ describe('DataDownloadsPage', () => {
     await user.click(downloadButton);
 
     await waitFor(() => {
-      expect(consoleError).toHaveBeenCalledWith('Error downloading report:', expect.any(Error));
+      expect(screen.getAllByText('Failed to download report.').length).toBeGreaterThan(0);
     });
-
-    consoleError.mockRestore();
   });
 
   it('should cleanup on unmount', () => {
@@ -503,5 +504,172 @@ describe('DataDownloadsPage', () => {
     capturedCallbacks.onSuccess();
 
     jest.useRealTimers();
+  });
+
+  it('should trigger download with relative URL prepended with base URL', async () => {
+    const user = userEvent.setup();
+
+    mockUseGeneratedReports.mockReturnValue({
+      data: { downloads: mockReportsData },
+      isLoading: false,
+    } as any);
+
+    renderWithProviders(<DataDownloadsPage />);
+
+    const downloadButton = screen.getByText('Download Report');
+    await user.click(downloadButton);
+
+    await waitFor(() => {
+      expect(mockHttpGet).toHaveBeenCalledWith(
+        'http://lms.example.com/path/to/report-a.csv',
+        { responseType: 'blob' }
+      );
+    });
+
+    expect(global.URL.createObjectURL).toHaveBeenCalled();
+    expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('blob:mock');
+  });
+
+  it('should trigger download with absolute URL without prepending base URL', async () => {
+    const user = userEvent.setup();
+    const absoluteUrlReport = [
+      {
+        ...mockReportsData[0],
+        reportUrl: 'http://cdn.example.com/reports/report.csv',
+      },
+    ];
+
+    mockUseGeneratedReports.mockReturnValue({
+      data: { downloads: absoluteUrlReport },
+      isLoading: false,
+    } as any);
+
+    renderWithProviders(<DataDownloadsPage />);
+
+    const downloadButton = screen.getByText('Download Report');
+    await user.click(downloadButton);
+
+    await waitFor(() => {
+      expect(mockHttpGet).toHaveBeenCalledWith(
+        'http://cdn.example.com/reports/report.csv',
+        { responseType: 'blob' }
+      );
+    });
+  });
+
+  it('should show download error modal when download fails', async () => {
+    const user = userEvent.setup();
+    mockHttpGet.mockRejectedValueOnce(new Error('Network error'));
+
+    mockUseGeneratedReports.mockReturnValue({
+      data: { downloads: mockReportsData },
+      isLoading: false,
+    } as any);
+
+    renderWithProviders(<DataDownloadsPage />);
+
+    const downloadButton = screen.getByText('Download Report');
+    await user.click(downloadButton);
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Failed to download report.').length).toBeGreaterThan(0);
+    });
+  });
+
+  it('should show error message from API response when generate report fails with response error', async () => {
+    const user = userEvent.setup();
+    let capturedCallbacks: any;
+    const consoleError = jest.spyOn(console, 'error').mockImplementation();
+
+    mockMutate.mockImplementation((_, callbacks) => {
+      capturedCallbacks = callbacks;
+    });
+
+    mockUseGeneratedReports.mockReturnValue({
+      data: { downloads: [] },
+      isLoading: false,
+    } as any);
+
+    renderWithProviders(<DataDownloadsPage />);
+
+    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    await user.click(generateButton);
+
+    const apiError = { response: { data: { error: 'Course not configured for reports' } } };
+    capturedCallbacks.onError(apiError);
+
+    await waitFor(() => {
+      expect(screen.getByText('Course not configured for reports')).toBeInTheDocument();
+    });
+
+    consoleError.mockRestore();
+  });
+
+  it('should set problemResponsesError from API response when problem responses report fails', async () => {
+    const user = userEvent.setup();
+    let capturedCallbacks: any;
+    const consoleError = jest.spyOn(console, 'error').mockImplementation();
+
+    mockMutate.mockImplementation((_, callbacks) => {
+      capturedCallbacks = callbacks;
+    });
+
+    mockUseGeneratedReports.mockReturnValue({
+      data: { downloads: [] },
+      isLoading: false,
+    } as any);
+
+    renderWithProviders(<DataDownloadsPage />);
+
+    const problemTab = screen.getByRole('tab', { name: 'Open Response Reports' });
+    await user.click(problemTab);
+
+    const generateButton = screen.getByRole('button', { name: 'Generate Problem Report' });
+    await user.click(generateButton);
+
+    const apiError = { response: { data: { error: 'Invalid problem location' } } };
+    capturedCallbacks.onError(apiError);
+
+    await waitFor(() => {
+      expect(screen.getByText('Invalid problem location')).toBeInTheDocument();
+    });
+
+    consoleError.mockRestore();
+  });
+
+  it('should clear problemResponsesError when generating a new problem responses report', async () => {
+    const user = userEvent.setup();
+    let capturedCallbacks: any;
+    const consoleError = jest.spyOn(console, 'error').mockImplementation();
+
+    mockMutate.mockImplementation((_, callbacks) => {
+      capturedCallbacks = callbacks;
+    });
+
+    mockUseGeneratedReports.mockReturnValue({
+      data: { downloads: [] },
+      isLoading: false,
+    } as any);
+
+    renderWithProviders(<DataDownloadsPage />);
+
+    const problemTab = screen.getByRole('tab', { name: 'Open Response Reports' });
+    await user.click(problemTab);
+
+    const generateButton = screen.getByRole('button', { name: 'Generate Problem Report' });
+
+    // First attempt: trigger error
+    await user.click(generateButton);
+    capturedCallbacks.onError({ response: { data: { error: 'Invalid problem location' } } });
+
+    await waitFor(() => {
+      expect(screen.getByText('Invalid problem location')).toBeInTheDocument();
+    });
+
+    // Second attempt: error should be cleared before mutate is called
+    await user.click(generateButton);
+    expect(screen.queryByText('Invalid problem location')).not.toBeInTheDocument();
+
+    consoleError.mockRestore();
   });
 });

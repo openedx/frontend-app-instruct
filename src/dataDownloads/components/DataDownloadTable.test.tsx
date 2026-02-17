@@ -61,4 +61,19 @@ describe('DataDownloadTable', () => {
     expect(screen.getByText('Report Type')).toBeInTheDocument();
     expect(screen.getByText('Report Name')).toBeInTheDocument();
   });
+
+  it('should render pagination footer when data exceeds page size', () => {
+    const manyReports: DownloadReportData[] = Array.from({ length: 11 }, (_, i) => ({
+      dateGenerated: `2025-10-0${(i % 9) + 1}T12:00:00Z`,
+      reportType: `Type ${i}`,
+      reportName: `Report ${i}`,
+      downloadLink: `https://example.com/report-${i}.pdf`,
+    }));
+
+    renderComponent({ data: manyReports, isLoading: false, onDownloadClick: mockOnDownloadClick });
+
+    // With 11 items and page size of 10, pageCount > 1 so footer with pagination should render
+    const navElements = screen.getAllByRole('navigation');
+    expect(navElements.length).toBeGreaterThan(0);
+  });
 });

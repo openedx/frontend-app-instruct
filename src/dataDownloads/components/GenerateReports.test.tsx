@@ -6,11 +6,12 @@ import { renderWithIntl } from '@src/testUtils';
 const mockOnGenerateReport = jest.fn();
 const mockOnGenerateProblemResponsesReport = jest.fn();
 
-const renderComponent = (isGenerating = false) => renderWithIntl(
+const renderComponent = (isGenerating = false, problemResponsesError?: string) => renderWithIntl(
   <GenerateReports
     onGenerateReport={mockOnGenerateReport}
     onGenerateProblemResponsesReport={mockOnGenerateProblemResponsesReport}
     isGenerating={isGenerating}
+    problemResponsesError={problemResponsesError}
   />
 );
 
@@ -231,6 +232,18 @@ describe('GenerateReports', () => {
 
       const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
       expect(generateButton).not.toBeDisabled();
+    });
+  });
+
+  describe('problemResponsesError', () => {
+    it('should display validation error message in the problem responses section', async () => {
+      const user = userEvent.setup();
+      renderComponent(false, 'Invalid problem location');
+
+      const tab = screen.getByRole('tab', { name: 'Open Response Reports' });
+      await user.click(tab);
+
+      expect(screen.getByText('Invalid problem location')).toBeInTheDocument();
     });
   });
 });
