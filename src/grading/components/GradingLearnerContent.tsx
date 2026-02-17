@@ -44,7 +44,23 @@ const GradingLearnerContent = ({ toolType }: GradingLearnerContentProps) => {
     }
   ];
 
-  const allLearnersActionRows = [];
+  const allLearnersActionRows = [
+    {
+      title: intl.formatMessage(messages.resetAttempts),
+      description: intl.formatMessage(messages.resetAllLearnersAttemptsDescription),
+      buttonLabel: intl.formatMessage(messages.resetAttemptsButtonLabel),
+    },
+    {
+      title: intl.formatMessage(messages.rescoreSubmission),
+      description: intl.formatMessage(messages.rescoreSubmissionAllLearnersDescription),
+      buttonLabel: intl.formatMessage(messages.rescoreSubmissionButtonLabel),
+    },
+    {
+      title: intl.formatMessage(messages.taskStatus),
+      description: intl.formatMessage(messages.taskStatusDescription),
+      buttonLabel: intl.formatMessage(messages.taskStatusButtonLabel),
+    }
+  ];
 
   const rows = toolType === 'single' ? singleLearnerActionRows : allLearnersActionRows;
 

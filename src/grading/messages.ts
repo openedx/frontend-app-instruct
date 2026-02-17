@@ -130,6 +130,16 @@ const messages = defineMessages({
     id: 'instruct.grading.taskStatusButtonLabel',
     defaultMessage: 'Show Task Status',
     description: 'Button label for the task status action card'
+  },
+  resetAllLearnersAttemptsDescription: {
+    id: 'instruct.grading.resetAllLearnersAttemptsDescription',
+    defaultMessage: 'Allows all learners to work on the problem again.',
+    description: 'Description for the reset attempts action card in the all learners view'
+  },
+  rescoreSubmissionAllLearnersDescription: {
+    id: 'instruct.grading.rescoreSubmissionAllLearnersDescription',
+    defaultMessage: 'For the specified problem, rescore all learners\' responses.',
+    description: 'Description for the rescore submission action card in the all learners view'
   }
 });
 
