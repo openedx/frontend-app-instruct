@@ -213,6 +213,19 @@ describe('GenerateReports', () => {
 
       expect(screen.getByText('Issued Certificates')).toBeInTheDocument();
     });
+
+    it('should call onGenerateReport with issued_certificates when button is clicked', async () => {
+      const user = userEvent.setup();
+      renderComponent();
+
+      const tab = screen.getByRole('tab', { name: 'Certificate Reports' });
+      await user.click(tab);
+
+      const button = screen.getByRole('button', { name: 'Generate Certificates Report' });
+      await user.click(button);
+
+      expect(mockOnGenerateReport).toHaveBeenCalledWith('issued_certificates');
+    });
   });
 
   describe('isGenerating state', () => {
