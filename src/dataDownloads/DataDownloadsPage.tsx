@@ -6,10 +6,10 @@ import { GenerateReports } from './components/GenerateReports';
 import { useParams } from 'react-router-dom';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
 import { useCallback, useState, useRef, useEffect } from 'react';
-import { getApiBaseUrl } from '../data/api';
+import { getApiBaseUrl } from '@src/data/api';
 import { getReportTypeDisplayName } from './utils';
-import PageNotFound from '../components/PageNotFound';
-import { useAlert } from '../providers/AlertProvider';
+import PageNotFound from '@src/components/PageNotFound';
+import { useAlert } from '@src/providers/AlertProvider';
 
 const DataDownloadsPageContent = () => {
   const intl = useIntl();

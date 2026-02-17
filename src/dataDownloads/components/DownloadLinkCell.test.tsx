@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DownloadLinkCell } from './DownloadLinkCell';
-import { IntlProvider } from '@openedx/frontend-base';
+import { renderWithIntl } from '@src/testUtils';
 
 const mockOnDownloadClick = jest.fn();
 
@@ -14,15 +14,7 @@ const createMockRow = (downloadLink: string | undefined) => ({
   },
 });
 
-const renderComponent = (props) => {
-  return render(
-    <IntlProvider locale="en">
-      <DownloadLinkCell
-        {...props}
-      />
-    </IntlProvider>
-  );
-};
+const renderComponent = (props) => renderWithIntl(<DownloadLinkCell {...props} />);
 
 describe('DownloadLinkCell', () => {
   beforeEach(() => {

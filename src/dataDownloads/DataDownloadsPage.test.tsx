@@ -1,13 +1,14 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { IntlProvider, getAuthenticatedHttpClient } from '@openedx/frontend-base';
+import { getAuthenticatedHttpClient, IntlProvider } from '@openedx/frontend-base';
 import { MemoryRouter } from 'react-router-dom';
 import { DataDownloadsPage } from './DataDownloadsPage';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
-import { AlertProvider } from '../providers/AlertProvider';
+import { AlertProvider } from '@src/providers/AlertProvider';
+import { renderWithIntl } from '@src/testUtils';
 
 jest.mock('./data/apiHook');
-jest.mock('../components/PageNotFound', () => ({
+jest.mock('@src/components/PageNotFound', () => ({
   __esModule: true,
   default: () => <div>Page Not Found</div>,
 }));
@@ -30,14 +31,12 @@ const mockReportsData = [
 ];
 
 const renderWithProviders = (component: React.ReactElement, courseId = 'course-123') => {
-  return render(
-    <IntlProvider locale="en">
-      <AlertProvider>
-        <MemoryRouter initialEntries={[`/course/${courseId}/data-downloads`]}>
-          {component}
-        </MemoryRouter>
-      </AlertProvider>
-    </IntlProvider>
+  return renderWithIntl(
+    <AlertProvider>
+      <MemoryRouter initialEntries={[`/course/${courseId}/data-downloads`]}>
+        {component}
+      </MemoryRouter>
+    </AlertProvider>
   );
 };
 
@@ -437,7 +436,7 @@ describe('DataDownloadsPage', () => {
     } as any);
 
     rerender(
-      <IntlProvider locale="en">
+      <IntlProvider locale="en" messages={{}}>
         <AlertProvider>
           <MemoryRouter initialEntries={['/course/course-123/data-downloads']}>
             <DataDownloadsPage />

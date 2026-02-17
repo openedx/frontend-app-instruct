@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { ReportNameCell } from './ReportNameCell';
-import { IntlProvider } from '@openedx/frontend-base';
+import { renderWithIntl } from '@src/testUtils';
 
 const createMockRow = (reportName: string | undefined = 'Test Report Name') => ({
   original: {
@@ -11,15 +11,7 @@ const createMockRow = (reportName: string | undefined = 'Test Report Name') => (
   },
 });
 
-const renderComponent = (props) => {
-  return render(
-    <IntlProvider locale="en">
-      <ReportNameCell
-        {...props}
-      />
-    </IntlProvider>
-  );
-};
+const renderComponent = (props) => renderWithIntl(<ReportNameCell {...props} />);
 
 describe('ReportNameCell', () => {
   beforeEach(() => {

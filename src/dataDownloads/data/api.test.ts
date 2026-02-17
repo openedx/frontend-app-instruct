@@ -1,9 +1,9 @@
 import { getGeneratedReports, generateReportLink } from './api';
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
-import { getApiBaseUrl } from '../../data/api';
+import { getApiBaseUrl } from '@src/data/api';
 
 jest.mock('@openedx/frontend-base');
-jest.mock('../../data/api');
+jest.mock('@src/data/api');
 
 const mockGet = jest.fn();
 const mockPost = jest.fn();

@@ -1,8 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { IntlProvider } from '@openedx/frontend-base';
 import { DataDownloadTable } from './DataDownloadTable';
 import { DownloadReportData } from '../types';
+import { renderWithIntl } from '@src/testUtils';
 
 const mockData: DownloadReportData[] = [
   {
@@ -19,13 +19,7 @@ const mockData: DownloadReportData[] = [
   },
 ];
 
-const renderComponent = (props) => {
-  return render(
-    <IntlProvider locale="en">
-      <DataDownloadTable {...props} />
-    </IntlProvider>
-  );
-};
+const renderComponent = (props) => renderWithIntl(<DataDownloadTable {...props} />);
 
 describe('DataDownloadTable', () => {
   const mockOnDownloadClick = jest.fn();

@@ -1,22 +1,18 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { IntlProvider } from '@openedx/frontend-base';
 import { GenerateReports } from './GenerateReports';
+import { renderWithIntl } from '@src/testUtils';
 
 const mockOnGenerateReport = jest.fn();
 const mockOnGenerateProblemResponsesReport = jest.fn();
 
-const renderComponent = (isGenerating = false) => {
-  return render(
-    <IntlProvider locale="en">
-      <GenerateReports
-        onGenerateReport={mockOnGenerateReport}
-        onGenerateProblemResponsesReport={mockOnGenerateProblemResponsesReport}
-        isGenerating={isGenerating}
-      />
-    </IntlProvider>
-  );
-};
+const renderComponent = (isGenerating = false) => renderWithIntl(
+  <GenerateReports
+    onGenerateReport={mockOnGenerateReport}
+    onGenerateProblemResponsesReport={mockOnGenerateProblemResponsesReport}
+    isGenerating={isGenerating}
+  />
+);
 
 describe('GenerateReports', () => {
   beforeEach(() => {
