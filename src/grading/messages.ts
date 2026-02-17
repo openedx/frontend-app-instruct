@@ -155,6 +155,21 @@ const messages = defineMessages({
     id: 'instruct.grading.overrideScorePlaceholder',
     defaultMessage: 'Score',
     description: 'Placeholder text for the override score input field'
+  },
+  resetAllLearnersAttemptsDescription: {
+    id: 'instruct.grading.resetAllLearnersAttemptsDescription',
+    defaultMessage: 'Allows all learners to work on the problem again.',
+    description: 'Description for the reset attempts action card in the all learners view'
+  },
+  rescoreSubmissionAllLearnersDescription: {
+    id: 'instruct.grading.rescoreSubmissionAllLearnersDescription',
+    defaultMessage: 'For the specified problem, rescore all learners\' responses.',
+    description: 'Description for the rescore submission action card in the all learners view'
+  },
+  rescoreAllSubmissionButtonLabel: {
+    id: 'instruct.grading.rescoreAllSubmissionButtonLabel',
+    defaultMessage: 'Rescore All Learners\' Submissions',
+    description: 'Button label for the rescore submission action card in the all learners view'
   }
 });
 

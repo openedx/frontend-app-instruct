@@ -126,7 +126,37 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
     }
   ];
 
-  const allLearnersActionRows = [];
+  const allLearnersActionRows = [
+    {
+      title: intl.formatMessage(messages.resetAttempts),
+      description: intl.formatMessage(messages.resetAllLearnersAttemptsDescription),
+      buttonLabel: intl.formatMessage(messages.resetAttemptsButtonLabel),
+      customAction: (
+        <Button disabled={!blockId} onClick={handleResetAttempts}>
+          {intl.formatMessage(messages.resetAttemptsButtonLabel)}
+        </Button>
+      )
+    },
+    {
+      title: intl.formatMessage(messages.rescoreSubmission),
+      description: intl.formatMessage(messages.rescoreSubmissionAllLearnersDescription),
+      customAction: (
+        <div className="d-flex flex-column gap-3">
+          <Button disabled={!blockId} onClick={() => handleRescoreSubmission()}>{intl.formatMessage(messages.rescoreAllSubmissionButtonLabel)}</Button>
+          <Button disabled={!blockId} onClick={() => handleRescoreSubmission(true)}>{intl.formatMessage(messages.rescoreIfImprovesScoreButtonLabel)}</Button>
+        </div>
+      ),
+    },
+    {
+      title: intl.formatMessage(messages.taskStatus),
+      description: intl.formatMessage(messages.taskStatusDescription),
+      customAction: (
+        <Button onClick={handleTaskStatusClick}>
+          {intl.formatMessage(messages.taskStatusButtonLabel)}
+        </Button>
+      )
+    }
+  ];
 
   const rows = toolType === 'single' ? singleLearnerActionRows : allLearnersActionRows;
 
