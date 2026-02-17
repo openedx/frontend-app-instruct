@@ -23,7 +23,7 @@ describe('SpecifyLearnerField', () => {
       (useCourseInfo as jest.Mock).mockReturnValue({ data: { permissions: { admin: true, dataResearcher: false } } });
       (useLearner as jest.Mock).mockReturnValue({
         data: mockLearnerData,
-        refetch: jest.fn(),
+        refetch: jest.fn().mockResolvedValue({ data: mockLearnerData }),
         error: null,
       });
     });
@@ -76,7 +76,7 @@ describe('SpecifyLearnerField', () => {
       (useCourseInfo as jest.Mock).mockReturnValue({ data: { permissions: { admin: true, dataResearcher: false } } });
       (useLearner as jest.Mock).mockReturnValue({
         data: {},
-        refetch: jest.fn(),
+        refetch: jest.fn().mockResolvedValue({ data: {} }),
         error: { isAxiosError: true, response: { status: 404 } },
       });
     });

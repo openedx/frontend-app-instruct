@@ -12,3 +12,7 @@
 .username .form-control::placeholder {
     font-size: var(--pgn-typography-form-input-font-size-sm);
 }
+
+.info-tooltip .tooltip-inner {
+    max-width: none;
+}

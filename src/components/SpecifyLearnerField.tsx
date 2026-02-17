@@ -39,9 +39,13 @@ const SpecifyLearnerField = ({ learner, onClickSelect }: SpecifyLearnerFieldProp
 
   const handleClickSelect = () => {
     if (inputValue) {
-      onClickSelect(inputValue);
-      refetch();
-      enableShowLearner();
+      refetch().then((result) => {
+        // Need to pass empty value if learner is not valid to clear out any previously selected learner
+        // We could have other conditions/fields depending on valid learner
+        const formValue = !result.error ? inputValue : '';
+        onClickSelect(formValue);
+        enableShowLearner();
+      });
     }
   };
 

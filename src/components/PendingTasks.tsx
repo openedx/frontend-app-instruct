@@ -10,9 +10,11 @@ import { PendingTask, TableCellValue } from '@src/types';
 
 interface PendingTasksProps {
   isPolling?: boolean,
+  isOpen?: boolean,
+  onToggle?: () => void,
 }
 
-const PendingTasks = ({ isPolling = false }: PendingTasksProps) => {
+const PendingTasks = ({ isPolling = false, isOpen = false, onToggle }: PendingTasksProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams();
   const { data: tasks, isLoading } = usePendingTasks(courseId, { enablePolling: isPolling });
@@ -48,10 +50,13 @@ const PendingTasks = ({ isPolling = false }: PendingTasksProps) => {
     );
   };
 
+  const collapsibleProps = onToggle ? { open: isOpen, onToggle } : {};
+
   return (
     <Collapsible.Advanced
       className="mt-4 pt-4 border-top"
       styling="basic"
+      {...collapsibleProps}
     >
       <Collapsible.Trigger
         className="collapsible-trigger d-flex border-0 align-items-center text-decoration-none"
