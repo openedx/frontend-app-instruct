@@ -76,7 +76,26 @@ const GradingLearnerContent = ({ toolType }: GradingLearnerContentProps) => {
     }
   ];
 
-  const allLearnersActionRows = [];
+  const allLearnersActionRows = [
+    {
+      title: intl.formatMessage(messages.resetAttempts),
+      description: intl.formatMessage(messages.resetAllLearnersAttemptsDescription),
+      buttonLabel: intl.formatMessage(messages.resetAttemptsButtonLabel),
+      onButtonClick: () => console.log('Reset attempts for all learners')
+    },
+    {
+      title: intl.formatMessage(messages.rescoreSubmission),
+      description: intl.formatMessage(messages.rescoreSubmissionAllLearnersDescription),
+      buttonLabel: intl.formatMessage(messages.rescoreSubmissionButtonLabel),
+      onButtonClick: () => console.log('Rescore submission for all learners')
+    },
+    {
+      title: intl.formatMessage(messages.taskStatus),
+      description: intl.formatMessage(messages.taskStatusDescription),
+      buttonLabel: intl.formatMessage(messages.taskStatusButtonLabel),
+      onButtonClick: () => console.log('Check task status for all learners')
+    }
+  ];
 
   const rows = toolType === 'single' ? singleLearnerActionRows : allLearnersActionRows;
 
