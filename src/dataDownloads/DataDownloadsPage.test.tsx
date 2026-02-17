@@ -6,7 +6,6 @@ import DataDownloadsPage from './DataDownloadsPage';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
 import { AlertProvider } from '@src/providers/AlertProvider';
 import { renderWithIntl } from '@src/testUtils';
-import * as dataApi from '@src/data/api';
 
 jest.mock('./data/apiHook');
 jest.mock('@src/components/PageNotFound', () => ({
