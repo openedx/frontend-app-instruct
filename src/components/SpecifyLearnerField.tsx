@@ -10,8 +10,8 @@ const SpecifyLearnerField = ({ onChange }: SpecifyLearnerFieldProps) => {
   const intl = useIntl();
 
   return (
-    <FormGroup size="sm">
-      <FormLabel>{intl.formatMessage(messages.specifyLearner)}</FormLabel>
+    <FormGroup size="sm" className="mb-0">
+      <FormLabel className="text-primary-500 d-flex">{intl.formatMessage(messages.specifyLearner)}</FormLabel>
       <div className="d-flex">
         <FormControl className="mr-2" name="emailOrUsername" placeholder={intl.formatMessage(messages.specifyLearnerPlaceholder)} size="md" autoResize onChange={onChange} />
         <Button>{intl.formatMessage(messages.select)}</Button>

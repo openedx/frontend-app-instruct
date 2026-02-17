@@ -14,7 +14,7 @@ const GradingPage = () => {
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h3 className="text-primary-700">{intl.formatMessage(messages.pageTitle)}</h3>
+        <h3 className="text-primary-700 mb-0">{intl.formatMessage(messages.pageTitle)}</h3>
         <GradingActionRow />
       </div>
       <Card className="bg-light-200 p-4 mt-4.5">
