@@ -1,6 +1,8 @@
 import { useIntl } from '@openedx/frontend-base';
 import messages from '../messages';
 import SpecifyProblem from '../../components/SpecifyProblem';
+import ActionCard from '@src/components/ActionCard';
+import SpecifyLearnerField from '@src/components/SpecifyLearnerField';
 import { GradingToolsType } from '../types';
 
 interface GradingLearnerContentProps {
@@ -9,6 +11,42 @@ interface GradingLearnerContentProps {
 
 const GradingLearnerContent = ({ toolType }: GradingLearnerContentProps) => {
   const intl = useIntl();
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    console.log('Learner specified:', event.target.value);
+  };
+
+  const singleLearnerActionRows = [
+    {
+      title: intl.formatMessage(messages.resetAttempts),
+      description: intl.formatMessage(messages.resetAttemptsDescription),
+      buttonLabel: intl.formatMessage(messages.resetAttemptsButtonLabel),
+    },
+    {
+      title: intl.formatMessage(messages.rescoreSubmission),
+      description: intl.formatMessage(messages.rescoreSubmissionDescription),
+      buttonLabel: intl.formatMessage(messages.rescoreSubmissionButtonLabel),
+    },
+    {
+      title: intl.formatMessage(messages.overrideScore),
+      description: intl.formatMessage(messages.overrideScoreDescription),
+      buttonLabel: intl.formatMessage(messages.overrideScoreButtonLabel),
+    },
+    {
+      title: intl.formatMessage(messages.deleteHistory),
+      description: intl.formatMessage(messages.deleteHistoryDescription),
+      buttonLabel: intl.formatMessage(messages.deleteHistoryButtonLabel),
+    },
+    {
+      title: intl.formatMessage(messages.taskStatus),
+      description: intl.formatMessage(messages.taskStatusDescription),
+      buttonLabel: intl.formatMessage(messages.taskStatusButtonLabel),
+    }
+  ];
+
+  const allLearnersActionRows = [];
+
+  const rows = toolType === 'single' ? singleLearnerActionRows : allLearnersActionRows;
 
   return (
     <>
@@ -19,7 +57,15 @@ const GradingLearnerContent = ({ toolType }: GradingLearnerContentProps) => {
             : intl.formatMessage(messages.descriptionAllLearners)
         }
       </p>
-      <SpecifyProblem />
+      <div className="d-flex justify-content-between">
+        {toolType === 'single' && <SpecifyLearnerField onChange={handleChange} />}
+        <SpecifyProblem />
+      </div>
+      {
+        rows.map(({ title, description, buttonLabel }, index) => (
+          <ActionCard key={title} buttonLabel={buttonLabel} description={description} title={title} hasBorderBottom={index !== rows.length - 1} />
+        ))
+      }
     </>
   );
 };
