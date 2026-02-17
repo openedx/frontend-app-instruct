@@ -50,24 +50,27 @@ const InstructorNav = () => {
   if (sortedTabs.length === 0) return null;
 
   return (
-    <Navbar>
+    <Navbar expand="md">
       <Nav
         variant="tabs"
         activeKey={tabId}
         onSelect={() => clearAlerts()}
       >
-        {
-          sortedTabs.map((tab) => (
-            <Nav.Item key={tab.tabId}>
-              <Nav.Link
-                href={tab.url}
-                active={tab.tabId === tabId}
-              >
-                {tab.title}
-              </Nav.Link>
-            </Nav.Item>
-          ))
-        }
+        <Navbar.Toggle aria-controls="instructor-nav" />
+        <Navbar.Collapse id="instructor-nav">
+          {
+            sortedTabs.map((tab) => (
+              <Nav.Item key={tab.tabId}>
+                <Nav.Link
+                  href={tab.url}
+                  active={tab.tabId === tabId}
+                >
+                  {tab.title}
+                </Nav.Link>
+              </Nav.Item>
+            ))
+          }
+        </Navbar.Collapse>
       </Nav>
     </Navbar>
   );
