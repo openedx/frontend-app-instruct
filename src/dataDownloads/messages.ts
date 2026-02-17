@@ -218,7 +218,7 @@ const messages = defineMessages({
   },
   problemResponsesReportNote: {
     id: 'instruct.dataDownloads.reports.problemResponses.note',
-    defaultMessage: 'Note: You also select a section or chapter to include results of all problems in that section or chapter.',
+    defaultMessage: 'Note: You can also select a section or chapter to include results of all problems in that section or chapter.',
     description: 'Note for problem responses report',
   },
   generateProblemResponsesReport: {
@@ -235,6 +235,11 @@ const messages = defineMessages({
     id: 'instruct.dataDownloads.reports.problemResponses.locationPlaceholder',
     defaultMessage: 'Problem location',
     description: 'Placeholder text for problem location input',
+  },
+  problemLocationInfoIconLabel: {
+    id: 'instruct.dataDownloads.reports.problemResponses.infoIconLabel',
+    defaultMessage: 'Example format for problem location',
+    description: 'Aria label for the info icon next to the problem location input',
   },
   issuedCertificatesTitle: {
     id: 'instruct.dataDownloads.reports.issuedCertificates.title',
@@ -317,6 +322,11 @@ const messages = defineMessages({
     defaultMessage: 'Failed to generate report.',
     description: 'Error message displayed when report generation fails',
   },
+  downloadReportError: {
+    id: 'instruct.dataDownloads.downloadReport.error',
+    defaultMessage: 'Failed to download report.',
+    description: 'Error message displayed when a report download fails',
+  },
   noReportsFoundMessage: {
     id: 'instruct.dataDownloads.noReportsFoundHeader',
     defaultMessage: 'No reports found',
@@ -324,4 +334,4 @@ const messages = defineMessages({
   },
 });
 
-export { messages };
+export default messages;

@@ -17,7 +17,7 @@ export const useGeneratedReports = (courseId: string, options?: { enablePolling?
       }
       return failureCount < 3;
     },
-    // Poll every 10 seconds when polling is enabled
+    // Poll every 3 seconds when polling is enabled
     refetchInterval: options?.enablePolling ? 3000 : false,
   })
 );

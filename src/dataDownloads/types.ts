@@ -1,8 +1,4 @@
-export interface TableCellValue<T> {
-  row: {
-    original: T,
-  },
-}
+import { TableCellValue } from '@src/types';
 
 export interface DownloadReportData {
   dateGenerated: string,

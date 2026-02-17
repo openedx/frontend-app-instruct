@@ -1,7 +1,7 @@
 import { useIntl } from '@openedx/frontend-base';
 import { DataTable } from '@openedx/paragon';
 import { useCallback, useMemo } from 'react';
-import { messages } from '../messages';
+import messages from '../messages';
 import { DownloadLinkCell } from './DownloadLinkCell';
 import { DownloadReportData } from '../types';
 import { ReportNameCell } from './ReportNameCell';

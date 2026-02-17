@@ -1,5 +1,5 @@
 import { Container } from '@openedx/paragon';
-import { messages } from './messages';
+import messages from './messages';
 import { useIntl, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { DataDownloadTable } from './components/DataDownloadTable';
 import { GenerateReports } from './components/GenerateReports';
@@ -11,17 +11,17 @@ import { getReportTypeDisplayName } from './utils';
 import PageNotFound from '@src/components/PageNotFound';
 import { useAlert } from '@src/providers/AlertProvider';
 
-const DataDownloadsPageContent = () => {
+const DataDownloadsPage = () => {
   const intl = useIntl();
-  const { courseId } = useParams();
+  const { courseId = '' } = useParams<{ courseId: string }>();
   const [isPolling, setIsPolling] = useState(false);
   const [problemResponsesError, setProblemResponsesError] = useState<string | undefined>(undefined);
   const { showToast, showModal } = useAlert();
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const initialReportCountRef = useRef<number | null>(null);
 
-  const { data: reportsData, isLoading, error } = useGeneratedReports(courseId ?? '', { enablePolling: isPolling });
-  const { mutate: generateReportLinkMutate, isPending: isGenerating } = useGenerateReportLink(courseId ?? '');
+  const { data: reportsData, isLoading, error } = useGeneratedReports(courseId, { enablePolling: isPolling });
+  const { mutate: generateReportLinkMutate, isPending: isGenerating } = useGenerateReportLink(courseId);
 
   // Check if we got a 404 error
   const is404 = (error as any)?.response?.status === 404;
@@ -80,14 +80,10 @@ const DataDownloadsPageContent = () => {
   })) ?? [];
 
   const handleDownload = useCallback(async (downloadLink: string, reportName: string) => {
-    console.log('Download link:', downloadLink);
-    console.log('Report name:', reportName);
-
     try {
       // The downloadLink is a relative path, so we need to prepend the LMS base URL
       const baseUrl = getApiBaseUrl();
       const fullUrl = downloadLink.startsWith('http') ? downloadLink : `${baseUrl}${downloadLink}`;
-      console.log('Full download URL:', fullUrl);
 
       // Use authenticated HTTP client to fetch the file as a blob
       const response = await getAuthenticatedHttpClient().get(fullUrl, {
@@ -110,10 +106,14 @@ const DataDownloadsPageContent = () => {
       // Clean up blob URL
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
-      console.error('Error downloading report:', error);
-      // TODO: Show error message to user
+      showModal({
+        title: intl.formatMessage(messages.downloadReportError),
+        message: intl.formatMessage(messages.downloadReportError),
+        variant: 'danger',
+        confirmText: 'OK',
+      });
     }
-  }, []);
+  }, [intl, showModal]);
 
   const handleGenerateReport = useCallback((reportType: string) => {
     generateReportLinkMutate(
@@ -189,4 +189,4 @@ const DataDownloadsPageContent = () => {
   );
 };
 
-export { DataDownloadsPageContent as DataDownloadsPage };
+export default DataDownloadsPage;

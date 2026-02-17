@@ -1,6 +1,6 @@
 import { useIntl } from '@openedx/frontend-base';
 import { Button } from '@openedx/paragon';
-import { messages } from '../messages';
+import messages from '../messages';
 import { DataDownloadsCellProps } from '../types';
 
 interface DownloadLinkCellProps extends DataDownloadsCellProps {

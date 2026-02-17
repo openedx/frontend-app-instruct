@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getAuthenticatedHttpClient, IntlProvider } from '@openedx/frontend-base';
 import { MemoryRouter } from 'react-router-dom';
-import { DataDownloadsPage } from './DataDownloadsPage';
+import DataDownloadsPage from './DataDownloadsPage';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
 import { AlertProvider } from '@src/providers/AlertProvider';
 import { renderWithIntl } from '@src/testUtils';

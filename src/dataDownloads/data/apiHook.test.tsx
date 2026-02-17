@@ -16,10 +16,10 @@ const createWrapper = () => {
       mutations: { retry: false },
     },
   });
-  const WrapedComponent = ({ children }: { children: ReactNode }) => (
+  const WrappedComponent = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
-  return WrapedComponent;
+  return WrappedComponent;
 };
 
 describe('dataDownloads apiHook', () => {

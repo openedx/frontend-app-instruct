@@ -1,5 +1,5 @@
 import { IntlShape } from 'react-intl';
-import { messages } from './messages';
+import messages from './messages';
 
 /**
  * Report type enum matching backend ReportType enum

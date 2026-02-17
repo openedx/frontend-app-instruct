@@ -2,7 +2,7 @@ import { Button, Tabs, Tab, Form, Card, Icon, OverlayTrigger, Tooltip } from '@o
 import { InfoOutline } from '@openedx/paragon/icons';
 import { useIntl } from '@openedx/frontend-base';
 import { useState, useCallback } from 'react';
-import { messages } from '../messages';
+import messages from '../messages';
 
 interface GenerateReportsProps {
   onGenerateReport: (reportType: string) => void,
@@ -174,7 +174,7 @@ const GenerateReports = ({
                           </Tooltip>
                         )}
                       >
-                        <Icon src={InfoOutline} size="sm" />
+                        <Icon src={InfoOutline} size="sm" aria-label={intl.formatMessage(messages.problemLocationInfoIconLabel)} />
                       </OverlayTrigger>
                     </Form.Label>
                     <Form.Control

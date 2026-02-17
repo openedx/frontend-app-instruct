@@ -1,7 +1,7 @@
 import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
 import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
-import { DataDownloadsPage } from '@src/dataDownloads/DataDownloadsPage';
+import DataDownloadsPage from '@src/dataDownloads/DataDownloadsPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 
 const routes = [
