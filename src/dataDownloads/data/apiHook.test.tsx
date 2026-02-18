@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useGeneratedReports, useGenerateReportLink, queryKeys } from './apiHook';
+import { useGeneratedReports, useGenerateReportLink } from './apiHook';
+import { dataDownloadsQueryKeys as queryKeys } from './queryKeys';
 import { generateReportLink, getGeneratedReports } from './api';
 import { ReactNode } from 'react';
 
@@ -29,8 +30,8 @@ describe('dataDownloads apiHook', () => {
 
   describe('queryKeys', () => {
     it('should generate correct query keys', () => {
-      expect(queryKeys.generatedReports('course-123')).toEqual(['generated-reports', 'course-123']);
-      expect(queryKeys.generateReportLink('course-456')).toEqual(['report-link', 'course-456']);
+      expect(queryKeys.generatedReports('course-123')).toEqual(['org.openedx.frontend.app.instructor', 'dataDownloads', 'generatedReports', 'course-123']);
+      expect(queryKeys.generateReportLink('course-456')).toEqual(['org.openedx.frontend.app.instructor', 'dataDownloads', 'reportLink', 'course-456']);
     });
   });
 

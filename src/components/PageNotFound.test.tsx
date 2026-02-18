@@ -10,7 +10,7 @@ describe('PageNotFound', () => {
 
   it('should render the page not found body text', () => {
     renderWithIntl(<PageNotFound />);
-    expect(screen.getByText('The page you were looking for was not found.')).toBeInTheDocument();
+    expect(screen.getByText("The page you're looking for is unavailable or there's an error in the URL. Please check the URL and try again.")).toBeInTheDocument();
   });
 
   it('should render a main element', () => {

@@ -23,7 +23,7 @@ const messages = defineMessages({
   },
   pageNotFoundBody: {
     id: 'instruct.pageNotFound.body',
-    defaultMessage: 'The page you were looking for was not found.',
+    defaultMessage: "The page you're looking for is unavailable or there's an error in the URL. Please check the URL and try again.",
     description: 'Body text for page not found error',
   },
 });
