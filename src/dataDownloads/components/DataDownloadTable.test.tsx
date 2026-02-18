@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { DataDownloadTable } from './DataDownloadTable';
 import { DownloadReportData } from '../types';
 import { renderWithIntl } from '@src/testUtils';
+import messages from '../messages';
 
 const mockData: DownloadReportData[] = [
   {
@@ -31,35 +32,35 @@ describe('DataDownloadTable', () => {
     const user = userEvent.setup();
     renderComponent({ data: mockData, isLoading: false, onDownloadClick: mockOnDownloadClick });
 
-    expect(screen.getByText('Date Generated')).toBeInTheDocument();
-    expect(screen.getByText('Report Type')).toBeInTheDocument();
-    expect(screen.getByText('Report Name')).toBeInTheDocument();
+    expect(screen.getByText(messages.dateGeneratedColumnName.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.reportTypeColumnName.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.reportNameColumnName.defaultMessage)).toBeInTheDocument();
 
-    expect(screen.getByText('2025-10-01T12:00:00Z')).toBeInTheDocument();
-    expect(screen.getByText('Type A')).toBeInTheDocument();
-    expect(screen.getByText('Test Report A')).toBeInTheDocument();
+    expect(screen.getByText(mockData[0].dateGenerated)).toBeInTheDocument();
+    expect(screen.getByText(mockData[0].reportType)).toBeInTheDocument();
+    expect(screen.getByText(mockData[0].reportName)).toBeInTheDocument();
 
-    const downloadButtons = screen.getAllByText('Download Report');
-    expect(downloadButtons).toHaveLength(2);
+    const downloadButtons = screen.getAllByText(messages.downloadLinkLabel.defaultMessage);
+    expect(downloadButtons).toHaveLength(mockData.length);
 
     await user.click(downloadButtons[0]);
-    expect(mockOnDownloadClick).toHaveBeenCalledWith('https://example.com/report-a.pdf', 'Test Report A');
+    expect(mockOnDownloadClick).toHaveBeenCalledWith(mockData[0].downloadLink, mockData[0].reportName);
   });
 
   it('should render loading state', () => {
     renderComponent({ data: [], isLoading: true, onDownloadClick: mockOnDownloadClick });
 
-    expect(screen.getByText('Date Generated')).toBeInTheDocument();
-    expect(screen.getByText('Report Type')).toBeInTheDocument();
-    expect(screen.getByText('Report Name')).toBeInTheDocument();
+    expect(screen.getByText(messages.dateGeneratedColumnName.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.reportTypeColumnName.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.reportNameColumnName.defaultMessage)).toBeInTheDocument();
   });
 
   it('should render empty table when no data provided', () => {
     renderComponent({ data: [], isLoading: false, onDownloadClick: mockOnDownloadClick });
 
-    expect(screen.getByText('Date Generated')).toBeInTheDocument();
-    expect(screen.getByText('Report Type')).toBeInTheDocument();
-    expect(screen.getByText('Report Name')).toBeInTheDocument();
+    expect(screen.getByText(messages.dateGeneratedColumnName.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.reportTypeColumnName.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.reportNameColumnName.defaultMessage)).toBeInTheDocument();
   });
 
   it('should render pagination footer when data exceeds page size', () => {
