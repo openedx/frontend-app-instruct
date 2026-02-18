@@ -52,3 +52,20 @@ build: clean
 	    mkdir -p "$$(dirname "$$d")"; \
 	    cp "$$f" "$$d"; \
 	  done' sh {} +
+
+validate-no-uncommitted-package-lock-changes:
+	# Checking for package-lock.json changes...
+	git diff --exit-code package-lock.json
+
+.PHONY: validate
+validate:
+	make validate-no-uncommitted-package-lock-changes
+	npm run i18n_extract
+	npm run lint -- --max-warnings 0
+	npm run test:ci
+	npm run build
+
+.PHONY: validate.ci
+validate.ci:
+	npm ci
+	make validate

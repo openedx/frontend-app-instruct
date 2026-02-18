@@ -29,7 +29,8 @@
     "lint:fix": "openedx lint --fix .",
     "prepack": "npm run build",
     "snapshot": "openedx test --updateSnapshot",
-    "test": "openedx test --coverage --passWithNoTests"
+    "test": "openedx test --coverage --passWithNoTests",
+    "test:ci": "TZ=UTC fedx-scripts jest --silent --coverage --passWithNoTests"
   },
   "author": "Open edX",
   "license": "AGPL-3.0",
