@@ -6,6 +6,7 @@ import DataDownloadsPage from './DataDownloadsPage';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
 import { AlertProvider } from '@src/providers/AlertProvider';
 import { renderWithIntl } from '@src/testUtils';
+import messages from './messages';
 
 jest.mock('./data/apiHook');
 jest.mock('@src/components/PageNotFound', () => ({
@@ -84,7 +85,7 @@ describe('DataDownloadsPage', () => {
     } as any);
     renderWithProviders(<DataDownloadsPage />);
 
-    expect(screen.getByText('Available Reports')).toBeInTheDocument();
+    expect(screen.getByText(messages.dataDownloadsTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(/The reports listed below are available for download/)).toBeInTheDocument();
     expect(screen.getByText(/To keep student data secure/)).toBeInTheDocument();
   });
@@ -98,7 +99,7 @@ describe('DataDownloadsPage', () => {
     renderWithProviders(<DataDownloadsPage />);
     // The download functionality is now internal and doesn't call mutate directly
     // We're just checking that the button is clickable
-    const downloadButton = screen.getByText('Download Report');
+    const downloadButton = screen.getByText(messages.downloadLinkLabel.defaultMessage);
     expect(downloadButton).toBeInTheDocument();
   });
 
@@ -120,8 +121,8 @@ describe('DataDownloadsPage', () => {
     } as any);
 
     renderWithProviders(<DataDownloadsPage />);
-    expect(screen.getByText('Available Reports')).toBeInTheDocument();
-    expect(screen.getByText('Generate Reports')).toBeInTheDocument();
+    expect(screen.getByText(messages.dataDownloadsTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.generateReportsTitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('should render empty table when no downloads', () => {
@@ -131,7 +132,7 @@ describe('DataDownloadsPage', () => {
     } as any);
 
     renderWithProviders(<DataDownloadsPage />);
-    expect(screen.getByText('Available Reports')).toBeInTheDocument();
+    expect(screen.getByText(messages.dataDownloadsTitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('should call generateReportLink when generate button clicked', async () => {
@@ -143,7 +144,7 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateEnrolledStudentsReport.defaultMessage });
     await user.click(generateButton);
 
     expect(mockMutate).toHaveBeenCalledWith(
@@ -170,7 +171,7 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateEnrolledStudentsReport.defaultMessage });
     await user.click(generateButton);
 
     // Trigger the onSuccess callback
@@ -198,7 +199,7 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateEnrolledStudentsReport.defaultMessage });
     await user.click(generateButton);
 
     // Trigger the onError callback
@@ -206,7 +207,7 @@ describe('DataDownloadsPage', () => {
 
     // Should show error toast
     await waitFor(() => {
-      const errorElements = screen.getAllByText('Failed to generate report.');
+      const errorElements = screen.getAllByText(messages.generateReportError.defaultMessage);
       expect(errorElements.length).toBeGreaterThan(0);
     });
 
@@ -223,15 +224,15 @@ describe('DataDownloadsPage', () => {
     renderWithProviders(<DataDownloadsPage />);
 
     // Switch to Problem Response tab
-    const problemTab = screen.getByRole('tab', { name: 'Open Response Reports' });
+    const problemTab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
     await user.click(problemTab);
 
     // Type in problem location
-    const locationInput = screen.getByPlaceholderText('Problem location');
+    const locationInput = screen.getByPlaceholderText(messages.problemLocationPlaceholder.defaultMessage);
     await user.type(locationInput, 'block-v1:test');
 
     // Click generate
-    const generateButton = screen.getByRole('button', { name: 'Generate Problem Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateProblemResponsesReport.defaultMessage });
     await user.click(generateButton);
 
     expect(mockMutate).toHaveBeenCalledWith(
@@ -259,10 +260,10 @@ describe('DataDownloadsPage', () => {
     renderWithProviders(<DataDownloadsPage />);
 
     // Switch to Problem Response tab
-    const problemTab = screen.getByRole('tab', { name: 'Open Response Reports' });
+    const problemTab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
     await user.click(problemTab);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Problem Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateProblemResponsesReport.defaultMessage });
     await user.click(generateButton);
 
     // Trigger the onSuccess callback
@@ -291,10 +292,10 @@ describe('DataDownloadsPage', () => {
     renderWithProviders(<DataDownloadsPage />);
 
     // Switch to Problem Response tab
-    const problemTab = screen.getByRole('tab', { name: 'Open Response Reports' });
+    const problemTab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
     await user.click(problemTab);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Problem Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateProblemResponsesReport.defaultMessage });
     await user.click(generateButton);
 
     // Trigger the onError callback
@@ -302,7 +303,7 @@ describe('DataDownloadsPage', () => {
 
     // Should show error toast
     await waitFor(() => {
-      const errorElements = screen.getAllByText('Failed to generate report.');
+      const errorElements = screen.getAllByText(messages.generateReportError.defaultMessage);
       expect(errorElements.length).toBeGreaterThan(0);
     });
 
@@ -322,7 +323,7 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateEnrolledStudentsReport.defaultMessage });
     expect(generateButton).toBeDisabled();
   });
 
@@ -335,7 +336,7 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
     // Should still render the page, not PageNotFound
-    expect(screen.getByText('Available Reports')).toBeInTheDocument();
+    expect(screen.getByText(messages.dataDownloadsTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.queryByText('Page Not Found')).not.toBeInTheDocument();
   });
 
@@ -356,15 +357,15 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    expect(screen.getByText('2025-01-01T00:00:00Z')).toBeInTheDocument();
+    expect(screen.getByText(testReports[0].dateGenerated)).toBeInTheDocument();
     // Use getAllByText since "Grade Report" appears in both the table and the generate section
-    expect(screen.getAllByText('Grade Report')[0]).toBeInTheDocument();
-    expect(screen.getByText('grades.csv')).toBeInTheDocument();
+    expect(screen.getAllByText(messages.gradeReportTitle.defaultMessage)[0]).toBeInTheDocument();
+    expect(screen.getByText(testReports[0].reportName)).toBeInTheDocument();
   });
 
   it('should render download button for reports', () => {
     renderWithProviders(<DataDownloadsPage />);
-    expect(screen.getByText('Download Report')).toBeInTheDocument();
+    expect(screen.getByText(messages.downloadLinkLabel.defaultMessage)).toBeInTheDocument();
   });
 
   it('should handle download error', async () => {
@@ -378,11 +379,11 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const downloadButton = screen.getByText('Download Report');
+    const downloadButton = screen.getByText(messages.downloadLinkLabel.defaultMessage);
     await user.click(downloadButton);
 
     await waitFor(() => {
-      expect(screen.getAllByText('Failed to download report.').length).toBeGreaterThan(0);
+      expect(screen.getAllByText(messages.downloadReportError.defaultMessage).length).toBeGreaterThan(0);
     });
   });
 
@@ -418,7 +419,7 @@ describe('DataDownloadsPage', () => {
 
     const { rerender } = renderWithProviders(<DataDownloadsPage />);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateEnrolledStudentsReport.defaultMessage });
     await user.click(generateButton);
 
     // Trigger the onSuccess callback to start polling
@@ -464,7 +465,7 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateEnrolledStudentsReport.defaultMessage });
     await user.click(generateButton);
 
     // Trigger the onSuccess callback to start polling
@@ -492,7 +493,7 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateEnrolledStudentsReport.defaultMessage });
 
     // Start first polling
     await user.click(generateButton);
@@ -515,7 +516,7 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const downloadButton = screen.getByText('Download Report');
+    const downloadButton = screen.getByText(messages.downloadLinkLabel.defaultMessage);
     await user.click(downloadButton);
 
     await waitFor(() => {
@@ -545,7 +546,7 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const downloadButton = screen.getByText('Download Report');
+    const downloadButton = screen.getByText(messages.downloadLinkLabel.defaultMessage);
     await user.click(downloadButton);
 
     await waitFor(() => {
@@ -567,11 +568,11 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const downloadButton = screen.getByText('Download Report');
+    const downloadButton = screen.getByText(messages.downloadLinkLabel.defaultMessage);
     await user.click(downloadButton);
 
     await waitFor(() => {
-      expect(screen.getAllByText('Failed to download report.').length).toBeGreaterThan(0);
+      expect(screen.getAllByText(messages.downloadReportError.defaultMessage).length).toBeGreaterThan(0);
     });
   });
 
@@ -591,7 +592,7 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateEnrolledStudentsReport.defaultMessage });
     await user.click(generateButton);
 
     const apiError = { response: { data: { error: 'Course not configured for reports' } } };
@@ -620,10 +621,10 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const problemTab = screen.getByRole('tab', { name: 'Open Response Reports' });
+    const problemTab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
     await user.click(problemTab);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Problem Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateProblemResponsesReport.defaultMessage });
     await user.click(generateButton);
 
     const apiError = { response: { data: { error: 'Invalid problem location' } } };
@@ -652,10 +653,10 @@ describe('DataDownloadsPage', () => {
 
     renderWithProviders(<DataDownloadsPage />);
 
-    const problemTab = screen.getByRole('tab', { name: 'Open Response Reports' });
+    const problemTab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
     await user.click(problemTab);
 
-    const generateButton = screen.getByRole('button', { name: 'Generate Problem Report' });
+    const generateButton = screen.getByRole('button', { name: messages.generateProblemResponsesReport.defaultMessage });
 
     // First attempt: trigger error
     await user.click(generateButton);

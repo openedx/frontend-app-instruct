@@ -1,5 +1,6 @@
 import { getReportTypeDisplayName, ReportType } from './utils';
 import { createIntl } from '@openedx/frontend-base';
+import messages from './messages';
 
 const intl = createIntl({
   locale: 'en',
@@ -10,57 +11,57 @@ describe('utils', () => {
   describe('getReportTypeDisplayName', () => {
     it('should return display name for enrolled_students report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.ENROLLED_STUDENTS, intl);
-      expect(displayName).toBe('Enrolled Students Report');
+      expect(displayName).toBe(messages.enrolledStudentsReportTitle.defaultMessage);
     });
 
     it('should return display name for pending_enrollments report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.PENDING_ENROLLMENTS, intl);
-      expect(displayName).toBe('Pending Enrollments Report');
+      expect(displayName).toBe(messages.pendingEnrollmentsReportTitle.defaultMessage);
     });
 
     it('should return display name for pending_activations report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.PENDING_ACTIVATIONS, intl);
-      expect(displayName).toBe('Pending Activations Report');
+      expect(displayName).toBe(messages.pendingActivationsReportTitle.defaultMessage);
     });
 
     it('should return display name for anonymized_student_ids report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.ANONYMIZED_STUDENT_IDS, intl);
-      expect(displayName).toBe('Anonymized Student IDs Report');
+      expect(displayName).toBe(messages.anonymizedStudentIdsReportTitle.defaultMessage);
     });
 
     it('should return display name for grade report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.GRADE, intl);
-      expect(displayName).toBe('Grade Report');
+      expect(displayName).toBe(messages.gradeReportTitle.defaultMessage);
     });
 
     it('should return display name for problem_grade report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.PROBLEM_GRADE, intl);
-      expect(displayName).toBe('Problem Grade Report');
+      expect(displayName).toBe(messages.problemGradeReportTitle.defaultMessage);
     });
 
     it('should return display name for problem_responses report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.PROBLEM_RESPONSES, intl);
-      expect(displayName).toBe('Problem Responses Report');
+      expect(displayName).toBe(messages.problemResponsesReportTitle.defaultMessage);
     });
 
     it('should return display name for ora2_summary report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.ORA2_SUMMARY, intl);
-      expect(displayName).toBe('ORA Summary Report');
+      expect(displayName).toBe(messages.ora2SummaryReportTitle.defaultMessage);
     });
 
     it('should return display name for ora2_data report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.ORA2_DATA, intl);
-      expect(displayName).toBe('ORA Data Report');
+      expect(displayName).toBe(messages.ora2DataReportTitle.defaultMessage);
     });
 
     it('should return display name for ora2_submission_files report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.ORA2_SUBMISSION_FILES, intl);
-      expect(displayName).toBe('Submission Files Archive');
+      expect(displayName).toBe(messages.submissionFilesArchiveTitle.defaultMessage);
     });
 
     it('should return display name for issued_certificates report type', () => {
       const displayName = getReportTypeDisplayName(ReportType.ISSUED_CERTIFICATES, intl);
-      expect(displayName).toBe('Issued Certificates');
+      expect(displayName).toBe(messages.issuedCertificatesTitle.defaultMessage);
     });
 
     it('should return formatted string for unknown report type', () => {

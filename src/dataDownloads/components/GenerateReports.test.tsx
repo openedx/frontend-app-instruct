@@ -2,6 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { GenerateReports } from './GenerateReports';
 import { renderWithIntl } from '@src/testUtils';
+import messages from '../messages';
 
 const mockOnGenerateReport = jest.fn();
 const mockOnGenerateProblemResponsesReport = jest.fn();
@@ -23,28 +24,28 @@ describe('GenerateReports', () => {
   it('should render the component with all tabs', () => {
     renderComponent();
 
-    expect(screen.getByText('Generate Reports')).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Enrollment Reports' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Grading Reports' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Open Response Reports' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Certificate Reports' })).toBeInTheDocument();
+    expect(screen.getByText(messages.generateReportsTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: messages.enrollmentReportsTabTitle.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: messages.gradingReportsTabTitle.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: messages.certificateReportsTabTitle.defaultMessage })).toBeInTheDocument();
   });
 
   describe('Enrollment Reports Tab', () => {
     it('should render all enrollment report sections', () => {
       renderComponent();
 
-      expect(screen.getByText('Enrolled Students Report')).toBeInTheDocument();
-      expect(screen.getByText('Pending Enrollments Report')).toBeInTheDocument();
-      expect(screen.getByText('Pending Activations Report')).toBeInTheDocument();
-      expect(screen.getByText('Anonymized Student IDs Report')).toBeInTheDocument();
+      expect(screen.getByText(messages.enrolledStudentsReportTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(messages.pendingEnrollmentsReportTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(messages.pendingActivationsReportTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(messages.anonymizedStudentIdsReportTitle.defaultMessage)).toBeInTheDocument();
     });
 
     it('should call onGenerateReport with enrolled_students when button is clicked', async () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const button = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+      const button = screen.getByRole('button', { name: messages.generateEnrolledStudentsReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateReport).toHaveBeenCalledWith('enrolled_students');
@@ -54,7 +55,7 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const button = screen.getByRole('button', { name: 'Generate Pending Enrollments Report' });
+      const button = screen.getByRole('button', { name: messages.generatePendingEnrollmentsReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateReport).toHaveBeenCalledWith('pending_enrollments');
@@ -64,7 +65,7 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const button = screen.getByRole('button', { name: 'Generate Pending Activations Report' });
+      const button = screen.getByRole('button', { name: messages.generatePendingActivationsReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateReport).toHaveBeenCalledWith('pending_activations');
@@ -74,7 +75,7 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const button = screen.getByRole('button', { name: 'Generate Anonymized Student IDs Report' });
+      const button = screen.getByRole('button', { name: messages.generateAnonymizedStudentIdsReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateReport).toHaveBeenCalledWith('anonymized_student_ids');
@@ -86,21 +87,21 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Grading Reports' });
+      const tab = screen.getByRole('tab', { name: messages.gradingReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      expect(screen.getByText('Grade Report')).toBeInTheDocument();
-      expect(screen.getByText('Problem Grade Report')).toBeInTheDocument();
+      expect(screen.getByText(messages.gradeReportTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(messages.problemGradeReportTitle.defaultMessage)).toBeInTheDocument();
     });
 
     it('should call onGenerateReport with grade when button is clicked', async () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Grading Reports' });
+      const tab = screen.getByRole('tab', { name: messages.gradingReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      const button = screen.getByRole('button', { name: 'Generate Grade Report' });
+      const button = screen.getByRole('button', { name: messages.generateGradeReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateReport).toHaveBeenCalledWith('grade');
@@ -110,10 +111,10 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Grading Reports' });
+      const tab = screen.getByRole('tab', { name: messages.gradingReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      const button = screen.getByRole('button', { name: 'Generate Problem Grade Report' });
+      const button = screen.getByRole('button', { name: messages.generateProblemGradeReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateReport).toHaveBeenCalledWith('problem_grade');
@@ -125,23 +126,23 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Open Response Reports' });
+      const tab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      expect(screen.getByText('ORA Summary Report')).toBeInTheDocument();
-      expect(screen.getByText('ORA Data Report')).toBeInTheDocument();
-      expect(screen.getByText('Submission Files Archive')).toBeInTheDocument();
-      expect(screen.getByText('Problem Responses Report')).toBeInTheDocument();
+      expect(screen.getByText(messages.ora2SummaryReportTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(messages.ora2DataReportTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(messages.submissionFilesArchiveTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(messages.problemResponsesReportTitle.defaultMessage)).toBeInTheDocument();
     });
 
     it('should call onGenerateReport with ora2_summary when button is clicked', async () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Open Response Reports' });
+      const tab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      const button = screen.getByRole('button', { name: 'Generate ORA Summary Report' });
+      const button = screen.getByRole('button', { name: messages.generateOra2SummaryReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateReport).toHaveBeenCalledWith('ora2_summary');
@@ -151,10 +152,10 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Open Response Reports' });
+      const tab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      const button = screen.getByRole('button', { name: 'Generate ORA Data Report' });
+      const button = screen.getByRole('button', { name: messages.generateOra2DataReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateReport).toHaveBeenCalledWith('ora2_data');
@@ -164,10 +165,10 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Open Response Reports' });
+      const tab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      const button = screen.getByRole('button', { name: 'Generate Submission Files Archive' });
+      const button = screen.getByRole('button', { name: messages.generateSubmissionFilesArchive.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateReport).toHaveBeenCalledWith('ora2_submission_files');
@@ -177,10 +178,10 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Open Response Reports' });
+      const tab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      const button = screen.getByRole('button', { name: 'Generate Problem Report' });
+      const button = screen.getByRole('button', { name: messages.generateProblemResponsesReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateProblemResponsesReport).toHaveBeenCalledWith(undefined);
@@ -190,13 +191,13 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Open Response Reports' });
+      const tab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      const input = screen.getByPlaceholderText('Problem location');
+      const input = screen.getByPlaceholderText(messages.problemLocationPlaceholder.defaultMessage);
       await user.type(input, 'block-v1:test');
 
-      const button = screen.getByRole('button', { name: 'Generate Problem Report' });
+      const button = screen.getByRole('button', { name: messages.generateProblemResponsesReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateProblemResponsesReport).toHaveBeenCalledWith('block-v1:test');
@@ -208,20 +209,20 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Certificate Reports' });
+      const tab = screen.getByRole('tab', { name: messages.certificateReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      expect(screen.getByText('Issued Certificates')).toBeInTheDocument();
+      expect(screen.getByText(messages.issuedCertificatesTitle.defaultMessage)).toBeInTheDocument();
     });
 
     it('should call onGenerateReport with issued_certificates when button is clicked', async () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const tab = screen.getByRole('tab', { name: 'Certificate Reports' });
+      const tab = screen.getByRole('tab', { name: messages.certificateReportsTabTitle.defaultMessage });
       await user.click(tab);
 
-      const button = screen.getByRole('button', { name: 'Generate Certificates Report' });
+      const button = screen.getByRole('button', { name: messages.generateCertificatesReport.defaultMessage });
       await user.click(button);
 
       expect(mockOnGenerateReport).toHaveBeenCalledWith('issued_certificates');
@@ -243,7 +244,7 @@ describe('GenerateReports', () => {
     it('should enable all buttons when isGenerating is false', () => {
       renderComponent(false);
 
-      const generateButton = screen.getByRole('button', { name: 'Generate Enrolled Students Report' });
+      const generateButton = screen.getByRole('button', { name: messages.generateEnrolledStudentsReport.defaultMessage });
       expect(generateButton).not.toBeDisabled();
     });
   });
@@ -253,7 +254,7 @@ describe('GenerateReports', () => {
       const user = userEvent.setup();
       renderComponent(false, 'Invalid problem location');
 
-      const tab = screen.getByRole('tab', { name: 'Open Response Reports' });
+      const tab = screen.getByRole('tab', { name: messages.problemResponseReportsTabTitle.defaultMessage });
       await user.click(tab);
 
       expect(screen.getByText('Invalid problem location')).toBeInTheDocument();
