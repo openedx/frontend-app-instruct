@@ -1,4 +1,4 @@
-import { DataDownloadsCellProps } from '../types';
+import { DataDownloadsCellProps } from '@src/dataDownloads/types';
 
 const ReportNameCell = ({ row }: DataDownloadsCellProps) => {
   return (

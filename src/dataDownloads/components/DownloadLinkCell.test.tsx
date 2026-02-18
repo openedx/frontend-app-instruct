@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DownloadLinkCell } from './DownloadLinkCell';
 import { renderWithIntl } from '@src/testUtils';
-import messages from '../messages';
+import messages from '@src/dataDownloads/messages';
 
 const mockOnDownloadClick = jest.fn();
 

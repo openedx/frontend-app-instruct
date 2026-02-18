@@ -2,7 +2,7 @@ import { Button, Tabs, Tab, Form, Card, Icon, OverlayTrigger, Tooltip } from '@o
 import { InfoOutline } from '@openedx/paragon/icons';
 import { useIntl } from '@openedx/frontend-base';
 import { useState, useCallback } from 'react';
-import messages from '../messages';
+import messages from '@src/dataDownloads/messages';
 
 interface GenerateReportsProps {
   onGenerateReport: (reportType: string) => void,

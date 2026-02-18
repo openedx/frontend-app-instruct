@@ -1,7 +1,7 @@
 import { useIntl } from '@openedx/frontend-base';
 import { Button } from '@openedx/paragon';
-import messages from '../messages';
-import { DataDownloadsCellProps } from '../types';
+import messages from '@src/dataDownloads/messages';
+import { DataDownloadsCellProps } from '@src/dataDownloads/types';
 
 interface DownloadLinkCellProps extends DataDownloadsCellProps {
   onDownloadClick: (downloadLink: string, reportName: string) => void,

@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DataDownloadTable } from './DataDownloadTable';
-import { DownloadReportData } from '../types';
+import { DownloadReportData } from '@src/dataDownloads/types';
 import { renderWithIntl } from '@src/testUtils';
-import messages from '../messages';
+import messages from '@src/dataDownloads/messages';
 
 const mockData: DownloadReportData[] = [
   {
