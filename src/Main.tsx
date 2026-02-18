@@ -5,7 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AlertProvider } from './providers/AlertProvider';
 import { appId } from './constants';
 
-import './main.scss';
+import './app.scss';
 
 const queryClient = new QueryClient();
 
