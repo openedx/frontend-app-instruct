@@ -22,39 +22,67 @@ We created following slots to handle Instructor Tabs:
 
 ### 1. Slot Operations Definition
 
-For a working example add in `src/slots.tsx` following code:
+The following `site.config.dev.tsx` will add a custom tab, route and tab content in dev environment.
 
 ```tsx
-import { SlotOperation } from '@openedx/frontend-base';
 import { WidgetOperationTypes } from '@openedx/frontend-base';
-import { PlaceholderSlot } from './slots/instructorTabsSlot/instructorTabsSlot';
+import { PlaceholderSlot } from './src/slots/PlaceholderSlot/PlaceholderSlot';
+import { EnvironmentTypes, SiteConfig, footerApp, headerApp, shellApp } from '@openedx/frontend-base';
 
-// Create slot operations for tabs
-const tabSlots: SlotOperation[] = [
-  {
-    slotId: 'org.openedx.frontend.slot.instructor.tabs.v1',
-    id: 'org.openedx.frontend.widget.instructor.tab.my_tab',
-    op: WidgetOperationTypes.APPEND,
-    element: <PlaceholderSlot tabId="my_tab" title="New Tab" url="my_tab" sortOrder={25} />,
-  },
-];
+import { instructApp } from './src';
 
-// Create slot operations for route and content
-const routeSlots: SlotOperation[] = [
-  {
-    slotId: 'org.openedx.frontend.slot.instructor.routes.v1',
-    id: 'org.openedx.frontend.widget.instructor.route.my_tab',
-    op: WidgetOperationTypes.APPEND,
-    element: <PlaceholderSlot tabId="my_tab" content={<div>Dynamic Content</div>} />,
-  },
-];
+import './src/app.scss';
 
-const slots: SlotOperation[] = [
-  ...tabSlots,
-  ...routeSlots,
-];
+const siteConfig: SiteConfig = {
+  siteId: 'instructor-dev',
+  siteName: 'Instructor Dev',
+  baseUrl: 'http://apps.local.openedx.io:8080',
+  lmsBaseUrl: 'http://local.openedx.io:8000',
+  loginUrl: 'http://local.openedx.io:8000/login',
+  logoutUrl: 'http://local.openedx.io:8000/logout',
 
-export default slots;
+  environment: EnvironmentTypes.DEVELOPMENT,
+  apps: [
+    shellApp,
+    headerApp,
+    footerApp,
+    {
+      ...instructApp,
+      slots: [
+        {
+          slotId: 'org.openedx.frontend.slot.instructor.tabs.v1',
+          id: 'org.openedx.frontend.widget.instructor.tab.my_tab',
+          op: WidgetOperationTypes.APPEND,
+          element: <PlaceholderSlot tabId="my_tab" title="New Tab" URL="my_tab" sortOrder={25} />,
+        },
+        {
+          slotId: 'org.openedx.frontend.slot.instructor.routes.v1',
+          id: 'org.openedx.frontend.widget.instructor.route.my_tab',
+          op: WidgetOperationTypes.APPEND,
+          element: <PlaceholderSlot tabId="my_tab" content={<div>Dynamic Content</div>} />,
+        }
+      ]
+    }
+  ],
+  externalRoutes: [
+    {
+      role: 'profile',
+      url: 'http://apps.local.openedx.io:1995/profile/'
+    },
+    {
+      role: 'account',
+      url: 'http://apps.local.openedx.io:1997/account/'
+    },
+    {
+      role: 'logout',
+      url: 'http://local.openedx.io:8000/logout'
+    },
+  ],
+
+  accessTokenCookieName: 'edx-jwt-cookie-header-payload',
+};
+
+export default siteConfig;
 ```
 
 #### UI with New Tab Selected and Dynamic Content Displayed
