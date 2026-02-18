@@ -1,3 +1,9 @@
+export interface TableCellValue<T> {
+  row: {
+    original: T,
+  },
+}
+
 export interface PaginationQueryKeys {
   page: number,
   pageSize: number,

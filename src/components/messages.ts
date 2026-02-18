@@ -16,6 +16,16 @@ const messages = defineMessages({
     defaultMessage: 'Learner email address or username',
     description: 'Placeholder text for specify learner input field',
   },
+  pageNotFoundHeader: {
+    id: 'instruct.pageNotFound.header',
+    defaultMessage: 'Page not found',
+    description: 'Header for page not found error',
+  },
+  pageNotFoundBody: {
+    id: 'instruct.pageNotFound.body',
+    defaultMessage: "The page you're looking for is unavailable or there's an error in the URL. Please check the URL and try again.",
+    description: 'Body text for page not found error',
+  },
 });
 
 export default messages;
