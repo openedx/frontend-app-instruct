@@ -170,7 +170,7 @@ const GenerateReports = ({
                         placement="top"
                         overlay={(
                           <Tooltip id="problem-location-tooltip">
-                            Example: block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378
+                            {intl.formatMessage(messages.problemLocationTooltip)}
                           </Tooltip>
                         )}
                       >

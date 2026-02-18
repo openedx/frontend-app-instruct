@@ -241,6 +241,11 @@ const messages = defineMessages({
     defaultMessage: 'Example format for problem location',
     description: 'Aria label for the info icon next to the problem location input',
   },
+  problemLocationTooltip: {
+    id: 'instruct.dataDownloads.reports.problemResponses.locationTooltip',
+    defaultMessage: 'Example: block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378',
+    description: 'Tooltip text showing an example problem location format',
+  },
   issuedCertificatesTitle: {
     id: 'instruct.dataDownloads.reports.issuedCertificates.title',
     defaultMessage: 'Issued Certificates',
