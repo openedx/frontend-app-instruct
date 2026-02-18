@@ -2,6 +2,7 @@ import { screen, fireEvent, waitFor } from '@testing-library/react';
 import DetailAssessmentsList from './DetailAssessmentsList';
 import { useDetailAssessmentsData } from '../data/apiHook';
 import { renderWithIntl } from '../../testUtils';
+import messages from '../messages';
 
 jest.mock('react-router-dom', () => ({
   useParams: () => ({ courseId: 'course-v1:edX+Test+2024' }),
@@ -77,7 +78,7 @@ describe('DetailAssessmentsList', () => {
     });
     renderWithIntl(<DetailAssessmentsList />);
     expect(screen.getByRole('table')).toBeInTheDocument();
-    expect(screen.getByText('No results found')).toBeInTheDocument();
+    expect(screen.getByText(messages.noAssessmentsFoundMessage.defaultMessage)).toBeInTheDocument();
     expect(screen.queryByText('View and Grade Responses')).not.toBeInTheDocument();
   });
 });
