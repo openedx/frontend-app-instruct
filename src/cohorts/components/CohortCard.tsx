@@ -27,7 +27,7 @@ const CohortCard = () => {
   const { mutate: editCohort } = usePatchCohort(courseId);
   const formRef = useRef<{ resetForm: () => void }>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
-  const { clearAlerts, showToast } = useAlert();
+  const { clearAlerts, showModal } = useAlert();
 
   if (!selectedCohort) {
     return null;
@@ -42,7 +42,9 @@ const CohortCard = () => {
           setSelectedCohort({ ...selectedCohort, ...updatedCohort });
         },
         onError: (error: Error) => {
-          showToast(error.message);
+          showModal({
+            message: error.message,
+          });
         }
       }
     );
