@@ -50,7 +50,7 @@ const InstructorNav = () => {
   if (sortedTabs.length === 0) return null;
 
   return (
-    <Navbar expand="md">
+    <Navbar expand="md" className="py-0">
       <Nav
         variant="tabs"
         activeKey={tabId}
