@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import { defineMessages, useIntl } from '@openedx/frontend-base';
 import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
 import CertificatesPage from '@src/certificates/CertificatesPage';
@@ -10,14 +9,8 @@ import EnrollmentsPage from '@src/enrollments/EnrollmentsPage';
 import GradingPage from '@src/grading/GradingPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 import SpecialExamsPage from '@src/specialExams/SpecialExamsPage';
+import PageNotFound from '@src/components/PageNotFound';
 import { useWidgetProps } from './slots/SlotUtils';
-
-const messages = defineMessages({
-  tabContentNotAvailable: {
-    defaultMessage: 'Tab content not available',
-    description: 'Message displayed when the content for a tab cannot be found.',
-  },
-});
 
 interface InstructorRouteProps {
   tabId: string,
@@ -39,7 +32,6 @@ const defaultTabs: InstructorRouteProps[] = [
 
 const TabContent = () => {
   const { tabId } = useParams<{ tabId: string }>();
-  const intl = useIntl();
   const routeWidgets = useWidgetProps('org.openedx.frontend.slot.instructor.routes.v1') as InstructorRouteProps[];
 
   const tabRoutes = [
@@ -49,7 +41,9 @@ const TabContent = () => {
     ...routeWidgets
   ];
 
-  return tabRoutes.find(tab => tab.tabId === tabId)?.content || <div>{intl.formatMessage(messages.tabContentNotAvailable)}</div>;
+  const foundTab = tabRoutes.find(tab => tab.tabId === tabId);
+
+  return foundTab ? foundTab.content : <PageNotFound />;
 };
 
 const routes = [
@@ -64,6 +58,10 @@ const routes = [
       return { Component: module.default };
     },
     children: [
+      {
+        index: true,
+        element: <PageNotFound />
+      },
       {
         path: ':tabId',
         element: <TabContent />
