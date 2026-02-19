@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
 import CertificatesPage from '@src/certificates/CertificatesPage';
@@ -60,7 +60,7 @@ const routes = [
     children: [
       {
         index: true,
-        element: <PageNotFound />
+        element: <Navigate to="course_info" replace />
       },
       {
         path: ':tabId',

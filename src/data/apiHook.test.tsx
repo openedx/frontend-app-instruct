@@ -5,28 +5,6 @@ import { fetchPendingTasks, getCourseInfo } from './api';
 
 jest.mock('./api');
 
-const mockCourseData = {
-  courseId: 'test-course-123',
-  displayName: 'Test Course',
-  courseNumber: '123',
-  courseRun: '2024',
-  enrollmentCounts: { total: 100, audit: 50 },
-  enrollment_end: null,
-  start: null,
-  end: null,
-  tabs: [],
-  total_enrollment: 150,
-  studio_url: 'http://studio.example.com',
-  pacing: 'self-paced',
-  org: 'Test Org',
-  numSections: 10,
-  hasStarted: true,
-  hasEnded: false,
-  enrollmentEnd: null,
-  enrollmentStart: null,
-  gradeCutoffs: null
-};
-
 const mockGetCourseInfo = getCourseInfo as jest.MockedFunction<typeof getCourseInfo>;
 const mockFetchPendingTasks = fetchPendingTasks as jest.MockedFunction<typeof fetchPendingTasks>;
 
