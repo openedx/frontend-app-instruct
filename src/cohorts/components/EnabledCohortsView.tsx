@@ -81,7 +81,7 @@ const EnabledCohortsView = () => {
       <div className="d-flex mt-4.5">
         <FormControl
           as="select"
-          disabled={displayAddForm || cohortsList.length === 0}
+          disabled={displayAddForm || cohortsList.length === 1}
           name="cohort"
           placeholder={intl.formatMessage(messages.selectCohortPlaceholder)}
           value={selectedCohort?.id?.toString() ?? 'null'}
