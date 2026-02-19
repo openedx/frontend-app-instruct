@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Nav, Navbar, Skeleton } from '@openedx/paragon';
 import { useCourseInfo } from '@src/data/apiHook';
 import { useAlert } from '@src/providers/AlertProvider';
@@ -54,7 +54,6 @@ const InstructorNav = () => {
       <Nav
         variant="tabs"
         activeKey={tabId}
-        onSelect={() => clearAlerts()}
       >
         <Navbar.Toggle aria-controls="instructor-nav" />
         <Navbar.Collapse id="instructor-nav">
@@ -62,8 +61,10 @@ const InstructorNav = () => {
             sortedTabs.map((tab) => (
               <Nav.Item key={tab.tabId}>
                 <Nav.Link
-                  href={tab.url}
+                  as={Link}
+                  to={tab.url}
                   active={tab.tabId === tabId}
+                  onClick={() => clearAlerts()}
                 >
                   {tab.title}
                 </Nav.Link>
