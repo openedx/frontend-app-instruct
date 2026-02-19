@@ -76,6 +76,11 @@ const messages = defineMessages({
     defaultMessage: 'View and Grade Responses',
     description: 'Label for the link to view and grade responses'
   },
+  noAssessmentsFoundMessage: {
+    id: 'instruct.openResponses.noAssessmentsFoundMessage',
+    defaultMessage: 'No assessments found.',
+    description: 'Message displayed when no assessments are found in the details table'
+  }
 });
 
 export default messages;

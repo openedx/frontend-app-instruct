@@ -64,7 +64,11 @@ const DetailAssessmentsList = () => {
         manualPagination
         pageCount={data.numPages}
         pageSize={DETAILS_PAGE_SIZE}
-      />
+      >
+        <DataTable.Table />
+        <DataTable.EmptyTable content={intl.formatMessage(messages.noAssessmentsFoundMessage)} />
+        <DataTable.TableFooter />
+      </DataTable>
     </div>
   );
 };
