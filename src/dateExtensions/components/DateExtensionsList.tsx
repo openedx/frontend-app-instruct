@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { debounce } from 'lodash';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, DataTable, FormControl, Icon, Skeleton } from '@openedx/paragon';
 import messages from '../messages';
@@ -8,6 +7,7 @@ import { LearnerDateExtension } from '../types';
 import { useDateExtensions } from '../data/apiHook';
 import { Search } from '@openedx/paragon/icons';
 import SelectGradedSubsection from './SelectGradedSubsection';
+import { useDebouncedFilter } from '../../hooks/useDebouncedFilter';
 
 const DATE_EXTENSIONS_PAGE_SIZE = 25;
 
@@ -40,34 +40,23 @@ const DateExtensionsList = ({
     pageSize: DATE_EXTENSIONS_PAGE_SIZE,
   });
 
-  // Added that time for debounce after testing on 3G network
-  // It seems to be a good middle ground between responsiveness and reducing the number of API calls made when users are typing in the search input or changing filters.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSetFilter = useCallback(
-    debounce((setFilter: (value: string) => void, value: string) => setFilter(value), 600),
-    []
-  );
-
   const tableColumns = [
     { accessor: 'username',
       Header: intl.formatMessage(messages.username),
       Filter: ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
-        const [inputValue, setInputValue] = useState(filterValue || '');
+        const { inputValue, handleChange } = useDebouncedFilter({
+          filterValue,
+          setFilter,
+        });
 
-        useEffect(() => {
-          setInputValue(filterValue || '');
-        }, [filterValue]);
-
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-          const value = e.target.value;
-          setInputValue(value);
-          debouncedSetFilter(setFilter, value);
+        const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+          handleChange(e.target.value);
         };
 
         return (
           <FormControl
             className="mb-0"
-            onChange={handleChange}
+            onChange={handleInputChange}
             placeholder={intl.formatMessage(messages.searchLearnerPlaceholder)}
             trailingElement={<Icon src={Search} />}
             value={inputValue}
@@ -80,22 +69,19 @@ const DateExtensionsList = ({
     { accessor: 'unitTitle',
       Header: intl.formatMessage(messages.gradedSubsection),
       Filter: ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
-        const [inputValue, setInputValue] = useState(filterValue || '');
+        const { inputValue, handleChange } = useDebouncedFilter({
+          filterValue,
+          setFilter,
+        });
 
-        useEffect(() => {
-          setInputValue(filterValue || '');
-        }, [filterValue]);
-
-        const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-          const value = e.target.value;
-          setInputValue(value);
-          debouncedSetFilter(setFilter, value);
+        const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+          handleChange(e.target.value);
         };
 
         return (
           <SelectGradedSubsection
             placeholder={intl.formatMessage(messages.allGradedSubsections)}
-            onChange={handleChange}
+            onChange={handleSelectChange}
             value={inputValue}
           />
         );
