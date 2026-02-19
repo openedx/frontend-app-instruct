@@ -1,0 +1,10 @@
+@use "@openedx/frontend-base/shell/app.scss";
+
+.toast-container {
+    left: unset;
+    right: var(--pgn-spacing-toast-container-gutter-lg);
+}
+
+.text-prewrap {
+    white-space: pre-wrap;
+}

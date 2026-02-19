@@ -1,4 +1,4 @@
-const parseObject = (input: any): string => {
+export const parseObject = (input: any): string => {
   if (typeof input === 'string') {
     return input;
   }
@@ -8,5 +8,3 @@ const parseObject = (input: any): string => {
     return String(input);
   }
 };
-
-export { parseObject };

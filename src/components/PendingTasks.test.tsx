@@ -1,9 +1,9 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { PendingTasks } from './PendingTasks';
-import { usePendingTasks } from '../data/apiHook';
-import { renderWithProviders } from '../testUtils';
+import { usePendingTasks } from '@src/data/apiHook';
+import { renderWithQueryClient } from '@src/testUtils';
 
-jest.mock('../data/apiHook');
+jest.mock('@src/data/apiHook');
 
 const mockUsePendingTasks = usePendingTasks as jest.MockedFunction<typeof usePendingTasks>;
 
@@ -13,14 +13,14 @@ describe('PendingTasks', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUsePendingTasks.mockReturnValue({
-      mutate: mockFetchTasks,
       data: undefined,
       isPending: false,
+      isLoading: false,
     } as any);
   });
 
   it('should render the collapsible pending tasks section', () => {
-    renderWithProviders(<PendingTasks />);
+    renderWithQueryClient(<PendingTasks />);
 
     expect(screen.getByText('Pending Tasks')).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeInTheDocument();
@@ -28,14 +28,14 @@ describe('PendingTasks', () => {
 
   it('should show loading skeleton when tasks are being fetched', async () => {
     mockUsePendingTasks.mockReturnValue({
-      mutate: mockFetchTasks,
       data: undefined,
       isPending: true,
+      isLoading: true,
     } as any);
 
-    const { container } = renderWithProviders(<PendingTasks />);
+    const { container } = renderWithQueryClient(<PendingTasks />);
     const toggleButton = screen.getByRole('button');
-    await waitFor(() => toggleButton.click());
+    await toggleButton.click();
 
     expect(screen.queryByText('No tasks currently running.')).not.toBeInTheDocument();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
@@ -52,9 +52,9 @@ describe('PendingTasks', () => {
       isPending: false,
     } as any);
 
-    renderWithProviders(<PendingTasks />);
+    renderWithQueryClient(<PendingTasks />);
     const toggleButton = screen.getByRole('button');
-    await waitFor(() => toggleButton.click());
+    await toggleButton.click();
 
     expect(screen.getByText('No tasks currently running.')).toBeInTheDocument();
   });
@@ -76,14 +76,14 @@ describe('PendingTasks', () => {
     ];
 
     mockUsePendingTasks.mockReturnValue({
-      mutate: mockFetchTasks,
       data: mockTasks,
       isPending: false,
+      isLoading: false,
     } as any);
 
-    renderWithProviders(<PendingTasks />);
+    renderWithQueryClient(<PendingTasks />);
     const toggleButton = screen.getByRole('button');
-    await waitFor(() => toggleButton.click());
+    await toggleButton.click();
 
     expect(screen.getByText('Task Type')).toBeInTheDocument();
     expect(screen.getByText('Task ID')).toBeInTheDocument();
@@ -92,10 +92,7 @@ describe('PendingTasks', () => {
   });
 
   it('should fetch tasks on component mount', async () => {
-    renderWithProviders(<PendingTasks />);
-
-    await waitFor(() => {
-      expect(mockFetchTasks).toHaveBeenCalledTimes(1);
-    });
+    renderWithQueryClient(<PendingTasks />);
+    expect(mockUsePendingTasks).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,14 +1,26 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useCourseInfo, usePendingTasks } from './apiHook';
-import { getCourseInfo, fetchPendingTasks } from './api';
-import { createWrapper } from '../testUtils';
+import { fetchPendingTasks, getCourseInfo } from './api';
 
 jest.mock('./api');
 
 const mockGetCourseInfo = getCourseInfo as jest.MockedFunction<typeof getCourseInfo>;
 const mockFetchPendingTasks = fetchPendingTasks as jest.MockedFunction<typeof fetchPendingTasks>;
 
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
+};
 describe('api hooks', () => {
   describe('useCourseInfo', () => {
     beforeEach(() => {
@@ -51,8 +63,7 @@ describe('api hooks', () => {
       expect(result.current.data).toBe(undefined);
     });
   });
-
-  describe('base api hooks', () => {
+  describe('usePendingTasks', () => {
     it('should successfully fetch pending tasks when mutate is called', async () => {
       const mockTasks = [
         { taskType: 'grade_course', taskId: '12345', taskState: 'SUCCESS' },
@@ -70,8 +81,6 @@ describe('api hooks', () => {
       );
 
       const { result } = renderHook(() => usePendingTasks(mockCourseId), { wrapper });
-
-      result.current.mutate();
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);

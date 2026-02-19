@@ -1,17 +1,21 @@
 import { useIntl } from '@openedx/frontend-base';
 import { Collapsible, DataTable, Icon, Skeleton } from '@openedx/paragon';
-import { useEffect, useMemo } from 'react';
-import { messages } from './messages';
+import { useMemo } from 'react';
+import messages from './messages';
 import { ExpandLess, ExpandMore } from '@openedx/paragon/icons';
-import { usePendingTasks } from '../data/apiHook';
+import { usePendingTasks } from '@src/data/apiHook';
 import { useParams } from 'react-router';
 import { ObjectCell } from './ObjectCell';
-import { PendingTask, TableCellValue } from '../types';
+import { PendingTask, TableCellValue } from '@src/types';
 
-const PendingTasks = () => {
+interface PendingTasksProps {
+  isPolling?: boolean,
+}
+
+const PendingTasks = ({ isPolling = false }: PendingTasksProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams();
-  const { mutate: fetchTasks, data: tasks, isPending } = usePendingTasks(courseId);
+  const { data: tasks, isLoading } = usePendingTasks(courseId, { enablePolling: isPolling });
 
   const tableColumns = useMemo(() => [
     { accessor: 'taskType', Header: intl.formatMessage(messages.taskTypeColumnName) },
@@ -26,16 +30,12 @@ const PendingTasks = () => {
     { accessor: 'taskMessage', Header: intl.formatMessage(messages.taskMessageColumnName) },
   ], [intl]);
 
-  useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
-
   const renderContent = () => {
-    if (isPending) {
+    if (isLoading) {
       return <Skeleton count={3} />;
     }
 
-    if (tasks?.length === 0) {
+    if (!tasks || tasks?.length === 0) {
       return <div className="my-3">{intl.formatMessage(messages.noTasksMessage)}</div>;
     }
 
@@ -43,7 +43,6 @@ const PendingTasks = () => {
       <DataTable
         columns={tableColumns}
         data={tasks}
-        isLoading={isPending}
         RowStatusComponent={() => null}
       />
     );

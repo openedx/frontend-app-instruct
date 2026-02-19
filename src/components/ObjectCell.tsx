@@ -1,4 +1,4 @@
-import { parseObject } from '../utils/formatters';
+import { parseObject } from '@src/utils/formatters';
 
 interface ObjectCellProps {
   value: Record<string, any> | null,
@@ -6,8 +6,8 @@ interface ObjectCellProps {
 
 const ObjectCell = ({ value }: ObjectCellProps) => {
   return (
-    <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-      {parseObject(value ?? '')}
+    <pre className="text-prewrap text-break">
+      {parseObject(value ?? {})}
     </pre>
   );
 };

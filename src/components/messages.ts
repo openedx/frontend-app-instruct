@@ -1,6 +1,31 @@
 import { defineMessages } from '@openedx/frontend-base';
 
 const messages = defineMessages({
+  select: {
+    id: 'instruct.specifyLearner.select',
+    defaultMessage: 'Select',
+    description: 'Label for select dropdown in specify learner field',
+  },
+  specifyLearner: {
+    id: 'instruct.specifyLearner.label',
+    defaultMessage: 'Specify Learner:',
+    description: 'Label for specify learner field',
+  },
+  specifyLearnerPlaceholder: {
+    id: 'instruct.specifyLearner.placeholder',
+    defaultMessage: 'Learner email address or username',
+    description: 'Placeholder text for specify learner input field',
+  },
+  pageNotFoundHeader: {
+    id: 'instruct.pageNotFound.header',
+    defaultMessage: 'Page not found',
+    description: 'Header for page not found error',
+  },
+  pageNotFoundBody: {
+    id: 'instruct.pageNotFound.body',
+    defaultMessage: "The page you're looking for is unavailable or there's an error in the URL. Please check the URL and try again.",
+    description: 'Body text for page not found error',
+  },
   pendingTasksTitle: {
     id: 'instruct.pendingTasks.section.title',
     defaultMessage: 'Pending Tasks',
@@ -63,4 +88,4 @@ const messages = defineMessages({
   },
 });
 
-export { messages };
+export default messages;

@@ -1,15 +1,20 @@
 import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
-import Main from '@src/Main';
+import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
+import DataDownloadsPage from '@src/dataDownloads/DataDownloadsPage';
+import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 
 const routes = [
   {
     id: 'org.openedx.frontend.route.instructor.main',
-    path: ':courseId',
+    path: 'instructor/:courseId',
     handle: {
       role: 'org.openedx.frontend.role.instructor'
     },
-    Component: Main,
+    async lazy() {
+      const module = await import('./Main');
+      return { Component: module.default };
+    },
     children: [
       {
         path: 'course_info',
@@ -23,18 +28,18 @@ const routes = [
         path: 'cohorts',
         element: <CohortsPage />
       },
-      // {
-      //   path: 'extensions',
-      //   element: <ExtensionsPage />
-      // },
+      {
+        path: 'date_extensions',
+        element: <DateExtensionsPage />
+      },
       // {
       //   path: 'student_admin',
       //   element: <StudentAdminPage />
       // },
-      // {
-      //   path: 'data_download',
-      //   element: <DataDownloadPage />
-      // },
+      {
+        path: 'data_downloads',
+        element: <DataDownloadsPage />
+      },
       // {
       //   path: 'special_exams',
       //   element: <SpecialExamsPage />
@@ -43,10 +48,10 @@ const routes = [
       //   path: 'certificates',
       //   element: <CertificatesPage />
       // },
-      // {
-      //   path: 'open_responses',
-      //   element: <OpenResponsesPage />
-      // }
+      {
+        path: 'open_responses',
+        element: <OpenResponsesPage />
+      }
     ]
   }
 ];
