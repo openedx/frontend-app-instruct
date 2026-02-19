@@ -35,7 +35,7 @@ describe('EnabledCohortsView', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { allGroupConfigurations: [{ groups: mockContentGroups }] } });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups, id: 1 } });
     (useParams as jest.Mock).mockReturnValue({ courseId: 'course-v1:edX+Test+2024' });
   });
 
