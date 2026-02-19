@@ -13,3 +13,15 @@ export const getCourseInfo = async (courseId) => {
     .get(`${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}`);
   return camelCaseObject(data);
 };
+
+/**
+ * Fetch pending instructor tasks for a course.
+ * @param {string} courseId
+ * @returns {Promise<Array>}
+ */
+export const fetchPendingTasks = async (courseId: string) => {
+  const response = await getAuthenticatedHttpClient().post<{ results: Record<string, any>[] }>(
+    `${getApiBaseUrl()}/courses/${courseId}/instructor/api/list_instructor_tasks`
+  );
+  return response.data?.tasks?.map(camelCaseObject);
+};

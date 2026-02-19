@@ -4,3 +4,7 @@
     left: unset;
     right: var(--pgn-spacing-toast-container-gutter-lg);
 }
+
+.text-prewrap {
+    white-space: pre-wrap;
+}
