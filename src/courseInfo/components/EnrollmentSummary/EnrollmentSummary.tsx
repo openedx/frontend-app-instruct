@@ -5,8 +5,6 @@ import { Col, Container, Row, Stack } from '@openedx/paragon';
 import { Verified } from '@openedx/paragon/icons';
 import { EnrollmentCounter } from './';
 
-import './index.scss';
-
 interface EnrollmentSummaryProps {
   enrollmentCounts: {
     total: number,
@@ -32,7 +30,7 @@ const EnrollmentSummary: FC<EnrollmentSummaryProps> = ({ enrollmentCounts }) => 
           label={intl.formatMessage(messages.allEnrollmentsLabel)}
           count={enrollmentCounts.total.toString()}
         />
-        <div className="vertical-separator" />
+        <div className="h-auto border-light-400 border-left align-self-stretch" />
         {enrollmentCounts?.staffAndAdmins && (
           <EnrollmentCounter
             label={intl.formatMessage(messages.staffAndAdminsLabel)}
@@ -46,7 +44,7 @@ const EnrollmentSummary: FC<EnrollmentSummaryProps> = ({ enrollmentCounts }) => 
           />
         )}
         {(enrollmentCounts?.learners ?? enrollmentCounts?.verified) && (
-          <div className="vertical-separator" />
+          <div className="h-auto border-light-400 border-left align-self-stretch" />
         )}
         {enrollmentCounts?.verified && (
           <EnrollmentCounter
