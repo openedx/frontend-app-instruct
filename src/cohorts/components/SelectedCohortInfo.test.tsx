@@ -62,7 +62,7 @@ describe('SelectedCohortInfo', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useCohorts as jest.Mock).mockReturnValue({ data: mockCohorts });
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { allGroupConfigurations: [{ groups: mockContentGroups }] } });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups, id: 1 } });
     jest.spyOn(CohortContextModule, 'useCohortContext').mockReturnValue({
       selectedCohort: mockCohorts[0],
       setSelectedCohort: mockSetSelectedCohort,

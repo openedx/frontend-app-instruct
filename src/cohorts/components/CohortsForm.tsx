@@ -22,7 +22,7 @@ export interface CohortsFormRef {
 const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManualAssignment = false, onCancel, onSubmit }, ref) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const { data = { allGroupConfigurations: [{ groups: [] }] } } = useContentGroupsData(courseId);
+  const { data = { groups: [], id: null } } = useContentGroupsData(courseId);
   const { selectedCohort } = useCohortContext();
 
   const initialCohortName = (selectedCohort?.name) ?? '';
@@ -53,7 +53,7 @@ const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManua
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCohort]);
 
-  const contentGroups = [{ id: 'null', name: intl.formatMessage(messages.notSelected) }, ...data.allGroupConfigurations[0].groups];
+  const contentGroups = [{ id: 'null', name: intl.formatMessage(messages.notSelected) }, ...data.groups];
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -61,7 +61,7 @@ const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManua
       name,
       assignmentType: selectedAssignmentType,
       groupId: selectedContentGroup,
-      userPartitionId: data.allGroupConfigurations[0].id,
+      userPartitionId: data.id,
     });
   };
 
@@ -101,8 +101,8 @@ const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManua
         >
           <Form.Radio value="noContentGroup">{intl.formatMessage(messages.noContentGroup)}</Form.Radio>
           <div className="d-flex align-items-center">
-            <Form.Radio value="selectContentGroup" disabled={data.allGroupConfigurations[0].groups.length === 0}>{intl.formatMessage(messages.selectAContentGroup)}</Form.Radio>
-            { data.allGroupConfigurations[0].groups.length > 0
+            <Form.Radio value="selectContentGroup" disabled={data.groups.length === 0}>{intl.formatMessage(messages.selectAContentGroup)}</Form.Radio>
+            { data.groups.length > 0
               ? (
                   <FormControl
                     as="select"

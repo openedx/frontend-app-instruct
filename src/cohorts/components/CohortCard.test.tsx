@@ -22,7 +22,7 @@ jest.mock('react-router-dom', () => ({
 jest.mock('@src/cohorts/data/apiHook', () => ({
   usePatchCohort: jest.fn(),
   useAddLearnersToCohort: jest.fn(),
-  useContentGroupsData: jest.fn().mockReturnValue({ data: { allGroupConfigurations: [{ groups: [{ id: '2', name: 'Group 1' }] }] } }),
+  useContentGroupsData: jest.fn().mockReturnValue({ data: { groups: [{ id: '2', name: 'Group 1' }], id: 1 } }),
 }));
 
 jest.mock('@src/providers/AlertProvider', () => ({
