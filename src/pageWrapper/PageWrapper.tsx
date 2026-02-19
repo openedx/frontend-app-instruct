@@ -7,9 +7,9 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   const { formatMessage } = useIntl();
   return (
     <Container size="xl" fluid>
-      <h2 className="text-primary-700">{formatMessage(messages.pageTitle)}</h2>
+      <h2 className="text-primary-700 m-4">{formatMessage(messages.pageTitle)}</h2>
       <InstructorNav />
-      <div className="m-4 px-3">
+      <div className="m-4">
         {children}
       </div>
     </Container>
