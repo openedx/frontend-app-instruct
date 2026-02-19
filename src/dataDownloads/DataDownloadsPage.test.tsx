@@ -5,8 +5,9 @@ import { MemoryRouter } from 'react-router-dom';
 import DataDownloadsPage from './DataDownloadsPage';
 import { useGeneratedReports, useGenerateReportLink } from './data/apiHook';
 import { AlertProvider } from '@src/providers/AlertProvider';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithQueryClient } from '@src/testUtils';
 import messages from './messages';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock('./data/apiHook');
 jest.mock('@src/components/PageNotFound', () => ({
@@ -35,7 +36,7 @@ const mockReportsData = [
 ];
 
 const renderWithProviders = (component: React.ReactElement, courseId = 'course-123') => {
-  return renderWithIntl(
+  return renderWithQueryClient(
     <AlertProvider>
       <MemoryRouter initialEntries={[`/course/${courseId}/data-downloads`]}>
         {component}
@@ -437,13 +438,15 @@ describe('DataDownloadsPage', () => {
     } as any);
 
     rerender(
-      <IntlProvider locale="en" messages={{}}>
-        <AlertProvider>
-          <MemoryRouter initialEntries={['/course/course-123/data-downloads']}>
-            <DataDownloadsPage />
-          </MemoryRouter>
-        </AlertProvider>
-      </IntlProvider>
+      <QueryClientProvider client={new QueryClient()}>
+        <IntlProvider locale="en" messages={{}}>
+          <AlertProvider>
+            <MemoryRouter initialEntries={['/course/course-123/data-downloads']}>
+              <DataDownloadsPage />
+            </MemoryRouter>
+          </AlertProvider>
+        </IntlProvider>
+      </QueryClientProvider>
     );
 
     jest.useRealTimers();
@@ -671,5 +674,11 @@ describe('DataDownloadsPage', () => {
     expect(screen.queryByText('Invalid problem location')).not.toBeInTheDocument();
 
     consoleError.mockRestore();
+  });
+
+  it('should render pending tasks', async () => {
+    renderWithProviders(<DataDownloadsPage />);
+    const pendingTasks = screen.getByText('Pending Tasks');
+    expect(pendingTasks).toBeInTheDocument();
   });
 });

@@ -10,6 +10,7 @@ import { getApiBaseUrl } from '@src/data/api';
 import { getReportTypeDisplayName } from './utils';
 import PageNotFound from '@src/components/PageNotFound';
 import { useAlert } from '@src/providers/AlertProvider';
+import { PendingTasks } from '@src/components/PendingTasks';
 
 const DataDownloadsPage = () => {
   const intl = useIntl();
@@ -185,6 +186,8 @@ const DataDownloadsPage = () => {
         isGenerating={isGenerating}
         problemResponsesError={problemResponsesError}
       />
+
+      <PendingTasks />
     </Container>
   );
 };
