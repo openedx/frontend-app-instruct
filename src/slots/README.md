@@ -53,7 +53,7 @@ const siteConfig: SiteConfig = {
           slotId: 'org.openedx.frontend.slot.instructor.tabs.v1',
           id: 'org.openedx.frontend.widget.instructor.tab.my_tab',
           op: WidgetOperationTypes.APPEND,
-          element: <PlaceholderSlot tabId="my_tab" title="New Tab" URL="my_tab" sortOrder={25} />,
+          element: <PlaceholderSlot tabId="my_tab" title="New Tab" url="my_tab" sortOrder={25} />,
         },
         {
           slotId: 'org.openedx.frontend.slot.instructor.routes.v1',

@@ -63,11 +63,12 @@ describe('InstructorNav', () => {
     ]);
 
     render(<InstructorNav />);
-    const tabLinks = screen.getAllByRole('link');
-    expect(tabLinks).toHaveLength(3);
-    expect(tabLinks[0]).toHaveTextContent('Tab 2');
-    expect(tabLinks[1]).toHaveTextContent('Tab 1');
-    expect(tabLinks[2]).toHaveTextContent('Tab 3');
+    const tabLinks = screen.getAllByRole('button');
+    expect(tabLinks).toHaveLength(4);
+    expect(tabLinks[0]).toHaveAttribute('aria-label', 'Toggle navigation');
+    expect(tabLinks[1]).toHaveTextContent('Tab 2');
+    expect(tabLinks[2]).toHaveTextContent('Tab 1');
+    expect(tabLinks[3]).toHaveTextContent('Tab 3');
   });
 
   it('does not render slot tabs without tabId or title', () => {
