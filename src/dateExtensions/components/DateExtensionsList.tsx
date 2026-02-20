@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { Button, DataTable, FormControl, Icon, Skeleton } from '@openedx/paragon';
+import { Button, DataTable, FormControl, Icon } from '@openedx/paragon';
 import messages from '../messages';
 import { LearnerDateExtension } from '../types';
 import { useDateExtensions } from '../data/apiHook';
@@ -20,6 +20,48 @@ interface DataTableFetchDataProps {
   filters: { id: string, value: string }[],
   pageIndex: number,
 }
+
+const UsernameFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
+  const intl = useIntl();
+  const { inputValue, handleChange } = useDebouncedFilter({
+    filterValue,
+    setFilter,
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleChange(e.target.value);
+  };
+
+  return (
+    <FormControl
+      className="mb-0"
+      onChange={handleInputChange}
+      placeholder={intl.formatMessage(messages.searchLearnerPlaceholder)}
+      trailingElement={<Icon src={Search} />}
+      value={inputValue}
+    />
+  );
+};
+
+const GradedSubsectionFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
+  const intl = useIntl();
+  const { inputValue, handleChange } = useDebouncedFilter({
+    filterValue,
+    setFilter,
+  });
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    handleChange(e.target.value);
+  };
+
+  return (
+    <SelectGradedSubsection
+      placeholder={intl.formatMessage(messages.allGradedSubsections)}
+      onChange={handleSelectChange}
+      value={inputValue}
+    />
+  );
+};
 
 const DateExtensionsList = ({
   onResetExtensions = () => {},
@@ -43,49 +85,13 @@ const DateExtensionsList = ({
   const tableColumns = [
     { accessor: 'username',
       Header: intl.formatMessage(messages.username),
-      Filter: ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
-        const { inputValue, handleChange } = useDebouncedFilter({
-          filterValue,
-          setFilter,
-        });
-
-        const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-          handleChange(e.target.value);
-        };
-
-        return (
-          <FormControl
-            className="mb-0"
-            onChange={handleInputChange}
-            placeholder={intl.formatMessage(messages.searchLearnerPlaceholder)}
-            trailingElement={<Icon src={Search} />}
-            value={inputValue}
-          />
-        );
-      }
+      Filter: UsernameFilter,
     },
     { accessor: 'fullName', Header: intl.formatMessage(messages.fullname), disableFilters: true, },
     { accessor: 'email', Header: intl.formatMessage(messages.email), disableFilters: true, },
     { accessor: 'unitTitle',
       Header: intl.formatMessage(messages.gradedSubsection),
-      Filter: ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
-        const { inputValue, handleChange } = useDebouncedFilter({
-          filterValue,
-          setFilter,
-        });
-
-        const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-          handleChange(e.target.value);
-        };
-
-        return (
-          <SelectGradedSubsection
-            placeholder={intl.formatMessage(messages.allGradedSubsections)}
-            onChange={handleSelectChange}
-            value={inputValue}
-          />
-        );
-      }
+      Filter: GradedSubsectionFilter,
     },
     {
       accessor: 'extendedDueDate',
@@ -116,6 +122,8 @@ const DateExtensionsList = ({
     const newEmailOrUsername = emailOrUsernameFilter ? emailOrUsernameFilter.value : '';
     const blockIdFilter = data.filters.find((filter) => filter.id === 'unitTitle');
     const newBlockId = blockIdFilter ? blockIdFilter.value : '';
+
+    // Always reset to page 0 when filters change
     if (newEmailOrUsername !== filters.emailOrUsername || newBlockId !== filters.blockId) {
       setFilters({ page: 0, emailOrUsername: newEmailOrUsername, blockId: newBlockId });
       return;
@@ -126,23 +134,13 @@ const DateExtensionsList = ({
     }
   };
 
-  if (isLoading) {
-    return (
-      <>
-        <Skeleton className="mt-4 mb-2 lead" />
-        <Skeleton className="mb-3 small" width="25%" />
-        <Skeleton className="mt-3 lead" count={4} />
-      </>
-    );
-  }
-
   return (
     <DataTable
       columns={tableColumns}
       additionalColumns={additionalColumns}
       data={data.results}
       fetchData={handleFetchData}
-      initialState={{
+      state={{
         pageIndex: filters.page,
         pageSize: DATE_EXTENSIONS_PAGE_SIZE,
         filters: [
