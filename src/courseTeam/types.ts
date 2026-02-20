@@ -10,3 +10,8 @@ export interface CourseTeamMemberQueryParams {
   emailOrUsername?: string,
   role?: string,
 };
+
+export interface Role {
+  id: string,
+  name: string,
+};
