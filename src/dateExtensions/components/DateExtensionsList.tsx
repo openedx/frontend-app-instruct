@@ -123,14 +123,16 @@ const DateExtensionsList = ({
     const blockIdFilter = data.filters.find((filter) => filter.id === 'unitTitle');
     const newBlockId = blockIdFilter ? blockIdFilter.value : '';
 
-    // Always reset to page 0 when filters change
-    if (newEmailOrUsername !== filters.emailOrUsername || newBlockId !== filters.blockId) {
-      setFilters({ page: 0, emailOrUsername: newEmailOrUsername, blockId: newBlockId });
-      return;
-    }
+    const filterChanged = newEmailOrUsername !== filters.emailOrUsername || newBlockId !== filters.blockId;
+    const pageChanged = data.pageIndex !== filters.page;
 
-    if (data.pageIndex !== filters.page) {
-      setFilters((prev) => ({ ...prev, page: data.pageIndex }));
+    // If filters changed, reset to page 0
+    if (filterChanged) {
+      setFilters({ page: 0, emailOrUsername: newEmailOrUsername, blockId: newBlockId });
+    }
+    // If only page changed (filters didn't change), update page
+    else if (pageChanged) {
+      setFilters({ page: data.pageIndex, emailOrUsername: newEmailOrUsername, blockId: newBlockId });
     }
   };
 

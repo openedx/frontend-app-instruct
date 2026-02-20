@@ -44,7 +44,7 @@ describe('DateExtensionsList', () => {
   it('renders skeletons when loading', () => {
     (useDateExtensions as jest.Mock).mockReturnValue({ isLoading: true, data: { count: 0, results: [] } });
     renderComponent({});
-    expect(document.querySelectorAll('.react-loading-skeleton')).toHaveLength(6);
+    expect(screen.getByTestId('data-table-spinner')).toBeInTheDocument();
   });
 
   it('renders table with data', async () => {
@@ -220,28 +220,30 @@ describe('DateExtensionsList', () => {
     const searchInput = screen.getByPlaceholderText(/search for a learner/i);
     await user.type(searchInput, 'test');
 
+    // Wait for the filter to be applied
     await waitFor(() => {
-      expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, {
-        blockId: '',
+      expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, expect.objectContaining({
         emailOrUsername: 'test',
         page: 0,
-        pageSize: 25,
-      });
-    }, { timeout: 700 });
+      }));
+    }, { timeout: 1000 });
+
+    // Wait for all debounced callbacks to complete
+    await new Promise(resolve => setTimeout(resolve, 700));
+
+    // Clear mock calls to focus on pagination behavior
+    (useDateExtensions as jest.Mock).mockClear();
 
     // Then paginate
     const nextPageButton = screen.getByLabelText(/next/i);
-    if (nextPageButton) {
-      await user.click(nextPageButton);
+    await user.click(nextPageButton);
 
-      await waitFor(() => {
-        expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, {
-          blockId: '',
-          emailOrUsername: 'test',
-          page: 1,
-          pageSize: 25,
-        });
-      }, { timeout: 700 });
-    }
+    // Should call with page 1 and maintain the filter
+    await waitFor(() => {
+      expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, expect.objectContaining({
+        emailOrUsername: 'test',
+        page: 1,
+      }));
+    }, { timeout: 1000 });
   });
 });

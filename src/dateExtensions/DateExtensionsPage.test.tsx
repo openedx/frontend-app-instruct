@@ -78,7 +78,7 @@ describe('DateExtensionsPage', () => {
       isLoading: true,
     });
     renderWithAlertAndIntl(<DateExtensionsPage />);
-    expect(document.querySelectorAll('.react-loading-skeleton')).toHaveLength(6);
+    expect(screen.getByTestId('data-table-spinner')).toBeInTheDocument();
   });
 
   it('renders reset link for each row', () => {
