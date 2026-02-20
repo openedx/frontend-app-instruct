@@ -1,22 +1,22 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import CohortsForm from './CohortsForm';
-import messages from '../messages';
-import { renderWithIntl } from '@src/testUtils';
-import { useContentGroupsData } from '../data/apiHook';
-import { CohortProvider } from './CohortContext';
-import * as CohortContextModule from './CohortContext';
+import CohortsForm from '@src/cohorts/components/CohortsForm';
+import messages from '@src/cohorts/messages';
+import { renderWithAlertAndIntl, renderWithIntl } from '@src/testUtils';
+import { useContentGroupsData } from '@src/cohorts/data/apiHook';
+import { CohortProvider } from '@src/cohorts/components/CohortContext';
+import * as CohortContextModule from '@src/cohorts/components/CohortContext';
 
 jest.mock('react-router-dom', () => ({
   useParams: () => ({ courseId: 'course-v1:edX+DemoX+Demo_Course' }),
 }));
 
 const mockContentGroups = [
-  { id: '1:2', displayName: 'Group 1' },
-  { id: '2:3', displayName: 'Group 2' },
+  { id: '2', name: 'Group 1' },
+  { id: '3', name: 'Group 2' },
 ];
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('@src/cohorts/data/apiHook', () => ({
   useContentGroupsData: jest.fn(),
 }));
 
@@ -25,7 +25,7 @@ describe('CohortsForm', () => {
   const onSubmit = jest.fn();
 
   const renderComponent = () =>
-    renderWithIntl(
+    renderWithAlertAndIntl(
       <CohortProvider>
         <CohortsForm onCancel={onCancel} onSubmit={onSubmit} />
       </CohortProvider>
@@ -36,30 +36,30 @@ describe('CohortsForm', () => {
   });
 
   it('renders cohort name input', () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups } });
     renderComponent();
     expect(screen.getByPlaceholderText(messages.cohortName.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders assignment method radios', () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups } });
     renderComponent();
     expect(screen.getByLabelText(messages.automatic.defaultMessage)).toBeInTheDocument();
     expect(screen.getByLabelText(messages.manual.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders content group radios and select', () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups } });
     renderComponent();
     expect(screen.getByLabelText(messages.noContentGroup.defaultMessage)).toBeInTheDocument();
     expect(screen.getByLabelText(messages.selectAContentGroup.defaultMessage)).toBeInTheDocument();
     expect(screen.getByRole('combobox')).toBeInTheDocument();
-    expect(screen.getByText(mockContentGroups[0].displayName)).toBeInTheDocument();
-    expect(screen.getByText(mockContentGroups[1].displayName)).toBeInTheDocument();
+    expect(screen.getByText(mockContentGroups[0].name)).toBeInTheDocument();
+    expect(screen.getByText(mockContentGroups[1].name)).toBeInTheDocument();
   });
 
   it('calls onCancel when Cancel button is clicked', async () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups } });
     renderComponent();
     const user = userEvent.setup();
     const cancelButton = screen.getByRole('button', { name: messages.cancelLabel.defaultMessage });
@@ -68,7 +68,7 @@ describe('CohortsForm', () => {
   });
 
   it('calls onSubmit when Save button is enabled and clicked', async () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups } });
     renderComponent();
     const user = userEvent.setup();
     const input = screen.getByPlaceholderText(messages.cohortName.defaultMessage);
@@ -78,7 +78,7 @@ describe('CohortsForm', () => {
   });
 
   it('updates cohort name input value', async () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups } });
     renderComponent();
     const input = screen.getByPlaceholderText(messages.cohortName.defaultMessage);
     const user = userEvent.setup();
@@ -87,7 +87,7 @@ describe('CohortsForm', () => {
   });
 
   it('disables select when "Select a Content Group" is not chosen', async () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups } });
     renderComponent();
     const select = screen.getByRole('combobox');
     expect(select).toBeDisabled();
@@ -97,14 +97,14 @@ describe('CohortsForm', () => {
   });
 
   it('renders warning and create link when no content groups', () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: [] });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: [] } });
     renderComponent();
     expect(screen.getByText(messages.noContentGroups.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.createContentGroup.defaultMessage)).toBeInTheDocument();
   });
 
   it('submits correct data when selecting a content group', async () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups, id: 1 } });
     renderComponent();
     const user = userEvent.setup();
 
@@ -121,15 +121,15 @@ describe('CohortsForm', () => {
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         name: 'Cohort With Group',
-        groupId: null,
-        userPartitionId: null,
+        groupId: 3,
+        userPartitionId: 1,
         assignmentType: 'random',
       })
     );
   });
 
   it('disables manual assignment radio when disableManualAssignment is true', () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups } });
     renderWithIntl(
       <CohortProvider>
         <CohortsForm onCancel={onCancel} onSubmit={onSubmit} disableManualAssignment />
@@ -140,7 +140,7 @@ describe('CohortsForm', () => {
   });
 
   it('shows initial values in context', async () => {
-    (useContentGroupsData as jest.Mock).mockReturnValue({ data: mockContentGroups });
+    (useContentGroupsData as jest.Mock).mockReturnValue({ data: { groups: mockContentGroups } });
 
     jest.spyOn(CohortContextModule, 'useCohortContext').mockReturnValue({
       selectedCohort: {
@@ -174,6 +174,6 @@ describe('CohortsForm', () => {
     expect(selectGroupRadio).toBeChecked();
 
     const groupSelect = screen.getByRole('combobox');
-    expect(groupSelect).toHaveValue('2:3');
+    expect(groupSelect).toHaveValue('2');
   });
 });
