@@ -47,7 +47,7 @@ const DetailAssessmentsList = () => {
 
   return (
     <div className="mt-4.5">
-      <h3 className="text-primary-700">{intl.formatMessage(messages.details)}</h3>
+      <h3 className="text-primary-700 mb-3">{intl.formatMessage(messages.details)}</h3>
       <DataTable
         columns={tableColumns}
         additionalColumns={additionalColumns}

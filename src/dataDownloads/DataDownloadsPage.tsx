@@ -1,4 +1,3 @@
-import { Container } from '@openedx/paragon';
 import messages from './messages';
 import { useIntl, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { DataDownloadTable } from './components/DataDownloadTable';
@@ -174,21 +173,19 @@ const DataDownloadsPage = () => {
   }
 
   return (
-    <Container className="mt-4.5 mb-4" fluid>
+    <>
       <h3 className="text-primary-700">{intl.formatMessage(messages.dataDownloadsTitle)}</h3>
       <p className="text-primary-700">{intl.formatMessage(messages.dataDownloadsDescription)}</p>
       <p className="text-primary-700">{intl.formatMessage(messages.dataDownloadsReportExpirationPolicyMessage)}</p>
       <DataDownloadTable data={data} isLoading={isLoading} onDownloadClick={handleDownload} />
-
       <GenerateReports
         onGenerateReport={handleGenerateReport}
         onGenerateProblemResponsesReport={handleGenerateProblemResponsesReport}
         isGenerating={isGenerating}
         problemResponsesError={problemResponsesError}
       />
-
       <PendingTasks />
-    </Container>
+    </>
   );
 };
 

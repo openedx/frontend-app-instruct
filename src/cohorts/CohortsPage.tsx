@@ -36,7 +36,7 @@ const CohortsPageContent = () => {
   };
 
   return (
-    <div className="mt-4.5 mb-4 mx-4">
+    <>
       <div className="d-inline-flex align-items-center">
         <h3 className="mb-0 text-gray-700">{intl.formatMessage(messages.cohortsTitle)}</h3>
         {isCohorted && (
@@ -58,7 +58,7 @@ const CohortsPageContent = () => {
         <DisabledCohortsView onEnableCohorts={handleEnableCohorts} />
       )}
       <DisableCohortsModal isOpen={isOpenDisableModal} onClose={() => setIsOpenDisableModal(false)} onConfirmDisable={handleDisableCohorts} />
-    </div>
+    </>
   );
 };
 

@@ -42,6 +42,10 @@ const GeneralCourseInfo = () => {
     );
   }
 
+  if (!courseInfo) {
+    return null;
+  }
+
   return (
     <Card className="general-course-info">
       <Card.Section>

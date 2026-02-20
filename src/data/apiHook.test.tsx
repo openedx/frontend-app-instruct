@@ -5,6 +5,27 @@ import { fetchPendingTasks, getCourseInfo } from './api';
 
 jest.mock('./api');
 
+const mockCourseData = {
+  courseId: 'test-course-123',
+  displayName: 'Test Course',
+  courseNumber: '123',
+  courseRun: '2024',
+  enrollmentCounts: { total: 100, audit: 50 },
+  start: null,
+  end: null,
+  tabs: [],
+  totalEnrollment: 150,
+  studioUrl: 'http://studio.example.com',
+  pacing: 'self-paced',
+  org: 'Test Org',
+  numSections: 10,
+  hasStarted: true,
+  hasEnded: false,
+  enrollmentEnd: null,
+  enrollmentStart: null,
+  gradeCutoffs: null
+};
+
 const mockGetCourseInfo = getCourseInfo as jest.MockedFunction<typeof getCourseInfo>;
 const mockFetchPendingTasks = fetchPendingTasks as jest.MockedFunction<typeof fetchPendingTasks>;
 
@@ -15,9 +36,11 @@ const createWrapper = () => {
       mutations: { retry: false },
     },
   });
+
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+
   Wrapper.displayName = 'TestWrapper';
   return Wrapper;
 };
@@ -28,7 +51,6 @@ describe('api hooks', () => {
     });
 
     it('fetches course info successfully', async () => {
-      const mockCourseData = { courseName: 'Test Course' };
       mockGetCourseInfo.mockResolvedValue(mockCourseData);
 
       const { result } = renderHook(() => useCourseInfo('test-course-123'), {
