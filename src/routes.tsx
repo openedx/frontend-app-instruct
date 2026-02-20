@@ -2,6 +2,7 @@ import CohortsPage from '@src/cohorts/CohortsPage';
 import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
 import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
 import DataDownloadsPage from '@src/dataDownloads/DataDownloadsPage';
+import GradingPage from '@src/grading/GradingPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 
 const routes = [
@@ -39,6 +40,10 @@ const routes = [
       {
         path: 'data_downloads',
         element: <DataDownloadsPage />
+      },
+      {
+        path: 'grading',
+        element: <GradingPage />
       },
       // {
       //   path: 'special_exams',
