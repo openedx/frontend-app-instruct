@@ -41,10 +41,10 @@ describe('DateExtensionsList', () => {
     <DateExtensionsList {...props} />
   );
 
-  it('renders skeletons when loading', () => {
+  it('renders loading state on the table', () => {
     (useDateExtensions as jest.Mock).mockReturnValue({ isLoading: true, data: { count: 0, results: [] } });
     renderComponent({});
-    expect(screen.getByTestId('data-table-spinner')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('renders table with data', async () => {

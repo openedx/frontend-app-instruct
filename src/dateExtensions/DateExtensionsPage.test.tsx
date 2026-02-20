@@ -78,7 +78,7 @@ describe('DateExtensionsPage', () => {
       isLoading: true,
     });
     renderWithAlertAndIntl(<DateExtensionsPage />);
-    expect(screen.getByTestId('data-table-spinner')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('renders reset link for each row', () => {
