@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { Button } from '@openedx/paragon';
 import messages from './messages';
 import DateExtensionsList from './components/DateExtensionsList';
 import ResetExtensionsModal from './components/ResetExtensionsModal';
@@ -83,12 +82,11 @@ const DateExtensionsPage = () => {
 
   return (
     <div className="mt-4.5 mb-4 mx-4">
-      <h3>{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
-      <div className="d-flex align-items-center justify-content-between mb-3.5">
-        <p>filters</p>
-        <Button onClick={() => setIsAddExtensionModalOpen(true)}>+ {intl.formatMessage(messages.addIndividualExtension)}</Button>
-      </div>
-      <DateExtensionsList onResetExtensions={handleResetExtensions} />
+      <h3 className="mb-4.5">{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
+      <DateExtensionsList
+        onClickAdd={() => setIsAddExtensionModalOpen(true)}
+        onResetExtensions={handleResetExtensions}
+      />
       <AddExtensionModal
         isOpen={isAddExtensionModalOpen}
         title={intl.formatMessage(messages.addIndividualDueDateExtension)}

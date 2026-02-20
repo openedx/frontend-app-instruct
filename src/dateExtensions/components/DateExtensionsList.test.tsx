@@ -1,8 +1,10 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DateExtensionsList, { DateExtensionListProps } from './DateExtensionsList';
 import { renderWithIntl } from '../../testUtils';
-import { useDateExtensions } from '../data/apiHook';
+import { useDateExtensions, useGradedSubsections } from '../data/apiHook';
+
+const testCourseId = 'course-v1:edX+DemoX+Demo_Course';
 
 const mockData = [
   {
@@ -15,11 +17,24 @@ const mockData = [
   }
 ];
 
+const mockGradedSubsections = [
+  {
+    subsectionId: 'subsection-1block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378',
+    displayName: 'Three body diagrams'
+  }
+];
+
 jest.mock('../data/apiHook', () => ({
   useDateExtensions: jest.fn(),
+  useGradedSubsections: jest.fn().mockReturnValue({ data: { items: [] } }),
+}));
+
+jest.mock('react-router-dom', () => ({
+  useParams: () => ({ courseId: testCourseId }),
 }));
 
 const mockResetExtensions = jest.fn();
+const mockOnClickAdd = jest.fn();
 
 describe('DateExtensionsList', () => {
   const renderComponent = (props: DateExtensionListProps) => renderWithIntl(
@@ -52,5 +67,183 @@ describe('DateExtensionsList', () => {
     renderComponent({});
     expect(screen.queryByText(mockData[0].username)).not.toBeInTheDocument();
     expect(screen.getByText('No results found')).toBeInTheDocument();
+  });
+
+  it('renders add extension button and handles click', async () => {
+    (useDateExtensions as jest.Mock).mockReturnValue({ isLoading: false, data: { count: 0, results: [] } });
+    renderComponent({ onClickAdd: mockOnClickAdd });
+    const user = userEvent.setup();
+
+    const addButton = screen.getByRole('button', { name: /add individual extension/i });
+    expect(addButton).toBeInTheDocument();
+
+    await user.click(addButton);
+    expect(mockOnClickAdd).toHaveBeenCalled();
+  });
+
+  it('filters by username/email when typing in search input', async () => {
+    (useDateExtensions as jest.Mock).mockReturnValue({ isLoading: false, data: { count: mockData.length, results: mockData } });
+    renderComponent({});
+    const user = userEvent.setup();
+
+    const searchInput = screen.getByPlaceholderText(/search for a learner/i);
+    expect(searchInput).toBeInTheDocument();
+
+    await user.type(searchInput, 'test_user');
+
+    await waitFor(() => {
+      expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, {
+        blockId: '',
+        emailOrUsername: 'test_user',
+        page: 0,
+        pageSize: 25,
+      });
+    }, { timeout: 700 });
+  });
+
+  it('debounces search input to avoid excessive API calls', async () => {
+    (useDateExtensions as jest.Mock).mockReturnValue({ isLoading: false, data: { count: mockData.length, results: mockData } });
+    renderComponent({});
+    const user = userEvent.setup();
+
+    const searchInput = screen.getByPlaceholderText(/search for a learner/i);
+
+    // Type multiple characters quickly
+    await user.type(searchInput, 'test');
+
+    // Should not call immediately
+    expect(useDateExtensions).not.toHaveBeenCalledWith(testCourseId, {
+      blockId: '',
+      emailOrUsername: 'test',
+      page: 0,
+      pageSize: 25,
+    });
+
+    // Wait for debounce
+    await waitFor(() => {
+      expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, {
+        blockId: '',
+        emailOrUsername: 'test',
+        page: 0,
+        pageSize: 25,
+      });
+    }, { timeout: 700 });
+  });
+
+  it('filters by graded subsection when selecting from dropdown', async () => {
+    (useDateExtensions as jest.Mock).mockReturnValue({ isLoading: false, data: { count: mockData.length, results: mockData } });
+    (useGradedSubsections as jest.Mock).mockReturnValue({
+      data: { items: mockGradedSubsections },
+      isLoading: false,
+    });
+    renderComponent({});
+    const user = userEvent.setup();
+
+    const subsectionSelect = screen.getByPlaceholderText('All Graded Subsections');
+    expect(subsectionSelect).toBeInTheDocument();
+
+    await user.selectOptions(subsectionSelect, mockGradedSubsections[0].subsectionId);
+
+    await waitFor(() => {
+      expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, {
+        blockId: mockGradedSubsections[0].subsectionId,
+        emailOrUsername: '',
+        page: 0,
+        pageSize: 25,
+      });
+    }, { timeout: 700 });
+  });
+
+  it('resets page to 0 when filters change', async () => {
+    // Start with some data on page 1
+    (useDateExtensions as jest.Mock).mockReturnValue({
+      isLoading: false,
+      data: { count: 50, results: mockData, numPages: 2 }
+    });
+
+    renderComponent({});
+    const user = userEvent.setup();
+
+    // Navigate to page 2 first (simulate pagination)
+    const nextPageButton = screen.getByLabelText(/next/i);
+    if (nextPageButton) {
+      await user.click(nextPageButton);
+    }
+
+    // Now apply a filter
+    const searchInput = screen.getByPlaceholderText(/search for a learner/i);
+    await user.type(searchInput, 'test');
+
+    // Should reset to page 0 when filter changes
+    await waitFor(() => {
+      expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, {
+        blockId: '',
+        emailOrUsername: 'test',
+        page: 0,
+        pageSize: 25,
+      });
+    }, { timeout: 700 });
+  });
+
+  it('handles pagination correctly', async () => {
+    (useDateExtensions as jest.Mock).mockReturnValue({
+      isLoading: false,
+      data: { count: 50, results: mockData, numPages: 2 }
+    });
+
+    renderComponent({});
+    const user = userEvent.setup();
+
+    const nextPageButton = screen.getByLabelText(/next/i);
+    if (nextPageButton) {
+      await user.click(nextPageButton);
+
+      expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, {
+        blockId: '',
+        emailOrUsername: '',
+        page: 1,
+        pageSize: 25,
+      });
+    }
+  });
+
+  it('maintains filters when paginating', async () => {
+    (useDateExtensions as jest.Mock).mockReturnValue({
+      isLoading: false,
+      data: { count: 50, results: mockData, numPages: 2 }
+    });
+
+    renderComponent({});
+    const user = userEvent.setup();
+
+    // Apply a filter first
+    const searchInput = screen.getByPlaceholderText(/search for a learner/i);
+    await user.type(searchInput, 'test');
+
+    // Wait for the filter to be applied
+    await waitFor(() => {
+      expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, expect.objectContaining({
+        emailOrUsername: 'test',
+        page: 0,
+      }));
+    }, { timeout: 1000 });
+
+    // Wait for all debounced callbacks to complete
+    await new Promise(resolve => setTimeout(resolve, 700));
+
+    // Clear mock calls to focus on pagination behavior
+    (useDateExtensions as jest.Mock).mockClear();
+
+    // Then paginate
+    const nextPageButton = screen.getByLabelText(/next/i);
+    await user.click(nextPageButton);
+
+    // Should call with page 1 and maintain the filter
+    await waitFor(() => {
+      expect(useDateExtensions).toHaveBeenCalledWith(testCourseId, expect.objectContaining({
+        emailOrUsername: 'test',
+        page: 1,
+      }));
+    }, { timeout: 1000 });
   });
 });

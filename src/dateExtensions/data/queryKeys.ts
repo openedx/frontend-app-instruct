@@ -1,10 +1,19 @@
-import { PaginationQueryKeys } from '@src/types';
 import { appId } from '../../constants';
+import { DateExtensionQueryParams } from '../types';
 
 export const dateExtensionsQueryKeys = {
   all: [appId, 'dateExtensions'] as const,
   byCourse: (courseId: string) => [...dateExtensionsQueryKeys.all, courseId] as const,
-  byCoursePaginated: (courseId: string, pagination: PaginationQueryKeys) => [...dateExtensionsQueryKeys.byCourse(courseId), pagination.page] as const,
+  byCoursePaginated: (
+    courseId: string,
+    params: DateExtensionQueryParams
+  ) => [
+    ...dateExtensionsQueryKeys.byCourse(courseId),
+    params.page,
+    params.pageSize,
+    params.emailOrUsername || '',
+    params.blockId || ''
+  ] as const,
 };
 
 export const gradedSubsectionsQueryKeys = {
