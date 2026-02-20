@@ -129,9 +129,8 @@ const DateExtensionsList = ({
     // If filters changed, reset to page 0
     if (filterChanged) {
       setFilters({ page: 0, emailOrUsername: newEmailOrUsername, blockId: newBlockId });
-    }
-    // If only page changed (filters didn't change), update page
-    else if (pageChanged) {
+    } else if (pageChanged) {
+      // If only page changed (filters didn't change), update page
       setFilters({ page: data.pageIndex, emailOrUsername: newEmailOrUsername, blockId: newBlockId });
     }
   };
