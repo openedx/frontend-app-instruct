@@ -1,157 +1,186 @@
 import { screen } from '@testing-library/react';
 import { EnrollmentSummary } from './EnrollmentSummary';
 import { renderWithIntl } from '../../../testUtils';
+import { useCourseInfo } from '@src/data/apiHook';
+import messages from './messages';
+
+jest.mock('react-router-dom', () => ({
+  useParams: () => ({
+    courseId: 'course-v1:edX+DemoX+Demo_Course',
+  }),
+}));
+
+jest.mock('@src/data/apiHook', () => ({
+  useCourseInfo: jest.fn(),
+}));
+
+const mockCounter = {
+  enrollmentCounts: {
+    total: 5000,
+    verified: 3500,
+    audit: 1500,
+  },
+  staffCount: 25,
+  learnerCount: 4975,
+};
 
 describe('EnrollmentSummary', () => {
-  const mockEnrollmentCounts = {
-    total: 5000,
-    staffAndAdmins: 25,
-    learners: 4975,
-    verified: 3500,
-    audit: 1475,
-  };
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('displays the enrollment summary title', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
+    renderWithIntl(<EnrollmentSummary />);
 
     expect(screen.getByRole('heading', { name: /course enrollment/i })).toBeInTheDocument();
   });
 
   it('displays total enrollment count with proper formatting', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
+    renderWithIntl(<EnrollmentSummary />);
+    screen.debug();
 
-    expect(screen.getByText('All Enrollments')).toBeInTheDocument();
-    expect(screen.getByText('5,000')).toBeInTheDocument();
+    expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.enrollmentCounts.total.toLocaleString())).toBeInTheDocument();
   });
 
   it('displays Staff / Admin count when provided', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
+    renderWithIntl(<EnrollmentSummary />);
 
-    expect(screen.getByText('Staff / Admin')).toBeInTheDocument();
-    expect(screen.getByText('25')).toBeInTheDocument();
+    expect(screen.getByText(messages.staffAndAdminsLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.staffCount.toLocaleString())).toBeInTheDocument();
   });
 
   it('displays learners count when provided', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
+    renderWithIntl(<EnrollmentSummary />);
 
-    expect(screen.getByText('Learners')).toBeInTheDocument();
-    expect(screen.getByText('4,975')).toBeInTheDocument();
+    expect(screen.getByText(messages.learnersLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.learnerCount.toLocaleString())).toBeInTheDocument();
   });
 
   it('displays verified count with svg icon when provided', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
+    renderWithIntl(<EnrollmentSummary />);
 
-    expect(screen.getByText('Verified')).toBeInTheDocument();
-    expect(screen.getByText('3,500')).toBeInTheDocument();
+    expect(screen.getByText(messages.verified.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.enrollmentCounts.verified.toLocaleString())).toBeInTheDocument();
 
     const svgElements = document.querySelectorAll('svg');
     expect(svgElements.length).toBeGreaterThan(0);
   });
 
   it('displays audit count when provided', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
+    renderWithIntl(<EnrollmentSummary />);
 
-    expect(screen.getByText('Audit')).toBeInTheDocument();
-    expect(screen.getByText('1,475')).toBeInTheDocument();
-  });
-
-  it('does not display Staff / Admin section when not provided', () => {
-    const countsWithoutStaff = {
-      total: 3000,
-      learners: 3000,
-      verified: 2000,
-      audit: 1000,
-    };
-
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={countsWithoutStaff} />);
-
-    expect(screen.queryByText('Staff / Admin')).not.toBeInTheDocument();
-    expect(screen.getByText('All Enrollments')).toBeInTheDocument();
-    expect(screen.getByText('Learners')).toBeInTheDocument();
-  });
-
-  it('does not display learners section when not provided', () => {
-    const countsWithoutLearners = {
-      total: 500,
-      staffAndAdmins: 50,
-      verified: 400,
-      audit: 50,
-    };
-
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={countsWithoutLearners} />);
-
-    expect(screen.queryByText('Learners')).not.toBeInTheDocument();
-    expect(screen.getByText('All Enrollments')).toBeInTheDocument();
-    expect(screen.getByText('Staff / Admin')).toBeInTheDocument();
+    expect(screen.getByText(messages.audit.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.enrollmentCounts.audit.toLocaleString())).toBeInTheDocument();
   });
 
   it('does not display verified section when not provided', () => {
     const countsWithoutVerified = {
       total: 2000,
-      staffAndAdmins: 20,
-      learners: 1980,
-      audit: 1980,
+      audit: 2000,
     };
 
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={countsWithoutVerified} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: { enrollmentCounts: countsWithoutVerified, staffCount: 20, learnerCount: 1980 },
+      isLoading: false,
+    });
 
-    expect(screen.queryByText('Verified')).not.toBeInTheDocument();
-    expect(screen.getByText('All Enrollments')).toBeInTheDocument();
-    expect(screen.getByText('Learners')).toBeInTheDocument();
+    renderWithIntl(<EnrollmentSummary />);
+
+    expect(screen.queryByText(messages.verified.defaultMessage)).not.toBeInTheDocument();
+    expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.learnersLabel.defaultMessage)).toBeInTheDocument();
   });
 
   it('does not display audit section when not provided', () => {
     const countsWithoutAudit = {
       total: 1500,
-      staffAndAdmins: 15,
-      learners: 1485,
-      verified: 1485,
+      verified: 1500,
     };
 
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={countsWithoutAudit} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: { enrollmentCounts: countsWithoutAudit, staffCount: 15, learnerCount: 1485 },
+      isLoading: false,
+    });
 
-    expect(screen.queryByText('Audit')).not.toBeInTheDocument();
-    expect(screen.getByText('All Enrollments')).toBeInTheDocument();
-    expect(screen.getByText('Verified')).toBeInTheDocument();
+    renderWithIntl(<EnrollmentSummary />);
+
+    expect(screen.queryByText(messages.audit.defaultMessage)).not.toBeInTheDocument();
+    expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.verified.defaultMessage)).toBeInTheDocument();
   });
 
   it('displays only total when other counts are not provided', () => {
     const minimalCounts = { total: 100 };
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: { enrollmentCounts: minimalCounts, staffCount: 0, learnerCount: 0 },
+      isLoading: false,
+    });
 
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={minimalCounts} />);
+    renderWithIntl(<EnrollmentSummary />);
 
-    expect(screen.getByText('All Enrollments')).toBeInTheDocument();
-    expect(screen.getByText('100')).toBeInTheDocument();
-    expect(screen.queryByText('Staff / Admin')).not.toBeInTheDocument();
-    expect(screen.queryByText('Learners')).not.toBeInTheDocument();
-    expect(screen.queryByText('Verified')).not.toBeInTheDocument();
-    expect(screen.queryByText('Audit')).not.toBeInTheDocument();
+    expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(minimalCounts.total.toLocaleString())).toBeInTheDocument();
+    expect(screen.queryByText(messages.verified.defaultMessage)).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.audit.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('handles zero values correctly', () => {
     const countsWithZeros = {
       total: 0,
-      staffAndAdmins: 0,
-      learners: 0,
       verified: 0,
       audit: 0,
     };
 
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={countsWithZeros} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: { enrollmentCounts: countsWithZeros, staffCount: 0, learnerCount: 0 },
+      isLoading: false,
+    });
+
+    renderWithIntl(<EnrollmentSummary />);
 
     // Should still display sections with zero values when provided
-    expect(screen.getByText('All Enrollments')).toBeInTheDocument();
-    expect(screen.getAllByText('0')).toHaveLength(1); // Only total should appear with 0
+    expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getAllByText('0')).toHaveLength(5);
   });
 
   it('displays enrollment data in proper visual order', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
 
-    const allEnrollments = screen.getByText('All Enrollments');
-    const staffAndAdmins = screen.getByText('Staff / Admin');
-    const learners = screen.getByText('Learners');
-    const verified = screen.getByText('Verified');
-    const audit = screen.getByText('Audit');
+    renderWithIntl(<EnrollmentSummary />);
+
+    const allEnrollments = screen.getByText(messages.allEnrollmentsLabel.defaultMessage);
+    const staffAndAdmins = screen.getByText(messages.staffAndAdminsLabel.defaultMessage);
+    const learners = screen.getByText(messages.learnersLabel.defaultMessage);
+    const verified = screen.getByText(messages.verified.defaultMessage);
+    const audit = screen.getByText(messages.audit.defaultMessage);
 
     // Check DOM order
     expect(allEnrollments.compareDocumentPosition(staffAndAdmins) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -162,24 +191,35 @@ describe('EnrollmentSummary', () => {
 
   it('displays large numbers with proper comma formatting', () => {
     const largeCounts = {
-      total: 1234567,
-      staffAndAdmins: 1234,
-      learners: 1233333,
-      verified: 987654,
-      audit: 245913,
+      enrollmentCounts: {
+        total: 1234567,
+        verified: 987654,
+        audit: 245913,
+      },
+      staffCount: 1234,
+      learnerCount: 1233333,
     };
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: largeCounts,
+      isLoading: false,
+    });
 
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={largeCounts} />);
+    renderWithIntl(<EnrollmentSummary />);
 
-    expect(screen.getByText('1,234,567')).toBeInTheDocument();
-    expect(screen.getByText('1,234')).toBeInTheDocument();
-    expect(screen.getByText('1,233,333')).toBeInTheDocument();
-    expect(screen.getByText('987,654')).toBeInTheDocument();
-    expect(screen.getByText('245,913')).toBeInTheDocument();
+    expect(screen.getByText(largeCounts.enrollmentCounts.total.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(largeCounts.enrollmentCounts.verified.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(largeCounts.enrollmentCounts.audit.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(largeCounts.staffCount.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(largeCounts.learnerCount.toLocaleString())).toBeInTheDocument();
   });
 
   it('is accessible to screen readers', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
+
+    renderWithIntl(<EnrollmentSummary />);
 
     // Main heading should be accessible
     const heading = screen.getByRole('heading', { name: /course enrollment/i });
@@ -187,29 +227,33 @@ describe('EnrollmentSummary', () => {
     expect(heading).toBeVisible();
 
     // All enrollment information should be visible and accessible
-    expect(screen.getByText('All Enrollments')).toBeVisible();
-    expect(screen.getByText('Staff / Admin')).toBeVisible();
-    expect(screen.getByText('Learners')).toBeVisible();
-    expect(screen.getByText('Verified')).toBeVisible();
-    expect(screen.getByText('Audit')).toBeVisible();
+    expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeVisible();
+    expect(screen.getByText(messages.staffAndAdminsLabel.defaultMessage)).toBeVisible();
+    expect(screen.getByText(messages.learnersLabel.defaultMessage)).toBeVisible();
+    expect(screen.getByText(messages.verified.defaultMessage)).toBeVisible();
+    expect(screen.getByText(messages.audit.defaultMessage)).toBeVisible();
 
     // All counts should be visible
-    expect(screen.getByText('5,000')).toBeVisible();
-    expect(screen.getByText('25')).toBeVisible();
-    expect(screen.getByText('4,975')).toBeVisible();
-    expect(screen.getByText('3,500')).toBeVisible();
-    expect(screen.getByText('1,475')).toBeVisible();
+    expect(screen.getByText(mockCounter.enrollmentCounts.total.toLocaleString())).toBeVisible();
+    expect(screen.getByText(mockCounter.enrollmentCounts.verified.toLocaleString())).toBeVisible();
+    expect(screen.getByText(mockCounter.enrollmentCounts.audit.toLocaleString())).toBeVisible();
+    expect(screen.getByText(mockCounter.staffCount.toLocaleString())).toBeVisible();
+    expect(screen.getByText(mockCounter.learnerCount.toLocaleString())).toBeVisible();
   });
 
   it('maintains proper heading hierarchy', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
+    renderWithIntl(<EnrollmentSummary />);
 
     const heading = screen.getByRole('heading', { level: 3 });
     expect(heading).toHaveTextContent('Course Enrollment');
   });
 
   it('displays enrollment counters in horizontal layout', () => {
-    const { container } = renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    const { container } = renderWithIntl(<EnrollmentSummary />);
 
     // Check for horizontal stack layout
     const stackElement = container.querySelector('.d-flex');
@@ -217,11 +261,15 @@ describe('EnrollmentSummary', () => {
   });
 
   it('shows verified enrollment with distinctive icon presentation', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
+    renderWithIntl(<EnrollmentSummary />);
 
     // Verified section should have both text and icon
-    expect(screen.getByText('Verified')).toBeInTheDocument();
-    expect(screen.getByText('3,500')).toBeInTheDocument();
+    expect(screen.getByText(messages.verified.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.enrollmentCounts.verified.toLocaleString())).toBeInTheDocument();
 
     // Should have an SVG icon for verified
     const svgElements = document.querySelectorAll('svg');
@@ -230,40 +278,51 @@ describe('EnrollmentSummary', () => {
 
   it('handles edge case with only verified enrollments', () => {
     const verifiedOnlyCounts = {
-      total: 500,
-      verified: 500,
+      enrollmentCounts: {
+        total: 500,
+        verified: 500,
+      },
+      staffCount: 0,
+      learnerCount: 0,
     };
 
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={verifiedOnlyCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: verifiedOnlyCounts,
+      isLoading: false,
+    });
 
-    expect(screen.getByText('All Enrollments')).toBeInTheDocument();
-    expect(screen.getByText('Verified')).toBeInTheDocument();
-    expect(screen.getAllByText('500')).toHaveLength(2);
+    renderWithIntl(<EnrollmentSummary />);
+
+    expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.verified.defaultMessage)).toBeInTheDocument();
+    expect(screen.getAllByText(verifiedOnlyCounts.enrollmentCounts.verified.toLocaleString())).toHaveLength(2);
 
     // Should not show other sections
-    expect(screen.queryByText('Staff / Admin')).not.toBeInTheDocument();
-    expect(screen.queryByText('Learners')).not.toBeInTheDocument();
-    expect(screen.queryByText('Audit')).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.audit.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('provides complete enrollment overview for course administrators', () => {
-    renderWithIntl(<EnrollmentSummary enrollmentCounts={mockEnrollmentCounts} />);
+    (useCourseInfo as jest.Mock).mockReturnValue({
+      data: mockCounter,
+      isLoading: false,
+    });
+    renderWithIntl(<EnrollmentSummary />);
 
     // Should show comprehensive enrollment data
-    expect(screen.getByText('Course Enrollment')).toBeInTheDocument();
+    expect(screen.getByText(messages.enrollmentSummaryTitle.defaultMessage)).toBeInTheDocument();
 
     // All major enrollment categories should be visible
-    expect(screen.getByText('All Enrollments')).toBeInTheDocument();
-    expect(screen.getByText('Staff / Admin')).toBeInTheDocument();
-    expect(screen.getByText('Learners')).toBeInTheDocument();
-    expect(screen.getByText('Verified')).toBeInTheDocument();
-    expect(screen.getByText('Audit')).toBeInTheDocument();
+    expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.staffAndAdminsLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.learnersLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.verified.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.audit.defaultMessage)).toBeInTheDocument();
 
     // All counts should be properly formatted and visible
-    expect(screen.getByText('5,000')).toBeInTheDocument();
-    expect(screen.getByText('25')).toBeInTheDocument();
-    expect(screen.getByText('4,975')).toBeInTheDocument();
-    expect(screen.getByText('3,500')).toBeInTheDocument();
-    expect(screen.getByText('1,475')).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.enrollmentCounts.total.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.staffCount.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.learnerCount.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.enrollmentCounts.verified.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.enrollmentCounts.audit.toLocaleString())).toBeInTheDocument();
   });
 });
