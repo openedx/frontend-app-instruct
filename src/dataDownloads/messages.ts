@@ -63,7 +63,7 @@ const messages = defineMessages({
   },
   problemResponseReportsTabTitle: {
     id: 'instruct.dataDownloads.tabs.problemResponseReports',
-    defaultMessage: 'Open Response Reports',
+    defaultMessage: 'Problem Response Reports',
     description: 'Tab title for problem response reports',
   },
   certificateReportsTabTitle: {
@@ -108,7 +108,7 @@ const messages = defineMessages({
   },
   pendingActivationsReportDescription: {
     id: 'instruct.dataDownloads.reports.pendingActivations.description',
-    defaultMessage: 'Report of enrolled learners who have not yet activated their account',
+    defaultMessage: 'Report of enrolled learners who have not yet activated their account.',
     description: 'Description for pending activations report',
   },
   generatePendingActivationsReport: {
@@ -123,7 +123,7 @@ const messages = defineMessages({
   },
   anonymizedStudentIdsReportDescription: {
     id: 'instruct.dataDownloads.reports.anonymizedStudentIds.description',
-    defaultMessage: 'Report of enrolled learners who have not yet activated their account',
+    defaultMessage: 'Report of enrolled learners with student IDs anonymized.',
     description: 'Description for anonymized student IDs report',
   },
   generateAnonymizedStudentIdsReport: {
@@ -168,7 +168,7 @@ const messages = defineMessages({
   },
   ora2SummaryReportDescription: {
     id: 'instruct.dataDownloads.reports.ora2Summary.description',
-    defaultMessage: 'Report of details and statuses for ORA',
+    defaultMessage: 'Report of details and statuses for ORA.',
     description: 'Description for ORA summary report',
   },
   generateOra2SummaryReport: {
@@ -183,7 +183,7 @@ const messages = defineMessages({
   },
   ora2DataReportDescription: {
     id: 'instruct.dataDownloads.reports.ora2Data.description',
-    defaultMessage: 'Report of all ORA assignment details',
+    defaultMessage: 'Report of all ORA assignment details.',
     description: 'Description for ORA data report',
   },
   generateOra2DataReport: {
@@ -253,7 +253,7 @@ const messages = defineMessages({
   },
   issuedCertificatesDescription: {
     id: 'instruct.dataDownloads.reports.issuedCertificates.description',
-    defaultMessage: 'Report of Certificates Issued',
+    defaultMessage: 'Report of Certificates Issued.',
     description: 'Description for issued certificates report',
   },
   generateCertificatesReport: {
