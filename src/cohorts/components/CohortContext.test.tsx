@@ -1,9 +1,9 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { render, act } from '@testing-library/react';
 import { CohortProvider, useCohortContext } from './CohortContext';
 import { assignmentTypes } from '../constants';
 
-const TestComponent: React.FC = () => {
+const TestComponent = () => {
   const {
     selectedCohort,
     setSelectedCohort,
@@ -101,7 +101,7 @@ describe('CohortContext', () => {
     const RenderCountComponent = () => {
       renderCount++;
       const { setSelectedCohort } = useCohortContext();
-      React.useEffect(() => {
+      useEffect(() => {
         setSelectedCohort({
           id: 1,
           name: 'Cohort 1',

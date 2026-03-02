@@ -1,15 +1,16 @@
 import { useParams } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { FormattedMessage, getExternalLinkUrl, useIntl } from '@openedx/frontend-base';
-import { Card, Tab, Tabs, Toast } from '@openedx/paragon';
-import messages from '../messages';
-import CohortsForm from './CohortsForm';
-import ManageLearners from './ManageLearners';
-import { useCohortContext } from './CohortContext';
-import { usePatchCohort } from '../data/apiHook';
-import { CohortData } from '../types';
+import { Card, Hyperlink, Tab, Tabs, Toast } from '@openedx/paragon';
+import messages from '@src/cohorts/messages';
+import { CohortData } from '@src/cohorts/types';
+import { usePatchCohort } from '@src/cohorts/data/apiHook';
+import CohortsForm from '@src/cohorts/components/CohortsForm';
+import ManageLearners from '@src/cohorts/components/ManageLearners';
+import { useCohortContext } from '@src/cohorts/components/CohortContext';
+import { useAlert } from '@src/providers/AlertProvider';
 
-const assignmentLink = {
+export const assignmentLink = {
   random: 'https://docs.openedx.org/en/latest/educators/references/advanced_features/managing_cohort_assignment.html#about-auto-cohorts',
   manual: 'https://docs.openedx.org/en/latest/educators/how-tos/advanced_features/manage_cohorts.html#assign-learners-to-cohorts-manually',
 };
@@ -26,19 +27,25 @@ const CohortCard = () => {
   const { mutate: editCohort } = usePatchCohort(courseId);
   const formRef = useRef<{ resetForm: () => void }>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+  const { clearAlerts, showModal } = useAlert();
 
   if (!selectedCohort) {
     return null;
   }
 
   const handleEditCohort = (updatedCohort: CohortData) => {
+    clearAlerts();
     editCohort({ cohortId: selectedCohort.id, cohortInfo: updatedCohort },
       {
         onSuccess: () => {
           setShowSuccessMessage(true);
           setSelectedCohort({ ...selectedCohort, ...updatedCohort });
         },
-        onError: (error) => console.error(error)
+        onError: (error: Error) => {
+          showModal({
+            message: error.message,
+          });
+        }
       }
     );
   };
@@ -56,7 +63,7 @@ const CohortCard = () => {
             <p className="ml-3 text-primary-700 mb-0">{intl.formatMessage(messages.studentsOnCohort, { users: selectedCohort?.userCount ?? 0 })}</p>
           </div>
           <p className="x-small mb-0 mt-2">
-            <FormattedMessage {...warningMessage[selectedCohort.assignmentType]} /> <a href={getExternalLinkUrl(assignmentLink[selectedCohort.assignmentType])}>{intl.formatMessage(messages.warningCohortLink)}</a>
+            <FormattedMessage {...warningMessage[selectedCohort.assignmentType]} /> <Hyperlink showLaunchIcon={false} target="_blank" destination={getExternalLinkUrl(assignmentLink[selectedCohort.assignmentType])}>{intl.formatMessage(messages.warningCohortLink)}</Hyperlink>
           </p>
         </div>
         <Tabs id="cohort-management-tabs" className="mx-0" onSelect={() => {}}>

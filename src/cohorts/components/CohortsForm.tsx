@@ -1,13 +1,13 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
-import { ActionRow, Button, Form, FormControl, FormGroup, FormLabel, FormRadioSet, Hyperlink, Icon } from '@openedx/paragon';
+import { ActionRow, Button, Form, FormControl, FormGroup, FormLabel, FormRadioSet, Hyperlink, Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
-import messages from '../messages';
-import { useContentGroupsData } from '../data/apiHook';
+import messages from '@src/cohorts/messages';
+import { useContentGroupsData } from '@src/cohorts/data/apiHook';
 import { Warning } from '@openedx/paragon/icons';
-import { assignmentTypes } from '../constants';
-import { useCohortContext } from './CohortContext';
-import { CohortData } from '../types';
+import { assignmentTypes } from '@src/cohorts/constants';
+import { CohortData } from '@src/cohorts/types';
+import { useCohortContext } from '@src/cohorts/components/CohortContext';
 
 interface CohortsFormProps {
   disableManualAssignment?: boolean,
@@ -22,26 +22,25 @@ export interface CohortsFormRef {
 const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManualAssignment = false, onCancel, onSubmit }, ref) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const { data = [] } = useContentGroupsData(courseId);
+  const { data = { groups: [], id: null } } = useContentGroupsData(courseId);
   const { selectedCohort } = useCohortContext();
 
   const initialCohortName = (selectedCohort?.name) ?? '';
   const initialAssignmentType = selectedCohort?.assignmentType ?? assignmentTypes.automatic;
   const initialContentGroupOption = selectedCohort?.groupId ? 'selectContentGroup' : 'noContentGroup';
-  const initialContentGroup = selectedCohort?.groupId && selectedCohort?.userPartitionId ? `${selectedCohort.groupId}:${selectedCohort.userPartitionId}` : 'null';
+  const initialContentGroup = selectedCohort?.groupId ? selectedCohort.groupId : null;
 
-  const [selectedContentGroup, setSelectedContentGroup] = useState<string>(initialContentGroup);
+  const [selectedContentGroup, setSelectedContentGroup] = useState<number | null>(initialContentGroup);
   const [selectedContentGroupOption, setSelectedContentGroupOption] = useState<string>(initialContentGroupOption);
   const [selectedAssignmentType, setSelectedAssignmentType] = useState<string>(initialAssignmentType);
   const [name, setName] = useState<string>(initialCohortName);
 
   const resetToInitialValues = useCallback(() => {
     if (selectedCohort) {
-      const contentGroup = selectedCohort.groupId && selectedCohort.userPartitionId ? `${selectedCohort.groupId}:${selectedCohort.userPartitionId}` : 'null';
       setName(selectedCohort.name);
       setSelectedAssignmentType(selectedCohort.assignmentType);
       setSelectedContentGroupOption(selectedCohort.groupId ? 'selectContentGroup' : 'noContentGroup');
-      setSelectedContentGroup(contentGroup);
+      setSelectedContentGroup(selectedCohort.groupId ?? null);
     }
   }, [selectedCohort]);
 
@@ -54,18 +53,15 @@ const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManua
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCohort]);
 
-  const contentGroups = [{ id: 'null', displayName: intl.formatMessage(messages.notSelected) }, ...data];
+  const contentGroups = [{ id: 'null', name: intl.formatMessage(messages.notSelected) }, ...data.groups];
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const contentGroups = selectedContentGroupOption.split(':');
-    const groupId = contentGroups.length > 1 ? Number(contentGroups[0]) : null;
-    const userPartitionId = contentGroups.length > 1 ? Number(contentGroups[1]) : null;
     onSubmit({
       name,
       assignmentType: selectedAssignmentType,
-      groupId,
-      userPartitionId,
+      groupId: selectedContentGroup,
+      userPartitionId: data.id,
     });
   };
 
@@ -79,7 +75,21 @@ const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManua
         <FormLabel className="text-primary-500">{intl.formatMessage(messages.cohortAssignmentMethod)}</FormLabel>
         <FormRadioSet name="assignmentType" value={selectedAssignmentType} onChange={(e) => setSelectedAssignmentType(e.target.value)}>
           <Form.Radio className="mb-2" value={assignmentTypes.automatic}>{intl.formatMessage(messages.automatic)}</Form.Radio>
-          <Form.Radio disabled={disableManualAssignment} value={assignmentTypes.manual}>{intl.formatMessage(messages.manual)}</Form.Radio>
+          {disableManualAssignment ? (
+            <OverlayTrigger
+              placement="top"
+              overlay={(
+                <Tooltip id="manual-assignment-tooltip" className="assignment-tooltip">
+                  {intl.formatMessage(messages.manualAssignmentDisabledTooltip)}
+                </Tooltip>
+              )}
+            >
+              <span>
+                <Form.Radio disabled value={assignmentTypes.manual}>{intl.formatMessage(messages.manual)}</Form.Radio>
+              </span>
+            </OverlayTrigger>
+          )
+            : <Form.Radio value={assignmentTypes.manual}>{intl.formatMessage(messages.manual)}</Form.Radio>}
         </FormRadioSet>
       </FormGroup>
       <FormGroup className="mb-3.5">
@@ -91,8 +101,8 @@ const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManua
         >
           <Form.Radio value="noContentGroup">{intl.formatMessage(messages.noContentGroup)}</Form.Radio>
           <div className="d-flex align-items-center">
-            <Form.Radio value="selectContentGroup" disabled={data.length === 0}>{intl.formatMessage(messages.selectAContentGroup)}</Form.Radio>
-            { data.length > 0
+            <Form.Radio value="selectContentGroup" disabled={data.groups.length === 0}>{intl.formatMessage(messages.selectAContentGroup)}</Form.Radio>
+            { data.groups.length > 0
               ? (
                   <FormControl
                     as="select"
@@ -100,13 +110,13 @@ const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManua
                     size="sm"
                     disabled={selectedContentGroupOption !== 'selectContentGroup'}
                     name="contentGroup"
-                    onChange={(e) => setSelectedContentGroup(e.target.value)}
+                    onChange={(e) => setSelectedContentGroup(Number(e.target.value))}
                     value={selectedContentGroup}
                   >
                     {
                       contentGroups.map((contentGroup) => (
                         <option key={contentGroup.id} value={contentGroup.id}>
-                          {contentGroup.displayName}
+                          {contentGroup.name}
                         </option>
                       ))
                     }
