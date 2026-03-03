@@ -3,6 +3,7 @@ import { EnrollmentSummary } from './EnrollmentSummary';
 import { renderWithIntl } from '../../../testUtils';
 import { useCourseInfo } from '@src/data/apiHook';
 import messages from './messages';
+import { formatNumberWithCommas } from './utils';
 
 jest.mock('react-router-dom', () => ({
   useParams: () => ({
@@ -48,7 +49,7 @@ describe('EnrollmentSummary', () => {
     screen.debug();
 
     expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(mockCounter.enrollmentCounts.total.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.total))).toBeInTheDocument();
   });
 
   it('displays Staff / Admin count when provided', () => {
@@ -59,7 +60,7 @@ describe('EnrollmentSummary', () => {
     renderWithIntl(<EnrollmentSummary />);
 
     expect(screen.getByText(messages.staffAndAdminsLabel.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(mockCounter.staffCount.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(mockCounter.staffCount)).toBeInTheDocument();
   });
 
   it('displays learners count when provided', () => {
@@ -70,7 +71,7 @@ describe('EnrollmentSummary', () => {
     renderWithIntl(<EnrollmentSummary />);
 
     expect(screen.getByText(messages.learnersLabel.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(mockCounter.learnerCount.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.learnerCount))).toBeInTheDocument();
   });
 
   it('displays verified count with svg icon when provided', () => {
@@ -81,7 +82,7 @@ describe('EnrollmentSummary', () => {
     renderWithIntl(<EnrollmentSummary />);
 
     expect(screen.getByText(messages.verified.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(mockCounter.enrollmentCounts.verified.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.verified))).toBeInTheDocument();
 
     const svgElements = document.querySelectorAll('svg');
     expect(svgElements.length).toBeGreaterThan(0);
@@ -95,7 +96,7 @@ describe('EnrollmentSummary', () => {
     renderWithIntl(<EnrollmentSummary />);
 
     expect(screen.getByText(messages.audit.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(mockCounter.enrollmentCounts.audit.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.audit))).toBeInTheDocument();
   });
 
   it('does not display verified section when not provided', () => {
@@ -144,7 +145,7 @@ describe('EnrollmentSummary', () => {
     renderWithIntl(<EnrollmentSummary />);
 
     expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(minimalCounts.total.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(minimalCounts.total)).toBeInTheDocument();
     expect(screen.queryByText(messages.verified.defaultMessage)).not.toBeInTheDocument();
     expect(screen.queryByText(messages.audit.defaultMessage)).not.toBeInTheDocument();
   });
@@ -206,11 +207,11 @@ describe('EnrollmentSummary', () => {
 
     renderWithIntl(<EnrollmentSummary />);
 
-    expect(screen.getByText(largeCounts.enrollmentCounts.total.toLocaleString())).toBeInTheDocument();
-    expect(screen.getByText(largeCounts.enrollmentCounts.verified.toLocaleString())).toBeInTheDocument();
-    expect(screen.getByText(largeCounts.enrollmentCounts.audit.toLocaleString())).toBeInTheDocument();
-    expect(screen.getByText(largeCounts.staffCount.toLocaleString())).toBeInTheDocument();
-    expect(screen.getByText(largeCounts.learnerCount.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(largeCounts.enrollmentCounts.total))).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(largeCounts.enrollmentCounts.verified))).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(largeCounts.enrollmentCounts.audit))).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(largeCounts.staffCount))).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(largeCounts.learnerCount))).toBeInTheDocument();
   });
 
   it('is accessible to screen readers', () => {
@@ -234,11 +235,11 @@ describe('EnrollmentSummary', () => {
     expect(screen.getByText(messages.audit.defaultMessage)).toBeVisible();
 
     // All counts should be visible
-    expect(screen.getByText(mockCounter.enrollmentCounts.total.toLocaleString())).toBeVisible();
-    expect(screen.getByText(mockCounter.enrollmentCounts.verified.toLocaleString())).toBeVisible();
-    expect(screen.getByText(mockCounter.enrollmentCounts.audit.toLocaleString())).toBeVisible();
-    expect(screen.getByText(mockCounter.staffCount.toLocaleString())).toBeVisible();
-    expect(screen.getByText(mockCounter.learnerCount.toLocaleString())).toBeVisible();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.total))).toBeVisible();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.verified))).toBeVisible();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.audit))).toBeVisible();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.staffCount))).toBeVisible();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.learnerCount))).toBeVisible();
   });
 
   it('maintains proper heading hierarchy', () => {
@@ -269,7 +270,7 @@ describe('EnrollmentSummary', () => {
 
     // Verified section should have both text and icon
     expect(screen.getByText(messages.verified.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(mockCounter.enrollmentCounts.verified.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.verified))).toBeInTheDocument();
 
     // Should have an SVG icon for verified
     const svgElements = document.querySelectorAll('svg');
@@ -295,7 +296,7 @@ describe('EnrollmentSummary', () => {
 
     expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.verified.defaultMessage)).toBeInTheDocument();
-    expect(screen.getAllByText(verifiedOnlyCounts.enrollmentCounts.verified.toLocaleString())).toHaveLength(2);
+    expect(screen.getAllByText(verifiedOnlyCounts.enrollmentCounts.verified)).toHaveLength(2);
 
     // Should not show other sections
     expect(screen.queryByText(messages.audit.defaultMessage)).not.toBeInTheDocument();
@@ -319,10 +320,10 @@ describe('EnrollmentSummary', () => {
     expect(screen.getByText(messages.audit.defaultMessage)).toBeInTheDocument();
 
     // All counts should be properly formatted and visible
-    expect(screen.getByText(mockCounter.enrollmentCounts.total.toLocaleString())).toBeInTheDocument();
-    expect(screen.getByText(mockCounter.staffCount.toLocaleString())).toBeInTheDocument();
-    expect(screen.getByText(mockCounter.learnerCount.toLocaleString())).toBeInTheDocument();
-    expect(screen.getByText(mockCounter.enrollmentCounts.verified.toLocaleString())).toBeInTheDocument();
-    expect(screen.getByText(mockCounter.enrollmentCounts.audit.toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.total))).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.staffCount))).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.learnerCount))).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.verified))).toBeInTheDocument();
+    expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.audit))).toBeInTheDocument();
   });
 });

@@ -3,7 +3,7 @@ import { formatNumberWithCommas } from './utils';
 
 interface EnrollmentCounterProps {
   label: string,
-  count: string,
+  count: string | number,
   icon?: React.ReactNode,
 }
 
