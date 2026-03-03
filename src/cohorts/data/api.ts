@@ -45,3 +45,9 @@ export const addLearnersToCohort = async (courseId: string, cohortId: number, us
   const { data } = await getAuthenticatedHttpClient().post(url, { users });
   return camelCaseObject(data);
 };
+
+export const addLearnersToCohortsBulk = async (courseId: string, uploadedFile: FormData) => {
+  const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/users`;
+  const { data } = await getAuthenticatedHttpClient().post(url, uploadedFile);
+  return camelCaseObject(data);
+};

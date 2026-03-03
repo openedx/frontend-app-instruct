@@ -19,6 +19,7 @@ jest.mock('@src/cohorts/data/apiHook', () => ({
   useCreateCohort: jest.fn(),
   usePatchCohort: () => ({ mutate: jest.fn() }),
   useAddLearnersToCohort: () => ({ mutate: jest.fn() }),
+  useAddLearnersToCohortsBulk: () => ({ mutate: jest.fn() }),
 }));
 
 const mockCohorts = [
