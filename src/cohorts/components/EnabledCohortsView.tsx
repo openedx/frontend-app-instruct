@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { FormControl, Button, Card, Alert } from '@openedx/paragon';
@@ -28,6 +28,28 @@ const EnabledCohortsView = () => {
   const { alerts, addAlert, removeAlert, clearAlerts } = useAlert();
 
   const cohortsList = [{ id: 'null', name: intl.formatMessage(messages.selectCohortPlaceholder) }, ...data];
+
+  // Sync selectedCohort with updated data when useCohorts refetches
+  useEffect(() => {
+    if (selectedCohort && data.length > 0) {
+      const updatedCohort = data.find(cohort => cohort.id?.toString() === selectedCohort.id?.toString());
+      if (updatedCohort && (
+        updatedCohort.userCount !== selectedCohort.userCount
+        || updatedCohort.name !== selectedCohort.name
+        || updatedCohort.assignmentType !== selectedCohort.assignmentType
+      )) {
+        const updatedCohortData: CohortData = {
+          id: updatedCohort.id,
+          name: updatedCohort.name,
+          assignmentType: updatedCohort.assignmentType ?? assignmentTypes.automatic,
+          groupId: updatedCohort.groupId,
+          userPartitionId: updatedCohort.userPartitionId,
+          userCount: updatedCohort.userCount ?? 0,
+        };
+        setSelectedCohort(updatedCohortData);
+      }
+    }
+  }, [data, selectedCohort, setSelectedCohort]);
 
   const handleAddCohort = () => {
     clearSelectedCohort();
