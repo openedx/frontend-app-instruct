@@ -57,17 +57,17 @@ const PendingTasks = ({ isPolling = false }: PendingTasksProps) => {
         className="collapsible-trigger d-flex border-0 align-items-center text-decoration-none"
       >
         <div className="d-flex">
-          <h3>{intl.formatMessage(messages.pendingTasksTitle)}</h3>
+          <h3 className="text-primary-700">{intl.formatMessage(messages.pendingTasksTitle)}</h3>
         </div>
 
         <Collapsible.Visible whenClosed>
           <div className="pl-2 d-flex">
-            <Icon src={ExpandMore} />
+            <Icon className="text-primary-500" src={ExpandMore} />
           </div>
         </Collapsible.Visible>
         <Collapsible.Visible whenOpen>
           <div className="pl-2 d-flex">
-            <Icon src={ExpandLess} />
+            <Icon className="text-primary-500" src={ExpandLess} />
           </div>
         </Collapsible.Visible>
       </Collapsible.Trigger>
