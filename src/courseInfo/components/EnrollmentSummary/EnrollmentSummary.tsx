@@ -51,7 +51,7 @@ const EnrollmentSummary = () => {
                     key={type}
                     label={intl.formatMessage(messages[`${type}` as keyof typeof messages] ?? { id: 'fallback', defaultMessage: type, description: `${type} label` })}
                     count={count?.toLocaleString() ?? '0'}
-                    icon={type === 'verified' ? <Verified className="text-primary-400 mr-2" size="1.5rem" /> : undefined}
+                    icon={type === 'verified' ? <Verified className="text-primary-300 mr-2" size="1.5rem" /> : undefined}
                   />
                 );
               })

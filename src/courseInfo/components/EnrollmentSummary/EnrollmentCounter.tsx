@@ -23,7 +23,7 @@ const EnrollmentCounter: FC<EnrollmentCounterProps> = (props) => {
 
   return (
     <div className="flex-row">
-      <p className="text-gray x-small mb-1">{props.label}</p>
+      <p className="text-gray-500 x-small mb-1">{props.label}</p>
       { props.icon ? renderCounterWithIcon() : renderCounter() }
     </div>
   );
