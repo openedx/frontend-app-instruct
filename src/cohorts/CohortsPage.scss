@@ -2,3 +2,13 @@
   background-color: var(--pgn-color-primary-700);
   max-width: none;
 }
+
+.collapsible-basic.collapsible-csv {
+  .collapsible-trigger {
+    text-decoration: none;
+  }
+
+  .collapsible-icon {
+    color: var(--pgn-color-info-500);
+  }
+}

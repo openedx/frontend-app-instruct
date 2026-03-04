@@ -16,7 +16,7 @@ interface CohortProviderProps {
 
 const areCohortsEqual = (prev: CohortData | null, current: CohortData): boolean => {
   if (!prev) return false;
-  return prev.id !== current.id
+  return prev.id === current.id
     && prev.name === current.name
     && prev.assignmentType === current.assignmentType
     && prev.userPartitionId === current.userPartitionId
