@@ -1,12 +1,12 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import SelectedCohortInfo from './SelectedCohortInfo';
-import messages from '../messages';
 import dataDownloadsMessages from '@src/dataDownloads/messages';
 import { renderWithAlertAndIntl } from '@src/testUtils';
 import * as CohortContextModule from '@src/cohorts/components/CohortContext';
+import SelectedCohortInfo from './SelectedCohortInfo';
 import { CohortProvider } from './CohortContext';
 import { useCohorts, useContentGroupsData } from '../data/apiHook';
+import messages from '../messages';
 import { assignmentTypes } from '../constants';
 
 jest.mock('react-router-dom', () => ({
@@ -38,13 +38,15 @@ const mockContentGroups = [
   { id: '3', name: 'Group 2' },
 ];
 
+const mockAddLearnersToCohortsBulk = jest.fn();
+
 jest.mock('@src/cohorts/data/apiHook', () => ({
   useCohorts: jest.fn(),
   useContentGroupsData: jest.fn(),
   useCreateCohort: () => ({ mutate: jest.fn() }),
   usePatchCohort: () => ({ mutate: jest.fn() }),
   useAddLearnersToCohort: () => ({ mutate: jest.fn() }),
-  useAddLearnersToCohortsBulk: () => ({ mutate: jest.fn() }),
+  useAddLearnersToCohortsBulk: () => ({ mutate: mockAddLearnersToCohortsBulk }),
 }));
 
 function renderWithProviders() {
@@ -153,6 +155,23 @@ describe('SelectedCohortInfo', () => {
       renderWithProviders();
       expect(screen.getByRole('tablist')).toBeInTheDocument();
       expect(screen.getByText(messages.automaticCohortWarning.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  describe('Collapsible CSV Section', () => {
+    it('renders CSV section correctly', async () => {
+      renderWithProviders();
+
+      // Check that the CSV collapsible section is present
+      const collapsibleTitle = screen.getByText(messages.downloadCSVCaption.defaultMessage);
+      expect(collapsibleTitle).toBeInTheDocument();
+
+      const user = userEvent.setup();
+      await user.click(collapsibleTitle);
+
+      // Check that dropzone is present
+      const dropzone = screen.getByRole('presentation');
+      expect(dropzone).toBeInTheDocument();
     });
   });
 });
