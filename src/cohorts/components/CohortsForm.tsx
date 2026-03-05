@@ -22,7 +22,7 @@ export interface CohortsFormRef {
 const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManualAssignment = false, onCancel, onSubmit }, ref) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const { data = { groups: [], id: null } } = useContentGroupsData(courseId);
+  const { data = { groups: [], id: null, studioContentGroupsLink: '' } } = useContentGroupsData(courseId);
   const { selectedCohort } = useCohortContext();
 
   const initialCohortName = (selectedCohort?.name) ?? '';
@@ -126,7 +126,7 @@ const CohortsForm = forwardRef<CohortsFormRef, CohortsFormProps>(({ disableManua
                   <div className="d-flex align-items-center small">
                     <Icon className="ml-2 text-danger-500" src={Warning} size="sm" />
                     <p className="mb-0 ml-1 text-danger-500">{intl.formatMessage(messages.noContentGroups)}</p>
-                    <Hyperlink className="ml-1">{intl.formatMessage(messages.createContentGroup)}</Hyperlink>
+                    <Hyperlink className="ml-1" destination={data.studioContentGroupsLink}>{intl.formatMessage(messages.createContentGroup)}</Hyperlink>
                   </div>
                 )}
           </div>
