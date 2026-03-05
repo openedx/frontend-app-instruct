@@ -82,7 +82,7 @@ const DateExtensionsPage = () => {
 
   return (
     <>
-      <h3 className="mb-4.5">{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
+      <h3 className="mb-4.5 text-primary-700">{intl.formatMessage(messages.dateExtensionsTitle)}</h3>
       <DateExtensionsList
         onClickAdd={() => setIsAddExtensionModalOpen(true)}
         onResetExtensions={handleResetExtensions}
