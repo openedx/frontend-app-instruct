@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { getRoles, getTeamMembers } from '@src/courseTeam/data/api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { addTeamMember, getRoles, getTeamMembers } from '@src/courseTeam/data/api';
 import { courseTeamQueryKeys } from '@src/courseTeam/data/queryKeys';
 import { CourseTeamMemberQueryParams } from '@src/courseTeam/types';
 
@@ -18,3 +18,14 @@ export const useRoles = (courseId: string) => (
     enabled: !!courseId,
   })
 );
+
+export const useAddTeamMember = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return (useMutation({
+    mutationFn: ({ identifier, role }: { identifier: string[], role: string }) => addTeamMember(courseId, identifier, role),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: courseTeamQueryKeys.byCourse(courseId) });
+    }
+  })
+  );
+};

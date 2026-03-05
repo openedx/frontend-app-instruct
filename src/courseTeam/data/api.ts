@@ -32,3 +32,16 @@ export const getRoles = async (courseId: string): Promise<Omit<DataList<Role>, '
   );
   return camelCaseObject(data);
 };
+
+export const addTeamMember = async (courseId: string, identifier: string[], role: string): Promise<void> => {
+  await getAuthenticatedHttpClient().post(
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/team`,
+    { identifier, role }
+  );
+};
+
+export const removeTeamMember = async (courseId: string, username: string): Promise<void> => {
+  await getAuthenticatedHttpClient().delete(
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/team/${username}`
+  );
+};
