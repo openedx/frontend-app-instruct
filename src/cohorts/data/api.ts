@@ -10,7 +10,7 @@ export const getCohortStatus = async (courseId: string) => {
 
 export const getCohorts = async (courseId: string) => {
   const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/cohorts/`;
-  const { data } = await getAuthenticatedHttpClient().get(url);
+  const { data } = await getAuthenticatedHttpClient().get(url, { params: { page_size: 100 } });
   return camelCaseObject(data);
 };
 
