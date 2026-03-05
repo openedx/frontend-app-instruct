@@ -1,0 +1,78 @@
+import { getAuthenticatedHttpClient } from '@openedx/frontend-base';
+import { getTeamMembers, getRoles } from './api';
+
+jest.mock('@openedx/frontend-base', () => ({
+  ...jest.requireActual('@openedx/frontend-base'),
+  getAuthenticatedHttpClient: jest.fn(),
+}));
+
+jest.mock('../../data/api', () => ({
+  getApiBaseUrl: jest.fn().mockReturnValue(''),
+}));
+
+const httpClientMock = {
+  get: jest.fn(),
+};
+
+beforeEach(() => {
+  (getAuthenticatedHttpClient as jest.Mock).mockReturnValue(httpClientMock);
+});
+
+describe('courseTeam API', () => {
+  describe('getTeamMembers', () => {
+    it('should call the correct endpoint to get team members', async () => {
+      const courseId = 'course-v1:edX+DemoX+Demo_Course';
+      const params = { page: 0, pageSize: 10 };
+      httpClientMock.get.mockResolvedValue({ data: { results: [], count: 0 } });
+
+      await getTeamMembers(courseId, params);
+
+      const expectedUrl = `/api/instructor/v2/courses/${courseId}/team_members?page=1&page_size=10`;
+      expect(httpClientMock.get).toHaveBeenCalledWith(expectedUrl);
+    });
+
+    it('should include email_or_username in query params if provided', async () => {
+      const courseId = 'course-v1:edX+DemoX+Demo_Course';
+      const params = { page: 0, pageSize: 10, emailOrUsername: 'test@example.com' };
+      httpClientMock.get.mockResolvedValue({ data: { results: [], count: 0 } });
+
+      await getTeamMembers(courseId, params);
+
+      const expectedUrl = `/api/instructor/v2/courses/${courseId}/team_members?page=1&page_size=10&email_or_username=test%40example.com`;
+      expect(httpClientMock.get).toHaveBeenCalledWith(expectedUrl);
+    });
+
+    it('should include role in query params if provided', async () => {
+      const courseId = 'course-v1:edX+DemoX+Demo_Course';
+      const params = { page: 0, pageSize: 10, role: 'instructor' };
+      httpClientMock.get.mockResolvedValue({ data: { results: [], count: 0 } });
+
+      await getTeamMembers(courseId, params);
+
+      const expectedUrl = `/api/instructor/v2/courses/${courseId}/team_members?page=1&page_size=10&role=instructor`;
+      expect(httpClientMock.get).toHaveBeenCalledWith(expectedUrl);
+    });
+  });
+
+  describe('getRoles', () => {
+    it('should call the correct endpoint to get roles', async () => {
+      const courseId = 'course-v1:edX+DemoX+Demo_Course';
+      httpClientMock.get.mockResolvedValue({ data: { roles: [] } });
+
+      await getRoles(courseId);
+
+      const expectedUrl = `/api/instructor/v2/courses/${courseId}/team_roles`;
+      expect(httpClientMock.get).toHaveBeenCalledWith(expectedUrl);
+    });
+
+    it('should return the roles from the response', async () => {
+      const courseId = 'course-v1:edX+DemoX+Demo_Course';
+      const roles = ['instructor', 'staff'];
+      httpClientMock.get.mockResolvedValue({ data: { roles } });
+
+      const result = await getRoles(courseId);
+
+      expect(result).toEqual(roles);
+    });
+  });
+});
