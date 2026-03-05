@@ -21,6 +21,8 @@ export interface CourseInfoResponse {
   gradeCutoffs: string | null,
   staffCount: number,
   learnerCount: number,
+  gradebookUrl: string,
+  studioGradingUrl?: string,
 }
 
 interface EnrollmentCounts extends Record<string, number> {
