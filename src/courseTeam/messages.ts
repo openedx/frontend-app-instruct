@@ -150,7 +150,47 @@ const messages = defineMessages({
     id: 'instruct.courseTeam.roles.ccxCoachDescription',
     defaultMessage: 'CCX Coaches are able to create their own Custom Courses based on this course, which they can use to provide personalized instruction to their own students based in this course material.',
     description: 'Description for CCX coach role',
-  }
+  },
+  addNewTeamMember: {
+    id: 'instruct.courseTeam.addNewTeamMember',
+    defaultMessage: 'Add New Team Member',
+    description: 'Title for add new team member form',
+  },
+  addNewTeamMemberDescription: {
+    id: 'instruct.courseTeam.addNewTeamMemberDescription',
+    defaultMessage: 'Add new members to {courseName}’s Course team and assign them a role to define their permissions.',
+    description: 'Description for add new team member form',
+  },
+  addUsersLabel: {
+    id: 'instruct.courseTeam.addUsersLabel',
+    defaultMessage: 'Add users by username or email',
+    description: 'Label for input to add users to course team',
+  },
+  usersPlaceholder: {
+    id: 'instruct.courseTeam.usersPlaceholder',
+    defaultMessage: 'Enter one or more email addresses or usernames',
+    description: 'Placeholder for input to add users to course team',
+  },
+  roleLabel: {
+    id: 'instruct.courseTeam.roleLabel',
+    defaultMessage: 'Role',
+    description: 'Label for role selection when adding users to course team',
+  },
+  rolePlaceholder: {
+    id: 'instruct.courseTeam.rolePlaceholder',
+    defaultMessage: 'Select Role',
+    description: 'Placeholder for role selection when adding users to course team',
+  },
+  cancelButton: {
+    id: 'instruct.courseTeam.cancelButton',
+    defaultMessage: 'Cancel',
+    description: 'Label for cancel button when adding users to course team',
+  },
+  saveButton: {
+    id: 'instruct.courseTeam.saveButton',
+    defaultMessage: 'Save',
+    description: 'Label for save button when adding users to course team',
+  },
 });
 
 export default messages;

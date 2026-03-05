@@ -32,3 +32,10 @@ export const getRoles = async (courseId: string): Promise<Role[]> => {
   );
   return data.roles;
 };
+
+export const addTeamMember = async (courseId: string, users: string[], role: string): Promise<void> => {
+  await getAuthenticatedHttpClient().post(
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/team_members`,
+    { users, role }
+  );
+};

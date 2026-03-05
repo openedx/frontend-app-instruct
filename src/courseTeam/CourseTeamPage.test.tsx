@@ -3,6 +3,15 @@ import userEvent from '@testing-library/user-event';
 import { renderWithIntl } from '@src/testUtils';
 import CourseTeamPage from './CourseTeamPage';
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: jest.fn(() => ({ courseId: 'course-v1:test-course' })),
+}));
+
+jest.mock('./data/apiHook', () => ({
+  useAddTeamMember: () => ({ mutate: jest.fn() }),
+}));
+
 // Mock the child components, each component should have its own test suite
 jest.mock('./components/MembersContent', () => {
   return function MembersContent() {
@@ -13,6 +22,12 @@ jest.mock('./components/MembersContent', () => {
 jest.mock('./components/RolesContent', () => {
   return function RolesContent() {
     return <div>Roles Content</div>;
+  };
+});
+
+jest.mock('./components/AddTeamMemberModal', () => {
+  return function AddTeamMemberModal() {
+    return <div>Add Team Member Modal</div>;
   };
 });
 
@@ -44,10 +59,12 @@ describe('CourseTeamPage', () => {
     expect(title).toHaveClass('text-primary-700', 'mb-0');
   });
 
-  it('has primary variant on add button', () => {
+  it('shows the AddTeamMemberModal when add button is clicked', async () => {
     renderWithIntl(<CourseTeamPage />);
     const button = screen.getByRole('button', { name: /add team member/i });
-    expect(button).toHaveClass('btn-primary');
+    const user = userEvent.setup();
+    await user.click(button);
+    expect(screen.getByText('Add Team Member Modal')).toBeInTheDocument();
   });
 
   it('renders RolesContent when Roles tab is selected', async () => {
