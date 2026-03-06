@@ -105,7 +105,22 @@ const messages = defineMessages({
     id: 'instruct.csvComponent.uploadingFileMessage',
     defaultMessage: 'File chosen: {fileName}',
     description: 'Message displayed when a file is being uploaded, with the file name included'
-  }
+  },
+  problemLocationPlaceholder: {
+    id: 'instruct.specifyProblemField.locationPlaceholder',
+    defaultMessage: 'Problem location',
+    description: 'Placeholder text for problem location input',
+  },
+  problemLocationInfoIconLabel: {
+    id: 'instruct.specifyProblemField.infoIconLabel',
+    defaultMessage: 'Example format for problem location',
+    description: 'Aria label for the info icon next to the problem location input',
+  },
+  problemLocationTooltip: {
+    id: 'instruct.specifyProblemField.locationTooltip',
+    defaultMessage: 'Example: block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378',
+    description: 'Tooltip text showing an example problem location format',
+  },
 });
 
 export default messages;

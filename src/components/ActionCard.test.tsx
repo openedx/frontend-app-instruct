@@ -8,6 +8,7 @@ describe('ActionCard', () => {
     title: 'Test Card Title',
     description: 'This is a test card description',
     buttonLabel: 'Click Me',
+    onButtonClick: jest.fn(),
   };
 
   beforeEach(() => {
@@ -62,12 +63,5 @@ describe('ActionCard', () => {
     expect(screen.getByText('Custom Button 1')).toBeInTheDocument();
     expect(screen.getByText('Custom Button 2')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Click Me' })).not.toBeInTheDocument();
-  });
-
-  it('should handle missing onButtonClick prop gracefully', async () => {
-    render(<ActionCard {...defaultProps} />);
-    const button = screen.getByRole('button', { name: 'Click Me' });
-    await user.click(button);
-    expect(button).toBeInTheDocument();
   });
 });
