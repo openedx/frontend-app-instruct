@@ -1,0 +1,316 @@
+import { defineMessages } from '@openedx/frontend-base';
+
+const messages = defineMessages({
+  pageTitle: {
+    id: 'instruct.certificates.pageTitle',
+    defaultMessage: 'Certificates',
+    description: 'Title for certificates page',
+  },
+  grantExceptionsButton: {
+    id: 'instruct.certificates.grantExceptionsButton',
+    defaultMessage: 'Grant Exception(s)',
+    description: 'Button to grant certificate exceptions',
+  },
+  invalidateCertificateButton: {
+    id: 'instruct.certificates.invalidateCertificateButton',
+    defaultMessage: 'Invalidate Certificate',
+    description: 'Button to invalidate certificates',
+  },
+  disableCertificatesButton: {
+    id: 'instruct.certificates.disableCertificatesButton',
+    defaultMessage: 'Disable Certificates',
+    description: 'Button to disable certificate generation',
+  },
+  regenerateCertificatesButton: {
+    id: 'instruct.certificates.regenerateCertificatesButton',
+    defaultMessage: 'Regenerate Certificates',
+    description: 'Button to regenerate certificates',
+  },
+  issuedCertificatesTab: {
+    id: 'instruct.certificates.issuedCertificatesTab',
+    defaultMessage: 'Issued Certificates',
+    description: 'Tab label for issued certificates',
+  },
+  generationHistoryTab: {
+    id: 'instruct.certificates.generationHistoryTab',
+    defaultMessage: 'Certificate Generation History',
+    description: 'Tab label for certificate generation history',
+  },
+  searchPlaceholder: {
+    id: 'instruct.certificates.searchPlaceholder',
+    defaultMessage: 'Search by username or email',
+    description: 'Placeholder text for search input',
+  },
+  filterAllLearners: {
+    id: 'instruct.certificates.filterAllLearners',
+    defaultMessage: 'All Learners',
+    description: 'Filter option for all learners',
+  },
+  filterReceived: {
+    id: 'instruct.certificates.filterReceived',
+    defaultMessage: 'Received',
+    description: 'Filter option for learners who received certificates',
+  },
+  filterNotReceived: {
+    id: 'instruct.certificates.filterNotReceived',
+    defaultMessage: 'Not Received',
+    description: 'Filter option for learners who did not receive certificates',
+  },
+  filterAuditPassing: {
+    id: 'instruct.certificates.filterAuditPassing',
+    defaultMessage: 'Audit - Passing',
+    description: 'Filter option for audit learners who are passing',
+  },
+  filterAuditNotPassing: {
+    id: 'instruct.certificates.filterAuditNotPassing',
+    defaultMessage: 'Audit - Not Passing',
+    description: 'Filter option for audit learners who are not passing',
+  },
+  filterErrorState: {
+    id: 'instruct.certificates.filterErrorState',
+    defaultMessage: 'Error State',
+    description: 'Filter option for error states',
+  },
+  filterGrantedExceptions: {
+    id: 'instruct.certificates.filterGrantedExceptions',
+    defaultMessage: 'Granted Exceptions',
+    description: 'Filter option for granted exceptions',
+  },
+  filterInvalidated: {
+    id: 'instruct.certificates.filterInvalidated',
+    defaultMessage: 'Invalidated',
+    description: 'Filter option for invalidated certificates',
+  },
+  columnUsername: {
+    id: 'instruct.certificates.columnUsername',
+    defaultMessage: 'Username',
+    description: 'Table column header for username',
+  },
+  columnEmail: {
+    id: 'instruct.certificates.columnEmail',
+    defaultMessage: 'Email',
+    description: 'Table column header for email',
+  },
+  columnEnrollmentTrack: {
+    id: 'instruct.certificates.columnEnrollmentTrack',
+    defaultMessage: 'Enrollment Track',
+    description: 'Table column header for enrollment track',
+  },
+  columnCertificateStatus: {
+    id: 'instruct.certificates.columnCertificateStatus',
+    defaultMessage: 'Certificate Status',
+    description: 'Table column header for certificate status',
+  },
+  columnSpecialCase: {
+    id: 'instruct.certificates.columnSpecialCase',
+    defaultMessage: 'Special Case',
+    description: 'Table column header for special case',
+  },
+  columnExceptionGranted: {
+    id: 'instruct.certificates.columnExceptionGranted',
+    defaultMessage: 'Exception Granted',
+    description: 'Table column header for exception granted',
+  },
+  columnExceptionNotes: {
+    id: 'instruct.certificates.columnExceptionNotes',
+    defaultMessage: 'Exception Notes',
+    description: 'Table column header for exception notes',
+  },
+  columnInvalidatedBy: {
+    id: 'instruct.certificates.columnInvalidatedBy',
+    defaultMessage: 'Invalidated By',
+    description: 'Table column header for invalidated by',
+  },
+  columnInvalidationDate: {
+    id: 'instruct.certificates.columnInvalidationDate',
+    defaultMessage: 'Invalidation Date',
+    description: 'Table column header for invalidation date',
+  },
+  columnInvalidationNote: {
+    id: 'instruct.certificates.columnInvalidationNote',
+    defaultMessage: 'Invalidation Note',
+    description: 'Table column header for invalidation note',
+  },
+  columnActions: {
+    id: 'instruct.certificates.columnActions',
+    defaultMessage: 'Actions',
+    description: 'Table column header for actions',
+  },
+  removeExceptionAction: {
+    id: 'instruct.certificates.removeExceptionAction',
+    defaultMessage: 'Remove Exception',
+    description: 'Action menu item to remove exception',
+  },
+  removeInvalidationAction: {
+    id: 'instruct.certificates.removeInvalidationAction',
+    defaultMessage: 'Remove Invalidation',
+    description: 'Action menu item to remove invalidation',
+  },
+  noDataMessage: {
+    id: 'instruct.certificates.noDataMessage',
+    defaultMessage: 'No certificates found',
+    description: 'Message when no certificates are found',
+  },
+  exceptionRemovedToast: {
+    id: 'instruct.certificates.exceptionRemovedToast',
+    defaultMessage: 'Exception removed for {email}',
+    description: 'Toast message when exception is removed',
+  },
+  invalidationRemovedToast: {
+    id: 'instruct.certificates.invalidationRemovedToast',
+    defaultMessage: 'The certificate for {email} has been re-validated and the system is re-running the grade for this learner.',
+    description: 'Toast message when invalidation is removed',
+  },
+  exceptionsGrantedToast: {
+    id: 'instruct.certificates.exceptionsGrantedToast',
+    defaultMessage: 'Exceptions granted for {count} learner(s)',
+    description: 'Toast message when exceptions are granted',
+  },
+  certificatesInvalidatedToast: {
+    id: 'instruct.certificates.certificatesInvalidatedToast',
+    defaultMessage: 'Certificates invalidated for {count} learner(s)',
+    description: 'Toast message when certificates are invalidated',
+  },
+  grantExceptionsModalTitle: {
+    id: 'instruct.certificates.grantExceptionsModalTitle',
+    defaultMessage: 'Grant Certificate Exceptions',
+    description: 'Title for grant exceptions modal',
+  },
+  grantExceptionsModalDescription: {
+    id: 'instruct.certificates.grantExceptionsModalDescription',
+    defaultMessage: 'Enter usernames or emails, or upload a CSV file to grant certificate exceptions.',
+    description: 'Description for grant exceptions modal',
+  },
+  invalidateCertificateModalTitle: {
+    id: 'instruct.certificates.invalidateCertificateModalTitle',
+    defaultMessage: 'Invalidate Certificates',
+    description: 'Title for invalidate certificate modal',
+  },
+  invalidateCertificateModalDescription: {
+    id: 'instruct.certificates.invalidateCertificateModalDescription',
+    defaultMessage: 'Enter usernames or emails, or upload a CSV file to invalidate certificates.',
+    description: 'Description for invalidate certificate modal',
+  },
+  removeInvalidationModalTitle: {
+    id: 'instruct.certificates.removeInvalidationModalTitle',
+    defaultMessage: 'Remove Invalidation',
+    description: 'Title for remove invalidation modal',
+  },
+  removeInvalidationModalMessage: {
+    id: 'instruct.certificates.removeInvalidationModalMessage',
+    defaultMessage: 'Are you sure you want to remove invalidation for {email}?',
+    description: 'Message for remove invalidation confirmation modal',
+  },
+  disableCertificatesModalTitle: {
+    id: 'instruct.certificates.disableCertificatesModalTitle',
+    defaultMessage: 'Disable Certificate Generation',
+    description: 'Title for disable certificates modal',
+  },
+  disableCertificatesModalMessage: {
+    id: 'instruct.certificates.disableCertificatesModalMessage',
+    defaultMessage: 'Students will not be able to receive certificates until certificate generation is re-enabled. Are you sure you want to disable certificate generation?',
+    description: 'Message for disable certificates modal',
+  },
+  enableCertificatesModalTitle: {
+    id: 'instruct.certificates.enableCertificatesModalTitle',
+    defaultMessage: 'Enable Certificate Generation',
+    description: 'Title for enable certificates modal',
+  },
+  enableCertificatesModalMessage: {
+    id: 'instruct.certificates.enableCertificatesModalMessage',
+    defaultMessage: 'Are you sure you want to enable certificate generation for this course?',
+    description: 'Message for enable certificates modal',
+  },
+  notesLabel: {
+    id: 'instruct.certificates.notesLabel',
+    defaultMessage: 'Notes (Optional)',
+    description: 'Label for notes field',
+  },
+  notesPlaceholder: {
+    id: 'instruct.certificates.notesPlaceholder',
+    defaultMessage: 'Enter notes...',
+    description: 'Placeholder for notes field',
+  },
+  learnersLabel: {
+    id: 'instruct.certificates.learnersLabel',
+    defaultMessage: 'Username or Email',
+    description: 'Label for learners field',
+  },
+  learnersPlaceholder: {
+    id: 'instruct.certificates.learnersPlaceholder',
+    defaultMessage: 'Enter usernames or emails (one per line)',
+    description: 'Placeholder for learners field',
+  },
+  cancel: {
+    id: 'instruct.certificates.cancel',
+    defaultMessage: 'Cancel',
+    description: 'Cancel button text',
+  },
+  confirm: {
+    id: 'instruct.certificates.confirm',
+    defaultMessage: 'Confirm',
+    description: 'Confirm button text',
+  },
+  submit: {
+    id: 'instruct.certificates.submit',
+    defaultMessage: 'Submit',
+    description: 'Submit button text',
+  },
+  columnTaskName: {
+    id: 'instruct.certificates.columnTaskName',
+    defaultMessage: 'Task Name',
+    description: 'Table column header for task name',
+  },
+  columnDate: {
+    id: 'instruct.certificates.columnDate',
+    defaultMessage: 'Date',
+    description: 'Table column header for date',
+  },
+  columnDetails: {
+    id: 'instruct.certificates.columnDetails',
+    defaultMessage: 'Details',
+    description: 'Table column header for details',
+  },
+  noTasksMessage: {
+    id: 'instruct.certificates.noTasksMessage',
+    defaultMessage: 'No certificate generation tasks found',
+    description: 'Message when no tasks are found',
+  },
+  errorGrantException: {
+    id: 'instruct.certificates.errorGrantException',
+    defaultMessage: 'Failed to grant exceptions',
+    description: 'Error message when granting exceptions fails',
+  },
+  errorInvalidateCertificate: {
+    id: 'instruct.certificates.errorInvalidateCertificate',
+    defaultMessage: 'Failed to invalidate certificates',
+    description: 'Error message when invalidating certificates fails',
+  },
+  errorRemoveException: {
+    id: 'instruct.certificates.errorRemoveException',
+    defaultMessage: 'Failed to remove exception',
+    description: 'Error message when removing exception fails',
+  },
+  errorRemoveInvalidation: {
+    id: 'instruct.certificates.errorRemoveInvalidation',
+    defaultMessage: 'Failed to remove invalidation',
+    description: 'Error message when removing invalidation fails',
+  },
+  errorToggleCertificateGeneration: {
+    id: 'instruct.certificates.errorToggleCertificateGeneration',
+    defaultMessage: 'Failed to toggle certificate generation',
+    description: 'Error message when toggling certificate generation fails',
+  },
+  successEnableCertificates: {
+    id: 'instruct.certificates.successEnableCertificates',
+    defaultMessage: 'Certificate generation enabled',
+    description: 'Success message when certificate generation is enabled',
+  },
+  successDisableCertificates: {
+    id: 'instruct.certificates.successDisableCertificates',
+    defaultMessage: 'Certificate generation disabled',
+    description: 'Success message when certificate generation is disabled',
+  },
+});
+
+export default messages;

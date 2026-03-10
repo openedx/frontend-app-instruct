@@ -1,4 +1,9 @@
 @use "@openedx/frontend-base/shell/app.scss";
+@import "./certificates/certificates.scss";
+
+html, body {
+    overflow-x: hidden;
+}
 
 .toast-container {
     left: unset;
