@@ -8,7 +8,6 @@ import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
 import EnrollmentsPage from '@src/enrollments/EnrollmentsPage';
 import GradingPage from '@src/grading/GradingPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
-import CertificatesPage from '@src/certificates/CertificatesPage';
 import SpecialExamsPage from '@src/specialExams/SpecialExamsPage';
 import PageNotFound from '@src/components/PageNotFound';
 import { useWidgetProps } from './slots/SlotUtils';
