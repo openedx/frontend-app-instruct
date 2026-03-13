@@ -8,7 +8,7 @@ import messages from '../messages';
 const CertificateGenerationHistory = () => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const [pageIndex, setPageIndex] = useState(0);
+  const [pageIndex] = useState(0);
   const pageSize = 20;
 
   const { data, isLoading, error } = useCertificateGenerationHistory(
