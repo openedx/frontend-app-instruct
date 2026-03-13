@@ -3,6 +3,7 @@ import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
 import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
 import DataDownloadsPage from '@src/dataDownloads/DataDownloadsPage';
 import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
+import CertificatesPage from '@src/certificates/CertificatesPage';
 
 const routes = [
   {
@@ -44,10 +45,10 @@ const routes = [
       //   path: 'special_exams',
       //   element: <SpecialExamsPage />
       // },
-      // {
-      //   path: 'certificates',
-      //   element: <CertificatesPage />
-      // },
+      {
+        path: 'certificates',
+        element: <CertificatesPage />
+      },
       {
         path: 'open_responses',
         element: <OpenResponsesPage />
