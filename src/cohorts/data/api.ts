@@ -10,7 +10,7 @@ export const getCohortStatus = async (courseId: string) => {
 
 export const getCohorts = async (courseId: string) => {
   const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/cohorts/`;
-  const { data } = await getAuthenticatedHttpClient().get(url);
+  const { data } = await getAuthenticatedHttpClient().get(url, { params: { page_size: 100 } });
   return camelCaseObject(data);
 };
 
@@ -43,5 +43,11 @@ export const patchCohort = async (courseId: string, cohortId: number, cohortDeta
 export const addLearnersToCohort = async (courseId: string, cohortId: number, users: string[]) => {
   const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/cohorts/${cohortId}/users/`;
   const { data } = await getAuthenticatedHttpClient().post(url, { users });
+  return camelCaseObject(data);
+};
+
+export const addLearnersToCohortsBulk = async (courseId: string, uploadedFile: FormData) => {
+  const url = `${getApiBaseUrl()}/api/cohorts/v1/courses/${courseId}/users`;
+  const { data } = await getAuthenticatedHttpClient().post(url, uploadedFile);
   return camelCaseObject(data);
 };

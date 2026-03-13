@@ -216,6 +216,21 @@ const messages = defineMessages({
     defaultMessage: 'Unknown username or email: {learner}',
     description: 'Message indicating that a learner is not recognized in the course'
   },
+  downloadCSVCaption: {
+    id: 'instruct.cohorts.downloadCSVCaption',
+    defaultMessage: 'Assign learners to cohorts by uploading a CSV file',
+    description: 'Caption for the learners CSV upload collapsible section'
+  },
+  uploadSuccessMessage: {
+    id: 'instruct.cohorts.uploadSuccessMessage',
+    defaultMessage: 'Your file {fileName} has been uploaded. Allow a few minutes for processing.',
+    description: 'Message displayed when learners are successfully added to cohorts via CSV upload'
+  },
+  noFileFoundMessage: {
+    id: 'instruct.cohorts.noFileFoundMessage',
+    defaultMessage: 'No file found in upload data. Please try again.',
+    description: 'Error message displayed when no file is found in the uploaded data'
+  },
 });
 
 export default messages;

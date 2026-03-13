@@ -86,6 +86,26 @@ const messages = defineMessages({
     defaultMessage: 'Task Message',
     description: 'Column name for task message in pending tasks table',
   },
+  downloadCSVTitle: {
+    id: 'instruct.csvComponent.downloadCSVTitle',
+    defaultMessage: 'Upload CSV File',
+    description: 'Title for the upload CSV file section'
+  },
+  downloadCSVDescription: {
+    id: 'instruct.csvComponent.downloadCSVDescription',
+    defaultMessage: 'Only properly formatted CSV files will be accepted',
+    description: 'Description for the upload CSV file section'
+  },
+  viewCSVTemplate: {
+    id: 'instruct.csvComponent.viewCSVTemplate',
+    defaultMessage: 'View Template',
+    description: 'Label for the view CSV template link'
+  },
+  uploadingFileMessage: {
+    id: 'instruct.csvComponent.uploadingFileMessage',
+    defaultMessage: 'File chosen: {fileName}',
+    description: 'Message displayed when a file is being uploaded, with the file name included'
+  }
 });
 
 export default messages;
