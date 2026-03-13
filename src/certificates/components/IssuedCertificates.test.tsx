@@ -405,11 +405,11 @@ describe('IssuedCertificates', () => {
     await waitFor(() => {
       const calls = mockUseIssuedCertificates.mock.calls;
       const hasExpectedCall = calls.some(call =>
-        call[0] === 'course-123' &&
-        call[1].page === 0 &&
-        call[1].pageSize === 10 &&
-        call[2] === 'test' &&
-        call[3] === 'all'
+        call[0] === 'course-123'
+        && call[1].page === 0
+        && call[1].pageSize === 10
+        && call[2] === 'test'
+        && call[3] === 'all'
       );
       expect(hasExpectedCall).toBe(true);
     }, { timeout: 1000 });

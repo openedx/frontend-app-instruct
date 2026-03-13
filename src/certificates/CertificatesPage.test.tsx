@@ -153,7 +153,6 @@ describe('CertificatesPage', () => {
     });
   });
 
-
   it('should render certificates page when config is enabled', () => {
     mockUseCertificateConfig.mockReturnValue({
       data: { enabled: true },
