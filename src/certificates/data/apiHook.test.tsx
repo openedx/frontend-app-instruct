@@ -32,7 +32,7 @@ describe('certificates apiHook', () => {
 
   describe('useIssuedCertificates', () => {
     it('should fetch issued certificates successfully', async () => {
-      const mockData = { results: [], count: 0 };
+      const mockData = { results: [], count: 0, next: null, previous: null, numPages: 0 };
       mockGetIssuedCertificates.mockResolvedValue(mockData);
 
       const { result } = renderHook(
@@ -49,7 +49,7 @@ describe('certificates apiHook', () => {
     });
 
     it('should fetch with search parameter', async () => {
-      const mockData = { results: [], count: 0 };
+      const mockData = { results: [], count: 0, next: null, previous: null, numPages: 0 };
       mockGetIssuedCertificates.mockResolvedValue(mockData);
 
       const { result } = renderHook(
@@ -65,7 +65,7 @@ describe('certificates apiHook', () => {
     });
 
     it('should fetch with filter parameter', async () => {
-      const mockData = { results: [], count: 0 };
+      const mockData = { results: [], count: 0, next: null, previous: null, numPages: 0 };
       mockGetIssuedCertificates.mockResolvedValue(mockData);
 
       const { result } = renderHook(
@@ -97,7 +97,7 @@ describe('certificates apiHook', () => {
     });
 
     it('should use correct query key', async () => {
-      const mockData = { results: [], count: 0 };
+      const mockData = { results: [], count: 0, next: null, previous: null, numPages: 0 };
       mockGetIssuedCertificates.mockResolvedValue(mockData);
 
       const { result } = renderHook(
@@ -115,7 +115,7 @@ describe('certificates apiHook', () => {
 
   describe('useCertificateGenerationHistory', () => {
     it('should fetch generation history successfully', async () => {
-      const mockData = { results: [], count: 0 };
+      const mockData = { results: [], count: 0, next: null, previous: null, numPages: 0 };
       mockGetCertificateGenerationHistory.mockResolvedValue(mockData);
 
       const { result } = renderHook(
