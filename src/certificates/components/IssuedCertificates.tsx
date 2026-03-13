@@ -5,7 +5,6 @@ import {
   Button,
   DataTable,
   Form,
-  SearchField,
   Dropdown,
   ModalDialog,
 } from '@openedx/paragon';
@@ -15,8 +14,10 @@ import messages from '../messages';
 import { CertificateFilter } from '../types';
 import { APIError } from '@src/types';
 import { useDebouncedFilter } from '@src/hooks/useDebouncedFilter';
+import { FormControl, Icon } from '@openedx/paragon';
+import { Search } from '@openedx/paragon/icons';
 
-const CertificateSearchField = ({ filterValue, setFilter }: { filterValue: string, setFilter: (value: string) => void }) => {
+const SearchFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
   const intl = useIntl();
   const { inputValue, handleChange } = useDebouncedFilter({
     filterValue,
@@ -25,31 +26,18 @@ const CertificateSearchField = ({ filterValue, setFilter }: { filterValue: strin
   });
 
   return (
-    <SearchField
+    <FormControl
+      className="mb-0"
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e.target.value)}
       placeholder={intl.formatMessage(messages.searchPlaceholder)}
-      onChange={handleChange}
+      trailingElement={<Icon src={Search} />}
       value={inputValue}
     />
   );
 };
 
-const IssuedCertificates = () => {
+const FilterDropdownFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
   const intl = useIntl();
-  const { courseId = '' } = useParams<{ courseId: string }>();
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<CertificateFilter>('all');
-  const [pageIndex, setPageIndex] = useState(0);
-  const [isRegenerateModalOpen, setIsRegenerateModalOpen] = useState(false);
-  const pageSize = 20;
-  const { showToast, showModal, removeAlert } = useAlert();
-  const { mutate: regenerateMutation, isPending: isRegenerating } = useRegenerateCertificatesMutation();
-
-  const { data, isLoading, error } = useIssuedCertificates(
-    courseId,
-    { page: pageIndex, pageSize },
-    search,
-    filter
-  );
 
   const filterOptions = [
     { value: 'all', label: intl.formatMessage(messages.allLearners) },
@@ -62,52 +50,120 @@ const IssuedCertificates = () => {
     { value: 'invalidated', label: intl.formatMessage(messages.invalidated) },
   ];
 
+  return (
+    <Form.Group className="mb-0">
+      <Dropdown>
+        <Dropdown.Toggle variant="outline-primary">
+          {filterOptions.find(opt => opt.value === (filterValue || 'all'))?.label}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          {filterOptions.map(option => (
+            <Dropdown.Item
+              key={option.value}
+              onClick={() => setFilter(option.value)}
+            >
+              {option.label}
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown>
+    </Form.Group>
+  );
+};
+
+const IssuedCertificates = () => {
+  const intl = useIntl();
+  const { courseId = '' } = useParams<{ courseId: string }>();
+  const [filters, setFilters] = useState<{ page: number, search: string, filter: CertificateFilter }>({
+    page: 0,
+    search: '',
+    filter: 'all',
+  });
+  const [isRegenerateModalOpen, setIsRegenerateModalOpen] = useState(false);
+  const pageSize = 10;
+  const { showToast, showModal, removeAlert } = useAlert();
+  const { mutate: regenerateMutation, isPending: isRegenerating } = useRegenerateCertificatesMutation();
+
+  const { data, isLoading, error } = useIssuedCertificates(
+    courseId,
+    { page: filters.page, pageSize },
+    filters.search,
+    filters.filter
+  );
+
   const columns = [
     {
       Header: intl.formatMessage(messages.username),
       accessor: 'username',
+      Filter: SearchFilter,
     },
     {
       Header: intl.formatMessage(messages.email),
       accessor: 'email',
+      Filter: FilterDropdownFilter,
     },
     {
       Header: intl.formatMessage(messages.enrollmentTrack),
       accessor: 'enrollmentTrack',
+      disableFilters: true,
     },
     {
       Header: intl.formatMessage(messages.certificateStatus),
       accessor: 'certificateStatus',
+      disableFilters: true,
     },
     {
       Header: intl.formatMessage(messages.specialCase),
       accessor: 'specialCase',
       Cell: ({ value }) => value || '—',
+      disableFilters: true,
     },
     {
       Header: intl.formatMessage(messages.exceptionGranted),
       accessor: 'exceptionGranted',
       Cell: ({ value }) => value || '—',
+      disableFilters: true,
     },
     {
       Header: intl.formatMessage(messages.exceptionNotes),
       accessor: 'exceptionNotes',
       Cell: ({ value }) => value || '—',
+      disableFilters: true,
     },
     {
       Header: intl.formatMessage(messages.invalidatedBy),
       accessor: 'invalidatedBy',
       Cell: ({ value }) => value || '—',
+      disableFilters: true,
     },
     {
       Header: intl.formatMessage(messages.invalidationDate),
       accessor: 'invalidationDate',
       Cell: ({ value }) => value || '—',
+      disableFilters: true,
     },
   ];
 
+  const handleFetchData = (data: { pageIndex: number, filters: { id: string, value: string }[] }) => {
+    const searchFilter = data.filters.find((filter) => filter.id === 'username');
+    const newSearch = searchFilter ? searchFilter.value : '';
+    const filterFilter = data.filters.find((filter) => filter.id === 'email');
+    const newFilter = filterFilter ? filterFilter.value as CertificateFilter : 'all';
+
+    const filterChanged = newSearch !== filters.search || newFilter !== filters.filter;
+    const pageChanged = data.pageIndex !== filters.page;
+
+    // If filters changed, reset to page 0
+    if (filterChanged) {
+      setFilters({ page: 0, search: newSearch, filter: newFilter });
+    } else if (pageChanged) {
+      // If only page changed (filters didn't change), update page
+      setFilters({ page: data.pageIndex, search: newSearch, filter: newFilter });
+    }
+  };
+
   // Determine if regenerate button should be disabled
-  const isRegenerateDisabled = filter === 'all' || filter === 'invalidated' || (data?.count || 0) === 0;
+  const isRegenerateDisabled = filters.filter === 'all' || filters.filter === 'invalidated' || (data?.count || 0) === 0;
 
   // Get modal content based on filter
   const getModalContent = () => {
@@ -119,7 +175,7 @@ const IssuedCertificates = () => {
       error: intl.formatMessage(messages.regenerateErrorMessage),
       granted_exceptions: intl.formatMessage(messages.generateExceptionsMessage),
     };
-    return filterMessages[filter] || intl.formatMessage(messages.regenerateAllLearnersMessage);
+    return filterMessages[filters.filter] || intl.formatMessage(messages.regenerateAllLearnersMessage);
   };
 
   const handleOpenRegenerateModal = () => {
@@ -133,17 +189,17 @@ const IssuedCertificates = () => {
     // Map filter to API parameters
     const params: any = {};
 
-    if (filter === 'granted_exceptions') {
+    if (filters.filter === 'granted_exceptions') {
       params.studentSet = 'allowlisted';
-    } else if (filter === 'received') {
+    } else if (filters.filter === 'received') {
       params.statuses = ['downloadable'];
-    } else if (filter === 'not_received') {
+    } else if (filters.filter === 'not_received') {
       params.statuses = ['notpassing', 'unavailable'];
-    } else if (filter === 'audit_passing') {
+    } else if (filters.filter === 'audit_passing') {
       params.statuses = ['audit_passing'];
-    } else if (filter === 'audit_not_passing') {
+    } else if (filters.filter === 'audit_not_passing') {
       params.statuses = ['audit_notpassing'];
-    } else if (filter === 'error') {
+    } else if (filters.filter === 'error') {
       params.statuses = ['error'];
     }
 
@@ -172,39 +228,9 @@ const IssuedCertificates = () => {
 
   return (
     <div>
-      <div className="d-flex align-items-center justify-content-between mb-3">
-        <div className="d-flex gap-3">
-          <CertificateSearchField filterValue={search} setFilter={setSearch} />
-          <Form.Group>
-            <Dropdown>
-              <Dropdown.Toggle variant="outline-primary">
-                {filterOptions.find(opt => opt.value === filter)?.label}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                {filterOptions.map(option => (
-                  <Dropdown.Item
-                    key={option.value}
-                    onClick={() => setFilter(option.value as CertificateFilter)}
-                  >
-                    {option.label}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-          </Form.Group>
-        </div>
-        <Button
-          variant="primary"
-          onClick={handleOpenRegenerateModal}
-          disabled={isRegenerateDisabled || isRegenerating}
-        >
-          {intl.formatMessage(messages.regenerateCertificates)}
-        </Button>
-      </div>
-
       <ModalDialog
         title={intl.formatMessage(
-          filter === 'granted_exceptions'
+          filters.filter === 'granted_exceptions'
             ? messages.generateCertificatesTitle
             : messages.regenerateCertificatesTitle
         )}
@@ -215,7 +241,7 @@ const IssuedCertificates = () => {
         <ModalDialog.Header>
           <ModalDialog.Title>
             {intl.formatMessage(
-              filter === 'granted_exceptions'
+              filters.filter === 'granted_exceptions'
                 ? messages.generateCertificatesTitle
                 : messages.regenerateCertificatesTitle
             )}
@@ -225,7 +251,7 @@ const IssuedCertificates = () => {
           <p>{getModalContent()}</p>
           <p>
             {intl.formatMessage(messages.regenerateConfirmation, {
-              action: filter === 'granted_exceptions' ? 'Generate' : 'Regenerate',
+              action: filters.filter === 'granted_exceptions' ? 'Generate' : 'Regenerate',
               number: data?.count || 0,
             })}
           </p>
@@ -238,7 +264,7 @@ const IssuedCertificates = () => {
             {isRegenerating
               ? intl.formatMessage(messages.regenerating)
               : intl.formatMessage(
-                  filter === 'granted_exceptions' ? messages.generate : messages.regenerate
+                  filters.filter === 'granted_exceptions' ? messages.generate : messages.regenerate
                 )}
           </Button>
         </ModalDialog.Footer>
@@ -248,28 +274,48 @@ const IssuedCertificates = () => {
         <div className="alert alert-danger">Error loading certificates</div>
       ) : (
         <DataTable
-          data={data?.results || []}
           columns={columns}
-          itemCount={data?.count || 0}
-          pageCount={Math.ceil((data?.count || 0) / pageSize)}
-          isPaginated
-          manualPagination
-          isLoading={isLoading}
+          data={data?.results || []}
+          fetchData={handleFetchData}
           state={{
+            pageIndex: filters.page,
             pageSize,
-            pageIndex,
+            filters: [
+              {
+                id: 'username',
+                value: filters.search,
+              },
+              {
+                id: 'email',
+                value: filters.filter,
+              }
+            ]
           }}
-          fetchData={({ pageIndex: newPageIndex }: { pageIndex: number }) => setPageIndex(newPageIndex)}
+          isFilterable
+          numBreakoutFilters={2}
+          isLoading={isLoading}
+          isPaginated
+          itemCount={data?.count || 0}
+          manualFilters
+          manualPagination
+          pageSize={pageSize}
+          pageCount={Math.ceil((data?.count || 0) / pageSize)}
+          FilterStatusComponent={() => null}
         >
+          <div className="d-flex justify-content-between align-items-start pt-1 mx-3 mb-3">
+            <DataTable.TableControlBar />
+            <Button
+              className="mt-2.5"
+              variant="primary"
+              onClick={handleOpenRegenerateModal}
+              disabled={isRegenerateDisabled || isRegenerating}
+            >
+              {intl.formatMessage(messages.regenerateCertificates)}
+            </Button>
+          </div>
           <DataTable.Table />
           <DataTable.EmptyTable content="No certificates found" />
-          {Math.ceil((data?.count || 0) / pageSize) > 1 && (
-            <DataTable.TableFooter>
-              <DataTable.RowStatus />
-              <DataTable.TablePagination />
-              <DataTable.TablePaginationMinimal />
-            </DataTable.TableFooter>
-          )}
+          <DataTable.TableFooter />
         </DataTable>
       )}
     </div>
