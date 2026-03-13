@@ -66,6 +66,26 @@ const routes = [
         path: ':tabId',
         element: <TabContent />
       },
+      // {
+      //   path: 'student_admin',
+      //   element: <StudentAdminPage />
+      // },
+      {
+        path: 'data_downloads',
+        element: <DataDownloadsPage />
+      },
+      // {
+      //   path: 'special_exams',
+      //   element: <SpecialExamsPage />
+      // },
+      {
+        path: 'certificates',
+        element: <CertificatesPage />
+      },
+      {
+        path: 'open_responses',
+        element: <OpenResponsesPage />
+      }
     ]
   }
 ];
