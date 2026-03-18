@@ -12,10 +12,19 @@ jest.mock('./data/apiHook', () => ({
   useAddTeamMember: () => ({ mutate: jest.fn() }),
 }));
 
-// Mock the child components, each component should have its own test suite
+// Mock the child components but allow passing through props
 jest.mock('./components/MembersContent', () => {
-  return function MembersContent() {
-    return <div>Members Content</div>;
+  return function MembersContent({ onEdit }: { onEdit?: (user: any) => void }) {
+    return (
+      <div>
+        Members Content
+        {onEdit && (
+          <button onClick={() => onEdit({ username: 'testuser', fullName: 'Test User', email: 'test@example.com', roles: [] })}>
+            Edit User
+          </button>
+        )}
+      </div>
+    );
   };
 });
 
@@ -26,8 +35,14 @@ jest.mock('./components/RolesContent', () => {
 });
 
 jest.mock('./components/AddTeamMemberModal', () => {
-  return function AddTeamMemberModal() {
-    return <div>Add Team Member Modal</div>;
+  return function AddTeamMemberModal({ isOpen }: { isOpen?: boolean }) {
+    return isOpen ? <div>Add Team Member Modal</div> : null;
+  };
+});
+
+jest.mock('./components/EditTeamMemberModal', () => {
+  return function EditTeamMemberModal({ isOpen, user }: { isOpen?: boolean, user?: any }) {
+    return isOpen && user ? <div>Edit Team Member Modal for {user.username}</div> : null;
   };
 });
 
@@ -73,5 +88,87 @@ describe('CourseTeamPage', () => {
     const user = userEvent.setup();
     await user.click(rolesTab);
     expect(screen.getByText('Roles Content')).toBeInTheDocument();
+  });
+
+  it('opens EditTeamMemberModal when handleEdit is called', async () => {
+    renderWithAlertAndIntl(<CourseTeamPage />);
+
+    // Initially, EditTeamMemberModal should not be visible
+    expect(screen.queryByText(/Edit Team Member Modal for/)).not.toBeInTheDocument();
+
+    // Click the edit button which triggers handleEdit
+    const editButton = screen.getByRole('button', { name: /Edit User/i });
+    const user = userEvent.setup();
+    await user.click(editButton);
+
+    // Now EditTeamMemberModal should be visible
+    expect(screen.getByText('Edit Team Member Modal for testuser')).toBeInTheDocument();
+  });
+
+  it('does not render EditTeamMemberModal initially', () => {
+    renderWithAlertAndIntl(<CourseTeamPage />);
+    expect(screen.queryByText(/Edit Team Member Modal for/)).not.toBeInTheDocument();
+  });
+
+  it('initializes with correct state values', () => {
+    renderWithAlertAndIntl(<CourseTeamPage />);
+
+    // Verify initial states by checking that EditTeamMemberModal is not rendered
+    expect(screen.queryByText(/Edit Team Member Modal for/)).not.toBeInTheDocument();
+
+    // Verify the component renders without crashing and shows expected initial content
+    expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /add team member/i })).toBeInTheDocument();
+  });
+
+  it('passes onEdit prop to MembersContent', () => {
+    renderWithAlertAndIntl(<CourseTeamPage />);
+    // The mock MembersContent component renders an edit button that uses onEdit
+    expect(screen.getByRole('button', { name: /Edit User/i })).toBeInTheDocument();
+  });
+
+  it('sets selected user when handleEdit is called', async () => {
+    renderWithAlertAndIntl(<CourseTeamPage />);
+
+    const editButton = screen.getByRole('button', { name: /Edit User/i });
+    const user = userEvent.setup();
+    await user.click(editButton);
+
+    // Verify the modal shows with the correct user
+    expect(screen.getByText('Edit Team Member Modal for testuser')).toBeInTheDocument();
+  });
+
+  it('renders both AddTeamMemberModal and EditTeamMemberModal when both are open', async () => {
+    renderWithAlertAndIntl(<CourseTeamPage />);
+
+    // Open AddTeamMemberModal
+    const addButton = screen.getByRole('button', { name: /add team member/i });
+    const user = userEvent.setup();
+    await user.click(addButton);
+    expect(screen.getByText('Add Team Member Modal')).toBeInTheDocument();
+
+    // Open EditTeamMemberModal
+    const editButton = screen.getByRole('button', { name: /Edit User/i });
+    await user.click(editButton);
+    expect(screen.getByText('Edit Team Member Modal for testuser')).toBeInTheDocument();
+
+    // Both should be visible
+    expect(screen.getByText('Add Team Member Modal')).toBeInTheDocument();
+    expect(screen.getByText('Edit Team Member Modal for testuser')).toBeInTheDocument();
+  });
+
+  it('manages edit modal state correctly through complete cycle', async () => {
+    renderWithAlertAndIntl(<CourseTeamPage />);
+    const user = userEvent.setup();
+
+    // Initial state - modal not visible
+    expect(screen.queryByText(/Edit Team Member Modal for/)).not.toBeInTheDocument();
+
+    // Open modal by triggering edit
+    const editButton = screen.getByRole('button', { name: /Edit User/i });
+    await user.click(editButton);
+
+    // Modal should be visible
+    expect(screen.getByText('Edit Team Member Modal for testuser')).toBeInTheDocument();
   });
 });

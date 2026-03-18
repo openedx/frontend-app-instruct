@@ -1,15 +1,25 @@
+import { useState } from 'react';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, Tab, Tabs, useToggle } from '@openedx/paragon';
 import { Plus } from '@openedx/paragon/icons';
 import AddTeamMemberModal from '@src/courseTeam/components/AddTeamMemberModal';
+import EditTeamMemberModal from '@src/courseTeam/components/EditTeamMemberModal';
 import MembersContent from '@src/courseTeam/components/MembersContent';
 import RolesContent from '@src/courseTeam/components/RolesContent';
 import messages from '@src/courseTeam/messages';
 import { AlertOutlet } from '@src/providers/AlertProvider';
+import { CourseTeamMember } from '@src/courseTeam/types';
 
 const CourseTeamPage = () => {
   const intl = useIntl();
   const [isOpenAddModal, openAddModal, closeAddModal] = useToggle(false);
+  const [isOpenEditModal, openEditModal, closeEditModal] = useToggle(false);
+  const [selectedUser, setSelectedUser] = useState<CourseTeamMember | null>(null);
+
+  const handleEdit = (user: CourseTeamMember) => {
+    setSelectedUser(user);
+    openEditModal();
+  };
 
   return (
     <>
@@ -20,13 +30,14 @@ const CourseTeamPage = () => {
       <AlertOutlet />
       <Tabs>
         <Tab eventKey="members" title={intl.formatMessage(messages.membersTab)}>
-          <MembersContent />
+          <MembersContent onEdit={handleEdit} />
         </Tab>
         <Tab eventKey="roles" title={intl.formatMessage(messages.rolesTab)}>
           <RolesContent />
         </Tab>
       </Tabs>
       {isOpenAddModal && <AddTeamMemberModal isOpen={isOpenAddModal} onClose={closeAddModal} />}
+      {isOpenEditModal && selectedUser && <EditTeamMemberModal isOpen={isOpenEditModal} user={selectedUser} onClose={closeEditModal} />}
     </>
   );
 };

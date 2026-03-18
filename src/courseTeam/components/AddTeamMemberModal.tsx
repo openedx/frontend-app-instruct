@@ -72,10 +72,10 @@ const AddTeamMemberModal = ({
 
   return (
     <ModalDialog isOpen={isOpen} onClose={onClose} title={intl.formatMessage(messages.addNewTeamMember)} isOverflowVisible={false} size="lg">
-      <ModalDialog.Header>
+      <ModalDialog.Header className="border-light-700 border-bottom">
         <h3 className="text-primary-500">{intl.formatMessage(messages.addNewTeamMember)}</h3>
       </ModalDialog.Header>
-      <ModalDialog.Body>
+      <ModalDialog.Body className="position-relative overflow-auto">
         <p>{intl.formatMessage(messages.addNewTeamMemberDescription, { courseName: displayName })}</p>
         <Form.Group>
           <Form.Label>{intl.formatMessage(messages.addUsersLabel)}</Form.Label>
@@ -94,7 +94,7 @@ const AddTeamMemberModal = ({
           </Form.Control>
         </Form.Group>
       </ModalDialog.Body>
-      <ModalDialog.Footer>
+      <ModalDialog.Footer className="border-light-700 border-top">
         <ActionRow>
           <Button variant="tertiary" onClick={onClose}>{intl.formatMessage(messages.cancelButton)}</Button>
           <Button variant="primary" onClick={handleSave} disabled={!selectedRole || !inputValue}>{intl.formatMessage(messages.saveButton)}</Button>

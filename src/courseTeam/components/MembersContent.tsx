@@ -6,10 +6,14 @@ import { FilterList } from '@openedx/paragon/icons';
 import UsernameFilter from '@src/components/UsernameFilter';
 import { useRoles, useTeamMembers } from '@src/courseTeam/data/apiHook';
 import messages from '@src/courseTeam/messages';
-import { Role } from '@src/courseTeam/types';
+import { CourseTeamMember, Role } from '@src/courseTeam/types';
 import { DataTableFetchDataProps } from '@src/types';
 
 const TEAM_MEMBERS_PAGE_SIZE = 25;
+
+interface MembersContentProps {
+  onEdit: (user: CourseTeamMember) => void,
+}
 
 const RoleFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
   const intl = useIntl();
@@ -44,7 +48,7 @@ const RoleFilter = ({ column: { filterValue, setFilter } }: { column: { filterVa
   );
 };
 
-const MembersContent = () => {
+const MembersContent = ({ onEdit }: MembersContentProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [filters, setFilters] = useState({ page: 0, emailOrUsername: '', role: '' });
@@ -53,23 +57,23 @@ const MembersContent = () => {
   const tableColumns = useMemo(() => [
     { accessor: 'username', Header: intl.formatMessage(messages.username), Filter: UsernameFilter },
     { accessor: 'email', Header: intl.formatMessage(messages.email), disableFilters: true },
-    { accessor: 'role', Header: intl.formatMessage(messages.role), Filter: RoleFilter },
+    { accessor: 'roles', Header: intl.formatMessage(messages.role), Cell: ({ cell: { value } }: { cell: { value: Role[] } }) => value.map(role => role.displayName).join(', '), Filter: RoleFilter },
   ], [intl]);
 
   const additionalColumns = useMemo(() => [{
     id: 'actions',
     Header: intl.formatMessage(messages.actions),
-    Cell: () => (
-      <Button variant="link" size="inline">
+    Cell: ({ row }: { row: { original: any } }) => (
+      <Button variant="link" size="inline" onClick={() => onEdit(row.original)}>
         {intl.formatMessage(messages.edit)}
       </Button>
     )
-  }], [intl]);
+  }], [intl, onEdit]);
 
   const handleFetchData = (data: DataTableFetchDataProps) => {
     const usernameFilter = data.filters?.find((f) => f.id === 'username');
     const newEmailOrUsername = usernameFilter ? usernameFilter.value : '';
-    const rolesFilter = data.filters?.find((f) => f.id === 'role');
+    const rolesFilter = data.filters?.find((f) => f.id === 'roles');
     const newRole = rolesFilter ? rolesFilter.value : '';
     const filtersChanged = (newEmailOrUsername !== filters.emailOrUsername) || (newRole !== filters.role);
 
