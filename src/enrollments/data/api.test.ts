@@ -20,6 +20,7 @@ const mockGetApiBaseUrl = getApiBaseUrl as jest.MockedFunction<typeof getApiBase
 describe('enrollments api', () => {
   const mockHttpClient = {
     get: jest.fn(),
+    post: jest.fn(),
   };
 
   beforeEach(() => {
@@ -34,44 +35,40 @@ describe('enrollments api', () => {
   describe('getEnrollments', () => {
     const mockEnrollmentsData = {
       count: 2,
-      results: [
+      enrollments: [
         {
-          id: '1',
           username: 'student1',
           full_name: 'Student One',
           email: 'student1@example.com',
-          track: 'verified',
-          beta_tester: false,
+          mode: 'verified',
+          is_beta_tester: false,
         },
         {
-          id: '2',
           username: 'student2',
           full_name: 'Student Two',
           email: 'student2@example.com',
-          track: 'audit',
-          beta_tester: true,
+          mode: 'audit',
+          is_beta_tester: true,
         },
       ],
     };
 
     const mockCamelCaseData: EnrollmentsResponse = {
       count: 2,
-      results: [
+      enrollments: [
         {
-          id: '1',
           username: 'student1',
           fullName: 'Student One',
           email: 'student1@example.com',
-          track: 'verified',
-          betaTester: false,
+          mode: 'verified',
+          isBetaTester: false,
         },
         {
-          id: '2',
           username: 'student2',
           fullName: 'Student Two',
           email: 'student2@example.com',
-          track: 'audit',
-          betaTester: true,
+          mode: 'audit',
+          isBetaTester: true,
         },
       ],
     };
@@ -90,7 +87,7 @@ describe('enrollments api', () => {
       expect(mockGetApiBaseUrl).toHaveBeenCalled();
       expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/?page=1&page_size=20'
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments?page=2&page_size=20'
       );
       expect(mockCamelCaseObject).toHaveBeenCalledWith(mockEnrollmentsData);
       expect(result).toBe(mockCamelCaseData);
@@ -103,7 +100,7 @@ describe('enrollments api', () => {
       await getEnrollments(courseId, customPagination);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/?page=3&page_size=50'
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments?page=4&page_size=50'
       );
     });
 
@@ -113,7 +110,7 @@ describe('enrollments api', () => {
       await getEnrollments(courseId, pagination);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+Course+2023/enrollments/?page=1&page_size=20'
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+Course+2023/enrollments?page=2&page_size=20'
       );
     });
 
@@ -142,15 +139,15 @@ describe('enrollments api', () => {
 
   describe('getEnrollmentStatus', () => {
     const mockEnrollmentStatusData = {
-      status: 'enrolled',
+      enrollment_status: 'enrolled',
     };
 
     const mockCamelCaseStatusData: EnrollmentStatusResponse = {
-      status: 'enrolled',
+      enrollmentStatus: 'enrolled',
     };
 
     beforeEach(() => {
-      mockHttpClient.get.mockResolvedValue({ data: mockEnrollmentStatusData });
+      mockHttpClient.post.mockResolvedValue({ data: mockEnrollmentStatusData });
       mockCamelCaseObject.mockReturnValue(mockCamelCaseStatusData);
     });
 
@@ -162,8 +159,9 @@ describe('enrollments api', () => {
 
       expect(mockGetApiBaseUrl).toHaveBeenCalled();
       expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
-      expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/?email_or_username=student@example.com'
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        'https://test-lms.com/courses/course-v1:edX+Test+2023/instructor/api/get_student_enrollment_status',
+        { unique_student_identifier: userIdentifier }
       );
       expect(mockCamelCaseObject).toHaveBeenCalledWith(mockEnrollmentStatusData);
       expect(result).toBe(mockCamelCaseStatusData);
@@ -175,8 +173,9 @@ describe('enrollments api', () => {
 
       await getEnrollmentStatus(courseId, userIdentifier);
 
-      expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/?email_or_username=student123'
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        'https://test-lms.com/courses/course-v1:edX+Test+2023/instructor/api/get_student_enrollment_status',
+        { unique_student_identifier: userIdentifier }
       );
     });
 
@@ -186,8 +185,9 @@ describe('enrollments api', () => {
 
       await getEnrollmentStatus(courseId, userIdentifier);
 
-      expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/?email_or_username=test+user@example.com'
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        'https://test-lms.com/courses/course-v1:edX+Test+2023/instructor/api/get_student_enrollment_status',
+        { unique_student_identifier: userIdentifier }
       );
     });
 
@@ -197,8 +197,9 @@ describe('enrollments api', () => {
 
       await getEnrollmentStatus(courseId, userIdentifier);
 
-      expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Advanced+Course+2023/enrollments/?email_or_username=student@example.com'
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        'https://test-lms.com/courses/course-v1:edX+Advanced+Course+2023/instructor/api/get_student_enrollment_status',
+        { unique_student_identifier: userIdentifier }
       );
     });
 
@@ -206,7 +207,7 @@ describe('enrollments api', () => {
       const courseId = 'course-v1:edX+Test+2023';
       const userIdentifier = 'student@example.com';
       const error = new Error('Network error');
-      mockHttpClient.get.mockRejectedValue(error);
+      mockHttpClient.post.mockRejectedValue(error);
 
       await expect(getEnrollmentStatus(courseId, userIdentifier)).rejects.toThrow('Network error');
       expect(mockCamelCaseObject).not.toHaveBeenCalled();
@@ -221,7 +222,7 @@ describe('enrollments api', () => {
           data: { error: 'User not found' },
         },
       };
-      mockHttpClient.get.mockRejectedValue(error);
+      mockHttpClient.post.mockRejectedValue(error);
 
       await expect(getEnrollmentStatus(courseId, userIdentifier)).rejects.toEqual(error);
     });
@@ -230,15 +231,15 @@ describe('enrollments api', () => {
       const statuses = ['enrolled', 'unenrolled', 'pending'];
 
       for (const status of statuses) {
-        const mockStatusData = { status };
-        const mockCamelCaseStatus = { status };
+        const mockStatusData = { enrollment_status: status };
+        const mockCamelCaseStatus = { enrollmentStatus: status };
 
-        mockHttpClient.get.mockResolvedValue({ data: mockStatusData });
+        mockHttpClient.post.mockResolvedValue({ data: mockStatusData });
         mockCamelCaseObject.mockReturnValue(mockCamelCaseStatus);
 
         const result = await getEnrollmentStatus('course-v1:edX+Test+2023', 'test@example.com');
 
-        expect(result.status).toBe(status);
+        expect(result.enrollmentStatus).toBe(status);
         expect(mockCamelCaseObject).toHaveBeenCalledWith(mockStatusData);
       }
     });

@@ -12,10 +12,11 @@ jest.mock('./components/EnrollmentsList', () => {
     return (
       <div role="table">
         <button onClick={() => onUnenroll({
-          id: '1', fullName: 'Tester', email: 'test@example.com',
+          fullName: 'Tester',
+          email: 'test@example.com',
           username: '',
-          track: '',
-          betaTester: false
+          mode: '',
+          isBetaTester: false
         })}
         >
           Unenroll Test Learner

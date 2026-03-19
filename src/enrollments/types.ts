@@ -1,17 +1,16 @@
-export interface EnrollmentsResponse {
-  count: number,
-  results: Learner[],
-}
-
 export interface EnrollmentStatusResponse {
-  status: string,
+  enrollmentStatus: string,
 }
 
 export interface Learner {
-  id: string,
   username: string,
   fullName: string,
   email: string,
-  track: string,
-  betaTester: boolean,
+  mode: string,
+  isBetaTester: boolean,
 };
+
+export interface EnrollmentsResponse {
+  count: number,
+  enrollments: Learner[],
+}

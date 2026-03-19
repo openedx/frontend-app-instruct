@@ -10,28 +10,26 @@ const mockGetEnrollmentStatus = getEnrollmentStatus as jest.MockedFunction<typeo
 
 const mockEnrollmentsData = {
   count: 2,
-  results: [
+  enrollments: [
     {
-      id: '1',
       username: 'student1',
       fullName: 'Student One',
       email: 'student1@example.com',
-      track: 'verified',
-      betaTester: false,
+      mode: 'verified',
+      isBetaTester: false,
     },
     {
-      id: '2',
       username: 'student2',
       fullName: 'Student Two',
       email: 'student2@example.com',
-      track: 'audit',
-      betaTester: true,
+      mode: 'audit',
+      isBetaTester: true,
     },
   ],
 };
 
 const mockEnrollmentStatusData = {
-  status: 'enrolled',
+  enrollmentStatus: 'enrolled',
 };
 
 const createWrapper = () => {
@@ -111,7 +109,7 @@ describe('enrollments api hooks', () => {
     });
 
     it('handles empty results', async () => {
-      const emptyResults = { count: 0, results: [] };
+      const emptyResults = { count: 0, enrollments: [] };
       mockGetEnrollments.mockResolvedValue(emptyResults);
 
       const { result } = renderHook(() => useEnrollments(courseId, pagination), {
@@ -124,7 +122,7 @@ describe('enrollments api hooks', () => {
 
       expect(result.current.data).toBe(emptyResults);
       expect(result.current.data?.count).toBe(0);
-      expect(result.current.data?.results).toHaveLength(0);
+      expect(result.current.data?.enrollments).toHaveLength(0);
     });
 
     it('handles HTTP error responses', async () => {
@@ -253,7 +251,7 @@ describe('enrollments api hooks', () => {
       const statuses = ['enrolled', 'unenrolled', 'pending'];
 
       for (const status of statuses) {
-        const statusData = { status };
+        const statusData = { enrollmentStatus: status };
         mockGetEnrollmentStatus.mockResolvedValue(statusData);
 
         const { result } = renderHook(() => useEnrollmentByUserId(courseId, userIdentifier), {
@@ -267,7 +265,7 @@ describe('enrollments api hooks', () => {
           expect(result.current.isSuccess).toBe(true);
         });
 
-        expect(result.current.data?.status).toBe(status);
+        expect(result.current.data?.enrollmentStatus).toBe(status);
 
         // Clear mock for next iteration
         jest.clearAllMocks();

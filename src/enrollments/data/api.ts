@@ -12,7 +12,7 @@ export const getEnrollments = async (
   pagination: PaginationParams
 ): Promise<EnrollmentsResponse> => {
   const { data } = await getAuthenticatedHttpClient().get(
-    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments/?page=${pagination.page}&page_size=${pagination.pageSize}`
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments?page=${pagination.page + 1}&page_size=${pagination.pageSize}`
   );
   return camelCaseObject(data);
 };
@@ -21,8 +21,10 @@ export const getEnrollmentStatus = async (
   courseId: string,
   userIdentifier: string
 ): Promise<EnrollmentStatusResponse> => {
-  const { data } = await getAuthenticatedHttpClient().get(
-    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments/?email_or_username=${userIdentifier}`
+  const { data } = await getAuthenticatedHttpClient().post(
+    `${getApiBaseUrl()}/courses/${courseId}/instructor/api/get_student_enrollment_status`, {
+      unique_student_identifier: userIdentifier,
+    }
   );
   return camelCaseObject(data);
 };

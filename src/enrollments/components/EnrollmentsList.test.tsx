@@ -15,20 +15,18 @@ jest.mock('react-router-dom', () => ({
 
 const mockLearners = [
   {
-    id: '1',
     username: 'johndoe',
     fullName: 'John Doe',
     email: 'johndoe@example.com',
-    track: 'Verified',
-    betaTester: true,
+    mode: 'Verified',
+    isBetaTester: true,
   },
   {
-    id: '2',
     username: 'janedoe',
     fullName: 'Jane Doe',
     email: 'janedoe@example.com',
-    track: 'Audit',
-    betaTester: false,
+    mode: 'Audit',
+    isBetaTester: false,
   },
 ];
 
@@ -41,7 +39,7 @@ const renderComponent = (onUnenroll = jest.fn()) => {
 describe('EnrollmentsList', () => {
   beforeEach(() => {
     (useEnrollments as jest.Mock).mockReturnValue({
-      data: { count: 2, results: mockLearners },
+      data: { count: 2, enrollments: mockLearners },
       isLoading: false,
     });
   });
@@ -56,7 +54,7 @@ describe('EnrollmentsList', () => {
     expect(screen.getByText(mockLearners[0].username)).toBeInTheDocument();
     expect(screen.getByText(mockLearners[0].fullName)).toBeInTheDocument();
     expect(screen.getByText(mockLearners[0].email)).toBeInTheDocument();
-    expect(screen.getByText(mockLearners[0].track)).toBeInTheDocument();
+    expect(screen.getByText(mockLearners[0].mode)).toBeInTheDocument();
   });
 
   test('displays beta tester status correctly', () => {
@@ -80,7 +78,7 @@ describe('EnrollmentsList', () => {
 
   test('handles loading state', () => {
     (useEnrollments as jest.Mock).mockReturnValue({
-      data: { count: 0, results: [] },
+      data: { count: 0, enrollments: [] },
       isLoading: true,
     });
 
@@ -90,7 +88,7 @@ describe('EnrollmentsList', () => {
 
   test('handles empty data', () => {
     (useEnrollments as jest.Mock).mockReturnValue({
-      data: { count: 0, results: [] },
+      data: { count: 0, enrollments: [] },
       isLoading: false,
     });
 
@@ -98,13 +96,13 @@ describe('EnrollmentsList', () => {
     expect(screen.getByRole('table')).toBeInTheDocument();
   });
 
-  test('displays N/A for missing track', () => {
-    const learnersWithoutTrack = [
-      { ...mockLearners[0], track: null },
+  test('displays N/A for missing mode', () => {
+    const learnersWithoutMode = [
+      { ...mockLearners[0], mode: null },
     ];
 
     (useEnrollments as jest.Mock).mockReturnValue({
-      data: { count: 1, results: learnersWithoutTrack },
+      data: { count: 1, enrollments: learnersWithoutMode },
       isLoading: false,
     });
 

@@ -35,7 +35,7 @@ const EnrollmentsPage = () => {
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h3>{intl.formatMessage(messages.enrollmentsPageTitle)}</h3>
+        <h3 className="text-primary-700">{intl.formatMessage(messages.enrollmentsPageTitle)}</h3>
         <ActionRow>
           <IconButton
             alt={intl.formatMessage(messages.checkEnrollmentStatus)}
@@ -49,7 +49,7 @@ const EnrollmentsPage = () => {
       </div>
       <EnrollmentsList onUnenroll={handleUnenroll} />
       <EnrollmentStatusModal isOpen={isEnrollmentStatusModalOpen} onClose={handleCloseEnrollmentStatusModal} />
-      <UnenrollModal isOpen={isUnenrollModalOpen} learner={selectedLearner} onClose={handleUnenrollModalClose} />
+      {selectedLearner && <UnenrollModal isOpen={isUnenrollModalOpen} learner={selectedLearner} onClose={handleUnenrollModalClose} />}
     </>
   );
 };

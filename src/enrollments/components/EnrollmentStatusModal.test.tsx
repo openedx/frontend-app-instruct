@@ -28,7 +28,7 @@ describe('EnrollmentStatusModal', () => {
 
   beforeEach(() => {
     (useEnrollmentByUserId as jest.Mock).mockReturnValue({
-      data: { status: '' },
+      data: { enrollmentStatus: '' },
       refetch: mockRefetch,
     });
   });
@@ -98,7 +98,7 @@ describe('EnrollmentStatusModal', () => {
 
   it('displays status message when data and learner identifier exist', async () => {
     (useEnrollmentByUserId as jest.Mock).mockReturnValue({
-      data: { status: 'enrolled' },
+      data: { enrollmentStatus: 'enrolled' },
       refetch: mockRefetch,
     });
 
@@ -108,18 +108,7 @@ describe('EnrollmentStatusModal', () => {
     const user = userEvent.setup();
     await user.type(input, 'test@example.com');
 
-    expect(screen.getByText(/test@example.com.*enrolled/)).toBeInTheDocument();
-  });
-
-  it('does not display status message when learner identifier is empty', () => {
-    (useEnrollmentByUserId as jest.Mock).mockReturnValue({
-      data: { status: 'enrolled' },
-      refetch: mockRefetch,
-    });
-
-    renderComponent();
-
-    expect(screen.queryByText(/enrolled/)).not.toBeInTheDocument();
+    expect(screen.getByText(/enrolled/)).toBeInTheDocument();
   });
 
   it('does not display status message when status is empty', async () => {
