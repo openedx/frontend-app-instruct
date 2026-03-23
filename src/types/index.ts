@@ -19,8 +19,6 @@ export interface APIError {
 
 export interface DataList<T> {
   count: number,
-  next: string | null,
-  previous: string | null,
   numPages: number,
   results: T[],
 };
@@ -36,4 +34,9 @@ export interface PendingTask {
   durationSec: number,
   status: string,
   taskMessage: string,
+}
+
+export interface DataTableFetchDataProps {
+  filters: { id: string, value: string }[],
+  pageIndex: number,
 }

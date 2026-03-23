@@ -1,7 +1,8 @@
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '../../data/api';
 import { getEnrollments, getEnrollmentStatus, PaginationParams } from './api';
-import { EnrollmentsResponse, EnrollmentStatusResponse } from '../types';
+import { EnrollmentStatusResponse, Learner } from '../types';
+import { DataList } from '@src/types';
 
 jest.mock('@openedx/frontend-base', () => ({
   ...jest.requireActual('@openedx/frontend-base'),
@@ -35,7 +36,8 @@ describe('enrollments api', () => {
   describe('getEnrollments', () => {
     const mockEnrollmentsData = {
       count: 2,
-      enrollments: [
+      num_pages: 1,
+      results: [
         {
           username: 'student1',
           full_name: 'Student One',
@@ -53,9 +55,10 @@ describe('enrollments api', () => {
       ],
     };
 
-    const mockCamelCaseData: EnrollmentsResponse = {
+    const mockCamelCaseData: DataList<Learner> = {
       count: 2,
-      enrollments: [
+      numPages: 1,
+      results: [
         {
           username: 'student1',
           fullName: 'Student One',

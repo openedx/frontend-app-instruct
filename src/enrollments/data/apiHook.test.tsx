@@ -10,7 +10,8 @@ const mockGetEnrollmentStatus = getEnrollmentStatus as jest.MockedFunction<typeo
 
 const mockEnrollmentsData = {
   count: 2,
-  enrollments: [
+  numPages: 1,
+  results: [
     {
       username: 'student1',
       fullName: 'Student One',
@@ -109,7 +110,7 @@ describe('enrollments api hooks', () => {
     });
 
     it('handles empty results', async () => {
-      const emptyResults = { count: 0, enrollments: [] };
+      const emptyResults = { count: 0, results: [], numPages: 0 };
       mockGetEnrollments.mockResolvedValue(emptyResults);
 
       const { result } = renderHook(() => useEnrollments(courseId, pagination), {
@@ -122,7 +123,8 @@ describe('enrollments api hooks', () => {
 
       expect(result.current.data).toBe(emptyResults);
       expect(result.current.data?.count).toBe(0);
-      expect(result.current.data?.enrollments).toHaveLength(0);
+      expect(result.current.data?.results).toHaveLength(0);
+      expect(result.current.data?.numPages).toBe(0);
     });
 
     it('handles HTTP error responses', async () => {

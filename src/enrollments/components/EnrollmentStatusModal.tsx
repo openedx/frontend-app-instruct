@@ -16,7 +16,7 @@ const EnrollmentStatusModal = ({ isOpen, onClose }: EnrollmentStatusModalProps) 
   const [learnerIdentifier, setLearnerIdentifier] = useState<string>('');
   const { data = { enrollmentStatus: '' }, refetch } = useEnrollmentByUserId(courseId, learnerIdentifier);
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     refetch();
   };
 

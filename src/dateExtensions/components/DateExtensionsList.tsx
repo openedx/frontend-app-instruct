@@ -8,17 +8,13 @@ import { useDateExtensions } from '../data/apiHook';
 import { Search } from '@openedx/paragon/icons';
 import SelectGradedSubsection from './SelectGradedSubsection';
 import { useDebouncedFilter } from '../../hooks/useDebouncedFilter';
+import { DataTableFetchDataProps } from '@src/types';
 
 const DATE_EXTENSIONS_PAGE_SIZE = 25;
 
 export interface DateExtensionListProps {
   onResetExtensions?: (user: LearnerDateExtension) => void,
   onClickAdd?: () => void,
-}
-
-interface DataTableFetchDataProps {
-  filters: { id: string, value: string }[],
-  pageIndex: number,
 }
 
 const UsernameFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {

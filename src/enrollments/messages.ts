@@ -76,11 +76,6 @@ const messages = defineMessages({
     defaultMessage: 'Close',
     description: 'Label for close button in modals',
   },
-  statusResponseMessage: {
-    id: 'instruct.enrollments.checkEnrollmentStatusModal.statusResponseMessage',
-    defaultMessage: 'Enrollment status for {learnerIdentifier}: {status}',
-    description: 'Message displaying the enrollment status for a learner',
-  }
 });
 
 export default messages;

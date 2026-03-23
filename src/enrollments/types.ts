@@ -9,8 +9,3 @@ export interface Learner {
   mode: string,
   isBetaTester: boolean,
 };
-
-export interface EnrollmentsResponse {
-  count: number,
-  enrollments: Learner[],
-}

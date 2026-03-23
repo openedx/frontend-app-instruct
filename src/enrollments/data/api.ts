@@ -1,6 +1,7 @@
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '../../data/api';
-import { EnrollmentsResponse, EnrollmentStatusResponse } from '../types';
+import { EnrollmentStatusResponse, Learner } from '../types';
+import { DataList } from '@src/types';
 
 export interface PaginationParams {
   page: number,
@@ -10,7 +11,7 @@ export interface PaginationParams {
 export const getEnrollments = async (
   courseId: string,
   pagination: PaginationParams
-): Promise<EnrollmentsResponse> => {
+): Promise<DataList<Learner>> => {
   const { data } = await getAuthenticatedHttpClient().get(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments?page=${pagination.page + 1}&page_size=${pagination.pageSize}`
   );

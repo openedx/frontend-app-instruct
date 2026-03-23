@@ -39,7 +39,7 @@ const renderComponent = (onUnenroll = jest.fn()) => {
 describe('EnrollmentsList', () => {
   beforeEach(() => {
     (useEnrollments as jest.Mock).mockReturnValue({
-      data: { count: 2, enrollments: mockLearners },
+      data: { count: 2, results: mockLearners },
       isLoading: false,
     });
   });
@@ -78,7 +78,7 @@ describe('EnrollmentsList', () => {
 
   test('handles loading state', () => {
     (useEnrollments as jest.Mock).mockReturnValue({
-      data: { count: 0, enrollments: [] },
+      data: { count: 0, results: [] },
       isLoading: true,
     });
 
@@ -88,7 +88,7 @@ describe('EnrollmentsList', () => {
 
   test('handles empty data', () => {
     (useEnrollments as jest.Mock).mockReturnValue({
-      data: { count: 0, enrollments: [] },
+      data: { count: 0, results: [] },
       isLoading: false,
     });
 
@@ -102,7 +102,7 @@ describe('EnrollmentsList', () => {
     ];
 
     (useEnrollments as jest.Mock).mockReturnValue({
-      data: { count: 1, enrollments: learnersWithoutMode },
+      data: { count: 1, results: learnersWithoutMode },
       isLoading: false,
     });
 

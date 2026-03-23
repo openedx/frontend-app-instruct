@@ -6,7 +6,7 @@ import { MoreVert } from '@openedx/paragon/icons';
 import messages from '../messages';
 import { useEnrollments } from '../data/apiHook';
 import { Learner } from '../types';
-import { TableCellValue } from '@src/types';
+import { DataTableFetchDataProps, TableCellValue } from '@src/types';
 
 const ENROLLMENTS_PAGE_SIZE = 25;
 
@@ -18,15 +18,15 @@ const EnrollmentsList = ({ onUnenroll }: EnrollmentsListProps) => {
   const intl = useIntl();
   const { courseId } = useParams();
   const [page, setPage] = useState(0);
-  const { data = { count: 0, enrollments: [] }, isLoading } = useEnrollments(courseId ?? '', {
+  const { data = { count: 0, results: [], numPages: 0 }, isLoading } = useEnrollments(courseId ?? '', {
     page,
     pageSize: ENROLLMENTS_PAGE_SIZE
   });
 
   const pageCount = Math.ceil(data.count / ENROLLMENTS_PAGE_SIZE);
 
-  const handleFetchData = (state: any) => {
-    setPage(state.pageIndex);
+  const handleFetchData = (data: DataTableFetchDataProps) => {
+    setPage(data.pageIndex);
   };
 
   const handleMoreButton = () => {
@@ -45,7 +45,7 @@ const EnrollmentsList = ({ onUnenroll }: EnrollmentsListProps) => {
         <span className="text-capitalize">{value || 'N/A'}</span>
       )
     },
-    { accessor: 'isBetaTester', Header: intl.formatMessage(messages.betaTester), Cell: ({ value }: { value: string }) => (value ? 'True' : '') },
+    { accessor: 'isBetaTester', Header: intl.formatMessage(messages.betaTester), Cell: ({ value }: { value: string }) => (value ? intl.formatMessage(messages.trueLabel) : '') },
   ];
 
   const actionCustomCell = useCallback(({ row: { original } }: TableCellValue<Learner>) => {
@@ -75,7 +75,7 @@ const EnrollmentsList = ({ onUnenroll }: EnrollmentsListProps) => {
           Cell: actionCustomCell,
         }
       ]}
-      data={data.enrollments}
+      data={data.results}
       fetchData={handleFetchData}
       state={{
         pageIndex: page,
