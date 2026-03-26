@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { getEnrollments, getEnrollmentStatus, PaginationParams } from './api';
+import { getEnrollments, getEnrollmentStatus } from './api';
 import { enrollmentsQueryKeys } from './queryKeys';
+import { EnrollmentsParams } from '../types';
 
-export const useEnrollments = (courseId: string, pagination: PaginationParams) => (
+export const useEnrollments = (courseId: string, params: EnrollmentsParams) => (
   useQuery({
-    queryKey: enrollmentsQueryKeys.byCoursePaginated(courseId, pagination),
-    queryFn: () => getEnrollments(courseId, pagination),
+    queryKey: enrollmentsQueryKeys.byCoursePaginated(courseId, params),
+    queryFn: () => getEnrollments(courseId, params),
+    enabled: !!courseId,
   })
 );
 

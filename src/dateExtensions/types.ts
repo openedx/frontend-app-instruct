@@ -1,4 +1,4 @@
-import { PaginationQueryKeys } from '@src/types';
+import { PaginationParams } from '@src/types';
 
 export interface LearnerDateExtension {
   username: string,
@@ -22,7 +22,7 @@ export interface AddDateExtensionParams {
   reason: string,
 }
 
-export interface DateExtensionQueryParams extends PaginationQueryKeys {
+export interface DateExtensionQueryParams extends PaginationParams {
   emailOrUsername?: string,
   blockId?: string,
 }

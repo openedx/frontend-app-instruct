@@ -76,6 +76,41 @@ const messages = defineMessages({
     defaultMessage: 'Close',
     description: 'Label for close button in modals',
   },
+  searchPlaceholder: {
+    id: 'instruct.enrollments.searchPlaceholder',
+    defaultMessage: 'Search enrollments',
+    description: 'Placeholder for the search input in enrollments list',
+  },
+  betaTesterFilterPlaceholder: {
+    id: 'instruct.enrollments.betaTesterFilterPlaceholder',
+    defaultMessage: 'Filter by Beta Tester status',
+    description: 'Placeholder for the beta tester filter in enrollments list',
+  },
+  noEnrollments: {
+    id: 'instruct.enrollments.noEnrollments',
+    defaultMessage: 'No enrollments found',
+    description: 'Message displayed when there are no enrollments to show',
+  },
+  changeBetaTesterStatus: {
+    id: 'instruct.enrollments.changeBetaTesterStatus',
+    defaultMessage: 'Change Beta Tester Status',
+    description: 'Alt text for change beta tester status icon button',
+  },
+  allEnrollees: {
+    id: 'instruct.enrollments.allEnrollees',
+    defaultMessage: 'All Enrollees',
+    description: 'Option for showing all enrollees in beta tester filter',
+  },
+  betaTesters: {
+    id: 'instruct.enrollments.betaTesters',
+    defaultMessage: 'Beta Testers',
+    description: 'Option for showing only beta testers in beta tester filter',
+  },
+  nonBetaTesters: {
+    id: 'instruct.enrollments.nonBetaTesters',
+    defaultMessage: 'Non-Beta Testers',
+    description: 'Option for showing only non-beta testers in beta tester filter',
+  },
 });
 
 export default messages;
