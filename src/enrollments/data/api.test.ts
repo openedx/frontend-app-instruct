@@ -98,9 +98,9 @@ describe('enrollments api', () => {
 
     it('handles different params parameters', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const customparams: EnrollmentsParams = { page: 3, pageSize: 50, emailOrUsername: 'student', isBetaTester: '' };
+      const customParams: EnrollmentsParams = { page: 3, pageSize: 50, emailOrUsername: 'student', isBetaTester: '' };
 
-      await getEnrollments(courseId, customparams);
+      await getEnrollments(courseId, customParams);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith(
         'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments?page=4&page_size=50&search=student'

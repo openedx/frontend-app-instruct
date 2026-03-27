@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EnrollmentsList from './EnrollmentsList';
 import { useEnrollments } from '../data/apiHook';
@@ -176,11 +176,13 @@ describe('EnrollmentsList', () => {
       await user.type(usernameFilter, 'test');
 
       // Filter change should reset page to 0
-      expect(useEnrollments).toHaveBeenCalledWith('test-course-id', {
-        page: 0,
-        pageSize: 25,
-        emailOrUsername: '',
-        isBetaTester: '',
+      await waitFor(() => {
+        expect(useEnrollments).toHaveBeenCalledWith('test-course-id', {
+          page: 0,
+          pageSize: 25,
+          emailOrUsername: 'test',
+          isBetaTester: '',
+        });
       });
     });
   });

@@ -12,9 +12,9 @@ import { useDebouncedFilter } from '@src/hooks/useDebouncedFilter';
 const ENROLLMENTS_PAGE_SIZE = 25;
 
 const betaTesterOptions = [
-  { value: '', label: 'allEnrollees' },
-  { value: 'true', label: 'betaTesters' },
-  { value: 'false', label: 'nonBetaTesters' },
+  { value: '', label: messages.allEnrollees },
+  { value: 'true', label: messages.betaTesters },
+  { value: 'false', label: messages.nonBetaTesters },
 ];
 
 interface EnrollmentsListProps {
@@ -45,13 +45,9 @@ const UsernameFilter = ({ column: { filterValue, setFilter } }: { column: { filt
 
 const BetaTesterFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
   const intl = useIntl();
-  const { inputValue, handleChange } = useDebouncedFilter({
-    filterValue,
-    setFilter,
-  });
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    handleChange(e.target.value);
+    setFilter(e.target.value);
   };
 
   return (
@@ -59,15 +55,14 @@ const BetaTesterFilter = ({ column: { filterValue, setFilter } }: { column: { fi
       as="select"
       className="mb-0"
       name="isBetaTester"
-      placeholder={intl.formatMessage(messages.betaTesterFilterPlaceholder)}
       size="md"
-      value={inputValue}
+      value={filterValue}
       onChange={handleSelectChange}
     >
       {
         betaTesterOptions.map((option) => (
           <option key={option.value} value={option.value}>
-            {intl.formatMessage(messages[option.label])}
+            {intl.formatMessage(option.label)}
           </option>
         ))
       }

@@ -95,10 +95,10 @@ describe('enrollments api hooks', () => {
     });
 
     it('handles different params parameters', async () => {
-      const customparams: EnrollmentsParams = { page: 3, pageSize: 50, emailOrUsername: 'student', isBetaTester: '' };
+      const customParams: EnrollmentsParams = { page: 3, pageSize: 50, emailOrUsername: 'student', isBetaTester: '' };
       mockGetEnrollments.mockResolvedValue(mockEnrollmentsData);
 
-      const { result } = renderHook(() => useEnrollments(courseId, customparams), {
+      const { result } = renderHook(() => useEnrollments(courseId, customParams), {
         wrapper: createWrapper(),
       });
 
@@ -106,7 +106,7 @@ describe('enrollments api hooks', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(mockGetEnrollments).toHaveBeenCalledWith(courseId, customparams);
+      expect(mockGetEnrollments).toHaveBeenCalledWith(courseId, customParams);
       expect(result.current.data).toBe(mockEnrollmentsData);
     });
 

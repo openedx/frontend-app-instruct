@@ -81,11 +81,6 @@ const messages = defineMessages({
     defaultMessage: 'Search enrollments',
     description: 'Placeholder for the search input in enrollments list',
   },
-  betaTesterFilterPlaceholder: {
-    id: 'instruct.enrollments.betaTesterFilterPlaceholder',
-    defaultMessage: 'Filter by Beta Tester status',
-    description: 'Placeholder for the beta tester filter in enrollments list',
-  },
   noEnrollments: {
     id: 'instruct.enrollments.noEnrollments',
     defaultMessage: 'No enrollments found',
