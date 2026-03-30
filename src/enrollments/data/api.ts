@@ -1,19 +1,27 @@
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '../../data/api';
-import { EnrollmentStatusResponse, Learner } from '../types';
+import { EnrollmentsParams, EnrollmentStatusResponse, Learner } from '../types';
 import { DataList } from '@src/types';
-
-export interface PaginationParams {
-  page: number,
-  pageSize: number,
-}
 
 export const getEnrollments = async (
   courseId: string,
-  pagination: PaginationParams
+  params: EnrollmentsParams
 ): Promise<DataList<Learner>> => {
+  const queryParams = new URLSearchParams({
+    page: (params.page + 1).toString(),
+    page_size: params.pageSize.toString(),
+  });
+
+  if (params.emailOrUsername) {
+    queryParams.append('search', params.emailOrUsername);
+  }
+
+  if (params.isBetaTester) {
+    queryParams.append('is_beta_tester', params.isBetaTester);
+  }
+
   const { data } = await getAuthenticatedHttpClient().get(
-    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments?page=${pagination.page + 1}&page_size=${pagination.pageSize}`
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments?${queryParams.toString()}`
   );
   return camelCaseObject(data);
 };

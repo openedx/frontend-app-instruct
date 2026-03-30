@@ -1,3 +1,5 @@
+import { PaginationParams } from '@src/types';
+
 export interface EnrollmentStatusResponse {
   enrollmentStatus: string,
 }
@@ -8,4 +10,9 @@ export interface Learner {
   email: string,
   mode: string,
   isBetaTester: boolean,
-};
+}
+
+export interface EnrollmentsParams extends PaginationParams {
+  emailOrUsername: string,
+  isBetaTester: string,
+}

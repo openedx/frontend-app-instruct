@@ -4,7 +4,7 @@ export interface TableCellValue<T> {
   },
 }
 
-export interface PaginationQueryKeys {
+export interface PaginationParams {
   page: number,
   pageSize: number,
 }

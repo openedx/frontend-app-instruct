@@ -1,7 +1,8 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEnrollments, useEnrollmentByUserId } from './apiHook';
-import { getEnrollments, getEnrollmentStatus, PaginationParams } from './api';
+import { getEnrollments, getEnrollmentStatus } from './api';
+import { EnrollmentsParams } from '../types';
 
 jest.mock('./api');
 
@@ -56,12 +57,12 @@ describe('enrollments api hooks', () => {
 
   describe('useEnrollments', () => {
     const courseId = 'course-v1:edX+Test+2023';
-    const pagination: PaginationParams = { page: 1, pageSize: 20 };
+    const params: EnrollmentsParams = { page: 1, pageSize: 20, emailOrUsername: '', isBetaTester: '' };
 
     it('fetches enrollments successfully', async () => {
       mockGetEnrollments.mockResolvedValue(mockEnrollmentsData);
 
-      const { result } = renderHook(() => useEnrollments(courseId, pagination), {
+      const { result } = renderHook(() => useEnrollments(courseId, params), {
         wrapper: createWrapper(),
       });
 
@@ -71,7 +72,7 @@ describe('enrollments api hooks', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(mockGetEnrollments).toHaveBeenCalledWith(courseId, pagination);
+      expect(mockGetEnrollments).toHaveBeenCalledWith(courseId, params);
       expect(result.current.data).toBe(mockEnrollmentsData);
       expect(result.current.error).toBe(null);
     });
@@ -80,7 +81,7 @@ describe('enrollments api hooks', () => {
       const mockError = new Error('Network error');
       mockGetEnrollments.mockRejectedValue(mockError);
 
-      const { result } = renderHook(() => useEnrollments(courseId, pagination), {
+      const { result } = renderHook(() => useEnrollments(courseId, params), {
         wrapper: createWrapper(),
       });
 
@@ -88,16 +89,16 @@ describe('enrollments api hooks', () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(mockGetEnrollments).toHaveBeenCalledWith(courseId, pagination);
+      expect(mockGetEnrollments).toHaveBeenCalledWith(courseId, params);
       expect(result.current.error).toBe(mockError);
       expect(result.current.data).toBe(undefined);
     });
 
-    it('handles different pagination parameters', async () => {
-      const customPagination: PaginationParams = { page: 3, pageSize: 50 };
+    it('handles different params parameters', async () => {
+      const customParams: EnrollmentsParams = { page: 3, pageSize: 50, emailOrUsername: 'student', isBetaTester: '' };
       mockGetEnrollments.mockResolvedValue(mockEnrollmentsData);
 
-      const { result } = renderHook(() => useEnrollments(courseId, customPagination), {
+      const { result } = renderHook(() => useEnrollments(courseId, customParams), {
         wrapper: createWrapper(),
       });
 
@@ -105,7 +106,7 @@ describe('enrollments api hooks', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(mockGetEnrollments).toHaveBeenCalledWith(courseId, customPagination);
+      expect(mockGetEnrollments).toHaveBeenCalledWith(courseId, customParams);
       expect(result.current.data).toBe(mockEnrollmentsData);
     });
 
@@ -113,7 +114,7 @@ describe('enrollments api hooks', () => {
       const emptyResults = { count: 0, results: [], numPages: 0 };
       mockGetEnrollments.mockResolvedValue(emptyResults);
 
-      const { result } = renderHook(() => useEnrollments(courseId, pagination), {
+      const { result } = renderHook(() => useEnrollments(courseId, params), {
         wrapper: createWrapper(),
       });
 
@@ -136,7 +137,7 @@ describe('enrollments api hooks', () => {
       };
       mockGetEnrollments.mockRejectedValue(httpError);
 
-      const { result } = renderHook(() => useEnrollments(courseId, pagination), {
+      const { result } = renderHook(() => useEnrollments(courseId, params), {
         wrapper: createWrapper(),
       });
 

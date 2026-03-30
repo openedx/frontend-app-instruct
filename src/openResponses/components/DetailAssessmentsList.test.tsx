@@ -1,4 +1,5 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import DetailAssessmentsList from './DetailAssessmentsList';
 import { useDetailAssessmentsData } from '../data/apiHook';
 import { renderWithIntl } from '../../testUtils';
@@ -65,7 +66,8 @@ describe('DetailAssessmentsList', () => {
     });
     renderWithIntl(<DetailAssessmentsList />);
     const nextButton = screen.getByLabelText(/next/i);
-    fireEvent.click(nextButton);
+    const user = userEvent.setup();
+    await user.click(nextButton);
     await waitFor(() => {
       expect(useDetailAssessmentsData).toHaveBeenCalled();
     });

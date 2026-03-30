@@ -1,7 +1,7 @@
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '../../data/api';
-import { getEnrollments, getEnrollmentStatus, PaginationParams } from './api';
-import { EnrollmentStatusResponse, Learner } from '../types';
+import { getEnrollments, getEnrollmentStatus } from './api';
+import { EnrollmentsParams, EnrollmentStatusResponse, Learner } from '../types';
 import { DataList } from '@src/types';
 
 jest.mock('@openedx/frontend-base', () => ({
@@ -76,7 +76,7 @@ describe('enrollments api', () => {
       ],
     };
 
-    const pagination: PaginationParams = { page: 1, pageSize: 20 };
+    const params: EnrollmentsParams = { page: 1, pageSize: 20, emailOrUsername: '', isBetaTester: '' };
 
     beforeEach(() => {
       mockHttpClient.get.mockResolvedValue({ data: mockEnrollmentsData });
@@ -85,7 +85,7 @@ describe('enrollments api', () => {
 
     it('fetches enrollments successfully', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const result = await getEnrollments(courseId, pagination);
+      const result = await getEnrollments(courseId, params);
 
       expect(mockGetApiBaseUrl).toHaveBeenCalled();
       expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
@@ -96,21 +96,21 @@ describe('enrollments api', () => {
       expect(result).toBe(mockCamelCaseData);
     });
 
-    it('handles different pagination parameters', async () => {
+    it('handles different params parameters', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const customPagination: PaginationParams = { page: 3, pageSize: 50 };
+      const customParams: EnrollmentsParams = { page: 3, pageSize: 50, emailOrUsername: 'student', isBetaTester: '' };
 
-      await getEnrollments(courseId, customPagination);
+      await getEnrollments(courseId, customParams);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments?page=4&page_size=50'
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments?page=4&page_size=50&search=student'
       );
     });
 
     it('handles special characters in course ID', async () => {
       const courseId = 'course-v1:edX+Test+Course+2023';
 
-      await getEnrollments(courseId, pagination);
+      await getEnrollments(courseId, params);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith(
         'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+Course+2023/enrollments?page=2&page_size=20'
@@ -122,7 +122,7 @@ describe('enrollments api', () => {
       const error = new Error('Network error');
       mockHttpClient.get.mockRejectedValue(error);
 
-      await expect(getEnrollments(courseId, pagination)).rejects.toThrow('Network error');
+      await expect(getEnrollments(courseId, params)).rejects.toThrow('Network error');
       expect(mockCamelCaseObject).not.toHaveBeenCalled();
     });
 
@@ -136,7 +136,7 @@ describe('enrollments api', () => {
       };
       mockHttpClient.get.mockRejectedValue(error);
 
-      await expect(getEnrollments(courseId, pagination)).rejects.toEqual(error);
+      await expect(getEnrollments(courseId, params)).rejects.toEqual(error);
     });
   });
 
