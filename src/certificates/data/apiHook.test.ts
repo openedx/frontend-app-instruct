@@ -9,7 +9,7 @@ import {
   useRemoveException,
   useRemoveInvalidation,
   useToggleCertificateGeneration,
-} from '../../data/apiHook';
+} from './apiHook';
 import {
   getIssuedCertificates,
   getInstructorTasks,
@@ -18,10 +18,10 @@ import {
   removeException,
   removeInvalidation,
   toggleCertificateGeneration,
-} from '../../data/api';
-import { CertificateFilter, CertificateStatus, SpecialCase } from '../../types';
+} from './api';
+import { CertificateFilter, CertificateStatus, SpecialCase } from '../types';
 
-jest.mock('../../data/api');
+jest.mock('./api');
 
 const mockGetIssuedCertificates = getIssuedCertificates as jest.MockedFunction<typeof getIssuedCertificates>;
 const mockGetInstructorTasks = getInstructorTasks as jest.MockedFunction<typeof getInstructorTasks>;

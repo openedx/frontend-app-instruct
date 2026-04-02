@@ -48,7 +48,6 @@ export const useGrantBulkExceptions = (courseId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
-        exact: false,
       });
     },
   });
@@ -64,7 +63,6 @@ export const useInvalidateCertificate = (courseId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
-        exact: false,
       });
     },
   });
@@ -80,7 +78,6 @@ export const useRemoveException = (courseId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
-        exact: false,
       });
     },
   });
@@ -96,7 +93,6 @@ export const useRemoveInvalidation = (courseId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
-        exact: false,
       });
     },
   });
@@ -112,7 +108,6 @@ export const useToggleCertificateGeneration = (courseId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
-        exact: false,
       });
     },
   });

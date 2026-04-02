@@ -41,6 +41,7 @@
 .certificates-card {
   position: relative;
   overflow: visible;
+  overflow-x: hidden;
 
   .card-body,
   .pgn__tabs,

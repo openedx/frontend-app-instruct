@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import CertificatesToolbar from '../../components/CertificatesToolbar';
+import CertificatesToolbar from './CertificatesToolbar';
 import { renderWithIntl } from '@src/testUtils';
-import { CertificateFilter } from '../../types';
-import messages from '../../messages';
+import { CertificateFilter } from '../types';
+import messages from '../messages';
 
 describe('CertificatesToolbar', () => {
   const mockOnSearchChange = jest.fn();

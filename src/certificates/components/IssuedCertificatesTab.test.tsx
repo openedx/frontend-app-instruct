@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import IssuedCertificatesTab from '../../components/IssuedCertificatesTab';
+import IssuedCertificatesTab from './IssuedCertificatesTab';
 import { renderWithIntl } from '@src/testUtils';
-import { CertificateData, CertificateFilter, CertificateStatus, SpecialCase } from '../../types';
+import { CertificateData, CertificateFilter, CertificateStatus, SpecialCase } from '../types';
 
 describe('IssuedCertificatesTab', () => {
   const mockOnSearchChange = jest.fn();

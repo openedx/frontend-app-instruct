@@ -2,6 +2,8 @@ import { useState, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, Container, Tab, Tabs } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
+import { useAlert } from '@src/providers/AlertProvider';
+import { filterCertificates, parseLearnersCount } from '@src/utils/formatters';
 import CertificatesPageHeader from './components/CertificatesPageHeader';
 import IssuedCertificatesTab from './components/IssuedCertificatesTab';
 import GenerationHistoryTable from './components/GenerationHistoryTable';
@@ -18,18 +20,15 @@ import {
   useRemoveInvalidation,
   useToggleCertificateGeneration,
 } from './data/apiHook';
-import { CertificateFilter } from './types';
-import { useModalState } from './hooks/useModalState';
-import { useMutationCallbacks } from './hooks/useMutationCallbacks';
-import { filterCertificates } from './utils/filterUtils';
-import { parseLearnersCount } from './utils/errorHandling';
-import { CERTIFICATES_PAGE_SIZE, TAB_KEYS } from './constants';
+import { CertificateFilter, CertificateStatus, SpecialCase } from './types';
+import { CERTIFICATES_PAGE_SIZE, TAB_KEYS, MODAL_TITLES, ALERT_VARIANTS } from './constants';
+import { getErrorMessage } from './utils/errorHandling';
 import messages from './messages';
 
 const CertificatesPage = () => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const { createCallbacks } = useMutationCallbacks();
+  const { showToast, showModal } = useAlert();
 
   const [filter, setFilter] = useState<CertificateFilter>(CertificateFilter.ALL_LEARNERS);
   const [search, setSearch] = useState('');
@@ -40,7 +39,10 @@ const CertificatesPage = () => {
   const [selectedEmail, setSelectedEmail] = useState('');
   const [isCertificateGenerationEnabled, setIsCertificateGenerationEnabled] = useState(true);
 
-  const [modals, modalActions] = useModalState();
+  const [isGrantExceptionsOpen, setIsGrantExceptionsOpen] = useState(false);
+  const [isInvalidateCertificateOpen, setIsInvalidateCertificateOpen] = useState(false);
+  const [isRemoveInvalidationOpen, setIsRemoveInvalidationOpen] = useState(false);
+  const [isDisableCertificatesOpen, setIsDisableCertificatesOpen] = useState(false);
 
   const {
     data: tasksData,
@@ -56,79 +58,139 @@ const CertificatesPage = () => {
   const { mutate: removeInval, isPending: isRemovingInvalidation } = useRemoveInvalidation(courseId);
   const { mutate: toggleGeneration, isPending: isTogglingGeneration } = useToggleCertificateGeneration(courseId);
 
+  const matchesFilter = useCallback((item: typeof dummyCertificateData[0]) => {
+    switch (filter) {
+      case CertificateFilter.RECEIVED:
+        return item.certificateStatus === CertificateStatus.RECEIVED;
+      case CertificateFilter.NOT_RECEIVED:
+        return item.certificateStatus === CertificateStatus.NOT_RECEIVED;
+      case CertificateFilter.AUDIT_PASSING:
+        return item.certificateStatus === CertificateStatus.AUDIT_PASSING;
+      case CertificateFilter.AUDIT_NOT_PASSING:
+        return item.certificateStatus === CertificateStatus.AUDIT_NOT_PASSING;
+      case CertificateFilter.ERROR_STATE:
+        return item.certificateStatus === CertificateStatus.ERROR_STATE;
+      case CertificateFilter.GRANTED_EXCEPTIONS:
+        return item.specialCase === SpecialCase.EXCEPTION;
+      case CertificateFilter.INVALIDATED:
+        return item.specialCase === SpecialCase.INVALIDATION;
+      case CertificateFilter.ALL_LEARNERS:
+      default:
+        return true;
+    }
+  }, [filter]);
+
   const filteredData = useMemo(
-    () => filterCertificates(dummyCertificateData, filter, search),
-    [filter, search],
+    () => filterCertificates(dummyCertificateData, matchesFilter, search),
+    [matchesFilter, search],
   );
 
   const handleGrantExceptions = useCallback((learners: string, notes: string) => {
     const count = parseLearnersCount(learners);
     grantExceptions(
       { learners, notes },
-      createCallbacks({
-        onSuccess: () => modalActions.closeGrantExceptions(),
-        successMessage: intl.formatMessage(messages.exceptionsGrantedToast, { count }),
-        errorMessage: intl.formatMessage(messages.errorGrantException),
-      }),
+      {
+        onSuccess: () => {
+          setIsGrantExceptionsOpen(false);
+          showToast(intl.formatMessage(messages.exceptionsGrantedToast, { count }));
+        },
+        onError: (error) => {
+          showModal({
+            title: MODAL_TITLES.ERROR,
+            message: getErrorMessage(error, intl.formatMessage(messages.errorGrantException)),
+            variant: ALERT_VARIANTS.DANGER,
+          });
+        },
+      },
     );
-  }, [grantExceptions, createCallbacks, modalActions, intl]);
+  }, [grantExceptions, showToast, showModal, intl]);
 
   const handleInvalidateCertificate = useCallback((learners: string, notes: string) => {
     const count = parseLearnersCount(learners);
     invalidateCert(
       { learners, notes },
-      createCallbacks({
-        onSuccess: () => modalActions.closeInvalidateCertificate(),
-        successMessage: intl.formatMessage(messages.certificatesInvalidatedToast, { count }),
-        errorMessage: intl.formatMessage(messages.errorInvalidateCertificate),
-      }),
+      {
+        onSuccess: () => {
+          setIsInvalidateCertificateOpen(false);
+          showToast(intl.formatMessage(messages.certificatesInvalidatedToast, { count }));
+        },
+        onError: (error) => {
+          showModal({
+            title: MODAL_TITLES.ERROR,
+            message: getErrorMessage(error, intl.formatMessage(messages.errorInvalidateCertificate)),
+            variant: ALERT_VARIANTS.DANGER,
+          });
+        },
+      },
     );
-  }, [invalidateCert, createCallbacks, modalActions, intl]);
+  }, [invalidateCert, showToast, showModal, intl]);
 
   const handleRemoveException = useCallback((username: string, email: string) => {
     removeExcept(
       { username },
-      createCallbacks({
-        successMessage: intl.formatMessage(messages.exceptionRemovedToast, { email }),
-        errorMessage: intl.formatMessage(messages.errorRemoveException),
-      }),
+      {
+        onSuccess: () => {
+          showToast(intl.formatMessage(messages.exceptionRemovedToast, { email }));
+        },
+        onError: (error) => {
+          showModal({
+            title: MODAL_TITLES.ERROR,
+            message: getErrorMessage(error, intl.formatMessage(messages.errorRemoveException)),
+            variant: ALERT_VARIANTS.DANGER,
+          });
+        },
+      },
     );
-  }, [removeExcept, createCallbacks, intl]);
+  }, [removeExcept, showToast, showModal, intl]);
 
   const handleRemoveInvalidationClick = useCallback((username: string, email: string) => {
     setSelectedUsername(username);
     setSelectedEmail(email);
-    modalActions.openRemoveInvalidation();
-  }, [modalActions]);
+    setIsRemoveInvalidationOpen(true);
+  }, []);
 
   const handleRemoveInvalidationConfirm = useCallback(() => {
     removeInval(
       { username: selectedUsername },
-      createCallbacks({
+      {
         onSuccess: () => {
-          modalActions.closeRemoveInvalidation();
+          setIsRemoveInvalidationOpen(false);
           setSelectedUsername('');
           setSelectedEmail('');
+          showToast(intl.formatMessage(messages.invalidationRemovedToast, { email: selectedEmail }));
         },
-        successMessage: intl.formatMessage(messages.invalidationRemovedToast, { email: selectedEmail }),
-        errorMessage: intl.formatMessage(messages.errorRemoveInvalidation),
-      }),
+        onError: (error) => {
+          showModal({
+            title: MODAL_TITLES.ERROR,
+            message: getErrorMessage(error, intl.formatMessage(messages.errorRemoveInvalidation)),
+            variant: ALERT_VARIANTS.DANGER,
+          });
+        },
+      },
     );
-  }, [removeInval, selectedUsername, selectedEmail, createCallbacks, modalActions, intl]);
+  }, [removeInval, selectedUsername, selectedEmail, showToast, showModal, intl]);
 
   const handleToggleCertificateGeneration = useCallback(() => {
     const newState = !isCertificateGenerationEnabled;
-    toggleGeneration(newState, createCallbacks({
+    toggleGeneration(newState, {
       onSuccess: () => {
         setIsCertificateGenerationEnabled(newState);
-        modalActions.closeDisableCertificates();
+        setIsDisableCertificatesOpen(false);
+        showToast(
+          newState
+            ? intl.formatMessage(messages.successEnableCertificates)
+            : intl.formatMessage(messages.successDisableCertificates),
+        );
       },
-      successMessage: newState
-        ? intl.formatMessage(messages.successEnableCertificates)
-        : intl.formatMessage(messages.successDisableCertificates),
-      errorMessage: intl.formatMessage(messages.errorToggleCertificateGeneration),
-    }));
-  }, [isCertificateGenerationEnabled, toggleGeneration, createCallbacks, modalActions, intl]);
+      onError: (error) => {
+        showModal({
+          title: MODAL_TITLES.ERROR,
+          message: getErrorMessage(error, intl.formatMessage(messages.errorToggleCertificateGeneration)),
+          variant: ALERT_VARIANTS.DANGER,
+        });
+      },
+    });
+  }, [isCertificateGenerationEnabled, toggleGeneration, showToast, showModal, intl]);
 
   const handleRegenerateCertificates = useCallback(() => {
     // TODO: Implement when API is ready
@@ -137,9 +199,9 @@ const CertificatesPage = () => {
   return (
     <Container className="mt-4.5 mb-4" fluid>
       <CertificatesPageHeader
-        onGrantExceptions={modalActions.openGrantExceptions}
-        onInvalidateCertificate={modalActions.openInvalidateCertificate}
-        onDisableCertificates={modalActions.openDisableCertificates}
+        onGrantExceptions={() => setIsGrantExceptionsOpen(true)}
+        onInvalidateCertificate={() => setIsInvalidateCertificateOpen(true)}
+        onDisableCertificates={() => setIsDisableCertificatesOpen(true)}
       />
 
       <Card variant="muted" className="pt-3 pt-md-4 pb-4 pb-md-6 certificates-card">
@@ -182,22 +244,22 @@ const CertificatesPage = () => {
       </Card>
 
       <GrantExceptionsModal
-        isOpen={modals.grantExceptions}
-        onClose={modalActions.closeGrantExceptions}
+        isOpen={isGrantExceptionsOpen}
+        onClose={() => setIsGrantExceptionsOpen(false)}
         onSubmit={handleGrantExceptions}
         isSubmitting={isGrantingExceptions}
       />
       <InvalidateCertificateModal
-        isOpen={modals.invalidateCertificate}
-        onClose={modalActions.closeInvalidateCertificate}
+        isOpen={isInvalidateCertificateOpen}
+        onClose={() => setIsInvalidateCertificateOpen(false)}
         onSubmit={handleInvalidateCertificate}
         isSubmitting={isInvalidating}
       />
       <RemoveInvalidationModal
-        isOpen={modals.removeInvalidation}
+        isOpen={isRemoveInvalidationOpen}
         email={selectedEmail}
         onClose={() => {
-          modalActions.closeRemoveInvalidation();
+          setIsRemoveInvalidationOpen(false);
           setSelectedUsername('');
           setSelectedEmail('');
         }}
@@ -205,9 +267,9 @@ const CertificatesPage = () => {
         isSubmitting={isRemovingInvalidation}
       />
       <DisableCertificatesModal
-        isOpen={modals.disableCertificates}
+        isOpen={isDisableCertificatesOpen}
         isEnabled={isCertificateGenerationEnabled}
-        onClose={modalActions.closeDisableCertificates}
+        onClose={() => setIsDisableCertificatesOpen(false)}
         onConfirm={handleToggleCertificateGeneration}
         isSubmitting={isTogglingGeneration}
       />

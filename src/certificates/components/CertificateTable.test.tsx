@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
-import CertificateTable from '../../components/CertificateTable';
+import CertificateTable from './CertificateTable';
 import { renderWithIntl } from '@src/testUtils';
-import { CertificateData, CertificateFilter, CertificateStatus, SpecialCase } from '../../types';
-import messages from '../../messages';
+import { CertificateData, CertificateFilter, CertificateStatus, SpecialCase } from '../types';
+import messages from '../messages';
 
 describe('CertificateTable', () => {
   const mockOnRemoveException = jest.fn();

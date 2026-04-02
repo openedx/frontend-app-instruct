@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@openedx/frontend-base';
-import DisableCertificatesModal from '../../components/DisableCertificatesModal';
+import DisableCertificatesModal from './DisableCertificatesModal';
 import { renderWithIntl } from '@src/testUtils';
-import messages from '../../messages';
+import messages from '../messages';
 
 describe('DisableCertificatesModal', () => {
   const mockOnClose = jest.fn();

@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
-import GenerationHistoryTable from '../../components/GenerationHistoryTable';
+import GenerationHistoryTable from './GenerationHistoryTable';
 import { renderWithIntl } from '@src/testUtils';
-import { InstructorTask } from '../../types';
-import messages from '../../messages';
+import { InstructorTask } from '../types';
+import messages from '../messages';
 
 describe('GenerationHistoryTable', () => {
   const mockOnPageChange = jest.fn();

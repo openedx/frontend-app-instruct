@@ -1,5 +1,5 @@
-import { matchesFilter, matchesSearch, filterCertificates } from '../../utils/filterUtils';
-import { CertificateData, CertificateFilter, CertificateStatus, SpecialCase } from '../../types';
+import { matchesFilter, matchesSearch, filterCertificates } from './filterUtils';
+import { CertificateData, CertificateFilter, CertificateStatus, SpecialCase } from '../types';
 
 describe('filterUtils', () => {
   const mockCertificate: CertificateData = {

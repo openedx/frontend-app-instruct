@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import CertificatesPage from '../CertificatesPage';
+import CertificatesPage from './CertificatesPage';
 import { renderWithAlertAndIntl } from '@src/testUtils';
 import {
   useGrantBulkExceptions,
@@ -9,16 +9,16 @@ import {
   useRemoveException,
   useRemoveInvalidation,
   useToggleCertificateGeneration,
-} from '../data/apiHook';
-import messages from '../messages';
+} from './data/apiHook';
+import messages from './messages';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ courseId: 'course-v1:edX+Test+2024' }),
 }));
 
-jest.mock('../data/apiHook');
-jest.mock('../data/dummyData', () => ({
+jest.mock('./data/apiHook');
+jest.mock('./data/dummyData', () => ({
   dummyCertificateData: [
     {
       username: 'user1',

@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@openedx/frontend-base';
-import RemoveInvalidationModal from '../../components/RemoveInvalidationModal';
+import RemoveInvalidationModal from './RemoveInvalidationModal';
 import { renderWithIntl } from '@src/testUtils';
-import messages from '../../messages';
+import messages from '../messages';
 
 describe('RemoveInvalidationModal', () => {
   const mockOnClose = jest.fn();
