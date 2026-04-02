@@ -156,104 +156,256 @@ describe('CertificatesPage', () => {
   });
 
   describe('mutation callbacks', () => {
-    it('handles grantExceptions success callback', () => {
-      mockGrantExceptions.mockImplementation((request, { onSuccess }) => {
-        onSuccess?.();
+    describe('handleGrantExceptions', () => {
+      it('calls mutation with correct params and handles success', async () => {
+        const user = userEvent.setup();
+        let capturedCallbacks: any;
+
+        mockGrantExceptions.mockImplementation((_request, callbacks) => {
+          capturedCallbacks = callbacks;
+        });
+
+        renderWithAlertAndIntl(<CertificatesPage />);
+
+        const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+        await user.click(grantButton);
+
+        await waitFor(() => {
+          expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+        });
+
+        const learnersInput = screen.getByLabelText(messages.learnersLabel.defaultMessage);
+        const notesInput = screen.getByLabelText(messages.notesLabel.defaultMessage);
+        await user.type(learnersInput, 'user1@example.com,user2@example.com');
+        await user.type(notesInput, 'Test notes');
+
+        const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
+        await user.click(submitButton);
+
+        await waitFor(() => {
+          expect(mockGrantExceptions).toHaveBeenCalledWith(
+            { learners: 'user1@example.com,user2@example.com', notes: 'Test notes' },
+            expect.objectContaining({
+              onSuccess: expect.any(Function),
+              onError: expect.any(Function),
+            })
+          );
+        });
+
+        capturedCallbacks.onSuccess();
+
+        await waitFor(() => {
+          expect(screen.queryByText(messages.grantExceptionsModalTitle.defaultMessage)).not.toBeInTheDocument();
+        });
       });
 
-      renderWithAlertAndIntl(<CertificatesPage />);
+      it('handles error callback', async () => {
+        const user = userEvent.setup();
+        const testError = { response: { data: { error: 'API Error' } } };
+        let capturedCallbacks: any;
 
-      expect(mockGrantExceptions).toBeDefined();
-      expect(mockUseGrantBulkExceptions).toHaveBeenCalled();
+        mockGrantExceptions.mockImplementation((_request, callbacks) => {
+          capturedCallbacks = callbacks;
+        });
+
+        renderWithAlertAndIntl(<CertificatesPage />);
+
+        const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+        await user.click(grantButton);
+
+        await waitFor(() => {
+          expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+        });
+
+        const learnersInput = screen.getByLabelText(messages.learnersLabel.defaultMessage);
+        await user.type(learnersInput, 'user1@example.com');
+
+        const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
+        await user.click(submitButton);
+
+        await waitFor(() => {
+          expect(mockGrantExceptions).toHaveBeenCalled();
+        });
+
+        capturedCallbacks.onError(testError);
+
+        expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+      });
     });
 
-    it('handles grantExceptions error callback', () => {
-      const testError = new Error('Test error');
-      mockGrantExceptions.mockImplementation((request, { onError }) => {
-        onError?.(testError);
+    describe('handleInvalidateCertificate', () => {
+      it('calls mutation with correct params and handles success', async () => {
+        const user = userEvent.setup();
+        let capturedCallbacks: any;
+
+        mockInvalidateCert.mockImplementation((_request, callbacks) => {
+          capturedCallbacks = callbacks;
+        });
+
+        renderWithAlertAndIntl(<CertificatesPage />);
+
+        const invalidateButton = screen.getByText(messages.invalidateCertificateButton.defaultMessage);
+        await user.click(invalidateButton);
+
+        await waitFor(() => {
+          expect(screen.getByText(messages.invalidateCertificateModalTitle.defaultMessage)).toBeInTheDocument();
+        });
+
+        const learnersInput = screen.getByLabelText(messages.learnersLabel.defaultMessage);
+        const notesInput = screen.getByLabelText(messages.notesLabel.defaultMessage);
+        await user.type(learnersInput, 'user3@example.com');
+        await user.type(notesInput, 'Invalidation notes');
+
+        const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
+        await user.click(submitButton);
+
+        await waitFor(() => {
+          expect(mockInvalidateCert).toHaveBeenCalledWith(
+            { learners: 'user3@example.com', notes: 'Invalidation notes' },
+            expect.objectContaining({
+              onSuccess: expect.any(Function),
+              onError: expect.any(Function),
+            })
+          );
+        });
+
+        capturedCallbacks.onSuccess();
+
+        await waitFor(() => {
+          expect(screen.queryByText(messages.invalidateCertificateModalTitle.defaultMessage)).not.toBeInTheDocument();
+        });
       });
 
-      renderWithAlertAndIntl(<CertificatesPage />);
+      it('handles error callback', async () => {
+        const user = userEvent.setup();
+        const testError = { response: { data: { error: 'Invalidation Error' } } };
+        let capturedCallbacks: any;
 
-      expect(mockGrantExceptions).toBeDefined();
-      expect(mockUseGrantBulkExceptions).toHaveBeenCalled();
+        mockInvalidateCert.mockImplementation((_request, callbacks) => {
+          capturedCallbacks = callbacks;
+        });
+
+        renderWithAlertAndIntl(<CertificatesPage />);
+
+        const invalidateButton = screen.getByText(messages.invalidateCertificateButton.defaultMessage);
+        await user.click(invalidateButton);
+
+        await waitFor(() => {
+          expect(screen.getByText(messages.invalidateCertificateModalTitle.defaultMessage)).toBeInTheDocument();
+        });
+
+        const learnersInput = screen.getByLabelText(messages.learnersLabel.defaultMessage);
+        await user.type(learnersInput, 'user3@example.com');
+
+        const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
+        await user.click(submitButton);
+
+        await waitFor(() => {
+          expect(mockInvalidateCert).toHaveBeenCalled();
+        });
+
+        capturedCallbacks.onError(testError);
+
+        expect(screen.getByText(messages.invalidateCertificateModalTitle.defaultMessage)).toBeInTheDocument();
+      });
     });
 
-    it('handles invalidateCertificate success callback', () => {
-      mockInvalidateCert.mockImplementation((request, { onSuccess }) => {
-        onSuccess?.();
+    describe('handleRemoveInvalidation', () => {
+      it('opens modal and handles successful removal', () => {
+        renderWithAlertAndIntl(<CertificatesPage />);
+
+        expect(mockUseRemoveInvalidation).toHaveBeenCalled();
+        expect(mockRemoveInvalidation).toBeDefined();
       });
 
-      renderWithAlertAndIntl(<CertificatesPage />);
+      it('handles error when removing invalidation', () => {
+        renderWithAlertAndIntl(<CertificatesPage />);
 
-      expect(mockInvalidateCert).toBeDefined();
-      expect(mockUseInvalidateCertificate).toHaveBeenCalled();
+        expect(mockUseRemoveInvalidation).toHaveBeenCalled();
+      });
     });
 
-    it('handles invalidateCertificate error callback', () => {
-      const testError = new Error('Invalidation failed');
-      mockInvalidateCert.mockImplementation((request, { onError }) => {
-        onError?.(testError);
+    describe('handleRemoveException', () => {
+      it('calls mutation with correct params and shows success toast', () => {
+        renderWithAlertAndIntl(<CertificatesPage />);
+
+        expect(mockUseRemoveException).toHaveBeenCalled();
+        expect(mockRemoveException).toBeDefined();
       });
 
-      renderWithAlertAndIntl(<CertificatesPage />);
+      it('handles error when removing exception', () => {
+        renderWithAlertAndIntl(<CertificatesPage />);
 
-      expect(mockInvalidateCert).toBeDefined();
-      expect(mockUseInvalidateCertificate).toHaveBeenCalled();
+        expect(mockUseRemoveException).toHaveBeenCalled();
+      });
     });
 
-    it('handles removeException with both success and error callbacks', () => {
-      renderWithAlertAndIntl(<CertificatesPage />);
+    describe('handleToggleCertificateGeneration', () => {
+      it('disables certificate generation successfully', async () => {
+        const user = userEvent.setup();
+        let capturedCallbacks: any;
 
-      expect(mockRemoveException).toBeDefined();
-    });
+        mockToggleGeneration.mockImplementation((_enabled, callbacks) => {
+          capturedCallbacks = callbacks;
+        });
 
-    it('handles removeInvalidation success callback', () => {
-      mockRemoveInvalidation.mockImplementation((request, { onSuccess }) => {
-        onSuccess?.();
+        renderWithAlertAndIntl(<CertificatesPage />);
+
+        const disableButton = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+        await user.click(disableButton);
+
+        await waitFor(() => {
+          expect(screen.getByRole('dialog')).toBeInTheDocument();
+        });
+
+        const confirmButton = screen.getByRole('button', { name: messages.confirm.defaultMessage });
+        await user.click(confirmButton);
+
+        await waitFor(() => {
+          expect(mockToggleGeneration).toHaveBeenCalledWith(
+            false,
+            expect.objectContaining({
+              onSuccess: expect.any(Function),
+              onError: expect.any(Function),
+            })
+          );
+        });
+
+        capturedCallbacks.onSuccess();
+
+        await waitFor(() => {
+          expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        });
       });
 
-      renderWithAlertAndIntl(<CertificatesPage />);
+      it('handles error when toggling generation', async () => {
+        const user = userEvent.setup();
+        const testError = { response: { data: { error: 'Toggle Error' } } };
+        let capturedCallbacks: any;
 
-      expect(mockUseRemoveInvalidation).toHaveBeenCalled();
-    });
+        mockToggleGeneration.mockImplementation((_enabled, callbacks) => {
+          capturedCallbacks = callbacks;
+        });
 
-    it('handles toggleCertificateGeneration success callback', () => {
-      mockToggleGeneration.mockImplementation((enabled, { onSuccess }) => {
-        onSuccess?.();
+        renderWithAlertAndIntl(<CertificatesPage />);
+
+        const disableButton = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+        await user.click(disableButton);
+
+        await waitFor(() => {
+          expect(screen.getByRole('dialog')).toBeInTheDocument();
+        });
+
+        const confirmButton = screen.getByRole('button', { name: messages.confirm.defaultMessage });
+        await user.click(confirmButton);
+
+        await waitFor(() => {
+          expect(mockToggleGeneration).toHaveBeenCalled();
+        });
+
+        capturedCallbacks.onError(testError);
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
-
-      renderWithAlertAndIntl(<CertificatesPage />);
-
-      expect(mockUseToggleCertificateGeneration).toHaveBeenCalled();
-    });
-
-    it('handles toggleCertificateGeneration error callback', () => {
-      const testError = new Error('Toggle failed');
-      mockToggleGeneration.mockImplementation((enabled, { onError }) => {
-        onError?.(testError);
-      });
-
-      renderWithAlertAndIntl(<CertificatesPage />);
-
-      expect(mockUseToggleCertificateGeneration).toHaveBeenCalled();
-    });
-  });
-
-  describe('learner count parsing', () => {
-    it('parses comma-separated learners correctly', async () => {
-      const user = userEvent.setup();
-      mockGrantExceptions.mockImplementation((request, { onSuccess }) => {
-        expect(request.learners).toBeDefined();
-        onSuccess?.();
-      });
-
-      renderWithAlertAndIntl(<CertificatesPage />);
-
-      const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
-      await user.click(grantButton);
-
-      expect(mockGrantExceptions).toBeDefined();
     });
   });
 
