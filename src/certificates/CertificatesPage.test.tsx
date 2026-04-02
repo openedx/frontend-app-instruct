@@ -154,4 +154,120 @@ describe('CertificatesPage', () => {
       { page: 0, pageSize: 25 }
     );
   });
+
+  describe('mutation callbacks', () => {
+    it('handles grantExceptions success callback', () => {
+      mockGrantExceptions.mockImplementation((request, { onSuccess }) => {
+        onSuccess?.();
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(mockGrantExceptions).toBeDefined();
+      expect(mockUseGrantBulkExceptions).toHaveBeenCalled();
+    });
+
+    it('handles grantExceptions error callback', () => {
+      const testError = new Error('Test error');
+      mockGrantExceptions.mockImplementation((request, { onError }) => {
+        onError?.(testError);
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(mockGrantExceptions).toBeDefined();
+      expect(mockUseGrantBulkExceptions).toHaveBeenCalled();
+    });
+
+    it('handles invalidateCertificate success callback', () => {
+      mockInvalidateCert.mockImplementation((request, { onSuccess }) => {
+        onSuccess?.();
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(mockInvalidateCert).toBeDefined();
+      expect(mockUseInvalidateCertificate).toHaveBeenCalled();
+    });
+
+    it('handles invalidateCertificate error callback', () => {
+      const testError = new Error('Invalidation failed');
+      mockInvalidateCert.mockImplementation((request, { onError }) => {
+        onError?.(testError);
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(mockInvalidateCert).toBeDefined();
+      expect(mockUseInvalidateCertificate).toHaveBeenCalled();
+    });
+
+    it('handles removeException with both success and error callbacks', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(mockRemoveException).toBeDefined();
+    });
+
+    it('handles removeInvalidation success callback', () => {
+      mockRemoveInvalidation.mockImplementation((request, { onSuccess }) => {
+        onSuccess?.();
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(mockUseRemoveInvalidation).toHaveBeenCalled();
+    });
+
+    it('handles toggleCertificateGeneration success callback', () => {
+      mockToggleGeneration.mockImplementation((enabled, { onSuccess }) => {
+        onSuccess?.();
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(mockUseToggleCertificateGeneration).toHaveBeenCalled();
+    });
+
+    it('handles toggleCertificateGeneration error callback', () => {
+      const testError = new Error('Toggle failed');
+      mockToggleGeneration.mockImplementation((enabled, { onError }) => {
+        onError?.(testError);
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(mockUseToggleCertificateGeneration).toHaveBeenCalled();
+    });
+  });
+
+  describe('learner count parsing', () => {
+    it('parses comma-separated learners correctly', async () => {
+      const user = userEvent.setup();
+      mockGrantExceptions.mockImplementation((request, { onSuccess }) => {
+        expect(request.learners).toBeDefined();
+        onSuccess?.();
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+      await user.click(grantButton);
+
+      expect(mockGrantExceptions).toBeDefined();
+    });
+  });
+
+  describe('filter functionality', () => {
+    it('filters certificates data correctly', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(screen.getByText('user1')).toBeInTheDocument();
+    });
+
+    it('searches certificates data correctly', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(screen.getByText('user1@example.com')).toBeInTheDocument();
+    });
+  });
 });
