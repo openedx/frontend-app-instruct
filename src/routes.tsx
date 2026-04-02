@@ -49,7 +49,7 @@ const TabContent = () => {
 const routes = [
   {
     id: 'org.openedx.frontend.route.instructor.main',
-    path: 'instructor/:courseId',
+    path: 'instructor-dashboard/:courseId',
     handle: {
       role: 'org.openedx.frontend.role.instructor'
     },
