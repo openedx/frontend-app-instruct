@@ -62,9 +62,9 @@ pull_translations:
 	   && atlas pull $(ATLAS_OPTIONS) \
 	            translations/frontend-base/src/i18n/messages:frontend-base \
 	            translations/paragon/src/i18n/messages:paragon \
-	            translations/frontend-app-instruct/src/i18n/messages:frontend-app-instruct
+	            translations/frontend-app-instructor-dashboard/src/i18n/messages:frontend-app-instructor-dashboard
 
-	$(intl_imports) frontend-base paragon frontend-component-header frontend-component-footer frontend-app-instruct
+	$(intl_imports) frontend-base paragon frontend-component-header frontend-component-footer frontend-app-instructor-dashboard
 
 clean:
 	rm -rf dist

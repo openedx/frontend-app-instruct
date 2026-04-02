@@ -34,9 +34,9 @@ The key decision point was whether to create a traditional legacy MFE and later 
 Decision
 --------
 
-We will create the `frontend-app-instruct` repository as a **frontend-base native micro-frontend** that will replace the legacy Instructor Dashboard pages. This initiative combines the MFE conversion with an incremental shift to using Paragon components and modern styling.
+We will create the `frontend-app-instructor-dashboard` repository as a **frontend-base native micro-frontend** that will replace the legacy Instructor Dashboard pages. This initiative combines the MFE conversion with an incremental shift to using Paragon components and modern styling.
 
-The `frontend-app-instruct` MFE will provide the following instructor tools:
+The `frontend-app-instructor-dashboard` MFE will provide the following instructor tools:
 
 *   Course Information (enrollment info, basic course info, pending tasks)
 *   Membership Management (student enrollment and access control)
@@ -93,7 +93,7 @@ The team will need to create a DEPR (Deprecation) document for the legacy Instru
 
 **Long-term Ownership and Maintainership**
 
-The long-term maintainership for the Instruct product has been established with WGU team members Diana Villalvazo (@diana-villalvazo-wgu) and Jesse Stewart (@wgu-jesse-stewart) serving as the initial maintainers under a new "committers-frontend-app-instruct" group. Schema continues to support early stages of product definition through documentation updates, QA pipeline recommendations, and release testing coordination to help ensure long-term stability and continuity during the transition period.
+The long-term maintainership for the Instruct product has been established with WGU team members Diana Villalvazo (@diana-villalvazo-wgu) and Jesse Stewart (@wgu-jesse-stewart) serving as the initial maintainers under a new "committers-frontend-app-instructor-dashboard" group. Schema continues to support early stages of product definition through documentation updates, QA pipeline recommendations, and release testing coordination to help ensure long-term stability and continuity during the transition period.
 
 References
 ----------
