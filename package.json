@@ -1,10 +1,10 @@
 {
-  "name": "@openedx/frontend-app-instruct",
-  "version": "1.0.0",
-  "description": "Frontend application template",
+  "name": "@openedx/frontend-app-instructor-dashboard",
+  "version": "0.0.0-dev",
+  "description": "The Open edX Instructor Dashboard",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openedx/frontend-app-instruct.git"
+    "url": "git+https://github.com/openedx/frontend-app-instructor-dashboard.git"
   },
   "exports": {
     ".": "./dist/index.js",
@@ -28,7 +28,7 @@
     "build:packages": "make build-packages",
     "clean": "make clean",
     "clean:packages": "make clean-packages",
-    "dev": "PORT=2003 PUBLIC_PATH=/instructor openedx dev",
+    "dev": "PORT=2003 PUBLIC_PATH=/instructor-dashboard openedx dev",
     "dev:site": "make dev-site",
     "dev:packages": "make dev-packages",
     "i18n_extract": "openedx formatjs extract",
@@ -41,12 +41,12 @@
   },
   "author": "Open edX",
   "license": "AGPL-3.0",
-  "homepage": "https://github.com/openedx/frontend-app-instruct#readme",
+  "homepage": "https://github.com/openedx/frontend-app-instructor-dashboard#readme",
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/openedx/frontend-app-instruct/issues"
+    "url": "https://github.com/openedx/frontend-app-instructor-dashboard/issues"
   },
   "dependencies": {
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.3",

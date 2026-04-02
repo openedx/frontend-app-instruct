@@ -1,1 +1,1 @@
-# `frontend-app-instruct` Widgets
+# `frontend-app-instructor-dashboard` Widgets

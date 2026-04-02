@@ -4,10 +4,10 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: "frontend-app-instruct"
+  name: "frontend-app-instructor-dashboard"
   description: "MFE Pages for the Instructor Dashboard"
   links:
-    - url: "https://github.com/openedx/frontend-app-instruct/blob/main/README.rst"
+    - url: "https://github.com/openedx/frontend-app-instructor-dashboard/blob/main/README.rst"
       title: "README"
       icon: "Article"
   annotations:
@@ -23,6 +23,6 @@ metadata:
     # component.
     openedx.org/arch-interest-groups: ""
 spec:
-  owner: group:committers-frontend-app-instruct
+  owner: group:committers-frontend-app-instructor-dashboard
   type: "library"
   lifecycle: "experimental"

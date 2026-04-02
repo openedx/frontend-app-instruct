@@ -1,5 +1,5 @@
-frontend-app-instruct
-#############################
+frontend-app-instructor-dashboard
+#################################
 
 |license-badge| |status-badge| |ci-badge| |codecov-badge|
 
@@ -26,7 +26,7 @@ Getting Started
 ***************
 
 After copying the template repository, you'll want to do a find-and-replace to
-replace all instances of ``frontend-app-instruct`` with the name of
+replace all instances of ``frontend-app-instructor-dashboard`` with the name of
 your new repository.  Also edit index.html to replace "Application Template"
 with a friendly name for this application that users will see in their browser
 tab.
@@ -47,7 +47,7 @@ Cloning and Startup
 
 1. Clone your new repo:
 
-  ``git clone https://github.com/openedx/frontend-app-instruct.git``
+  ``git clone https://github.com/openedx/frontend-app-instructor-dashboard.git``
 
 2. Use node v20.x.
 
@@ -58,7 +58,7 @@ Cloning and Startup
 
 3. Install npm dependencies:
 
-  ``cd frontend-app-instruct && npm install``
+  ``cd frontend-app-instructor-dashboard && npm install``
 
 4. Update the application port to use for local development:
 
@@ -78,7 +78,7 @@ Project Structure
 The source for this project is organized into nested submodules according to
 the `Feature-based Application Organization ADR`_.
 
-.. _Feature-based Application Organization ADR: https://github.com/openedx/frontend-app-instruct/blob/master/docs/decisions/0002-feature-based-application-organization.rst
+.. _Feature-based Application Organization ADR: https://github.com/openedx/frontend-app-instructor-dashboard/blob/master/docs/decisions/0002-feature-based-application-organization.rst
 
 Internationalization
 ====================
@@ -168,7 +168,7 @@ channel`_.
 For anything non-trivial, the best path is to open an issue in this repository
 with as many details about the issue you are facing as you can provide.
 
-https://github.com/openedx/frontend-app-instruct/issues
+https://github.com/openedx/frontend-app-instructor-dashboard/issues
 
 For more information about these options, see the `Getting Help`_ page.
 
@@ -213,23 +213,23 @@ The assigned maintainers for this component and other project details may be
 found in `Backstage`_. Backstage pulls this data from the ``catalog-info.yaml``
 file in this repo.
 
-.. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-app-instruct
+.. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-app-instructor-dashboard
 
 Reporting Security Issues
 *************************
 
 Please do not report security issues in public, and email security@openedx.org instead.
 
-.. |license-badge| image:: https://img.shields.io/github/license/openedx/frontend-app-instruct.svg
-    :target: https://github.com/openedx/frontend-app-instruct/blob/main/LICENSE
+.. |license-badge| image:: https://img.shields.io/github/license/openedx/frontend-app-instructor-dashboard.svg
+    :target: https://github.com/openedx/frontend-app-instructor-dashboard/blob/main/LICENSE
     :alt: License
 
 .. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
 
-.. |ci-badge| image:: https://github.com/openedx/frontend-app-instruct/actions/workflows/ci.yml/badge.svg
-    :target: https://github.com/openedx/frontend-app-instruct/actions/workflows/ci.yml
+.. |ci-badge| image:: https://github.com/openedx/frontend-app-instructor-dashboard/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/openedx/frontend-app-instructor-dashboard/actions/workflows/ci.yml
     :alt: Continuous Integration
 
-.. |codecov-badge| image:: https://codecov.io/github/openedx/frontend-app-instruct/coverage.svg?branch=main
-    :target: https://codecov.io/github/openedx/frontend-app-instruct?branch=main
+.. |codecov-badge| image:: https://codecov.io/github/openedx/frontend-app-instructor-dashboard/coverage.svg?branch=main
+    :target: https://codecov.io/github/openedx/frontend-app-instructor-dashboard?branch=main
     :alt: Codecov

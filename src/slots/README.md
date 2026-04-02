@@ -1,8 +1,8 @@
-# `frontend-app-instruct` Slots
+# `frontend-app-instructor-dashboard` Slots
 
 ## Overview
 
-Slots in `frontend-app-instruct` use the slot system from `@openedx/frontend-base` to provide modular extension points in the application. This system allows different widgets to be dynamically registered at specific UI locations.
+Slots in `frontend-app-instructor-dashboard` use the slot system from `@openedx/frontend-base` to provide modular extension points in the application. This system allows different widgets to be dynamically registered at specific UI locations.
 
 ## Slot Architecture
 
