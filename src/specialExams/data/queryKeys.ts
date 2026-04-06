@@ -3,5 +3,8 @@ import { AttemptsParams } from '../types';
 
 export const specialExamsQueryKeys = {
   all: [appId, 'specialExams'] as const,
-  attempts: (courseId: string, params: AttemptsParams) => [...specialExamsQueryKeys.all, 'attempts', courseId, params.page, params.emailOrUsername] as const,
+  byCourse: (courseId: string) => [...specialExamsQueryKeys.all, courseId] as const,
+  attempts: (courseId: string, params: AttemptsParams) => [...specialExamsQueryKeys.byCourse(courseId), 'attempts', params.page, params.emailOrUsername] as const,
+  allowances: (courseId: string, params?: AttemptsParams) => [...specialExamsQueryKeys.byCourse(courseId), 'allowances', params?.page || 1, params?.emailOrUsername || ''] as const,
+  specialExams: (courseId: string) => [...specialExamsQueryKeys.byCourse(courseId), 'specialExams'] as const,
 };

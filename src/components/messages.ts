@@ -150,7 +150,12 @@ const messages = defineMessages({
     id: 'instruct.specifyLearner.learnerNotEnrolled',
     defaultMessage: '{identifier} is not enrolled in this course',
     description: 'Error message displayed when a learner is found based on the provided identifier (email or username) but is not enrolled in the course',
-  }
+  },
+  selectedLearner: {
+    id: 'instruct.specifyLearner.selectedLearner',
+    defaultMessage: 'Selected Learner:',
+    description: 'Label for specify learner field when a learner has been selected',
+  },
 });
 
 export default messages;

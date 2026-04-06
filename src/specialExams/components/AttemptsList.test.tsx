@@ -16,12 +16,14 @@ jest.mock('../data/apiHook', () => ({
 const mockExamAttempts = {
   results: [
     {
-      username: 'user1',
+      user: {
+        username: 'user1',
+      },
       examName: 'Midterm',
-      timeLimit: '60',
+      allowedTimeLimitMins: 60,
       type: 'proctored',
-      startedAt: '2024-01-01',
-      completedAt: '2024-01-02',
+      startTime: '2024-01-01',
+      endTime: '2024-01-02',
       status: 'completed',
     },
   ],
@@ -63,12 +65,12 @@ describe('AttemptsList', () => {
     });
 
     renderWithIntl(<AttemptsList />);
-    expect(screen.getByText(mockExamAttempts.results[0].username)).toBeInTheDocument();
+    expect(screen.getByText(mockExamAttempts.results[0].user.username)).toBeInTheDocument();
     expect(screen.getByText(mockExamAttempts.results[0].examName)).toBeInTheDocument();
-    expect(screen.getByText(mockExamAttempts.results[0].timeLimit)).toBeInTheDocument();
+    expect(screen.getByText(mockExamAttempts.results[0].allowedTimeLimitMins.toString())).toBeInTheDocument();
     expect(screen.getByText(mockExamAttempts.results[0].type)).toBeInTheDocument();
-    expect(screen.getByText(mockExamAttempts.results[0].startedAt)).toBeInTheDocument();
-    expect(screen.getByText(mockExamAttempts.results[0].completedAt)).toBeInTheDocument();
+    expect(screen.getByText(mockExamAttempts.results[0].startTime)).toBeInTheDocument();
+    expect(screen.getByText(mockExamAttempts.results[0].endTime)).toBeInTheDocument();
     expect(screen.getByText(mockExamAttempts.results[0].status)).toBeInTheDocument();
   });
 

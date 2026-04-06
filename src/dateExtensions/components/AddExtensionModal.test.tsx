@@ -37,7 +37,7 @@ describe('AddExtensionModal', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useLearner as jest.Mock).mockReturnValue({
-      data: mockLearnerData,
+      data: null,
       refetch: jest.fn().mockResolvedValue({ data: mockLearnerData }),
       error: null,
     });
@@ -75,6 +75,13 @@ describe('AddExtensionModal', () => {
     const selectButton = screen.getByRole('button', { name: /select/i });
     await waitFor(() => expect(selectButton).not.toBeDisabled());
     await user.click(selectButton);
+
+    (useLearner as jest.Mock).mockReturnValue({
+      data: mockLearnerData,
+      refetch: jest.fn().mockResolvedValue({ data: mockLearnerData }),
+      error: null,
+    });
+
     await user.selectOptions(blockInput, 'sub1');
     await user.type(dueDateInput, '2024-12-31');
     await user.type(dueTimeInput, '23:59');
