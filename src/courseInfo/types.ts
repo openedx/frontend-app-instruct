@@ -21,6 +21,11 @@ export interface CourseInfoResponse {
   gradeCutoffs: string | null,
   staffCount: number,
   learnerCount: number,
+  permissions: {
+    admin: boolean,
+    dataResearcher: boolean,
+    [key: string]: boolean,
+  },
 }
 
 interface EnrollmentCounts extends Record<string, number> {

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchPendingTasks, getCourseInfo } from './api';
-import { courseInfoQueryKeys, pendingTasksQueryKey } from './queryKeys';
+import { fetchPendingTasks, getCourseInfo, getLearner } from './api';
+import { courseInfoQueryKeys, learnerQueryKeys, pendingTasksQueryKey } from './queryKeys';
 
 export const useCourseInfo = (courseId: string) => (
   useQuery({
@@ -20,3 +20,11 @@ export const usePendingTasks = (courseId: string, options?: { enablePolling?: bo
     refetchInterval: options?.enablePolling ? 3000 : false,
   });
 };
+
+export const useLearner = (courseId: string, emailOrUsername: string) => (
+  useQuery({
+    queryKey: learnerQueryKeys.byCourseAndLearner(courseId, emailOrUsername),
+    queryFn: () => getLearner(courseId, emailOrUsername),
+    enabled: false,
+    retry: false,
+  }));

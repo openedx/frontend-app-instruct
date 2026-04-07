@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AddExtensionModal from './AddExtensionModal';
 import { renderWithQueryClient } from '@src/testUtils';
+import messages from '../messages';
 
 const mockProps = {
   isOpen: true,
@@ -9,6 +10,15 @@ const mockProps = {
   onClose: jest.fn(),
   onSubmit: jest.fn(),
 };
+
+const items = [
+  { displayName: 'Quiz 1', subsectionId: 'sub1' },
+  { displayName: 'Quiz 2', subsectionId: 'sub2' },
+];
+
+jest.mock('../data/apiHook', () => ({
+  useGradedSubsections: jest.fn().mockReturnValue({ data: { items } }),
+}));
 
 describe('AddExtensionModal', () => {
   beforeEach(() => {
@@ -28,7 +38,7 @@ describe('AddExtensionModal', () => {
   it('calls onClose when cancel button is clicked', async () => {
     renderWithQueryClient(<AddExtensionModal {...mockProps} />);
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: /cancel/i }));
+    await user.click(screen.getByRole('button', { name: messages.cancel.defaultMessage }));
     expect(mockProps.onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -36,20 +46,28 @@ describe('AddExtensionModal', () => {
     renderWithQueryClient(<AddExtensionModal {...mockProps} />);
     const user = userEvent.setup();
 
-    const dueDateInput = screen.getByLabelText(/extension date/i);
+    const learnerInput = screen.getByLabelText(/Specify Learner/i);
+    const blockInput = screen.getByRole('combobox');
+    const dueDateInput = screen.getByLabelText(messages.extensionDate.defaultMessage + ':');
     const dueTimeInput = document.querySelector('input[type="time"]') as HTMLInputElement;
-    const reasonInput = screen.getByPlaceholderText(/reason/i);
+    const reasonInput = screen.getByPlaceholderText(messages.reasonForExtension.defaultMessage);
 
+    await user.type(learnerInput, 'testuser');
+    await user.click(screen.getByRole('button', { name: /select/i }));
+    await user.selectOptions(blockInput, 'sub1');
     await user.type(dueDateInput, '2024-12-31');
     await user.type(dueTimeInput, '23:59');
     await user.type(reasonInput, 'Medical emergency');
 
-    await user.click(screen.getByRole('button', { name: /add extension/i }));
+    const submitButton = screen.getByRole('button', { name: messages.addExtension.defaultMessage });
+    await waitFor(() => expect(submitButton).not.toBeDisabled());
+
+    await user.click(submitButton);
 
     await waitFor(() => {
       expect(mockProps.onSubmit).toHaveBeenCalledWith({
-        emailOrUsername: '',
-        blockId: '',
+        emailOrUsername: 'testuser',
+        blockId: 'sub1',
         dueDatetime: new Date('2024-12-31T23:59').toISOString(),
         reason: 'Medical emergency'
       });

@@ -1,13 +1,10 @@
-import { PaginationParams } from '@src/types';
+import { Learner, PaginationParams } from '@src/types';
 
 export interface EnrollmentStatusResponse {
   enrollmentStatus: string,
 }
 
-export interface Learner {
-  username: string,
-  fullName: string,
-  email: string,
+export interface EnrolledLearner extends Learner {
   mode: string,
   isBetaTester: boolean,
 }

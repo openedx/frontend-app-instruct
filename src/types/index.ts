@@ -40,3 +40,13 @@ export interface DataTableFetchDataProps {
   filters: { id: string, value: string }[],
   pageIndex: number,
 }
+
+export interface Learner {
+  username: string,
+  fullName: string,
+  email: string,
+};
+
+export interface SelectedLearner extends Learner {
+  progressUrl: string,
+}

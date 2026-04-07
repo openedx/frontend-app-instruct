@@ -1,4 +1,4 @@
-import { getCourseInfo } from './api';
+import { getCourseInfo, getLearner } from './api';
 import { camelCaseObject, getAppConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { fetchPendingTasks } from './api';
 
@@ -81,6 +81,37 @@ describe('base api', () => {
         'https://example.com/courses/course-v1:Example+Course+2025/instructor/api/list_instructor_tasks'
       );
       expect(result).toEqual(mockTasks);
+    });
+  });
+
+  describe('getLearner', () => {
+    const mockHttpClient = {
+      get: jest.fn(),
+    };
+    const mockLearnerData = { username: 'testuser', email: 'test@example.com', full_name: 'Test User' };
+    const mockCamelCaseData = { username: 'testuser', email: 'test@example.com', fullName: 'Test User' };
+
+    beforeEach(() => {
+      mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: 'https://test-lms.com' });
+      mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
+      mockCamelCaseObject.mockReturnValue(mockCamelCaseData);
+      mockHttpClient.get.mockResolvedValue({ data: mockLearnerData });
+    });
+
+    it('fetches learner info successfully', async () => {
+      const courseId = 'course-v1:Test+Course+2025';
+      const emailOrUsername = 'testuser';
+      const result = await getLearner(courseId, emailOrUsername);
+      expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
+      expect(mockHttpClient.get).toHaveBeenCalledWith('https://test-lms.com/api/instructor/v2/courses/course-v1:Test+Course+2025/learners/testuser');
+      expect(mockCamelCaseObject).toHaveBeenCalledWith(mockLearnerData);
+      expect(result).toBe(mockCamelCaseData);
+    });
+
+    it('throws error when API call fails', async () => {
+      const error = new Error('Network error');
+      mockHttpClient.get.mockRejectedValue(error);
+      await expect(getLearner('course-v1:Test+Course+2025', 'testuser')).rejects.toThrow('Network error');
     });
   });
 });

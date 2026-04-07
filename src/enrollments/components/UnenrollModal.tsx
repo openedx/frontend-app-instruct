@@ -1,6 +1,6 @@
-import { Learner } from '../types';
+import { EnrolledLearner } from '../types';
 interface UnenrollModalProps {
-  learner: Learner,
+  learner: EnrolledLearner,
   isOpen: boolean,
   onClose: () => void,
 }

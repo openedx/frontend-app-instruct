@@ -1,31 +1,42 @@
 import { useState } from 'react';
 import { ActionRow, Button, Form, FormControl, FormGroup, FormLabel, ModalDialog } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
-import SpecifyLearnerField from '../../components/SpecifyLearnerField';
+import SpecifyLearnerField from '@src/components/SpecifyLearnerField';
 import messages from '../messages';
 import SelectGradedSubsection from './SelectGradedSubsection';
+import { AddDateExtensionFormData, AddDateExtensionParams } from '../types';
 
 interface AddExtensionModalProps {
   isOpen: boolean,
   title: string,
   onClose: () => void,
-  onSubmit: ({ emailOrUsername, blockId, dueDatetime, reason }: {
-    emailOrUsername: string,
-    blockId: string,
-    dueDatetime: string,
-    reason: string,
-  }) => void,
+  onSubmit: ({ emailOrUsername, blockId, dueDatetime, reason }: AddDateExtensionParams) => void,
 }
+
+const initialFormData: AddDateExtensionFormData = {
+  emailOrUsername: '',
+  blockId: '',
+  dueDate: '',
+  dueTime: '',
+  reason: '',
+};
 
 const AddExtensionModal = ({ isOpen, title, onClose, onSubmit }: AddExtensionModalProps) => {
   const intl = useIntl();
-  const [formData, setFormData] = useState({
-    emailOrUsername: '',
-    blockId: '',
-    dueDate: '',
-    dueTime: '',
-    reason: '',
-  });
+  const [formData, setFormData] = useState(initialFormData);
+
+  const isFormFilled = (formData: AddDateExtensionFormData) => {
+    return (
+      formData.emailOrUsername.trim() !== ''
+      && formData.blockId.trim() !== ''
+      && formData.dueDate.trim() !== ''
+      && formData.dueTime.trim() !== ''
+    );
+  };
+
+  const resetForm = () => {
+    setFormData(initialFormData);
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,6 +47,11 @@ const AddExtensionModal = ({ isOpen, title, onClose, onSubmit }: AddExtensionMod
       dueDatetime: new Date(`${dueDate}T${dueTime}`).toISOString(),
       reason
     });
+  };
+
+  const handleCancel = () => {
+    resetForm();
+    onClose();
   };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -60,7 +76,7 @@ const AddExtensionModal = ({ isOpen, title, onClose, onSubmit }: AddExtensionMod
             <div className="container-fluid border-bottom mb-4.5 pb-3">
               <div className="row">
                 <div className="col-sm-12 col-md-6">
-                  <SpecifyLearnerField onChange={onChange} />
+                  <SpecifyLearnerField onClickSelect={(emailOrUsername) => setFormData((prevData) => ({ ...prevData, emailOrUsername }))} />
                 </div>
                 <div className="col-sm-12 col-md-4">
                   <SelectGradedSubsection
@@ -93,8 +109,10 @@ const AddExtensionModal = ({ isOpen, title, onClose, onSubmit }: AddExtensionMod
         </ModalDialog.Body>
         <ModalDialog.Footer className="p-4 border-top">
           <ActionRow>
-            <Button variant="tertiary" onClick={onClose}>{intl.formatMessage(messages.cancel)}</Button>
-            <Button type="submit">{intl.formatMessage(messages.addExtension)}</Button>
+            <Button variant="tertiary" onClick={handleCancel}>{intl.formatMessage(messages.cancel)}</Button>
+            <Button type="submit" disabled={!isFormFilled(formData)}>
+              {intl.formatMessage(messages.addExtension)}
+            </Button>
           </ActionRow>
         </ModalDialog.Footer>
       </Form>

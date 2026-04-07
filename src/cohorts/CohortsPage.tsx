@@ -39,7 +39,7 @@ const CohortsPageContent = () => {
   return (
     <>
       <div className="d-inline-flex align-items-center">
-        <h3 className="mb-0 text-gray-700">{intl.formatMessage(messages.cohortsTitle)}</h3>
+        <h3 className="mb-0 text-primary-700">{intl.formatMessage(messages.cohortsTitle)}</h3>
         {isCohorted && (
           <div className="small">
             <IconButton

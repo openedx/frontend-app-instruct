@@ -9,3 +9,8 @@ export const pendingTasksQueryKey = {
   all: [appId, 'pendingTasks'] as const,
   byCourse: (courseId: string) => [appId, 'pendingTasks', courseId] as const,
 };
+
+export const learnerQueryKeys = {
+  all: [appId, 'learner'] as const,
+  byCourseAndLearner: (courseId: string, emailOrUsername: string) => [appId, 'learner', courseId, emailOrUsername] as const,
+};
