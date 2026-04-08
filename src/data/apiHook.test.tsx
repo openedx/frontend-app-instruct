@@ -1,12 +1,13 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useCourseInfo, usePendingTasks } from './apiHook';
-import { fetchPendingTasks, getCourseInfo } from './api';
+import { useCourseInfo, usePendingTasks, useLearner } from './apiHook';
+import { fetchPendingTasks, getCourseInfo, getLearner } from './api';
 
 jest.mock('./api');
 
 const mockGetCourseInfo = getCourseInfo as jest.MockedFunction<typeof getCourseInfo>;
 const mockFetchPendingTasks = fetchPendingTasks as jest.MockedFunction<typeof fetchPendingTasks>;
+const mockGetLearner = getLearner as jest.MockedFunction<typeof getLearner>;
 
 const mockCourseData = {
   courseId: 'test-course-123',
@@ -29,6 +30,10 @@ const mockCourseData = {
   gradeCutoffs: null,
   staffCount: 5,
   learnerCount: 145,
+  permissions: {
+    admin: true,
+    dataResearcher: false,
+  }
 };
 
 const createWrapper = () => {
@@ -87,6 +92,7 @@ describe('api hooks', () => {
       expect(result.current.data).toBe(undefined);
     });
   });
+
   describe('usePendingTasks', () => {
     it('should successfully fetch pending tasks when mutate is called', async () => {
       const mockTasks = [
@@ -112,6 +118,54 @@ describe('api hooks', () => {
 
       expect(mockFetchPendingTasks).toHaveBeenCalledWith('course-v1:Example+Course+2025');
       expect(result.current.data).toEqual(mockTasks);
+    });
+  });
+
+  describe('useLearner', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('fetches learner info successfully', async () => {
+      const mockLearner = {
+        username: 'testuser',
+        fullName: 'Test User',
+        email: 'test@example.com',
+        progressUrl: '/progress/testuser',
+      };
+      mockGetLearner.mockResolvedValue(mockLearner);
+
+      const { result } = renderHook(() => useLearner('course-123', 'testuser'), {
+        wrapper: createWrapper(),
+      });
+
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isSuccess).toBe(false);
+
+      await result.current.refetch();
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockGetLearner).toHaveBeenCalledWith('course-123', 'testuser');
+      expect(result.current.data).toEqual(mockLearner);
+      expect(result.current.error).toBe(null);
+    });
+
+    it('handles API error', async () => {
+      const mockError = new Error('API Error');
+      mockGetLearner.mockRejectedValue(mockError);
+
+      const { result } = renderHook(() => useLearner('course-456', 'failuser'), {
+        wrapper: createWrapper(),
+      });
+
+      const refetchResult = await result.current.refetch();
+
+      expect(mockGetLearner).toHaveBeenCalledWith('course-456', 'failuser');
+      expect(refetchResult.error).toBe(mockError);
+      expect(result.current.data).toBe(undefined);
     });
   });
 });

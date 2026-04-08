@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, FormControl, ModalDialog } from '@openedx/paragon';
@@ -36,7 +36,7 @@ const EnrollmentStatusModal = ({ isOpen, onClose }: EnrollmentStatusModalProps) 
           <FormControl
             placeholder={intl.formatMessage(messages.enrollLearnersPlaceholder)}
             value={learnerIdentifier}
-            onChange={(e) => setLearnerIdentifier(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setLearnerIdentifier(e.target.value)}
           />
           <Button
             className="mt-3"

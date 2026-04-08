@@ -15,11 +15,16 @@ export interface ResetDueDateParams {
   reason?: string,
 }
 
-export interface AddDateExtensionParams {
+export interface AddDateExtensionFormData {
   emailOrUsername: string,
   blockId: string,
-  dueDatetime: string,
+  dueDate: string,
+  dueTime: string,
   reason: string,
+}
+
+export interface AddDateExtensionParams extends Omit<AddDateExtensionFormData, 'dueDate' | 'dueTime'> {
+  dueDatetime: string,
 }
 
 export interface DateExtensionQueryParams extends PaginationParams {

@@ -2,13 +2,12 @@ import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import { IntlProvider } from '@openedx/frontend-base';
 import EnrollmentsPage from './EnrollmentsPage';
-import { Learner } from './types';
+import { EnrolledLearner } from './types';
 import userEvent from '@testing-library/user-event';
 import messages from './messages';
 
-// Mock the child components
 jest.mock('./components/EnrollmentsList', () => {
-  return function MockEnrollmentsList({ onUnenroll }: { onUnenroll: (learner: Learner) => void }) {
+  return function MockEnrollmentsList({ onUnenroll }: { onUnenroll: (learner: EnrolledLearner) => void }) {
     return (
       <div role="table">
         <button onClick={() => onUnenroll({
@@ -37,7 +36,7 @@ jest.mock('./components/EnrollmentStatusModal', () => {
 });
 
 jest.mock('./components/UnenrollModal', () => {
-  return function MockUnenrollModal({ isOpen, learner, onClose }: { isOpen: boolean, learner: Learner | null, onClose: () => void }) {
+  return function MockUnenrollModal({ isOpen, learner, onClose }: { isOpen: boolean, learner: EnrolledLearner | null, onClose: () => void }) {
     return isOpen ? (
       <div role="dialog">
         <span>Unenroll {learner?.fullName}</span>

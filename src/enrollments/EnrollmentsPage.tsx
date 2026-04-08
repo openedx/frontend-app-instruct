@@ -6,19 +6,19 @@ import messages from './messages';
 import EnrollmentsList from './components/EnrollmentsList';
 import EnrollmentStatusModal from './components/EnrollmentStatusModal';
 import UnenrollModal from './components/UnenrollModal';
-import { Learner } from './types';
+import { EnrolledLearner } from './types';
 
 const EnrollmentsPage = () => {
   const intl = useIntl();
   const [isEnrollmentStatusModalOpen, setIsEnrollmentStatusModalOpen] = useState(false);
   const [isUnenrollModalOpen, setIsUnenrollModalOpen] = useState(false);
-  const [selectedLearner, setSelectedLearner] = useState<Learner | null>(null);
+  const [selectedLearner, setSelectedLearner] = useState<EnrolledLearner | null>(null);
 
   const handleMoreButton = () => {
     setIsEnrollmentStatusModalOpen(true);
   };
 
-  const handleUnenroll = (learner: Learner) => {
+  const handleUnenroll = (learner: EnrolledLearner) => {
     setIsUnenrollModalOpen(true);
     setSelectedLearner(learner);
   };

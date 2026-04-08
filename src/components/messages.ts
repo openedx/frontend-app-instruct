@@ -105,7 +105,17 @@ const messages = defineMessages({
     id: 'instruct.csvComponent.uploadingFileMessage',
     defaultMessage: 'File chosen: {fileName}',
     description: 'Message displayed when a file is being uploaded, with the file name included'
-  }
+  },
+  change: {
+    id: 'instruct.specifyLearner.change',
+    defaultMessage: 'Change',
+    description: 'Label for change button in specify learner field',
+  },
+  learnerNotFound: {
+    id: 'instruct.specifyLearner.learnerNotFound',
+    defaultMessage: 'Could not find student matching identifier: {identifier}',
+    description: 'Error message displayed when a learner cannot be found based on the provided identifier (email or username)',
+  },
 });
 
 export default messages;

@@ -5,7 +5,7 @@ import { useIntl } from '@openedx/frontend-base';
 import { MoreVert, Search } from '@openedx/paragon/icons';
 import messages from '../messages';
 import { useEnrollments } from '../data/apiHook';
-import { Learner } from '../types';
+import { EnrolledLearner } from '../types';
 import { DataTableFetchDataProps, TableCellValue } from '@src/types';
 import { useDebouncedFilter } from '@src/hooks/useDebouncedFilter';
 
@@ -18,7 +18,7 @@ const betaTesterOptions = [
 ];
 
 interface EnrollmentsListProps {
-  onUnenroll: (learner: Learner) => void,
+  onUnenroll: (learner: EnrolledLearner) => void,
 }
 
 const UsernameFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
@@ -128,7 +128,7 @@ const EnrollmentsList = ({ onUnenroll }: EnrollmentsListProps) => {
     },
   ];
 
-  const actionCustomCell = useCallback(({ row: { original } }: TableCellValue<Learner>) => {
+  const actionCustomCell = useCallback(({ row: { original } }: TableCellValue<EnrolledLearner>) => {
     return (
       <ActionRow className="justify-content-start">
         <Button className="pl-0" onClick={() => onUnenroll(original)} variant="link">
