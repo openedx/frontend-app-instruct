@@ -81,8 +81,13 @@ describe('SpecifyLearnerField', () => {
       });
     });
 
-    it('shows error message if learner not found', () => {
+    it('shows error message if learner not found', async () => {
       renderWithIntl(<SpecifyLearnerField onClickSelect={jest.fn()} />);
+      const input = screen.getByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage);
+      const user = userEvent.setup();
+      await user.type(input, mockLearnerData.username);
+      const button = screen.getByText(messages.select.defaultMessage);
+      await user.click(button);
       const staticPart = messages.learnerNotFound.defaultMessage.split(':')[0];
       expect(
         screen.getByText(new RegExp(staticPart + ':'))

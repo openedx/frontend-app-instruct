@@ -27,4 +27,6 @@ export const useLearner = (courseId: string, emailOrUsername: string) => (
     queryFn: () => getLearner(courseId, emailOrUsername),
     enabled: false,
     retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   }));

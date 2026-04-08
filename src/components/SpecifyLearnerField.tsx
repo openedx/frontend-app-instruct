@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from 'react';
-import type { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import { useParams } from 'react-router-dom';
 import { Avatar, Button, FormControl, FormGroup, FormLabel, useToggle } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
@@ -19,24 +19,30 @@ const SpecifyLearnerField = ({ learner, onClickSelect }: SpecifyLearnerFieldProp
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [identifier, setIdentifier] = useState('');
   const [showLearner, enableShowLearner, disableShowLearner] = useToggle(false);
-  const { data = { email: '', fullName: '', username: '' }, refetch, error } = useLearner(courseId, identifier);
   const { data: courseInfo } = useCourseInfo(courseId);
   const permissions = courseInfo?.permissions || { admin: false, dataResearcher: false };
   const { inputValue, handleChange } = useDebouncedFilter({
     filterValue: identifier,
     setFilter: setIdentifier,
   });
+  const { data = { email: '', fullName: '', username: '' }, refetch, error } = useLearner(courseId, inputValue);
 
   const selectedLearner = learner || data;
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     handleChange(event.target.value);
+
+    if (showLearner) {
+      disableShowLearner();
+    }
   };
 
   const handleClickSelect = () => {
-    if (inputValue) onClickSelect(inputValue);
-    refetch();
-    enableShowLearner();
+    if (inputValue) {
+      onClickSelect(inputValue);
+      refetch();
+      enableShowLearner();
+    }
   };
 
   return (
@@ -71,10 +77,9 @@ const SpecifyLearnerField = ({ learner, onClickSelect }: SpecifyLearnerFieldProp
           <Button onClick={handleClickSelect} disabled={!inputValue}>{intl.formatMessage(messages.select)}</Button>
         )}
       </div>
-      {error
-      && typeof error === 'object'
-      && (error as AxiosError).isAxiosError
-      && (error as AxiosError).response?.status === 404 && (
+      {showLearner && error
+      && isAxiosError(error)
+      && error.response?.status === 404 && (
         <p className="text-danger-500 mb-0 x-small mt-2">
           {intl.formatMessage(messages.learnerNotFound, { identifier })}
         </p>
