@@ -56,15 +56,8 @@ detect_changed_source_translations:
 	git diff --exit-code $(i18n)
 
 # Pulls translations using atlas.
-pull_translations:
-	mkdir src/i18n/messages
-	cd src/i18n/messages \
-	   && atlas pull $(ATLAS_OPTIONS) \
-	            translations/frontend-base/src/i18n/messages:frontend-base \
-	            translations/paragon/src/i18n/messages:paragon \
-	            translations/frontend-app-instructor-dashboard/src/i18n/messages:frontend-app-instructor-dashboard
-
-	$(intl_imports) frontend-base paragon frontend-component-header frontend-component-footer frontend-app-instructor-dashboard
+pull_translations: | requirements
+	npm run translations:pull
 
 clean:
 	rm -rf dist
