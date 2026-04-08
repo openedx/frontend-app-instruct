@@ -23,6 +23,10 @@
     "*.css",
     "*.scss"
   ],
+  "atlasTranslations": {
+    "path": "translations/frontend-app-instructor-dashboard/src/i18n/messages",
+    "dependencies": ["@openedx/frontend-base"]
+  },
   "scripts": {
     "build": "make build",
     "build:packages": "make build-packages",
@@ -37,6 +41,7 @@
     "prepack": "npm run clean && npm run build",
     "snapshot": "openedx test --updateSnapshot",
     "test": "openedx test --coverage --passWithNoTests",
+    "translations:pull": "openedx translations:pull",
     "watch:build": "nodemon --exec 'npm run build'"
   },
   "author": "Open edX",
