@@ -116,6 +116,11 @@ const messages = defineMessages({
     defaultMessage: 'Could not find student matching identifier: {identifier}',
     description: 'Error message displayed when a learner cannot be found based on the provided identifier (email or username)',
   },
+  searchPlaceholder: {
+    id: 'instruct.usernameFilter.searchPlaceholder',
+    defaultMessage: 'Search By Username or Email',
+    description: 'Placeholder text for the username filter input',
+  }
 });
 
 export default messages;

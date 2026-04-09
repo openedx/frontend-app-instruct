@@ -86,7 +86,7 @@ describe('DateExtensionsList', () => {
     renderComponent({});
     const user = userEvent.setup();
 
-    const searchInput = screen.getByPlaceholderText(/search for a learner/i);
+    const searchInput = screen.getByPlaceholderText(/search by username or email/i);
     expect(searchInput).toBeInTheDocument();
 
     await user.type(searchInput, 'test_user');
@@ -106,7 +106,7 @@ describe('DateExtensionsList', () => {
     renderComponent({});
     const user = userEvent.setup();
 
-    const searchInput = screen.getByPlaceholderText(/search for a learner/i);
+    const searchInput = screen.getByPlaceholderText(/search by username or email/i);
 
     // Type multiple characters quickly
     await user.type(searchInput, 'test');
@@ -171,7 +171,7 @@ describe('DateExtensionsList', () => {
     }
 
     // Now apply a filter
-    const searchInput = screen.getByPlaceholderText(/search for a learner/i);
+    const searchInput = screen.getByPlaceholderText(/search by username or email/i);
     await user.type(searchInput, 'test');
 
     // Should reset to page 0 when filter changes
@@ -217,7 +217,7 @@ describe('DateExtensionsList', () => {
     const user = userEvent.setup();
 
     // Apply a filter first
-    const searchInput = screen.getByPlaceholderText(/search for a learner/i);
+    const searchInput = screen.getByPlaceholderText(/search by username or email/i);
     await user.type(searchInput, 'test');
 
     // Wait for the filter to be applied
