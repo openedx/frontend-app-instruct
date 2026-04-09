@@ -57,7 +57,7 @@ detect_changed_source_translations:
 
 # Pulls translations using atlas.
 pull_translations: | requirements
-	npm run translations:pull
+	npm run translations:pull -- --atlas-options="$(ATLAS_OPTIONS)"
 
 clean:
 	rm -rf dist
