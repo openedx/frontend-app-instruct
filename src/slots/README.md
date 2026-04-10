@@ -29,7 +29,7 @@ import { WidgetOperationTypes } from '@openedx/frontend-base';
 import { PlaceholderSlot } from './src/slots/PlaceholderSlot/PlaceholderSlot';
 import { EnvironmentTypes, SiteConfig, footerApp, headerApp, shellApp } from '@openedx/frontend-base';
 
-import { instructApp } from './src';
+import { instructorDashboardApp } from './src';
 
 import './src/app.scss';
 
@@ -47,17 +47,17 @@ const siteConfig: SiteConfig = {
     headerApp,
     footerApp,
     {
-      ...instructApp,
+      ...instructorDashboardApp,
       slots: [
         {
-          slotId: 'org.openedx.frontend.slot.instructor.tabs.v1',
-          id: 'org.openedx.frontend.widget.instructor.tab.my_tab',
+          slotId: 'org.openedx.frontend.slot.instructorDashboard.tabs.v1',
+          id: 'org.openedx.frontend.widget.instructorDashboard.tab.my_tab',
           op: WidgetOperationTypes.APPEND,
           element: <PlaceholderSlot tabId="my_tab" title="New Tab" url="my_tab" sortOrder={25} />,
         },
         {
-          slotId: 'org.openedx.frontend.slot.instructor.routes.v1',
-          id: 'org.openedx.frontend.widget.instructor.route.my_tab',
+          slotId: 'org.openedx.frontend.slot.instructorDashboard.routes.v1',
+          id: 'org.openedx.frontend.widget.instructorDashboard.route.my_tab',
           op: WidgetOperationTypes.APPEND,
           element: <PlaceholderSlot tabId="my_tab" content={<div>Dynamic Content</div>} />,
         }
@@ -108,7 +108,7 @@ export const PlaceholderSlot = (_props: Record<string, any>) => null;
 ```tsx
 const TabContent = () => {
   const { tabId } = useParams<{ tabId: string }>();
-  const routeWidgets = useWidgetProps('org.openedx.frontend.slot.instructor.routes.v1') as InstructorRouteProps[];
+  const routeWidgets = useWidgetProps('org.openedx.frontend.slot.instructorDashboard.routes.v1') as InstructorRouteProps[];
 
   const tabRoutes = [
     ...defaultTabs.filter(

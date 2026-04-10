@@ -15,7 +15,7 @@ export interface TabProps {
 const InstructorNav = () => {
   const { courseId = '', tabId = '' } = useParams<{ courseId: string, tabId?: string }>();
   const { data: courseInfo, isLoading } = useCourseInfo(courseId);
-  const widgetPropsArray = useWidgetProps('org.openedx.frontend.slot.instructor.tabs.v1') as TabProps[];
+  const widgetPropsArray = useWidgetProps('org.openedx.frontend.slot.instructorDashboard.tabs.v1') as TabProps[];
   const { clearAlerts } = useAlert();
 
   const sortedTabs = useMemo(() => {

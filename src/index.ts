@@ -1,3 +1,2 @@
-export { default as instructApp } from './app';
-export { default as instructRoutes } from './routes';
-export { default as instructMessages } from './i18n';
+export { default as instructorDashboardApp } from './app';
+export { default as instructorDashboardRoutes } from './routes';
