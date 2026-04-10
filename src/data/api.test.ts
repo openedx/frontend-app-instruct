@@ -35,7 +35,7 @@ describe('base api', () => {
     it('fetches course info successfully', async () => {
       const courseId = 'test-course-123';
       const result = await getCourseInfo(courseId);
-      expect(mockGetAppConfig).toHaveBeenCalledWith('org.openedx.frontend.app.instructor');
+      expect(mockGetAppConfig).toHaveBeenCalledWith('org.openedx.frontend.app.instructorDashboard');
       expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
       expect(mockHttpClient.get).toHaveBeenCalledWith('https://test-lms.com/api/instructor/v2/courses/test-course-123');
       expect(mockCamelCaseObject).toHaveBeenCalledWith(mockCourseData);

@@ -11,7 +11,7 @@ const siteConfig: SiteConfig = {
   // if EnvironmentTypes.TEST is set, some tests fails due to it, TODO: update here once this issue is fixed in frontend-base
   environment: EnvironmentTypes?.TEST ?? 'test',
   apps: [{
-    appId: 'org.openedx.frontend.app.instructor',
+    appId: 'org.openedx.frontend.app.instructorDashboard',
     config: {}
   }],
 };

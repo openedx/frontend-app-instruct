@@ -1,6 +1,6 @@
 import { EnvironmentTypes, SiteConfig, footerApp, headerApp, shellApp } from '@openedx/frontend-base';
 
-import { instructApp } from './src';
+import { instructorDashboardApp } from './src';
 
 import './src/app.scss';
 
@@ -17,7 +17,7 @@ const siteConfig: SiteConfig = {
     shellApp,
     headerApp,
     footerApp,
-    instructApp
+    instructorDashboardApp
   ],
   externalRoutes: [
     {

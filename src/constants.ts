@@ -1,1 +1,2 @@
-export const appId = 'org.openedx.frontend.app.instructor';
+export const appId = 'org.openedx.frontend.app.instructorDashboard';
+export const instructorDashboardRole = 'org.openedx.frontend.role.instructorDashboard';

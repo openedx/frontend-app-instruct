@@ -30,8 +30,8 @@ describe('dataDownloads apiHook', () => {
 
   describe('queryKeys', () => {
     it('should generate correct query keys', () => {
-      expect(queryKeys.generatedReports('course-123')).toEqual(['org.openedx.frontend.app.instructor', 'dataDownloads', 'generatedReports', 'course-123']);
-      expect(queryKeys.generateReportLink('course-456')).toEqual(['org.openedx.frontend.app.instructor', 'dataDownloads', 'reportLink', 'course-456']);
+      expect(queryKeys.generatedReports('course-123')).toEqual(['org.openedx.frontend.app.instructorDashboard', 'dataDownloads', 'generatedReports', 'course-123']);
+      expect(queryKeys.generateReportLink('course-456')).toEqual(['org.openedx.frontend.app.instructorDashboard', 'dataDownloads', 'reportLink', 'course-456']);
     });
   });
 

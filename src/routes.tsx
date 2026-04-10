@@ -11,6 +11,7 @@ import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 import SpecialExamsPage from '@src/specialExams/SpecialExamsPage';
 import PageNotFound from '@src/components/PageNotFound';
 import { useWidgetProps } from './slots/SlotUtils';
+import { instructorDashboardRole } from './constants';
 
 interface InstructorRouteProps {
   tabId: string,
@@ -32,7 +33,7 @@ const defaultTabs: InstructorRouteProps[] = [
 
 const TabContent = () => {
   const { tabId } = useParams<{ tabId: string }>();
-  const routeWidgets = useWidgetProps('org.openedx.frontend.slot.instructor.routes.v1') as InstructorRouteProps[];
+  const routeWidgets = useWidgetProps('org.openedx.frontend.slot.instructorDashboard.routes.v1') as InstructorRouteProps[];
 
   const tabRoutes = [
     ...defaultTabs.filter(
@@ -48,10 +49,10 @@ const TabContent = () => {
 
 const routes = [
   {
-    id: 'org.openedx.frontend.route.instructor.main',
+    id: 'org.openedx.frontend.route.instructorDashboard.main',
     path: 'instructor-dashboard/:courseId',
     handle: {
-      role: 'org.openedx.frontend.role.instructor'
+      role: instructorDashboardRole
     },
     async lazy() {
       const module = await import('./Main');
