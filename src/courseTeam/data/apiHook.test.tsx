@@ -95,7 +95,7 @@ describe('apiHook', () => {
 
   describe('useRoles', () => {
     it('should fetch course roles successfully', async () => {
-      const mockRoles = { count: 3, numPages: 1, results: [{ role: 'instructor', displayName: 'Instructor' }, { role: 'staff', displayName: 'Staff' }, { role: 'beta_testers', displayName: 'Beta Testers' }] };
+      const mockRoles = { results: [{ role: 'instructor', displayName: 'Instructor' }, { role: 'staff', displayName: 'Staff' }, { role: 'beta_testers', displayName: 'Beta Testers' }] };
 
       mockGetRoles.mockResolvedValue(mockRoles);
 
