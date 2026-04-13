@@ -4,8 +4,8 @@ import { useIntl } from '@openedx/frontend-base';
 import { useToggle, ActionRow, Button, IconButton, ModalPopup, Menu, MenuItem } from '@openedx/paragon';
 import { TrendingUp, MoreVert, OpenInNew } from '@openedx/paragon/icons';
 import { useCourseInfo } from '@src/data/apiHook';
-import messages from '../messages';
-import GradingConfigurationModal from './GradingConfigurationModal';
+import GradingConfigurationModal from '@src/grading/components/GradingConfigurationModal';
+import messages from '@src/grading/messages';
 
 const GradingActionRow = () => {
   const { courseId = '' } = useParams<{ courseId: string }>();

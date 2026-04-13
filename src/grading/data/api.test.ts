@@ -1,5 +1,5 @@
-import { getGradingConfiguration } from './api';
 import { camelCaseObject, getAppConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
+import { getGradingConfiguration } from '@src/grading/data/api';
 
 jest.mock('@openedx/frontend-base', () => ({
   ...jest.requireActual('@openedx/frontend-base'),

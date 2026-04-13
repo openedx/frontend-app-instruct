@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { useGradingConfiguration } from './apiHook';
-import * as api from './api';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as api from '@src/grading/data/api';
+import { useGradingConfiguration } from '@src/grading/data/apiHook';
 
 const createWrapper = () => {
   const queryClient = new QueryClient({

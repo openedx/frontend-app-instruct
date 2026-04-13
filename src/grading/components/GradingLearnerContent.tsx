@@ -1,7 +1,7 @@
 import { useIntl } from '@openedx/frontend-base';
-import messages from '../messages';
-import SpecifyProblem from '../../components/SpecifyProblem';
-import { GradingToolsType } from '../types';
+import SpecifyProblem from '@src/components/SpecifyProblem';
+import messages from '@src/grading/messages';
+import { GradingToolsType } from '@src/grading/types';
 
 interface GradingLearnerContentProps {
   toolType: GradingToolsType,

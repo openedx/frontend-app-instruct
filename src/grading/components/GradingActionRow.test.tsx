@@ -1,10 +1,10 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithIntl } from '@src/testUtils';
-import GradingActionRow from '@src/grading/components/GradingActionRow';
-import messages from '../messages';
 import { useCourseInfo } from '@src/data/apiHook';
-import { useGradingConfiguration } from '../data/apiHook';
+import GradingActionRow from '@src/grading/components/GradingActionRow';
+import { useGradingConfiguration } from '@src/grading/data/apiHook';
+import messages from '@src/grading/messages';
+import { renderWithIntl } from '@src/testUtils';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),

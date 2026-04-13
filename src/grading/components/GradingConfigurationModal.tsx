@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { Button, ModalDialog } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
-import messages from '../messages';
-import { useGradingConfiguration } from '../data/apiHook';
+import messages from '@src/grading/messages';
+import { useGradingConfiguration } from '@src/grading/data/apiHook';
 
 interface GradingConfigurationModalProps {
   isOpen: boolean,

@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import { renderWithIntl } from '@src/testUtils';
-import { useGradingConfiguration } from '../data/apiHook';
-import GradingConfigurationModal from './GradingConfigurationModal';
-import messages from '../messages';
+import { useGradingConfiguration } from '@src/grading/data/apiHook';
+import GradingConfigurationModal from '@src/grading/components/GradingConfigurationModal';
+import messages from '@src/grading/messages';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),

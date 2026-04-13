@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, ButtonGroup, Card } from '@openedx/paragon';
-import GradingLearnerContent from './components/GradingLearnerContent';
-import messages from './messages';
-import GradingActionRow from './components/GradingActionRow';
-import { GradingToolsType } from './types';
 import { PendingTasks } from '@src/components/PendingTasks';
+import GradingActionRow from '@src/grading/components/GradingActionRow';
+import GradingLearnerContent from '@src/grading/components/GradingLearnerContent';
+import messages from '@src/grading/messages';
+import { GradingToolsType } from '@src/grading/types';
 
 const GradingPage = () => {
   const intl = useIntl();

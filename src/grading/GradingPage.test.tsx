@@ -1,17 +1,17 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithIntl } from '@src/testUtils';
-import GradingPage from './GradingPage';
-import messages from './messages';
+import GradingPage from '@src/grading/GradingPage';
+import messages from '@src/grading/messages';
 
 // Mock child components, each component should have its own test suite
-jest.mock('./components/GradingLearnerContent', () => {
+jest.mock('@src/grading/components/GradingLearnerContent', () => {
   return function MockGradingLearnerContent({ toolType }: { toolType: string }) {
     return <div>Grading Content for: {toolType}</div>;
   };
 });
 
-jest.mock('./components/GradingActionRow', () => {
+jest.mock('@src/grading/components/GradingActionRow', () => {
   return function MockGradingActionRow() {
     return <div>Grading Action Row</div>;
   };
