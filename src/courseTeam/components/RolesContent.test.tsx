@@ -1,10 +1,10 @@
 import { screen } from '@testing-library/react';
 import { renderWithIntl } from '@src/testUtils';
-import RolesContent, { rolesOrder } from './RolesContent';
-import messages from '../messages';
-import { useRoles } from '../data/apiHook';
+import RolesContent, { rolesOrder } from '@src/courseTeam/components/RolesContent';
+import { useRoles } from '@src/courseTeam/data/apiHook';
+import messages from '@src/courseTeam/messages';
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('@src/courseTeam/data/apiHook', () => ({
   useRoles: jest.fn(),
 }));
 

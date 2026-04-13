@@ -1,8 +1,8 @@
-import { useIntl } from '@openedx/frontend-base';
-import messages from '../messages';
 import { useParams } from 'react-router-dom';
-import { useRoles } from '../data/apiHook';
-import { Role } from '../types';
+import { useIntl } from '@openedx/frontend-base';
+import messages from '@src/courseTeam/messages';
+import { useRoles } from '@src/courseTeam/data/apiHook';
+import { Role } from '@src/courseTeam/types';
 
 export const rolesOrder = [
   'staff',
@@ -14,12 +14,12 @@ export const rolesOrder = [
   'discussionModerator',
   'groupCommunityTA',
   'communityTA'
-];
+] as const;
 
 const RolesContent = () => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const { data: { results } = { data: { results: [] } } } = useRoles(courseId);
+  const { data: { results } = { results: [] } } = useRoles(courseId);
   const isCCXCoachEnabled = !!results?.find(({ role }: Role) => role === 'ccx_coach');
 
   return (
