@@ -1,13 +1,13 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithIntl } from '@src/testUtils';
-import { useTeamMembers } from '../data/apiHook';
-import MembersContent from './MembersContent';
-import messages from '../messages';
+import MembersContent from '@src/courseTeam/components/MembersContent';
+import { useTeamMembers } from '@src/courseTeam/data/apiHook';
+import messages from '@src/courseTeam/messages';
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('@src/courseTeam/data/apiHook', () => ({
   useTeamMembers: jest.fn(),
 }));
 

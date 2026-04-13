@@ -1,5 +1,5 @@
-import { appId } from '../../constants';
-import { CourseTeamMemberQueryParams } from '../types';
+import { appId } from '@src/constants';
+import { CourseTeamMemberQueryParams } from '@src/courseTeam/types';
 
 export const courseTeamQueryKeys = {
   all: [appId, 'courseTeam'] as const,

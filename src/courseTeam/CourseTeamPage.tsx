@@ -1,9 +1,9 @@
 import { useIntl } from '@openedx/frontend-base';
-import messages from './messages';
 import { Button, Tab, Tabs } from '@openedx/paragon';
-import MembersContent from './components/MembersContent';
-import RolesContent from './components/RolesContent';
 import { Plus } from '@openedx/paragon/icons';
+import MembersContent from '@src/courseTeam/components/MembersContent';
+import RolesContent from '@src/courseTeam/components/RolesContent';
+import messages from '@src/courseTeam/messages';
 
 const CourseTeamPage = () => {
   const intl = useIntl();

@@ -2,8 +2,8 @@ import { useState, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, DataTable } from '@openedx/paragon';
-import messages from '../messages';
-import { useTeamMembers } from '../data/apiHook';
+import { useTeamMembers } from '@src/courseTeam/data/apiHook';
+import messages from '@src/courseTeam/messages';
 
 const TEAM_MEMBERS_PAGE_SIZE = 25;
 

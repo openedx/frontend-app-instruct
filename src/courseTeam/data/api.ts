@@ -1,7 +1,7 @@
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
-import { getApiBaseUrl } from '../../data/api';
+import { getApiBaseUrl } from '@src/data/api';
 import { DataList } from '@src/types';
-import { CourseTeamMember, CourseTeamMemberQueryParams, Role } from '../types';
+import { CourseTeamMember, CourseTeamMemberQueryParams, Role } from '@src/courseTeam/types';
 
 export const getTeamMembers = async (
   courseId: string,

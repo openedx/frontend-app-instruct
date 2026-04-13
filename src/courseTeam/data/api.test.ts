@@ -1,5 +1,5 @@
 import { getAuthenticatedHttpClient } from '@openedx/frontend-base';
-import { getTeamMembers, getRoles } from './api';
+import { getTeamMembers, getRoles } from '@src/courseTeam/data/api';
 
 jest.mock('@openedx/frontend-base', () => ({
   ...jest.requireActual('@openedx/frontend-base'),
@@ -67,8 +67,9 @@ describe('courseTeam API', () => {
 
     it('should return the roles from the response', async () => {
       const courseId = 'course-v1:edX+DemoX+Demo_Course';
-      const data = { results: [{ role: 'instructor', display_name: 'Instructor' }, { role: 'staff', display_name: 'Staff' }] };
-      httpClientMock.get.mockResolvedValue({ data });
+      const snakeCaseData = { results: [{ role: 'instructor', display_name: 'Instructor' }, { role: 'staff', display_name: 'Staff' }] };
+      const data = { results: [{ role: 'instructor', displayName: 'Instructor' }, { role: 'staff', displayName: 'Staff' }] };
+      httpClientMock.get.mockResolvedValue({ data: snakeCaseData });
 
       const result = await getRoles(courseId);
 

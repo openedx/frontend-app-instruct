@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithIntl } from '@src/testUtils';
-import CourseTeamPage from './CourseTeamPage';
+import CourseTeamPage from '@src/courseTeam/CourseTeamPage';
 
 // Mock the child components, each component should have its own test suite
 jest.mock('./components/MembersContent', () => {

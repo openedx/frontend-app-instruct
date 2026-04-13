@@ -1,12 +1,12 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
-import { useTeamMembers, useRoles } from './apiHook';
-import * as api from './api';
-import { CourseTeamMember } from '../types';
-import { DataList } from '../../types';
+import { useTeamMembers, useRoles } from '@src/courseTeam/data/apiHook';
+import * as api from '@src/courseTeam/data/api';
+import { CourseTeamMember } from '@src/courseTeam/types';
+import { DataList } from '@src/types';
 
-jest.mock('./api');
+jest.mock('@src/courseTeam/data/api');
 
 const mockGetTeamMembers = api.getTeamMembers as jest.MockedFunction<typeof api.getTeamMembers>;
 const mockGetRoles = api.getRoles as jest.MockedFunction<typeof api.getRoles>;

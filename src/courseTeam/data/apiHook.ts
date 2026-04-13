@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { getRoles, getTeamMembers } from './api';
-import { CourseTeamMemberQueryParams } from '../types';
-import { courseTeamQueryKeys } from './queryKeys';
+import { getRoles, getTeamMembers } from '@src/courseTeam/data/api';
+import { courseTeamQueryKeys } from '@src/courseTeam/data/queryKeys';
+import { CourseTeamMemberQueryParams } from '@src/courseTeam/types';
 
 export const useTeamMembers = (courseId: string, params: CourseTeamMemberQueryParams) => (
   useQuery({
