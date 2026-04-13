@@ -1,14 +1,14 @@
-import { camelCaseObject, getAppConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
+import { camelCaseObject, getSiteConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { getGradingConfiguration } from '@src/grading/data/api';
 
 jest.mock('@openedx/frontend-base', () => ({
   ...jest.requireActual('@openedx/frontend-base'),
   camelCaseObject: jest.fn((obj) => obj),
-  getAppConfig: jest.fn(),
+  getSiteConfig: jest.fn(),
   getAuthenticatedHttpClient: jest.fn(),
 }));
 
-const mockGetAppConfig = getAppConfig as jest.MockedFunction<typeof getAppConfig>;
+const mockGetSiteConfig = getSiteConfig as jest.MockedFunction<typeof getSiteConfig>;
 const mockGetAuthenticatedHttpClient = getAuthenticatedHttpClient as jest.MockedFunction<typeof getAuthenticatedHttpClient>;
 const mockCamelCaseObject = camelCaseObject as jest.MockedFunction<typeof camelCaseObject>;
 
@@ -20,7 +20,7 @@ describe('getGradingConfiguration', () => {
   const mockCamelCaseData = { gradingPolicy: 'test_policy' };
 
   beforeEach(() => {
-    mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: 'https://test-lms.com' });
+    (mockGetSiteConfig as jest.Mock).mockReturnValue({ lmsBaseUrl: 'https://test-lms.com' });
     mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
     mockCamelCaseObject.mockReturnValue(mockCamelCaseData);
     mockHttpClient.get.mockResolvedValue({ data: mockConfigData });
@@ -33,7 +33,7 @@ describe('getGradingConfiguration', () => {
   it('fetches grading configuration successfully', async () => {
     const courseId = 'test-course-123';
     const result = await getGradingConfiguration(courseId);
-    expect(mockGetAppConfig).toHaveBeenCalled();
+    expect(mockGetSiteConfig).toHaveBeenCalled();
     expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
     expect(mockHttpClient.get).toHaveBeenCalledWith('https://test-lms.com/api/instructor/v2/courses/test-course-123/grading-config');
     expect(mockCamelCaseObject).toHaveBeenCalledWith(mockConfigData);
