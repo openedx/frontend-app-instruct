@@ -33,7 +33,8 @@ const mockCourseData = {
   permissions: {
     admin: true,
     dataResearcher: false,
-  }
+  },
+  gradebookUrl: 'http://example.com/gradebook',
 };
 
 const createWrapper = () => {
