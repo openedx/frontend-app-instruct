@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
-import UsernameFilter from './UsernameFilter';
-import { renderWithIntl } from '../testUtils';
-import messages from './messages';
+import UsernameFilter from '@src/components/UsernameFilter';
+import messages from '@src/components/messages';
+import { renderWithIntl } from '@src/testUtils';
 
 describe('UsernameFilter', () => {
   const setup = (filterValue = '', setFilter = jest.fn()) => {

@@ -2,7 +2,7 @@ import { useIntl } from '@openedx/frontend-base';
 import { FormControl, Icon } from '@openedx/paragon';
 import { Search } from '@openedx/paragon/icons';
 import { useDebouncedFilter } from '@src/hooks/useDebouncedFilter';
-import messages from './messages';
+import messages from '@src/components/messages';
 
 const UsernameFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
   const intl = useIntl();
