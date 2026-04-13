@@ -33,7 +33,7 @@ const messages = defineMessages({
   },
   descriptionAllLearners: {
     id: 'instruct.grading.descriptionAllLearners',
-    defaultMessage: 'These grading tools allow for grade review and adjustment all enrolled learners on a specific problem. ',
+    defaultMessage: 'These grading tools allow for grade review and adjustment all enrolled learners on a specific problem.',
     description: 'Description for all learners grading tools'
   },
   gradingConfiguration: {
