@@ -1,15 +1,15 @@
 import { getCourseInfo, getLearner } from './api';
-import { camelCaseObject, getAppConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
+import { camelCaseObject, getSiteConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { fetchPendingTasks } from './api';
 
 jest.mock('@openedx/frontend-base', () => ({
   ...jest.requireActual('@openedx/frontend-base'),
   camelCaseObject: jest.fn((obj) => obj),
-  getAppConfig: jest.fn(),
+  getSiteConfig: jest.fn(),
   getAuthenticatedHttpClient: jest.fn(),
 }));
 
-const mockGetAppConfig = getAppConfig as jest.MockedFunction<typeof getAppConfig>;
+const mockGetSiteConfig = getSiteConfig as jest.MockedFunction<typeof getSiteConfig>;
 const mockGetAuthenticatedHttpClient = getAuthenticatedHttpClient as jest.MockedFunction<typeof getAuthenticatedHttpClient>;
 const mockCamelCaseObject = camelCaseObject as jest.MockedFunction<typeof camelCaseObject>;
 
@@ -26,7 +26,7 @@ describe('base api', () => {
     const mockCamelCaseData = { courseName: 'Test Course' };
 
     beforeEach(() => {
-      mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: 'https://test-lms.com' });
+      (mockGetSiteConfig as jest.Mock).mockReturnValue({ lmsBaseUrl: 'https://test-lms.com' });
       mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
       mockCamelCaseObject.mockReturnValue(mockCamelCaseData);
       mockHttpClient.get.mockResolvedValue({ data: mockCourseData });
@@ -35,7 +35,7 @@ describe('base api', () => {
     it('fetches course info successfully', async () => {
       const courseId = 'test-course-123';
       const result = await getCourseInfo(courseId);
-      expect(mockGetAppConfig).toHaveBeenCalledWith('org.openedx.frontend.app.instructorDashboard');
+      expect(mockGetSiteConfig).toHaveBeenCalled();
       expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
       expect(mockHttpClient.get).toHaveBeenCalledWith('https://test-lms.com/api/instructor/v2/courses/test-course-123');
       expect(mockCamelCaseObject).toHaveBeenCalledWith(mockCourseData);
@@ -56,7 +56,7 @@ describe('base api', () => {
 
     beforeEach(() => {
       mockCamelCaseObject.mockImplementation((obj) => obj);
-      mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: 'https://example.com' });
+      (mockGetSiteConfig as jest.Mock).mockReturnValue({ lmsBaseUrl: 'https://example.com' });
       mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
     });
 
@@ -92,7 +92,7 @@ describe('base api', () => {
     const mockCamelCaseData = { username: 'testuser', email: 'test@example.com', fullName: 'Test User' };
 
     beforeEach(() => {
-      mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: 'https://test-lms.com' });
+      (mockGetSiteConfig as jest.Mock).mockReturnValue({ lmsBaseUrl: 'https://test-lms.com' });
       mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
       mockCamelCaseObject.mockReturnValue(mockCamelCaseData);
       mockHttpClient.get.mockResolvedValue({ data: mockLearnerData });

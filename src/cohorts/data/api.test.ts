@@ -1,6 +1,5 @@
 import { getCohortStatus, getCohorts, toggleCohorts } from './api';
-import { camelCaseObject, getAppConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
-import { appId } from '@src/constants';
+import { camelCaseObject, getSiteConfig, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 
 jest.mock('@openedx/frontend-base');
 
@@ -11,7 +10,7 @@ const mockHttpClient = {
   put: jest.fn(),
 };
 
-const mockGetAppConfig = getAppConfig as jest.MockedFunction<typeof getAppConfig>;
+const mockGetSiteConfig = getSiteConfig as jest.MockedFunction<typeof getSiteConfig>;
 const mockGetAuthenticatedHttpClient = getAuthenticatedHttpClient as jest.MockedFunction<typeof getAuthenticatedHttpClient>;
 const mockCamelCaseObject = camelCaseObject as jest.MockedFunction<typeof camelCaseObject>;
 
@@ -21,7 +20,7 @@ describe('getCohortStatus', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: mockBaseUrl });
+    (mockGetSiteConfig as jest.Mock).mockReturnValue({ lmsBaseUrl: mockBaseUrl });
     mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
     mockCamelCaseObject.mockReturnValue(mockCamelCaseCohortStatusData);
     mockHttpClient.get.mockResolvedValue({ data: mockCohortStatusData });
@@ -32,7 +31,7 @@ describe('getCohortStatus', () => {
 
     const result = await getCohortStatus(courseId);
 
-    expect(getAppConfig).toHaveBeenCalledWith(appId);
+    expect(getSiteConfig).toHaveBeenCalled();
     expect(mockHttpClient.get).toHaveBeenCalledWith(
       `${mockBaseUrl}/api/cohorts/v1/settings/${courseId}`
     );
@@ -45,7 +44,7 @@ describe('getCohorts', () => {
   const mockData = [{ id: 1, name: 'Cohort 1' }];
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: mockBaseUrl });
+    (mockGetSiteConfig as jest.Mock).mockReturnValue({ lmsBaseUrl: mockBaseUrl });
     mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
     mockCamelCaseObject.mockReturnValue(mockData);
     mockHttpClient.get.mockResolvedValue({ data: mockData });
@@ -57,7 +56,7 @@ describe('getCohorts', () => {
 
     const result = await getCohorts(courseId);
 
-    expect(getAppConfig).toHaveBeenCalledWith(appId);
+    expect(getSiteConfig).toHaveBeenCalled();
     expect(mockHttpClient.get).toHaveBeenCalledWith(
       `${mockBaseUrl}/api/cohorts/v1/courses/${courseId}/cohorts/`, { params: { page_size: 100 } }
     );
@@ -72,7 +71,7 @@ describe('toggleCohorts', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetAppConfig.mockReturnValue({ LMS_BASE_URL: mockBaseUrl });
+    (mockGetSiteConfig as jest.Mock).mockReturnValue({ lmsBaseUrl: mockBaseUrl });
     mockGetAuthenticatedHttpClient.mockReturnValue(mockHttpClient as any);
     mockCamelCaseObject.mockReturnValue(mockCamelCasedData);
   });
@@ -84,7 +83,7 @@ describe('toggleCohorts', () => {
 
     const result = await toggleCohorts(courseId, isCohorted);
 
-    expect(getAppConfig).toHaveBeenCalledWith(appId);
+    expect(getSiteConfig).toHaveBeenCalled();
     expect(mockHttpClient.put).toHaveBeenCalledWith(
       `${mockBaseUrl}/api/cohorts/v1/settings/${courseId}`,
       { is_cohorted: isCohorted }
