@@ -46,7 +46,6 @@ describe('EnrollmentSummary', () => {
       isLoading: false,
     });
     renderWithIntl(<EnrollmentSummary />);
-    screen.debug();
 
     expect(screen.getByText(messages.allEnrollmentsLabel.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(formatNumberWithCommas(mockCounter.enrollmentCounts.total))).toBeInTheDocument();

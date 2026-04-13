@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { Button, DataTable, FormControl, Icon } from '@openedx/paragon';
+import { Button, DataTable } from '@openedx/paragon';
 import messages from '../messages';
 import { LearnerDateExtension } from '../types';
 import { useDateExtensions } from '../data/apiHook';
-import { Search } from '@openedx/paragon/icons';
 import SelectGradedSubsection from './SelectGradedSubsection';
 import { useDebouncedFilter } from '../../hooks/useDebouncedFilter';
 import { DataTableFetchDataProps } from '@src/types';
+import UsernameFilter from '@src/components/UsernameFilter';
 
 const DATE_EXTENSIONS_PAGE_SIZE = 25;
 
@@ -16,28 +16,6 @@ export interface DateExtensionListProps {
   onResetExtensions?: (user: LearnerDateExtension) => void,
   onClickAdd?: () => void,
 }
-
-const UsernameFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
-  const intl = useIntl();
-  const { inputValue, handleChange } = useDebouncedFilter({
-    filterValue,
-    setFilter,
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleChange(e.target.value);
-  };
-
-  return (
-    <FormControl
-      className="mb-0"
-      onChange={handleInputChange}
-      placeholder={intl.formatMessage(messages.searchLearnerPlaceholder)}
-      trailingElement={<Icon src={Search} />}
-      value={inputValue}
-    />
-  );
-};
 
 const GradedSubsectionFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
   const intl = useIntl();

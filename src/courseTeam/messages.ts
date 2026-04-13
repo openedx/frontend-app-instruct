@@ -51,6 +51,11 @@ const messages = defineMessages({
     defaultMessage: 'No team members found.',
     description: 'Message displayed when there are no team members',
   },
+  allRoles: {
+    id: 'instruct.courseTeam.allRoles',
+    defaultMessage: 'All Roles',
+    description: 'Option label for filtering by all roles',
+  },
 });
 
 export default messages;

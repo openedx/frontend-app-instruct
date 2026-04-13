@@ -2,13 +2,14 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithIntl } from '@src/testUtils';
 import MembersContent from '@src/courseTeam/components/MembersContent';
-import { useTeamMembers } from '@src/courseTeam/data/apiHook';
+import { useTeamMembers, useRoles } from '@src/courseTeam/data/apiHook';
 import messages from '@src/courseTeam/messages';
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
 
 jest.mock('@src/courseTeam/data/apiHook', () => ({
   useTeamMembers: jest.fn(),
+  useRoles: jest.fn(),
 }));
 
 jest.mock('react-router-dom', () => ({
@@ -21,11 +22,14 @@ const mockTeamMembers = [
   { username: 'user2', email: 'user2@example.com', role: 'Staff' },
 ];
 
+const mockRoles = { results: [{ role: 'Admin', displayName: 'Admin' }, { role: 'Staff', displayName: 'Staff' }] };
+
 const renderComponent = () => renderWithIntl(<MembersContent />);
 
 describe('MembersContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (useRoles as jest.Mock).mockReturnValue({ data: mockRoles, isLoading: false });
   });
 
   it('renders loading state correctly', () => {
@@ -48,10 +52,10 @@ describe('MembersContent', () => {
 
     expect(screen.getByText(mockTeamMembers[0].username)).toBeInTheDocument();
     expect(screen.getByText(mockTeamMembers[0].email)).toBeInTheDocument();
-    expect(screen.getByText(mockTeamMembers[0].role)).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: mockTeamMembers[0].role })).toBeInTheDocument();
     expect(screen.getByText(mockTeamMembers[1].username)).toBeInTheDocument();
     expect(screen.getByText(mockTeamMembers[1].email)).toBeInTheDocument();
-    expect(screen.getByText(mockTeamMembers[1].role)).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: mockTeamMembers[1].role })).toBeInTheDocument();
   });
 
   it('renders empty state when no team members', () => {

@@ -1,11 +1,48 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { Button, DataTable } from '@openedx/paragon';
-import { useTeamMembers } from '@src/courseTeam/data/apiHook';
+import { Button, DataTable, FormControl, Icon } from '@openedx/paragon';
+import { FilterList } from '@openedx/paragon/icons';
+import UsernameFilter from '@src/components/UsernameFilter';
+import { useRoles, useTeamMembers } from '@src/courseTeam/data/apiHook';
 import messages from '@src/courseTeam/messages';
+import { Role } from '@src/courseTeam/types';
+import { DataTableFetchDataProps } from '@src/types';
 
 const TEAM_MEMBERS_PAGE_SIZE = 25;
+
+const RoleFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
+  const intl = useIntl();
+  const { courseId = '' } = useParams<{ courseId: string }>();
+  const { data } = useRoles(courseId);
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilter(e.target.value);
+  };
+
+  const roles = useMemo(() => {
+    return [{ value: '', label: intl.formatMessage(messages.allRoles) }, ...(data?.results || []).map((role: Role) => ({ value: role.role, label: role.displayName }))];
+  }, [data, intl]);
+
+  return (
+    <FormControl
+      as="select"
+      className="mb-0"
+      disabled={!data}
+      name="role"
+      size="md"
+      value={filterValue}
+      onChange={handleSelectChange}
+      leadingElement={<Icon src={FilterList} />}
+    >
+      {roles.map(role => (
+        <option key={role.value} value={role.value}>
+          {role.label}
+        </option>
+      ))}
+    </FormControl>
+  );
+};
 
 const MembersContent = () => {
   const intl = useIntl();
@@ -14,9 +51,9 @@ const MembersContent = () => {
   const { data: { results: teamMembers = [], numPages = 1, count = 0 } = {}, isLoading = false } = useTeamMembers(courseId, { ...filters, pageSize: TEAM_MEMBERS_PAGE_SIZE });
 
   const tableColumns = useMemo(() => [
-    { accessor: 'username', Header: intl.formatMessage(messages.username) },
-    { accessor: 'email', Header: intl.formatMessage(messages.email) },
-    { accessor: 'role', Header: intl.formatMessage(messages.role) },
+    { accessor: 'username', Header: intl.formatMessage(messages.username), Filter: UsernameFilter },
+    { accessor: 'email', Header: intl.formatMessage(messages.email), disableFilters: true },
+    { accessor: 'role', Header: intl.formatMessage(messages.role), Filter: RoleFilter },
   ], [intl]);
 
   const additionalColumns = useMemo(() => [{
@@ -29,16 +66,27 @@ const MembersContent = () => {
     )
   }], [intl]);
 
-  const handleFetchData = useCallback(({ pageIndex, filters: tableFilters }: { pageIndex: number, filters: { id: string, value: string }[] }) => {
-    // Filters will be handled in a future iteration, for now we will just update pagination
-    console.log(pageIndex, tableFilters);
-    if (pageIndex !== filters.page) {
-      setFilters(prevFilters => ({
+  const handleFetchData = (data: DataTableFetchDataProps) => {
+    const usernameFilter = data.filters?.find((f) => f.id === 'username');
+    const newEmailOrUsername = usernameFilter ? usernameFilter.value : '';
+    const rolesFilter = data.filters?.find((f) => f.id === 'role');
+    const newRole = rolesFilter ? rolesFilter.value : '';
+    const filtersChanged = (newEmailOrUsername !== filters.emailOrUsername) || (newRole !== filters.role);
+
+    if (filtersChanged) {
+      setFilters((prevFilters) => ({
         ...prevFilters,
-        page: pageIndex,
+        emailOrUsername: newEmailOrUsername,
+        role: newRole,
+        page: 0,
       }));
+      return;
     }
-  }, [filters.page]);
+
+    if (data.pageIndex !== filters.page) {
+      setFilters((prevFilters) => ({ ...prevFilters, page: data.pageIndex }));
+    }
+  };
 
   const tableState = useMemo(() => ({
     pageIndex: filters.page,
@@ -52,11 +100,13 @@ const MembersContent = () => {
       data={teamMembers}
       fetchData={handleFetchData}
       state={tableState}
+      isFilterable
       isLoading={isLoading}
       isPaginated
       itemCount={count}
       manualFilters
       manualPagination
+      numBreakoutFilters={2}
       pageSize={TEAM_MEMBERS_PAGE_SIZE}
       pageCount={numPages}
       RowStatusComponent={() => null}
