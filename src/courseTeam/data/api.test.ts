@@ -67,7 +67,7 @@ describe('courseTeam API', () => {
 
     it('should return the roles from the response', async () => {
       const courseId = 'course-v1:edX+DemoX+Demo_Course';
-      const data = { results: [{ role: 'instructor', displayName: 'Instructor' }, { role: 'staff', displayName: 'Staff' }] };
+      const data = { results: [{ role: 'instructor', display_name: 'Instructor' }, { role: 'staff', display_name: 'Staff' }] };
       httpClientMock.get.mockResolvedValue({ data });
 
       const result = await getRoles(courseId);

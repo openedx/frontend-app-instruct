@@ -38,8 +38,7 @@ const MembersContent = () => {
         page: pageIndex,
       }));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [filters.page]);
 
   const tableState = useMemo(() => ({
     pageIndex: filters.page,

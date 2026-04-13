@@ -26,7 +26,7 @@ export const getTeamMembers = async (
   return camelCaseObject(data);
 };
 
-export const getRoles = async (courseId: string): Promise<DataList<Role>> => {
+export const getRoles = async (courseId: string): Promise<Omit<DataList<Role>, 'numPages' | 'count'>> => {
   const { data } = await getAuthenticatedHttpClient().get(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/team/roles`
   );
