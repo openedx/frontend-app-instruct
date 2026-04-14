@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useIntl } from '@openedx/frontend-base';
 import { ActionRow, Button, IconButton } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
-import messages from './messages';
-import EnrollmentsList from './components/EnrollmentsList';
-import EnrollmentStatusModal from './components/EnrollmentStatusModal';
-import UnenrollModal from './components/UnenrollModal';
-import EnrollLearnersModal from './components/EnrollLearnersModal';
-import { EnrolledLearner } from './types';
+import messages from '@src/enrollments/messages';
+import EnrollmentsList from '@src/enrollments/components/EnrollmentsList';
+import EnrollmentStatusModal from '@src/enrollments/components/EnrollmentStatusModal';
+import UnenrollModal from '@src/enrollments/components/UnenrollModal';
+import EnrollLearnersModal from '@src/enrollments/components/EnrollLearnersModal';
+import { EnrolledLearner } from '@src/enrollments/types';
 
 const EnrollmentsPage = () => {
   const intl = useIntl();

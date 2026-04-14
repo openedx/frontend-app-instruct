@@ -1,10 +1,10 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEnrollments, useEnrollmentByUserId, useUpdateEnrollments } from './apiHook';
-import { getEnrollments, getEnrollmentStatus, updateEnrollments } from './api';
-import { EnrollmentsParams } from '../types';
+import { getEnrollments, getEnrollmentStatus, updateEnrollments } from '@src/enrollments/data/api';
+import { useEnrollments, useEnrollmentByUserId, useUpdateEnrollments } from '@src/enrollments/data/apiHook';
+import { EnrollmentsParams } from '@src/enrollments/types';
 
-jest.mock('./api');
+jest.mock('@src/enrollments/data/api');
 
 const mockGetEnrollments = getEnrollments as jest.MockedFunction<typeof getEnrollments>;
 const mockGetEnrollmentStatus = getEnrollmentStatus as jest.MockedFunction<typeof getEnrollmentStatus>;

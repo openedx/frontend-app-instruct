@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import EnrollmentStatusModal from './EnrollmentStatusModal';
-import { useEnrollmentByUserId } from '../data/apiHook';
+import { useEnrollmentByUserId } from '@src/enrollments/data/apiHook';
 import { renderWithIntl } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 

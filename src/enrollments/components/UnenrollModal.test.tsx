@@ -1,10 +1,10 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import UnenrollModal from './UnenrollModal';
+import UnenrollModal from '@src/enrollments/components/UnenrollModal';
+import { useUpdateEnrollments } from '@src/enrollments/data/apiHook';
+import messages from '@src/enrollments/messages';
+import { UpdateEnrollmentsParams } from '@src/enrollments/types';
 import { renderWithAlertAndIntl } from '@src/testUtils';
-import { useUpdateEnrollments } from '../data/apiHook';
-import messages from '../messages';
-import { UpdateEnrollmentsParams } from '../types';
 
 const learner = {
   fullName: 'Jane Doe',
@@ -28,7 +28,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ courseId: 'test-course-id' }),
 }));
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('@src/enrollments/data/apiHook', () => ({
   useUpdateEnrollments: jest.fn(),
 }));
 
@@ -85,7 +85,7 @@ describe('UnenrollModal', () => {
     );
     await userEvent.click(screen.getByRole('button', { name: /^unenroll$/i }));
     expect(mutateMock).toHaveBeenCalledWith({
-      identifier: [learner.email],
+      identifier: [learner.username],
       action: 'unenroll',
     }, {
       onSuccess: expect.any(Function),

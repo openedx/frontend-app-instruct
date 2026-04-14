@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getEnrollments, getEnrollmentStatus, updateEnrollments } from './api';
-import { enrollmentsQueryKeys } from './queryKeys';
-import { EnrollmentsParams, UpdateEnrollmentsParams } from '../types';
+import { getEnrollments, getEnrollmentStatus, updateEnrollments } from '@src/enrollments/data/api';
+import { enrollmentsQueryKeys } from '@src/enrollments/data/queryKeys';
+import { EnrollmentsParams, UpdateEnrollmentsParams } from '@src/enrollments/types';
 
 export const useEnrollments = (courseId: string, params: EnrollmentsParams) => (
   useQuery({

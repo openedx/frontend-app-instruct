@@ -1,9 +1,9 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EnrollmentsPage from './EnrollmentsPage';
-import { EnrolledLearner } from './types';
-import messages from './messages';
-import { useEnrollmentByUserId, useEnrollments, useUpdateEnrollments } from './data/apiHook';
+import { EnrolledLearner } from '@src/enrollments/types';
+import messages from '@src/enrollments/messages';
+import { useEnrollmentByUserId, useEnrollments, useUpdateEnrollments } from '@src/enrollments/data/apiHook';
 import { renderWithAlertAndIntl } from '@src/testUtils';
 
 jest.mock('react-router-dom', () => ({

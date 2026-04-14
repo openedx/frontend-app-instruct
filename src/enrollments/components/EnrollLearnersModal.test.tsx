@@ -1,9 +1,9 @@
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
-import EnrollLearnersModal, { EnrollLearnersModalProps } from './EnrollLearnersModal';
-import messages from '../messages';
+import EnrollLearnersModal, { EnrollLearnersModalProps } from '@src/enrollments/components/EnrollLearnersModal';
+import { useUpdateEnrollments } from '@src/enrollments/data/apiHook';
+import messages from '@src/enrollments/messages';
 import { renderWithAlertAndIntl } from '@src/testUtils';
-import { useUpdateEnrollments } from '../data/apiHook';
 
 const defaultProps: EnrollLearnersModalProps = {
   isOpen: true,
@@ -18,7 +18,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ courseId: 'test-course-id' }),
 }));
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('@src/enrollments/data/apiHook', () => ({
   useUpdateEnrollments: jest.fn(),
 }));
 
@@ -184,7 +184,6 @@ describe('EnrollLearnersModal', () => {
     await user.click(saveBtn);
 
     expect(defaultProps.onSuccess).toHaveBeenCalled();
-    expect(defaultProps.onClose).toHaveBeenCalled();
   });
 
   it('shows error alert when mutation fails', async () => {

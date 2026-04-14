@@ -1,6 +1,6 @@
 import { camelCaseObject, getAuthenticatedHttpClient, snakeCaseObject } from '@openedx/frontend-base';
-import { getApiBaseUrl } from '../../data/api';
-import { EnrollmentsParams, EnrollmentStatusResponse, EnrolledLearner, UpdateEnrollmentsParams } from '../types';
+import { getApiBaseUrl } from '@src/data/api';
+import { EnrollmentsParams, EnrollmentStatusResponse, EnrolledLearner, UpdateEnrollmentsParams } from '@src/enrollments/types';
 import { DataList } from '@src/types';
 
 export const getEnrollments = async (

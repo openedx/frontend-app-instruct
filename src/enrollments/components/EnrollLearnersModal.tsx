@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { isAxiosError } from 'axios';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, FormControl, ModalDialog, Form } from '@openedx/paragon';
+import { useUpdateEnrollments } from '@src/enrollments/data/apiHook';
+import messages from '@src/enrollments/messages';
 import { useAlert } from '@src/providers/AlertProvider';
-import messages from '../messages';
-import { useUpdateEnrollments } from '../data/apiHook';
-import { isAxiosError } from 'axios';
 
 export interface EnrollLearnersModalProps {
   isOpen: boolean,

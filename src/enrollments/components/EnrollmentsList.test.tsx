@@ -1,11 +1,11 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import EnrollmentsList from './EnrollmentsList';
-import { useEnrollments } from '../data/apiHook';
+import EnrollmentsList from '@src/enrollments/components/EnrollmentsList';
+import { useEnrollments } from '@src/enrollments/data/apiHook';
+import messages from '@src/enrollments/messages';
 import { renderWithIntl } from '@src/testUtils';
-import messages from '../messages';
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('@src/enrollments/data/apiHook', () => ({
   useEnrollments: jest.fn(),
 }));
 

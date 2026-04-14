@@ -2,8 +2,8 @@ import { useState, ChangeEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, FormControl, ModalDialog } from '@openedx/paragon';
-import { useEnrollmentByUserId } from '../data/apiHook';
-import messages from '../messages';
+import { useEnrollmentByUserId } from '@src/enrollments/data/apiHook';
+import messages from '@src/enrollments/messages';
 
 interface EnrollmentStatusModalProps {
   isOpen: boolean,

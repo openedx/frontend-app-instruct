@@ -1,5 +1,5 @@
-import { appId } from '../../constants';
-import { EnrollmentsParams } from '../types';
+import { appId } from '@src/constants';
+import { EnrollmentsParams } from '@src/enrollments/types';
 
 export const enrollmentsQueryKeys = {
   all: [appId, 'enrollments'] as const,

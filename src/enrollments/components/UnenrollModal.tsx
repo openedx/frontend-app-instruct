@@ -2,9 +2,9 @@ import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, ModalDialog } from '@openedx/paragon';
 import { useAlert } from '@src/providers/AlertProvider';
-import { useUpdateEnrollments } from '../data/apiHook';
-import messages from '../messages';
-import { EnrolledLearner } from '../types';
+import { useUpdateEnrollments } from '@src/enrollments/data/apiHook';
+import messages from '@src/enrollments/messages';
+import { EnrolledLearner } from '@src/enrollments/types';
 
 interface UnenrollModalProps {
   learner: EnrolledLearner,

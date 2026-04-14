@@ -1,7 +1,7 @@
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
-import { getApiBaseUrl } from '../../data/api';
-import { getEnrollments, getEnrollmentStatus, updateEnrollments } from './api';
-import { EnrollmentsParams, EnrollmentStatusResponse, EnrolledLearner } from '../types';
+import { getApiBaseUrl } from '@src/data/api';
+import { getEnrollments, getEnrollmentStatus, updateEnrollments } from '@src/enrollments/data/api';
+import { EnrollmentsParams, EnrollmentStatusResponse, EnrolledLearner } from '@src/enrollments/types';
 import { DataList } from '@src/types';
 
 jest.mock('@openedx/frontend-base', () => ({
@@ -10,7 +10,7 @@ jest.mock('@openedx/frontend-base', () => ({
   getAuthenticatedHttpClient: jest.fn(),
 }));
 
-jest.mock('../../data/api', () => ({
+jest.mock('@src/data/api', () => ({
   getApiBaseUrl: jest.fn(),
 }));
 
