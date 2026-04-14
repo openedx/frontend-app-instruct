@@ -30,8 +30,10 @@ const EnrollLearnersModal = ({
     const identifier = emails.split(',').map(email => email.trim()).filter(email => email);
     enrollLearners({ identifier, action: 'enroll', autoEnroll, emailStudents }, {
       onSuccess: () => {
+        setEmails('');
+        setAutoEnroll(true);
+        setEmailStudents(true);
         onSuccess();
-        onClose();
       },
       onError: (error) => {
         const notFound = isAxiosError(error) && error.response?.status === 404;

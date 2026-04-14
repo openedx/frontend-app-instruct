@@ -166,11 +166,6 @@ const messages = defineMessages({
     defaultMessage: 'An error occurred while unenrolling learner. Please try again.',
     description: 'Error message displayed when unenrolling learner fails',
   },
-  unenrollingButton: {
-    id: 'instruct.enrollments.modals.unenrollingButton',
-    defaultMessage: 'Unenrolling...',
-    description: 'Label for unenroll button when processing',
-  },
   enrollLearnerNotFoundError: {
     id: 'instruct.enrollments.modals.enrollLearnerNotFoundError',
     defaultMessage: 'One or more learners were not found. Please check the email addresses or usernames and try again.',

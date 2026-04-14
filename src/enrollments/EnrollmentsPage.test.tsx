@@ -37,7 +37,8 @@ jest.mock('./components/EnrollmentsList', () => {
 });
 
 describe('EnrollmentsPage', () => {
-  beforeAll(() => {
+  beforeEach(() => {
+    jest.clearAllMocks();
     (useEnrollments as jest.Mock).mockReturnValue({
       data: { count: 1, numPages: 1, results: [{ username: 'testuser', fullName: 'Test User', email: 'test@example.com', mode: 'audit', isBetaTester: false }] },
       isLoading: false,
