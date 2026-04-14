@@ -13,3 +13,10 @@ export interface EnrollmentsParams extends PaginationParams {
   emailOrUsername: string,
   isBetaTester: string,
 }
+
+export interface UpdateEnrollmentsParams {
+  identifier: string[],
+  action: 'enroll' | 'unenroll',
+  autoEnroll?: boolean,
+  emailStudents?: boolean,
+}

@@ -1,6 +1,6 @@
-import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
+import { camelCaseObject, getAuthenticatedHttpClient, snakeCaseObject } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '../../data/api';
-import { EnrollmentsParams, EnrollmentStatusResponse, EnrolledLearner } from '../types';
+import { EnrollmentsParams, EnrollmentStatusResponse, EnrolledLearner, UpdateEnrollmentsParams } from '../types';
 import { DataList } from '@src/types';
 
 export const getEnrollments = async (
@@ -38,22 +38,13 @@ export const getEnrollmentStatus = async (
   return camelCaseObject(data);
 };
 
-export const enrollLearners = async (
+export const updateEnrollments = async (
   courseId: string,
-  users: string[]
+  params: UpdateEnrollmentsParams
 ): Promise<void> => {
+  const snakeCaseParams = snakeCaseObject(params);
   await getAuthenticatedHttpClient().post(
-    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments/`,
-    { users }
-  );
-};
-
-export const unenrollLearners = async (
-  courseId: string,
-  users: string[]
-): Promise<void> => {
-  await getAuthenticatedHttpClient().delete(
-    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments/`,
-    { data: { users } }
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/enrollments/modify`,
+    snakeCaseParams
   );
 };

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import EnrollmentsPage from './EnrollmentsPage';
 import { EnrolledLearner } from './types';
 import messages from './messages';
-import { useEnrollmentByUserId, useEnrollments, useEnrollLearners, useUnenrollLearners } from './data/apiHook';
+import { useEnrollmentByUserId, useEnrollments, useUpdateEnrollments } from './data/apiHook';
 import { renderWithAlertAndIntl } from '@src/testUtils';
 
 jest.mock('react-router-dom', () => ({
@@ -14,8 +14,7 @@ jest.mock('react-router-dom', () => ({
 jest.mock('./data/apiHook', () => ({
   useEnrollments: jest.fn(),
   useEnrollmentByUserId: jest.fn(),
-  useEnrollLearners: jest.fn(),
-  useUnenrollLearners: jest.fn(),
+  useUpdateEnrollments: jest.fn(),
 }));
 
 jest.mock('./components/EnrollmentsList', () => {
@@ -47,14 +46,10 @@ describe('EnrollmentsPage', () => {
       data: { enrollmentStatus: 'enrolled' },
       refetch: jest.fn(),
     });
-    (useEnrollLearners as jest.Mock).mockReturnValue({
+    (useUpdateEnrollments as jest.Mock).mockReturnValue({
       mutate: jest.fn(),
       isLoading: false,
       error: null,
-    });
-    (useUnenrollLearners as jest.Mock).mockReturnValue({
-      mutate: jest.fn(),
-      isPending: false,
     });
   });
 

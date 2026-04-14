@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, ModalDialog } from '@openedx/paragon';
 import { useAlert } from '@src/providers/AlertProvider';
-import { useUnenrollLearners } from '../data/apiHook';
+import { useUpdateEnrollments } from '../data/apiHook';
 import messages from '../messages';
 import { EnrolledLearner } from '../types';
 
@@ -16,11 +16,14 @@ interface UnenrollModalProps {
 const UnenrollModal = ({ learner, isOpen, onClose, onSuccess }: UnenrollModalProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const { mutate: unenrollLearners, isPending } = useUnenrollLearners(courseId);
+  const { mutate: unenrollLearners, isPending } = useUpdateEnrollments(courseId);
   const { showModal } = useAlert();
 
   const handleUnenroll = () => {
-    unenrollLearners([learner.email], {
+    unenrollLearners({
+      identifier: [learner.username],
+      action: 'unenroll',
+    }, {
       onSuccess: () => {
         onSuccess();
         onClose();
@@ -29,6 +32,7 @@ const UnenrollModal = ({ learner, isOpen, onClose, onSuccess }: UnenrollModalPro
         showModal({
           message: error.message || intl.formatMessage(messages.unenrollLearnerError),
           variant: 'danger',
+          confirmText: intl.formatMessage(messages.closeButton),
         });
       }
     });

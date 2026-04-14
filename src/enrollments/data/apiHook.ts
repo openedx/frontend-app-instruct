@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { enrollLearners, getEnrollments, getEnrollmentStatus, unenrollLearners } from './api';
+import { getEnrollments, getEnrollmentStatus, updateEnrollments } from './api';
 import { enrollmentsQueryKeys } from './queryKeys';
-import { EnrollmentsParams } from '../types';
+import { EnrollmentsParams, UpdateEnrollmentsParams } from '../types';
 
 export const useEnrollments = (courseId: string, params: EnrollmentsParams) => (
   useQuery({
@@ -19,20 +19,10 @@ export const useEnrollmentByUserId = (courseId: string, userIdentifier: string) 
   })
 );
 
-export const useEnrollLearners = (courseId: string) => {
+export const useUpdateEnrollments = (courseId: string) => {
   const queryClient = useQueryClient();
   return (useMutation({
-    mutationFn: (users: string[]) => enrollLearners(courseId, users),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: enrollmentsQueryKeys.byCourse(courseId) });
-    },
-  }));
-};
-
-export const useUnenrollLearners = (courseId: string) => {
-  const queryClient = useQueryClient();
-  return (useMutation({
-    mutationFn: (users: string[]) => unenrollLearners(courseId, users),
+    mutationFn: (params: UpdateEnrollmentsParams) => updateEnrollments(courseId, params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: enrollmentsQueryKeys.byCourse(courseId) });
     },

@@ -1,6 +1,6 @@
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '../../data/api';
-import { getEnrollments, getEnrollmentStatus, enrollLearners, unenrollLearners } from './api';
+import { getEnrollments, getEnrollmentStatus, updateEnrollments } from './api';
 import { EnrollmentsParams, EnrollmentStatusResponse, EnrolledLearner } from '../types';
 import { DataList } from '@src/types';
 
@@ -249,85 +249,85 @@ describe('enrollments api', () => {
     });
   });
 
-  describe('enrollLearners', () => {
+  describe('updateEnrollments', () => {
     beforeEach(() => {
       mockHttpClient.post.mockResolvedValue({});
     });
 
     it('enrolls multiple learners successfully', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const users = ['student1@example.com', 'student2@example.com'];
+      const identifier = ['student1@example.com', 'student2@example.com'];
 
-      await enrollLearners(courseId, users);
+      await updateEnrollments(courseId, { identifier, action: 'enroll', autoEnroll: true, emailStudents: true });
 
       expect(mockGetApiBaseUrl).toHaveBeenCalled();
       expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
       expect(mockHttpClient.post).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/',
-        { users }
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/modify',
+        { identifier, action: 'enroll', auto_enroll: true, email_students: true }
       );
     });
 
     it('enrolls a single learner successfully', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const users = ['student@example.com'];
+      const identifier = ['student@example.com'];
 
-      await enrollLearners(courseId, users);
+      await updateEnrollments(courseId, { identifier, action: 'enroll', autoEnroll: true, emailStudents: true });
 
       expect(mockHttpClient.post).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/',
-        { users }
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/modify',
+        { identifier, action: 'enroll', auto_enroll: true, email_students: true }
       );
     });
 
     it('handles empty users array', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const users: string[] = [];
+      const identifier: string[] = [];
 
-      await enrollLearners(courseId, users);
+      await updateEnrollments(courseId, { identifier, action: 'enroll', autoEnroll: true, emailStudents: true });
 
       expect(mockHttpClient.post).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/',
-        { users }
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/modify',
+        { identifier, action: 'enroll', auto_enroll: true, email_students: true }
       );
     });
 
     it('handles special characters in course ID', async () => {
       const courseId = 'course-v1:edX+Advanced+Course+2023';
-      const users = ['student@example.com'];
+      const identifier = ['student@example.com'];
 
-      await enrollLearners(courseId, users);
+      await updateEnrollments(courseId, { identifier, action: 'enroll', autoEnroll: true, emailStudents: true });
 
       expect(mockHttpClient.post).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Advanced+Course+2023/enrollments/',
-        { users }
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Advanced+Course+2023/enrollments/modify',
+        { identifier, action: 'enroll', auto_enroll: true, email_students: true }
       );
     });
 
     it('handles special characters in user emails', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const users = ['test+user@example.com', 'user.with+dots@domain.co.uk'];
+      const identifier = ['test+user@example.com', 'user.with+dots@domain.co.uk'];
 
-      await enrollLearners(courseId, users);
+      await updateEnrollments(courseId, { identifier, action: 'enroll', autoEnroll: true, emailStudents: true });
 
       expect(mockHttpClient.post).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/',
-        { users }
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/modify',
+        { identifier, action: 'enroll', auto_enroll: true, email_students: true }
       );
     });
 
     it('throws error when API call fails', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const users = ['student@example.com'];
+      const identifier = ['student@example.com'];
       const error = new Error('Enrollment failed');
       mockHttpClient.post.mockRejectedValue(error);
 
-      await expect(enrollLearners(courseId, users)).rejects.toThrow('Enrollment failed');
+      await expect(updateEnrollments(courseId, { identifier, action: 'enroll', autoEnroll: true, emailStudents: true })).rejects.toThrow('Enrollment failed');
     });
 
     it('handles enrollment validation errors', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const users = ['invalid-email'];
+      const identifier = ['invalid-email'];
       const error = {
         response: {
           status: 400,
@@ -336,112 +336,19 @@ describe('enrollments api', () => {
       };
       mockHttpClient.post.mockRejectedValue(error);
 
-      await expect(enrollLearners(courseId, users)).rejects.toEqual(error);
-    });
-  });
-
-  describe('unenrollLearners', () => {
-    beforeEach(() => {
-      mockHttpClient.delete.mockResolvedValue({});
+      await expect(updateEnrollments(courseId, { identifier, action: 'enroll', autoEnroll: true, emailStudents: true })).rejects.toEqual(error);
     });
 
     it('unenrolls multiple learners successfully', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const users = ['student1@example.com', 'student2@example.com'];
+      const identifier = ['student1@example.com', 'student2@example.com'];
 
-      await unenrollLearners(courseId, users);
+      await updateEnrollments(courseId, { identifier, action: 'unenroll', autoEnroll: true, emailStudents: true });
 
-      expect(mockGetApiBaseUrl).toHaveBeenCalled();
-      expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
-      expect(mockHttpClient.delete).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/',
-        { data: { users } }
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/modify',
+        { identifier, action: 'unenroll', auto_enroll: true, email_students: true }
       );
-    });
-
-    it('unenrolls a single learner successfully', async () => {
-      const courseId = 'course-v1:edX+Test+2023';
-      const users = ['student@example.com'];
-
-      await unenrollLearners(courseId, users);
-
-      expect(mockHttpClient.delete).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/',
-        { data: { users } }
-      );
-    });
-
-    it('handles empty users array', async () => {
-      const courseId = 'course-v1:edX+Test+2023';
-      const users: string[] = [];
-
-      await unenrollLearners(courseId, users);
-
-      expect(mockHttpClient.delete).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/',
-        { data: { users } }
-      );
-    });
-
-    it('handles special characters in course ID', async () => {
-      const courseId = 'course-v1:edX+Advanced+Course+2023';
-      const users = ['student@example.com'];
-
-      await unenrollLearners(courseId, users);
-
-      expect(mockHttpClient.delete).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Advanced+Course+2023/enrollments/',
-        { data: { users } }
-      );
-    });
-
-    it('handles special characters in user emails', async () => {
-      const courseId = 'course-v1:edX+Test+2023';
-      const users = ['test+user@example.com', 'user.with+dots@domain.co.uk'];
-
-      await unenrollLearners(courseId, users);
-
-      expect(mockHttpClient.delete).toHaveBeenCalledWith(
-        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/enrollments/',
-        { data: { users } }
-      );
-    });
-
-    it('throws error when API call fails', async () => {
-      const courseId = 'course-v1:edX+Test+2023';
-      const users = ['student@example.com'];
-      const error = new Error('Unenrollment failed');
-      mockHttpClient.delete.mockRejectedValue(error);
-
-      await expect(unenrollLearners(courseId, users)).rejects.toThrow('Unenrollment failed');
-    });
-
-    it('handles unenrollment authorization errors', async () => {
-      const courseId = 'course-v1:edX+Test+2023';
-      const users = ['student@example.com'];
-      const error = {
-        response: {
-          status: 403,
-          data: { error: 'Permission denied' },
-        },
-      };
-      mockHttpClient.delete.mockRejectedValue(error);
-
-      await expect(unenrollLearners(courseId, users)).rejects.toEqual(error);
-    });
-
-    it('handles unenrollment of non-enrolled users', async () => {
-      const courseId = 'course-v1:edX+Test+2023';
-      const users = ['notenrolled@example.com'];
-      const error = {
-        response: {
-          status: 404,
-          data: { error: 'User not enrolled in course' },
-        },
-      };
-      mockHttpClient.delete.mockRejectedValue(error);
-
-      await expect(unenrollLearners(courseId, users)).rejects.toEqual(error);
     });
   });
 });

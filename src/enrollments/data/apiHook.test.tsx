@@ -1,13 +1,14 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEnrollments, useEnrollmentByUserId } from './apiHook';
-import { getEnrollments, getEnrollmentStatus } from './api';
+import { useEnrollments, useEnrollmentByUserId, useUpdateEnrollments } from './apiHook';
+import { getEnrollments, getEnrollmentStatus, updateEnrollments } from './api';
 import { EnrollmentsParams } from '../types';
 
 jest.mock('./api');
 
 const mockGetEnrollments = getEnrollments as jest.MockedFunction<typeof getEnrollments>;
 const mockGetEnrollmentStatus = getEnrollmentStatus as jest.MockedFunction<typeof getEnrollmentStatus>;
+const mockPostUpdateEnrollments = updateEnrollments as jest.MockedFunction<typeof updateEnrollments>;
 
 const mockEnrollmentsData = {
   count: 2,
@@ -296,6 +297,45 @@ describe('enrollments api hooks', () => {
       });
 
       expect(result.current.error).toBe(httpError);
+    });
+  });
+
+  describe('useUpdateEnrollments', () => {
+    const courseId = 'course-v1:edX+Test+2023';
+
+    it('calls updateEnrollments and succeeds', async () => {
+      mockPostUpdateEnrollments.mockResolvedValue(undefined);
+
+      const { result } = renderHook(() => useUpdateEnrollments(courseId), {
+        wrapper: createWrapper(),
+      });
+
+      const params = { identifier: ['student1'], action: 'enroll' as const };
+      result.current.mutate(params);
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockPostUpdateEnrollments).toHaveBeenCalledWith(courseId, params);
+    });
+
+    it('handles mutation error', async () => {
+      const error = new Error('Failed to update');
+      mockPostUpdateEnrollments.mockRejectedValue(error);
+
+      const { result } = renderHook(() => useUpdateEnrollments(courseId), {
+        wrapper: createWrapper(),
+      });
+
+      const params = { identifier: ['student2'], action: 'unenroll' as const };
+      result.current.mutate(params);
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      });
+      expect(mockPostUpdateEnrollments).toHaveBeenCalledWith(courseId, params);
+      expect(result.current.error).toBe(error);
     });
   });
 });

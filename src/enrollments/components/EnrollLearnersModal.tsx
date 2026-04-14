@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { Button, FormControl, ModalDialog } from '@openedx/paragon';
-import { FormCheckbox, FormCheckboxSet } from '@openedx/paragon/dist/Form';
+import { Button, FormControl, ModalDialog, Form } from '@openedx/paragon';
 import { useAlert } from '@src/providers/AlertProvider';
 import messages from '../messages';
-import { useEnrollLearners } from '../data/apiHook';
+import { useUpdateEnrollments } from '../data/apiHook';
+import { isAxiosError } from 'axios';
 
 export interface EnrollLearnersModalProps {
   isOpen: boolean,
@@ -21,20 +21,27 @@ const EnrollLearnersModal = ({
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [emails, setEmails] = useState('');
-  const { mutate: enrollLearners } = useEnrollLearners(courseId);
+  const [autoEnroll, setAutoEnroll] = useState(true);
+  const [emailStudents, setEmailStudents] = useState(true);
+  const { mutate: enrollLearners } = useUpdateEnrollments(courseId);
   const { showModal } = useAlert();
 
   const handleSave = () => {
-    const emailList = emails.split(',').map(email => email.trim()).filter(email => email);
-    enrollLearners(emailList, {
+    const identifier = emails.split(',').map(email => email.trim()).filter(email => email);
+    enrollLearners({ identifier, action: 'enroll', autoEnroll, emailStudents }, {
       onSuccess: () => {
         onSuccess();
         onClose();
       },
       onError: (error) => {
+        const notFound = isAxiosError(error) && error.response?.status === 404;
+        const errorMessage = notFound
+          ? intl.formatMessage(messages.enrollLearnerNotFoundError)
+          : error.message || intl.formatMessage(messages.enrollLearnerError);
         showModal({
-          message: error.message || intl.formatMessage(messages.enrollLearnerError),
+          message: errorMessage,
           variant: 'danger',
+          confirmText: intl.formatMessage(messages.closeButton),
         });
       }
     });
@@ -45,26 +52,33 @@ const EnrollLearnersModal = ({
       <ModalDialog.Header className="border-light-700 border-bottom">
         <h3 className="text-primary-500">{intl.formatMessage(messages.enrollLearners)}</h3>
       </ModalDialog.Header>
-      <ModalDialog.Body className="py-4">
-        {/* TABS will be added as a follow up */}
-        {/* <Tabs id={`${title.replace(/\s+/g, '-')}-tabs`} className="mt-0 mb-2" onSelect={() => {}}>
-          <Tab key={`${title.replace(/\s+/g, '-')}`} eventKey={`${title.replace(/\s+/g, '-')}`} title={title}> */}
-        <p className="text-gray-700 x-small mb-2">{intl.formatMessage(messages.addLearnerInstructions)}</p>
-        <FormControl
-          as="textarea"
-          rows={4}
-          placeholder={intl.formatMessage(messages.userIdentifierPlaceholder)}
-          onChange={(e) => setEmails(e.target.value)}
-        />
-        <FormCheckboxSet name="enrollment-options" isInline className="mt-3 text-primary-500">
-          <FormCheckbox controlClassName="border-primary-500">{intl.formatMessage(messages.autoEnrollCheckbox)}</FormCheckbox>
-          <FormCheckbox controlClassName="border-primary-500" className="ml-4">{intl.formatMessage(messages.notifyUsersCheckbox)}</FormCheckbox>
-        </FormCheckboxSet>
-        {/* </Tab>
-          <Tab key="upload-csv" eventKey="upload-csv" title={intl.formatMessage(messages.uploadCSV)}>
-          </Tab>
-        </Tabs> */}
-      </ModalDialog.Body>
+      <div className="position-relative overflow-auto">
+        <ModalDialog.Body className="py-4">
+          <p className="text-gray-700 x-small mb-2">{intl.formatMessage(messages.addLearnerInstructions)}</p>
+          <FormControl
+            name="identifier"
+            as="textarea"
+            rows={4}
+            placeholder={intl.formatMessage(messages.userIdentifierPlaceholder)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEmails(e.target.value)}
+          />
+          <div className="d-flex mt-3 text-primary-500">
+            <Form.Checkbox
+              controlClassName="border-primary-500"
+              checked={autoEnroll}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAutoEnroll(e.target.checked)}
+            >{intl.formatMessage(messages.autoEnrollCheckbox)}
+            </Form.Checkbox>
+            <Form.Checkbox
+              controlClassName="border-primary-500"
+              className="ml-4"
+              checked={emailStudents}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmailStudents(e.target.checked)}
+            >{intl.formatMessage(messages.notifyUsersCheckbox)}
+            </Form.Checkbox>
+          </div>
+        </ModalDialog.Body>
+      </div>
       <ModalDialog.Footer className="border-light-700 border-top">
         <Button variant="tertiary" onClick={onClose}>
           {intl.formatMessage(messages.cancelButton)}

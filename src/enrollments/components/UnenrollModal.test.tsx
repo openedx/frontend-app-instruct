@@ -2,8 +2,9 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UnenrollModal from './UnenrollModal';
 import { renderWithAlertAndIntl } from '@src/testUtils';
-import { useUnenrollLearners } from '../data/apiHook';
+import { useUpdateEnrollments } from '../data/apiHook';
 import messages from '../messages';
+import { UpdateEnrollmentsParams } from '../types';
 
 const learner = {
   fullName: 'Jane Doe',
@@ -28,7 +29,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('../data/apiHook', () => ({
-  useUnenrollLearners: jest.fn(),
+  useUpdateEnrollments: jest.fn(),
 }));
 
 jest.mock('@src/providers/AlertProvider', () => ({
@@ -42,7 +43,7 @@ describe('UnenrollModal', () => {
   const mutateMock = jest.fn();
 
   beforeEach(() => {
-    (useUnenrollLearners as jest.Mock).mockReturnValue({
+    (useUpdateEnrollments as jest.Mock).mockReturnValue({
       mutate: mutateMock,
       isPending: false
     });
@@ -83,14 +84,17 @@ describe('UnenrollModal', () => {
       <UnenrollModal {...defaultProps} />
     );
     await userEvent.click(screen.getByRole('button', { name: /^unenroll$/i }));
-    expect(mutateMock).toHaveBeenCalledWith([learner.email], {
+    expect(mutateMock).toHaveBeenCalledWith({
+      identifier: [learner.email],
+      action: 'unenroll',
+    }, {
       onSuccess: expect.any(Function),
       onError: expect.any(Function),
     });
   });
 
   it('calls onSuccess and onClose when unenrollment succeeds', async () => {
-    const mutateWithCallback = (_users: string[], callbacks: any) => {
+    const mutateWithCallback = (_params: UpdateEnrollmentsParams, callbacks: any) => {
       callbacks.onSuccess();
     };
     mutateMock.mockImplementation(mutateWithCallback);
@@ -106,7 +110,7 @@ describe('UnenrollModal', () => {
 
   it('shows error alert when unenrollment fails', async () => {
     const errorMessage = 'Unenrollment failed';
-    const mutateWithError = (_users: string[], callbacks: any) => {
+    const mutateWithError = (_params: UpdateEnrollmentsParams, callbacks: any) => {
       callbacks.onError({ message: errorMessage });
     };
     mutateMock.mockImplementation(mutateWithError);
@@ -119,11 +123,12 @@ describe('UnenrollModal', () => {
     expect(mockShowModal).toHaveBeenCalledWith({
       message: errorMessage,
       variant: 'danger',
+      confirmText: messages.closeButton.defaultMessage,
     });
   });
 
   it('shows default error message when error has no message', async () => {
-    const mutateWithError = (_users: string[], callbacks: any) => {
+    const mutateWithError = (_params: UpdateEnrollmentsParams, callbacks: any) => {
       callbacks.onError({});
     };
     mutateMock.mockImplementation(mutateWithError);
@@ -136,11 +141,12 @@ describe('UnenrollModal', () => {
     expect(mockShowModal).toHaveBeenCalledWith({
       message: messages.unenrollLearnerError.defaultMessage,
       variant: 'danger',
+      confirmText: messages.closeButton.defaultMessage,
     });
   });
 
   it('disables unenroll button when pending', () => {
-    (useUnenrollLearners as jest.Mock).mockReturnValue({
+    (useUpdateEnrollments as jest.Mock).mockReturnValue({
       mutate: mutateMock,
       isPending: true
     });

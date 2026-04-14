@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import EnrollLearnersModal, { EnrollLearnersModalProps } from './EnrollLearnersModal';
 import messages from '../messages';
 import { renderWithAlertAndIntl } from '@src/testUtils';
-import { useEnrollLearners } from '../data/apiHook';
+import { useUpdateEnrollments } from '../data/apiHook';
 
 const defaultProps: EnrollLearnersModalProps = {
   isOpen: true,
@@ -19,7 +19,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('../data/apiHook', () => ({
-  useEnrollLearners: jest.fn(),
+  useUpdateEnrollments: jest.fn(),
 }));
 
 jest.mock('@src/providers/AlertProvider', () => ({
@@ -36,7 +36,7 @@ describe('EnrollLearnersModal', () => {
   const mutateMock = jest.fn();
 
   beforeEach(() => {
-    (useEnrollLearners as jest.Mock).mockReturnValue({ mutate: mutateMock });
+    (useUpdateEnrollments as jest.Mock).mockReturnValue({ mutate: mutateMock });
     mockShowModal.mockClear();
   });
 
@@ -109,10 +109,15 @@ describe('EnrollLearnersModal', () => {
       name: messages.saveButton.defaultMessage,
     });
     await user.click(saveBtn);
-    expect(mutateMock).toHaveBeenCalledWith([
-      'alice@example.com',
-      'bob@example.com',
-    ], {
+    expect(mutateMock).toHaveBeenCalledWith({
+      identifier: [
+        'alice@example.com',
+        'bob@example.com',
+      ],
+      action: 'enroll',
+      autoEnroll: true,
+      emailStudents: true,
+    }, {
       onSuccess: expect.any(Function),
       onError: expect.any(Function),
     });
@@ -129,11 +134,16 @@ describe('EnrollLearnersModal', () => {
       name: messages.saveButton.defaultMessage,
     });
     await user.click(saveBtn);
-    expect(mutateMock).toHaveBeenCalledWith([
-      'a@a.com',
-      'b@b.com',
-      'c@c.com',
-    ], {
+    expect(mutateMock).toHaveBeenCalledWith({
+      identifier: [
+        'a@a.com',
+        'b@b.com',
+        'c@c.com',
+      ],
+      action: 'enroll',
+      autoEnroll: true,
+      emailStudents: true,
+    }, {
       onSuccess: expect.any(Function),
       onError: expect.any(Function),
     });
@@ -198,6 +208,7 @@ describe('EnrollLearnersModal', () => {
     expect(mockShowModal).toHaveBeenCalledWith({
       message: errorMessage,
       variant: 'danger',
+      confirmText: messages.closeButton.defaultMessage,
     });
   });
 
@@ -221,6 +232,7 @@ describe('EnrollLearnersModal', () => {
     expect(mockShowModal).toHaveBeenCalledWith({
       message: messages.enrollLearnerError.defaultMessage,
       variant: 'danger',
+      confirmText: messages.closeButton.defaultMessage,
     });
   });
 
@@ -236,10 +248,15 @@ describe('EnrollLearnersModal', () => {
     });
     await user.click(saveBtn);
 
-    expect(mutateMock).toHaveBeenCalledWith([
-      'alice@example.com',
-      'bob@example.com',
-    ], {
+    expect(mutateMock).toHaveBeenCalledWith({
+      identifier: [
+        'alice@example.com',
+        'bob@example.com',
+      ],
+      action: 'enroll',
+      autoEnroll: true,
+      emailStudents: true,
+    }, {
       onSuccess: expect.any(Function),
       onError: expect.any(Function),
     });

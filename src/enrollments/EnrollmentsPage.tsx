@@ -38,6 +38,10 @@ const EnrollmentsPage = () => {
     setIsEnrollLearnersModalOpen(true);
   };
 
+  const handleCloseEnrollLearnersModal = () => {
+    setIsEnrollLearnersModalOpen(false);
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
@@ -55,8 +59,8 @@ const EnrollmentsPage = () => {
       </div>
       <EnrollmentsList onUnenroll={handleUnenroll} />
       <EnrollmentStatusModal isOpen={isEnrollmentStatusModalOpen} onClose={handleCloseEnrollmentStatusModal} />
-      {selectedLearner && <UnenrollModal isOpen={isUnenrollModalOpen} learner={selectedLearner} onClose={handleUnenrollModalClose} onSuccess={() => {}} />}
-      <EnrollLearnersModal isOpen={isEnrollLearnersModalOpen} onClose={() => setIsEnrollLearnersModalOpen(false)} onSuccess={() => {}} />
+      {selectedLearner && <UnenrollModal isOpen={isUnenrollModalOpen} learner={selectedLearner} onClose={handleUnenrollModalClose} onSuccess={handleUnenrollModalClose} />}
+      <EnrollLearnersModal isOpen={isEnrollLearnersModalOpen} onClose={handleCloseEnrollLearnersModal} onSuccess={handleCloseEnrollLearnersModal} />
     </>
   );
 };
