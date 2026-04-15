@@ -8,7 +8,6 @@ import { renderWithAlertAndIntl } from '@src/testUtils';
 const defaultProps: EnrollLearnersModalProps = {
   isOpen: true,
   onClose: jest.fn(),
-  onSuccess: jest.fn(),
 };
 
 const mockShowModal = jest.fn();
@@ -157,7 +156,7 @@ describe('EnrollLearnersModal', () => {
     const user = userEvent.setup();
     expect(saveBtn).toBeDisabled();
     await user.click(saveBtn);
-    expect(defaultProps.onSuccess).not.toHaveBeenCalled();
+    expect(defaultProps.onClose).not.toHaveBeenCalled();
   });
 
   it('does not render modal when isOpen is false', () => {
@@ -165,10 +164,9 @@ describe('EnrollLearnersModal', () => {
     expect(screen.queryByText(messages.enrollLearners.defaultMessage)).not.toBeInTheDocument();
   });
 
-  it('calls onSuccess and onClose when mutation succeeds', async () => {
+  it('calls onClose when mutation succeeds', async () => {
     const mutateWithCallback = (_users: string[], callbacks: any) => {
-      // Call onSuccess for the success scenario
-      callbacks.onSuccess();
+      callbacks.onSuccess({ results: [{ identifier: 'test@example.com', invalidIdentifier: false }] });
     };
     mutateMock.mockImplementation(mutateWithCallback);
 
@@ -183,13 +181,12 @@ describe('EnrollLearnersModal', () => {
     });
     await user.click(saveBtn);
 
-    expect(defaultProps.onSuccess).toHaveBeenCalled();
+    expect(defaultProps.onClose).toHaveBeenCalled();
   });
 
   it('shows error alert when mutation fails', async () => {
-    const errorMessage = 'Enrollment failed';
     const mutateWithError = (_users: string[], callbacks: any) => {
-      callbacks.onError({ message: errorMessage });
+      callbacks.onError({ message: messages.enrollLearnerError.defaultMessage });
     };
     mutateMock.mockImplementation(mutateWithError);
 
@@ -205,7 +202,7 @@ describe('EnrollLearnersModal', () => {
     await user.click(saveBtn);
 
     expect(mockShowModal).toHaveBeenCalledWith({
-      message: errorMessage,
+      message: messages.enrollLearnerError.defaultMessage,
       variant: 'danger',
       confirmText: messages.closeButton.defaultMessage,
     });

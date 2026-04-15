@@ -10,10 +10,9 @@ interface UnenrollModalProps {
   learner: EnrolledLearner,
   isOpen: boolean,
   onClose: () => void,
-  onSuccess: () => void,
 }
 
-const UnenrollModal = ({ learner, isOpen, onClose, onSuccess }: UnenrollModalProps) => {
+const UnenrollModal = ({ learner, isOpen, onClose }: UnenrollModalProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const { mutate: unenrollLearners, isPending } = useUpdateEnrollments(courseId);
@@ -25,7 +24,6 @@ const UnenrollModal = ({ learner, isOpen, onClose, onSuccess }: UnenrollModalPro
       action: 'unenroll',
     }, {
       onSuccess: () => {
-        onSuccess();
         onClose();
       },
       onError: (error) => {

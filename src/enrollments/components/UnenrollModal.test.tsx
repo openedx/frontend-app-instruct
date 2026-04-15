@@ -18,7 +18,6 @@ const defaultProps = {
   learner,
   isOpen: true,
   onClose: jest.fn(),
-  onSuccess: jest.fn(),
 };
 
 const mockShowModal = jest.fn();
@@ -104,7 +103,6 @@ describe('UnenrollModal', () => {
     );
     await userEvent.click(screen.getByRole('button', { name: /^unenroll$/i }));
 
-    expect(defaultProps.onSuccess).toHaveBeenCalled();
     expect(defaultProps.onClose).toHaveBeenCalled();
   });
 

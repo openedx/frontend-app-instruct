@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { getEnrollments, getEnrollmentStatus, updateEnrollments } from '@src/enrollments/data/api';
-import { useEnrollments, useEnrollmentByUserId, useUpdateEnrollments } from '@src/enrollments/data/apiHook';
+import { getEnrollments, getEnrollmentStatus, updateBetaTesters, updateEnrollments } from '@src/enrollments/data/api';
+import { useEnrollments, useEnrollmentByUserId, useUpdateEnrollments, useUpdateBetaTesters } from '@src/enrollments/data/apiHook';
 import { EnrollmentsParams } from '@src/enrollments/types';
 
 jest.mock('@src/enrollments/data/api');
@@ -9,6 +9,7 @@ jest.mock('@src/enrollments/data/api');
 const mockGetEnrollments = getEnrollments as jest.MockedFunction<typeof getEnrollments>;
 const mockGetEnrollmentStatus = getEnrollmentStatus as jest.MockedFunction<typeof getEnrollmentStatus>;
 const mockPostUpdateEnrollments = updateEnrollments as jest.MockedFunction<typeof updateEnrollments>;
+const mockPostUpdateBetaTesters = updateBetaTesters as jest.MockedFunction<typeof updateBetaTesters>;
 
 const mockEnrollmentsData = {
   count: 2,
@@ -304,7 +305,7 @@ describe('enrollments api hooks', () => {
     const courseId = 'course-v1:edX+Test+2023';
 
     it('calls updateEnrollments and succeeds', async () => {
-      mockPostUpdateEnrollments.mockResolvedValue(undefined);
+      mockPostUpdateEnrollments.mockResolvedValue({ results: [{ identifier: 'student1', invalidIdentifier: false }] });
 
       const { result } = renderHook(() => useUpdateEnrollments(courseId), {
         wrapper: createWrapper(),
@@ -335,6 +336,45 @@ describe('enrollments api hooks', () => {
         expect(result.current.isError).toBe(true);
       });
       expect(mockPostUpdateEnrollments).toHaveBeenCalledWith(courseId, params);
+      expect(result.current.error).toBe(error);
+    });
+  });
+
+  describe('useUpdateBetaTesters', () => {
+    const courseId = 'course-v1:edX+Test+2023';
+
+    it('calls updateEnrollments and succeeds', async () => {
+      mockPostUpdateBetaTesters.mockResolvedValue({ results: [{ identifier: 'student1', userDoesNotExist: false }] });
+
+      const { result } = renderHook(() => useUpdateBetaTesters(courseId), {
+        wrapper: createWrapper(),
+      });
+
+      const params = { identifier: ['student1'], action: 'add' as const };
+      result.current.mutate(params);
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockPostUpdateBetaTesters).toHaveBeenCalledWith(courseId, params);
+    });
+
+    it('handles mutation error', async () => {
+      const error = new Error('Failed to update');
+      mockPostUpdateBetaTesters.mockRejectedValue(error);
+
+      const { result } = renderHook(() => useUpdateBetaTesters(courseId), {
+        wrapper: createWrapper(),
+      });
+
+      const params = { identifier: ['student2'], action: 'add' as const };
+      result.current.mutate(params);
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      });
+      expect(mockPostUpdateBetaTesters).toHaveBeenCalledWith(courseId, params);
       expect(result.current.error).toBe(error);
     });
   });
