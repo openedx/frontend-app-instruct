@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { useIntl } from '@openedx/frontend-base';
 import { ActionRow, Button, IconButton } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
-import messages from './messages';
-import EnrollmentsList from './components/EnrollmentsList';
-import EnrollmentStatusModal from './components/EnrollmentStatusModal';
-import UnenrollModal from './components/UnenrollModal';
-import { EnrolledLearner } from './types';
+import messages from '@src/enrollments/messages';
+import EnrollmentsList from '@src/enrollments/components/EnrollmentsList';
+import EnrollmentStatusModal from '@src/enrollments/components/EnrollmentStatusModal';
+import UnenrollModal from '@src/enrollments/components/UnenrollModal';
+import EnrollLearnersModal from '@src/enrollments/components/EnrollLearnersModal';
+import { EnrolledLearner } from '@src/enrollments/types';
 
 const EnrollmentsPage = () => {
   const intl = useIntl();
   const [isEnrollmentStatusModalOpen, setIsEnrollmentStatusModalOpen] = useState(false);
+  const [isEnrollLearnersModalOpen, setIsEnrollLearnersModalOpen] = useState(false);
   const [isUnenrollModalOpen, setIsUnenrollModalOpen] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState<EnrolledLearner | null>(null);
 
@@ -32,6 +34,14 @@ const EnrollmentsPage = () => {
     setIsEnrollmentStatusModalOpen(false);
   };
 
+  const handleEnrollLearners = () => {
+    setIsEnrollLearnersModalOpen(true);
+  };
+
+  const handleCloseEnrollLearnersModal = () => {
+    setIsEnrollLearnersModalOpen(false);
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
@@ -44,12 +54,13 @@ const EnrollmentsPage = () => {
             onClick={handleMoreButton}
           />
           <Button variant="outline-primary">+ {intl.formatMessage(messages.addBetaTesters)}</Button>
-          <Button>+ {intl.formatMessage(messages.enrollLearners)}</Button>
+          <Button onClick={handleEnrollLearners}>+ {intl.formatMessage(messages.enrollLearners)}</Button>
         </ActionRow>
       </div>
       <EnrollmentsList onUnenroll={handleUnenroll} />
       <EnrollmentStatusModal isOpen={isEnrollmentStatusModalOpen} onClose={handleCloseEnrollmentStatusModal} />
-      {selectedLearner && <UnenrollModal isOpen={isUnenrollModalOpen} learner={selectedLearner} onClose={handleUnenrollModalClose} />}
+      {selectedLearner && <UnenrollModal isOpen={isUnenrollModalOpen} learner={selectedLearner} onClose={handleUnenrollModalClose} onSuccess={handleUnenrollModalClose} />}
+      <EnrollLearnersModal isOpen={isEnrollLearnersModalOpen} onClose={handleCloseEnrollLearnersModal} onSuccess={handleCloseEnrollLearnersModal} />
     </>
   );
 };

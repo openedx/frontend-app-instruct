@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ActionRow, Button, DataTable, FormControl, Icon, IconButton } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
-import { MoreVert, Search } from '@openedx/paragon/icons';
-import messages from '../messages';
-import { useEnrollments } from '../data/apiHook';
-import { EnrolledLearner } from '../types';
-import { DataTableFetchDataProps, TableCellValue } from '@src/types';
+import { ActionRow, Button, DataTable, FormControl, Icon, IconButton } from '@openedx/paragon';
+import { FilterList, MoreVert, Search } from '@openedx/paragon/icons';
+import messages from '@src/enrollments/messages';
+import { useEnrollments } from '@src/enrollments/data/apiHook';
+import { EnrolledLearner } from '@src/enrollments/types';
 import { useDebouncedFilter } from '@src/hooks/useDebouncedFilter';
+import { DataTableFetchDataProps, TableCellValue } from '@src/types';
 
 const ENROLLMENTS_PAGE_SIZE = 25;
 
@@ -58,6 +58,7 @@ const BetaTesterFilter = ({ column: { filterValue, setFilter } }: { column: { fi
       size="md"
       value={filterValue}
       onChange={handleSelectChange}
+      leadingElement={<Icon src={FilterList} />}
     >
       {
         betaTesterOptions.map((option) => (

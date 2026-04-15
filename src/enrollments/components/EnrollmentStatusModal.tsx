@@ -2,8 +2,8 @@ import { useState, ChangeEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, FormControl, ModalDialog } from '@openedx/paragon';
-import { useEnrollmentByUserId } from '../data/apiHook';
-import messages from '../messages';
+import { useEnrollmentByUserId } from '@src/enrollments/data/apiHook';
+import messages from '@src/enrollments/messages';
 
 interface EnrollmentStatusModalProps {
   isOpen: boolean,
@@ -34,7 +34,7 @@ const EnrollmentStatusModal = ({ isOpen, onClose }: EnrollmentStatusModalProps) 
         <div className="my-2">
           <p>{intl.formatMessage(messages.addLearnerInstructions)}</p>
           <FormControl
-            placeholder={intl.formatMessage(messages.enrollLearnersPlaceholder)}
+            placeholder={intl.formatMessage(messages.enrollmentStatusPlaceholder)}
             value={learnerIdentifier}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setLearnerIdentifier(e.target.value)}
           />
