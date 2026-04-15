@@ -52,7 +52,7 @@ const routes = [
     id: 'org.openedx.frontend.route.instructorDashboard.main',
     path: 'instructor-dashboard/:courseId',
     handle: {
-      role: instructorDashboardRole
+      roles: [instructorDashboardRole]
     },
     async lazy() {
       const module = await import('./Main');
