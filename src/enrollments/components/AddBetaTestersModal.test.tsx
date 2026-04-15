@@ -1,12 +1,12 @@
 import userEvent from '@testing-library/user-event';
 import { screen, waitFor } from '@testing-library/react';
 import { isAxiosError } from 'axios';
-import AddBetaTestersModal, { EnrollLearnersModalProps } from '@src/enrollments/components/AddBetaTestersModal';
+import AddBetaTestersModal, { AddBetaTestersModalProps } from '@src/enrollments/components/AddBetaTestersModal';
 import { useUpdateBetaTesters } from '@src/enrollments/data/apiHook';
 import messages from '@src/enrollments/messages';
 import { renderWithAlertAndIntl } from '@src/testUtils';
 
-const defaultProps: EnrollLearnersModalProps = {
+const defaultProps: AddBetaTestersModalProps = {
   isOpen: true,
   onClose: jest.fn(),
 };

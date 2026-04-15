@@ -8,7 +8,7 @@ import messages from '@src/enrollments/messages';
 import { useAlert } from '@src/providers/AlertProvider';
 import { useDebouncedFilter } from '@src/hooks/useDebouncedFilter';
 
-export interface EnrollLearnersModalProps {
+export interface AddBetaTestersModalProps {
   isOpen: boolean,
   onClose: () => void,
 }
@@ -16,7 +16,7 @@ export interface EnrollLearnersModalProps {
 const AddBetaTestersModal = ({
   isOpen,
   onClose
-}: EnrollLearnersModalProps) => {
+}: AddBetaTestersModalProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [emails, setEmails] = useState('');

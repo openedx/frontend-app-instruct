@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { useCallback, useEffect } from 'react';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, ModalDialog } from '@openedx/paragon';
 import { useAlert } from '@src/providers/AlertProvider';
@@ -18,7 +19,7 @@ const UpdateBetaTesterModal = ({ learner, isOpen, onClose }: UpdateBetaTesterMod
   const { mutate: updateBetaTester, isPending } = useUpdateBetaTesters(courseId);
   const { addAlert, showModal } = useAlert();
 
-  const handleUpdateBetaTester = () => {
+  const handleUpdateBetaTester = useCallback(() => {
     updateBetaTester({
       identifier: [learner.username],
       action: learner.isBetaTester ? 'remove' : 'add',
@@ -47,11 +48,17 @@ const UpdateBetaTesterModal = ({ learner, isOpen, onClose }: UpdateBetaTesterMod
     });
 
     onClose();
-  };
+  }, [updateBetaTester, learner.username, learner.isBetaTester, addAlert, intl, showModal, onClose]);
 
-  if (isOpen && !learner.isBetaTester) {
-    handleUpdateBetaTester();
-    return;
+  useEffect(() => {
+    if (isOpen && !learner.isBetaTester) {
+      handleUpdateBetaTester();
+    }
+  }, [handleUpdateBetaTester, isOpen, learner.isBetaTester]);
+
+  // Only show modal for removing beta testers (requires confirmation)
+  if (!isOpen || !learner.isBetaTester) {
+    return null;
   }
 
   return (
