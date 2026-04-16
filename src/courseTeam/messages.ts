@@ -205,7 +205,17 @@ const messages = defineMessages({
     id: 'instruct.courseTeam.closeButton',
     defaultMessage: 'Close',
     description: 'Label for close button in error modal when adding a team member fails',
-  }
+  },
+  failedToAddTeamMembers: {
+    id: 'instruct.courseTeam.failedToAddTeamMembers',
+    defaultMessage: 'The following usernames and/or email addresses are invalid. All other roles have been added to the team members.',
+    description: 'Error message displayed when some team members could not be added',
+  },
+  unknownLearner: {
+    id: 'instruct.courseTeam.unknownLearner',
+    defaultMessage: 'Unknown learner: {learner}',
+    description: 'Displayed when a learner does not have a full name or username available',
+  },
 });
 
 export default messages;

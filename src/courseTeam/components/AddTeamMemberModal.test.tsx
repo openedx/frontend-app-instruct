@@ -9,6 +9,7 @@ import { useAlert } from '@src/providers/AlertProvider';
 
 // Mocks
 jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ courseId: 'course-v1:test+id' }),
 }));
 
@@ -96,7 +97,7 @@ describe('AddTeamMemberModal', () => {
     await user.click(screen.getByText(messages.saveButton.defaultMessage));
 
     expect(mutateMock).toHaveBeenCalledWith(
-      { identifier: ['user1', 'user2'], role: 'admin' },
+      { identifiers: ['user1', 'user2'], role: 'admin' },
       expect.any(Object)
     );
   });
@@ -162,7 +163,7 @@ describe('AddTeamMemberModal', () => {
     const options = mutateCall[1];
 
     // Trigger onSuccess
-    options.onSuccess();
+    options.onSuccess({ results: [] });
 
     expect(defaultProps.onClose).toHaveBeenCalled();
   });
@@ -206,7 +207,7 @@ describe('AddTeamMemberModal', () => {
     await user.click(screen.getByText(messages.saveButton.defaultMessage));
 
     expect(mutateMock).toHaveBeenCalledWith(
-      { identifier: ['user1', 'user2', 'user3'], role: 'admin' },
+      { identifiers: ['user1', 'user2', 'user3'], role: 'admin' },
       expect.any(Object)
     );
   });
@@ -224,7 +225,7 @@ describe('AddTeamMemberModal', () => {
     await user.click(screen.getByText(messages.saveButton.defaultMessage));
 
     expect(mutateMock).toHaveBeenCalledWith(
-      { identifier: [], role: 'admin' },
+      { identifiers: [], role: 'admin' },
       expect.any(Object)
     );
   });

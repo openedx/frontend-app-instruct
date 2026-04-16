@@ -28,7 +28,7 @@ const AddTeamMemberModal = ({
     setFilter: setUsers,
   });
   const { mutate: addTeamMember } = useAddTeamMember(courseId);
-  const { showModal } = useAlert();
+  const { addAlert, showModal } = useAlert();
 
   const roles = [{ role: '', displayName: intl.formatMessage(messages.rolePlaceholder) }, ...(results || [])];
 
@@ -41,9 +41,21 @@ const AddTeamMemberModal = ({
   };
 
   const handleSave = () => {
-    const identifier = inputValue.split(',').map(user => user.trim()).filter(user => user);
-    addTeamMember({ identifier, role: selectedRole }, {
-      onSuccess: () => {
+    const identifiers = inputValue.split(',').map(user => user.trim()).filter(user => user);
+    addTeamMember({ identifiers, role: selectedRole }, {
+      onSuccess: (data) => {
+        const failedUsernames = data.results?.filter(user => user.userDoesNotExist).map(user => user.identifier) || [];
+        if (failedUsernames.length > 0) {
+          addAlert({
+            type: 'danger',
+            message: intl.formatMessage(messages.failedToAddTeamMembers),
+            extraContent: (
+              failedUsernames.map((learner: string) => (
+                <p key={learner} className="mb-0">• {intl.formatMessage(messages.unknownLearner, { learner })}</p>
+              ))
+            )
+          });
+        }
         setUsers('');
         setSelectedRole('');
         onClose();

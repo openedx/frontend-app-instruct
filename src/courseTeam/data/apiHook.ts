@@ -22,7 +22,7 @@ export const useRoles = (courseId: string) => (
 export const useAddTeamMember = (courseId: string) => {
   const queryClient = useQueryClient();
   return (useMutation({
-    mutationFn: ({ identifier, role }: { identifier: string[], role: string }) => addTeamMember(courseId, identifier, role),
+    mutationFn: ({ identifiers, role }: { identifiers: string[], role: string }) => addTeamMember(courseId, identifiers, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: courseTeamQueryKeys.byCourse(courseId) });
     }

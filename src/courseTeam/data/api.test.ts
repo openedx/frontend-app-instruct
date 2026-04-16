@@ -90,17 +90,17 @@ describe('courseTeam API', () => {
   describe('addTeamMember', () => {
     it('should call the correct endpoint to add a team member', async () => {
       const courseId = 'course-v1:edX+DemoX+Demo_Course';
-      const identifier = ['testuser'];
+      const identifiers = ['testuser'];
       const role = 'instructor';
       httpClientMock.post.mockResolvedValue({ data: {
-        identifier,
+        identifiers,
         role,
       } });
 
-      await addTeamMember(courseId, identifier, role);
+      await addTeamMember(courseId, identifiers, role);
 
       const expectedUrl = `/api/instructor/v2/courses/${courseId}/team`;
-      expect(httpClientMock.post).toHaveBeenCalledWith(expectedUrl, { identifier, role });
+      expect(httpClientMock.post).toHaveBeenCalledWith(expectedUrl, { identifiers, role });
     });
   });
 });

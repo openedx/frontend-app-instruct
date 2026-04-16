@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithAlertAndIntl } from '@src/testUtils';
 import CourseTeamPage from '@src/courseTeam/CourseTeamPage';
 
 jest.mock('react-router-dom', () => ({
@@ -33,34 +33,34 @@ jest.mock('./components/AddTeamMemberModal', () => {
 
 describe('CourseTeamPage', () => {
   it('renders the course team title', () => {
-    renderWithIntl(<CourseTeamPage />);
+    renderWithAlertAndIntl(<CourseTeamPage />);
     expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
   });
 
   it('renders the add team member button', () => {
-    renderWithIntl(<CourseTeamPage />);
+    renderWithAlertAndIntl(<CourseTeamPage />);
     expect(screen.getByRole('button', { name: /add team member/i })).toBeInTheDocument();
   });
 
   it('renders both tabs', () => {
-    renderWithIntl(<CourseTeamPage />);
+    renderWithAlertAndIntl(<CourseTeamPage />);
     expect(screen.getByRole('tab', { name: /members/i })).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: /roles/i })).toBeInTheDocument();
   });
 
   it('renders MembersContent by default', () => {
-    renderWithIntl(<CourseTeamPage />);
+    renderWithAlertAndIntl(<CourseTeamPage />);
     expect(screen.getByText('Members Content')).toBeInTheDocument();
   });
 
   it('has correct CSS classes on title', () => {
-    renderWithIntl(<CourseTeamPage />);
+    renderWithAlertAndIntl(<CourseTeamPage />);
     const title = screen.getByRole('heading', { level: 3 });
     expect(title).toHaveClass('text-primary-700', 'mb-0');
   });
 
   it('shows the AddTeamMemberModal when add button is clicked', async () => {
-    renderWithIntl(<CourseTeamPage />);
+    renderWithAlertAndIntl(<CourseTeamPage />);
     const button = screen.getByRole('button', { name: /add team member/i });
     const user = userEvent.setup();
     await user.click(button);
@@ -68,7 +68,7 @@ describe('CourseTeamPage', () => {
   });
 
   it('renders RolesContent when Roles tab is selected', async () => {
-    renderWithIntl(<CourseTeamPage />);
+    renderWithAlertAndIntl(<CourseTeamPage />);
     const rolesTab = screen.getByRole('tab', { name: /roles/i });
     const user = userEvent.setup();
     await user.click(rolesTab);

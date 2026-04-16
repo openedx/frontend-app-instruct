@@ -1,7 +1,7 @@
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '@src/data/api';
 import { DataList } from '@src/types';
-import { CourseTeamMember, CourseTeamMemberQueryParams, Role } from '@src/courseTeam/types';
+import { AddTeamMembersResponse, CourseTeamMember, CourseTeamMemberQueryParams, Role } from '@src/courseTeam/types';
 
 export const getTeamMembers = async (
   courseId: string,
@@ -33,15 +33,10 @@ export const getRoles = async (courseId: string): Promise<Omit<DataList<Role>, '
   return camelCaseObject(data);
 };
 
-export const addTeamMember = async (courseId: string, identifier: string[], role: string): Promise<void> => {
-  await getAuthenticatedHttpClient().post(
+export const addTeamMember = async (courseId: string, identifiers: string[], role: string): Promise<AddTeamMembersResponse> => {
+  const { data } = await getAuthenticatedHttpClient().post(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/team`,
-    { identifier, role }
+    { identifiers, role }
   );
-};
-
-export const removeTeamMember = async (courseId: string, username: string): Promise<void> => {
-  await getAuthenticatedHttpClient().delete(
-    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/team/${username}`
-  );
+  return camelCaseObject(data);
 };

@@ -141,12 +141,12 @@ describe('apiHook', () => {
 
   describe('useAddTeamMember', () => {
     it('should call addTeamMember API with correct parameters', async () => {
-      mockAddTeamMember.mockResolvedValue(undefined);
+      mockAddTeamMember.mockResolvedValue({ results: [] });
       const { result } = renderHook(() => useAddTeamMember('course-v1:org+course+run'), {
         wrapper: createWrapper(),
       });
 
-      result.current.mutate({ identifier: ['user1', 'user2'], role: 'admin' }, {
+      result.current.mutate({ identifiers: ['user1', 'user2'], role: 'admin' }, {
         onSuccess: jest.fn(),
         onError: jest.fn(),
       });

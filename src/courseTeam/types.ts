@@ -15,3 +15,10 @@ export interface Role {
   role: string,
   displayName: string,
 }
+
+export interface AddTeamMembersResponse {
+  results: {
+    identifier: string,
+    userDoesNotExist: boolean,
+  }[],
+}
