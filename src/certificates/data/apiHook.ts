@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { PaginationParams } from '@src/types';
 import type {
   CertificateQueryParams,
   GrantExceptionRequest,
   InvalidateCertificateRequest,
-  PaginationParams,
   RemoveExceptionRequest,
   RemoveInvalidationRequest,
 } from '../types';

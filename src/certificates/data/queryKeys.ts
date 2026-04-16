@@ -1,5 +1,6 @@
 import { appId } from '@src/constants';
-import type { CertificateQueryParams, PaginationParams } from '../types';
+import type { PaginationParams } from '@src/types';
+import type { CertificateQueryParams } from '../types';
 
 export const certificatesQueryKeys = {
   all: [appId, 'certificates'] as const,

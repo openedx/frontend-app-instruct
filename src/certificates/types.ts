@@ -1,3 +1,5 @@
+import type { PaginationParams } from '@src/types';
+
 export enum CertificateFilter {
   ALL_LEARNERS = 'all',
   RECEIVED = 'received',
@@ -36,14 +38,6 @@ export interface CertificateData {
   invalidationNote?: string,
 }
 
-export interface CertificateResponse {
-  count: number,
-  results: CertificateData[],
-  numPages: number,
-  next: string | null,
-  previous: string | null,
-}
-
 export interface InstructorTask {
   taskId: string,
   taskName: string,
@@ -51,19 +45,6 @@ export interface InstructorTask {
   taskOutput?: string,
   created: string,
   updated: string,
-}
-
-export interface InstructorTasksResponse {
-  count: number,
-  results: InstructorTask[],
-  numPages: number,
-  next: string | null,
-  previous: string | null,
-}
-
-export interface PaginationParams {
-  page: number,
-  pageSize: number,
 }
 
 export interface CertificateQueryParams extends PaginationParams {

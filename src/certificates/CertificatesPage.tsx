@@ -24,6 +24,7 @@ import { CertificateFilter, CertificateStatus, SpecialCase } from './types';
 import { CERTIFICATES_PAGE_SIZE, TAB_KEYS, MODAL_TITLES, ALERT_VARIANTS } from './constants';
 import { getErrorMessage } from './utils/errorHandling';
 import messages from './messages';
+import './CertificatesPage.scss';
 
 const CertificatesPage = () => {
   const intl = useIntl();

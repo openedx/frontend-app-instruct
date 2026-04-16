@@ -72,8 +72,10 @@
   }
 }
 
-.pgn__data-table-footer,
-.pgn__data-table-pagination {
-  position: relative;
-  z-index: 1;
+.certificates-card {
+  .pgn__data-table-footer,
+  .pgn__data-table-pagination {
+    position: relative;
+    z-index: 1;
+  }
 }

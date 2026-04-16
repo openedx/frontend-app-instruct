@@ -1,12 +1,12 @@
 import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '@src/data/api';
+import type { DataList, PaginationParams } from '@src/types';
 import type {
+  CertificateData,
   CertificateQueryParams,
-  CertificateResponse,
   GrantExceptionRequest,
-  InstructorTasksResponse,
+  InstructorTask,
   InvalidateCertificateRequest,
-  PaginationParams,
   RemoveExceptionRequest,
   RemoveInvalidationRequest,
 } from '../types';
@@ -14,7 +14,7 @@ import type {
 export const getIssuedCertificates = async (
   courseId: string,
   params: CertificateQueryParams,
-): Promise<CertificateResponse> => {
+): Promise<DataList<CertificateData>> => {
   const { data } = await getAuthenticatedHttpClient().get(
     `${getApiBaseUrl()}/courses/${courseId}/instructor/api/get_issued_certificates/`,
     {
@@ -32,7 +32,7 @@ export const getIssuedCertificates = async (
 export const getInstructorTasks = async (
   courseId: string,
   params: PaginationParams,
-): Promise<InstructorTasksResponse> => {
+): Promise<DataList<InstructorTask>> => {
   const { data } = await getAuthenticatedHttpClient().get(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/instructor_tasks`,
     {
