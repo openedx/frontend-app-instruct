@@ -1,5 +1,5 @@
 import { getAuthenticatedHttpClient } from '@openedx/frontend-base';
-import { getTeamMembers, getRoles } from '@src/courseTeam/data/api';
+import { getTeamMembers, getRoles, addTeamMember } from '@src/courseTeam/data/api';
 
 jest.mock('@openedx/frontend-base', () => ({
   ...jest.requireActual('@openedx/frontend-base'),
@@ -12,6 +12,7 @@ jest.mock('../../data/api', () => ({
 
 const httpClientMock = {
   get: jest.fn(),
+  post: jest.fn(),
 };
 
 beforeEach(() => {
@@ -52,6 +53,15 @@ describe('courseTeam API', () => {
       const expectedUrl = `/api/instructor/v2/courses/${courseId}/team?page=1&page_size=10&role=instructor`;
       expect(httpClientMock.get).toHaveBeenCalledWith(expectedUrl);
     });
+
+    it('should handle errors when API call fails', async () => {
+      const courseId = 'course-v1:edX+DemoX+Demo_Course';
+      const params = { page: 0, pageSize: 10 };
+      const error = new Error('API error');
+      httpClientMock.get.mockRejectedValue(error);
+
+      await expect(getTeamMembers(courseId, params)).rejects.toThrow('API error');
+    });
   });
 
   describe('getRoles', () => {
@@ -74,6 +84,23 @@ describe('courseTeam API', () => {
       const result = await getRoles(courseId);
 
       expect(result).toEqual(data);
+    });
+  });
+
+  describe('addTeamMember', () => {
+    it('should call the correct endpoint to add a team member', async () => {
+      const courseId = 'course-v1:edX+DemoX+Demo_Course';
+      const identifiers = ['testuser'];
+      const role = 'instructor';
+      httpClientMock.post.mockResolvedValue({ data: {
+        identifiers,
+        role,
+      } });
+
+      await addTeamMember(courseId, identifiers, role);
+
+      const expectedUrl = `/api/instructor/v2/courses/${courseId}/team`;
+      expect(httpClientMock.post).toHaveBeenCalledWith(expectedUrl, { identifiers, role });
     });
   });
 });

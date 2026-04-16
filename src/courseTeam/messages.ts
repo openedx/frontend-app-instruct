@@ -155,7 +155,67 @@ const messages = defineMessages({
     id: 'instruct.courseTeam.roles.ccxCoachDescription',
     defaultMessage: 'CCX Coaches are able to create their own Custom Courses based on this course, which they can use to provide personalized instruction to their own students based in this course material.',
     description: 'Description for CCX coach role',
-  }
+  },
+  addNewTeamMember: {
+    id: 'instruct.courseTeam.addNewTeamMember',
+    defaultMessage: 'Add New Team Member',
+    description: 'Title for add new team member form',
+  },
+  addNewTeamMemberDescription: {
+    id: 'instruct.courseTeam.addNewTeamMemberDescription',
+    defaultMessage: 'Add new members to {courseName}’s Course team and assign them a role to define their permissions.',
+    description: 'Description for add new team member form',
+  },
+  addUsersLabel: {
+    id: 'instruct.courseTeam.addUsersLabel',
+    defaultMessage: 'Add users by username or email',
+    description: 'Label for input to add users to course team',
+  },
+  usersPlaceholder: {
+    id: 'instruct.courseTeam.usersPlaceholder',
+    defaultMessage: 'Enter one or more email addresses or usernames',
+    description: 'Placeholder for input to add users to course team',
+  },
+  roleLabel: {
+    id: 'instruct.courseTeam.roleLabel',
+    defaultMessage: 'Role',
+    description: 'Label for role selection when adding users to course team',
+  },
+  rolePlaceholder: {
+    id: 'instruct.courseTeam.rolePlaceholder',
+    defaultMessage: 'Select Role',
+    description: 'Placeholder for role selection when adding users to course team',
+  },
+  cancelButton: {
+    id: 'instruct.courseTeam.cancelButton',
+    defaultMessage: 'Cancel',
+    description: 'Label for cancel button when adding users to course team',
+  },
+  saveButton: {
+    id: 'instruct.courseTeam.saveButton',
+    defaultMessage: 'Save',
+    description: 'Label for save button when adding users to course team',
+  },
+  addTeamMemberError: {
+    id: 'instruct.courseTeam.addTeamMemberError',
+    defaultMessage: 'Could not find a user with username or email address “{username}”',
+    description: 'Error message displayed when adding a team member fails',
+  },
+  closeButton: {
+    id: 'instruct.courseTeam.closeButton',
+    defaultMessage: 'Close',
+    description: 'Label for close button in error modal when adding a team member fails',
+  },
+  failedToAddTeamMembers: {
+    id: 'instruct.courseTeam.failedToAddTeamMembers',
+    defaultMessage: 'The following usernames and/or email addresses are invalid. All other roles have been added to the team members.',
+    description: 'Error message displayed when some team members could not be added',
+  },
+  unknownLearner: {
+    id: 'instruct.courseTeam.unknownLearner',
+    defaultMessage: 'Unknown learner: {learner}',
+    description: 'Displayed when a learner does not have a full name or username available',
+  },
 });
 
 export default messages;

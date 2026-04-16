@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
-import { useTeamMembers, useRoles } from '@src/courseTeam/data/apiHook';
+import { useTeamMembers, useRoles, useAddTeamMember } from '@src/courseTeam/data/apiHook';
 import * as api from '@src/courseTeam/data/api';
 import { CourseTeamMember } from '@src/courseTeam/types';
 import { DataList } from '@src/types';
@@ -10,6 +10,7 @@ jest.mock('@src/courseTeam/data/api');
 
 const mockGetTeamMembers = api.getTeamMembers as jest.MockedFunction<typeof api.getTeamMembers>;
 const mockGetRoles = api.getRoles as jest.MockedFunction<typeof api.getRoles>;
+const mockAddTeamMember = api.addTeamMember as jest.MockedFunction<typeof api.addTeamMember>;
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -135,6 +136,26 @@ describe('apiHook', () => {
       expect(result.current.isFetching).toBe(false);
       expect(result.current.data).toBeUndefined();
       expect(mockGetRoles).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('useAddTeamMember', () => {
+    it('should call addTeamMember API with correct parameters', async () => {
+      mockAddTeamMember.mockResolvedValue({ results: [] });
+      const { result } = renderHook(() => useAddTeamMember('course-v1:org+course+run'), {
+        wrapper: createWrapper(),
+      });
+
+      result.current.mutate({ identifiers: ['user1', 'user2'], role: 'admin' }, {
+        onSuccess: jest.fn(),
+        onError: jest.fn(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(api.addTeamMember).toHaveBeenCalledWith('course-v1:org+course+run', ['user1', 'user2'], 'admin');
     });
   });
 });
