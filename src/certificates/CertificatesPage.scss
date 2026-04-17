@@ -1,0 +1,81 @@
+.filter-dropdown-item {
+  &:hover,
+  &.active {
+    text-decoration: none;
+    color: var(--pgn-color-menu-item-hover-color);
+    border-color: var(--pgn-color-menu-item-hover-border);
+    background: var(--pgn-color-menu-item-hover-bg);
+  }
+
+  &.active {
+    font-weight: 600;
+  }
+}
+
+.certificates-filter-dropdown,
+.certificate-actions-dropdown {
+  position: relative;
+  z-index: 1050;
+
+  .dropdown-menu {
+    position: absolute;
+    z-index: 9999;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+}
+
+.certificate-actions-dropdown {
+  position: static;
+
+  .dropdown-toggle {
+    position: relative;
+    z-index: 1;
+  }
+
+  .dropdown-menu {
+    will-change: transform;
+  }
+}
+
+.certificates-card {
+  position: relative;
+  overflow: visible;
+  overflow-x: hidden;
+
+  .card-body,
+  .pgn__tabs,
+  .tab-content,
+  .tab-pane {
+    overflow: visible;
+  }
+}
+
+.certificates-tab-container {
+  overflow: visible;
+}
+
+.certificates-table-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+  position: relative;
+}
+
+.certificates-card .pgn__data-table-layout {
+  overflow: visible;
+
+  table,
+  tbody,
+  tr,
+  td {
+    position: relative;
+  }
+}
+
+.certificates-card {
+  .pgn__data-table-footer,
+  .pgn__data-table-pagination {
+    position: relative;
+    z-index: 1;
+  }
+}

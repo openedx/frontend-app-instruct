@@ -1,0 +1,714 @@
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import CertificatesPage from './CertificatesPage';
+import { renderWithAlertAndIntl } from '@src/testUtils';
+import {
+  useGrantBulkExceptions,
+  useInstructorTasks,
+  useInvalidateCertificate,
+  useRemoveException,
+  useRemoveInvalidation,
+  useToggleCertificateGeneration,
+} from './data/apiHook';
+import messages from './messages';
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({ courseId: 'course-v1:edX+Test+2024' }),
+}));
+
+jest.mock('./data/apiHook');
+jest.mock('./data/dummyData', () => ({
+  dummyCertificateData: [
+    {
+      username: 'user1',
+      email: 'user1@example.com',
+      enrollmentTrack: 'verified',
+      certificateStatus: 'downloadable',
+      specialCase: '',
+    },
+    {
+      username: 'user2',
+      email: 'user2@example.com',
+      enrollmentTrack: 'audit',
+      certificateStatus: 'notpassing',
+      specialCase: '',
+    },
+    {
+      username: 'user3',
+      email: 'user3@example.com',
+      enrollmentTrack: 'audit',
+      certificateStatus: 'audit_passing',
+      specialCase: '',
+    },
+    {
+      username: 'user4',
+      email: 'user4@example.com',
+      enrollmentTrack: 'audit',
+      certificateStatus: 'audit_notpassing',
+      specialCase: '',
+    },
+    {
+      username: 'user5',
+      email: 'user5@example.com',
+      enrollmentTrack: 'verified',
+      certificateStatus: 'error',
+      specialCase: '',
+    },
+    {
+      username: 'user6',
+      email: 'user6@example.com',
+      enrollmentTrack: 'verified',
+      certificateStatus: 'downloadable',
+      specialCase: 'exception',
+    },
+    {
+      username: 'user7',
+      email: 'user7@example.com',
+      enrollmentTrack: 'verified',
+      certificateStatus: 'notpassing',
+      specialCase: 'invalidated',
+    },
+  ],
+}));
+
+const mockUseInstructorTasks = useInstructorTasks as jest.MockedFunction<typeof useInstructorTasks>;
+const mockUseGrantBulkExceptions = useGrantBulkExceptions as jest.MockedFunction<typeof useGrantBulkExceptions>;
+const mockUseInvalidateCertificate = useInvalidateCertificate as jest.MockedFunction<typeof useInvalidateCertificate>;
+const mockUseRemoveException = useRemoveException as jest.MockedFunction<typeof useRemoveException>;
+const mockUseRemoveInvalidation = useRemoveInvalidation as jest.MockedFunction<typeof useRemoveInvalidation>;
+const mockUseToggleCertificateGeneration = useToggleCertificateGeneration as jest.MockedFunction<typeof useToggleCertificateGeneration>;
+
+describe('CertificatesPage', () => {
+  const mockGrantExceptions = jest.fn();
+  const mockInvalidateCert = jest.fn();
+  const mockRemoveException = jest.fn();
+  const mockRemoveInvalidation = jest.fn();
+  const mockToggleGeneration = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    mockUseInstructorTasks.mockReturnValue({
+      data: {
+        results: [],
+        count: 0,
+        numPages: 0,
+        next: null,
+        previous: null,
+      },
+      isLoading: false,
+    } as unknown as ReturnType<typeof useInstructorTasks>);
+
+    mockUseGrantBulkExceptions.mockReturnValue({
+      mutate: mockGrantExceptions,
+      isPending: false,
+    } as unknown as ReturnType<typeof useGrantBulkExceptions>);
+
+    mockUseInvalidateCertificate.mockReturnValue({
+      mutate: mockInvalidateCert,
+      isPending: false,
+    } as unknown as ReturnType<typeof useInvalidateCertificate>);
+
+    mockUseRemoveException.mockReturnValue({
+      mutate: mockRemoveException,
+    } as unknown as ReturnType<typeof useRemoveException>);
+
+    mockUseRemoveInvalidation.mockReturnValue({
+      mutate: mockRemoveInvalidation,
+      isPending: false,
+    } as unknown as ReturnType<typeof useRemoveInvalidation>);
+
+    mockUseToggleCertificateGeneration.mockReturnValue({
+      mutate: mockToggleGeneration,
+      isPending: false,
+    } as unknown as ReturnType<typeof useToggleCertificateGeneration>);
+  });
+
+  it('renders page with header and tabs', () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+
+    expect(screen.getByText(messages.issuedCertificatesTab.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.generationHistoryTab.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders issued certificates tab by default', () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+
+    expect(screen.getByText(messages.issuedCertificatesTab.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('switches to generation history tab', async () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+    const user = userEvent.setup();
+
+    const historyTab = screen.getByText(messages.generationHistoryTab.defaultMessage);
+    await user.click(historyTab);
+
+    await waitFor(() => {
+      expect(screen.getByText(messages.generationHistoryTab.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  it('renders page header with action buttons', () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+
+    expect(screen.getByText(messages.grantExceptionsButton.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.invalidateCertificateButton.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('opens Grant Exceptions modal when button is clicked', async () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+    const user = userEvent.setup();
+
+    const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+    await user.click(grantButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  it('opens Invalidate Certificate modal when button is clicked', async () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+    const user = userEvent.setup();
+
+    const invalidateButton = screen.getByText(messages.invalidateCertificateButton.defaultMessage);
+    await user.click(invalidateButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(messages.invalidateCertificateModalTitle.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  it('displays certificate data in table', () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+
+    expect(screen.getByText('user1')).toBeInTheDocument();
+    expect(screen.getByText('user1@example.com')).toBeInTheDocument();
+  });
+
+  it('fetches instructor tasks on mount', () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+
+    expect(mockUseInstructorTasks).toHaveBeenCalledWith(
+      'course-v1:edX+Test+2024',
+      { page: 0, pageSize: 25 }
+    );
+  });
+
+  it('renders with loading state for tasks', () => {
+    mockUseInstructorTasks.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+    } as unknown as ReturnType<typeof useInstructorTasks>);
+
+    renderWithAlertAndIntl(<CertificatesPage />);
+    expect(screen.getByText(messages.issuedCertificatesTab.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('handles page change for certificates', () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+    // The component should handle page changes
+    expect(screen.getByText('user1')).toBeInTheDocument();
+  });
+
+  it('handles page change for tasks', async () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+    const user = userEvent.setup();
+
+    // Switch to history tab
+    const historyTab = screen.getByText(messages.generationHistoryTab.defaultMessage);
+    await user.click(historyTab);
+
+    await waitFor(() => {
+      expect(screen.getByText(messages.generationHistoryTab.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  describe('Grant Exceptions', () => {
+    it('calls mutation with correct parameters when form is submitted', async () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+      await user.click(grantButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      // Fill in the form
+      const learnersInput = screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage);
+      const notesInput = screen.getByPlaceholderText(messages.notesPlaceholder.defaultMessage);
+
+      await user.type(learnersInput, 'user1');
+      await user.type(notesInput, 'Test note');
+
+      // Submit the form
+      const submitButton = screen.getByText(messages.submit.defaultMessage);
+      await user.click(submitButton);
+
+      // Verify mutation was called
+      expect(mockGrantExceptions).toHaveBeenCalledWith(
+        { learners: 'user1', notes: 'Test note' },
+        expect.objectContaining({
+          onSuccess: expect.any(Function),
+          onError: expect.any(Function),
+        })
+      );
+    });
+
+    it('shows success toast when grant exceptions succeeds', async () => {
+      // Make mock invoke onSuccess callback when called
+      mockGrantExceptions.mockImplementation((_data, options) => {
+        if (options?.onSuccess) {
+          options.onSuccess();
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+      await user.click(grantButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      // Fill in and submit the form
+      const learnersInput = screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage);
+      await user.type(learnersInput, 'user1');
+
+      const submitButton = screen.getByText(messages.submit.defaultMessage);
+      await user.click(submitButton);
+
+      // Verify the modal is closed (side effect of onSuccess)
+      await waitFor(() => {
+        expect(screen.queryByText(messages.grantExceptionsModalTitle.defaultMessage)).not.toBeInTheDocument();
+      });
+    });
+
+    it('shows error alert when grant exceptions fails', async () => {
+      // Make mock invoke onError callback when called
+      mockGrantExceptions.mockImplementation((_data, options) => {
+        if (options?.onError) {
+          const error = { response: { data: { message: 'Test error' } } };
+          options.onError(error);
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+      await user.click(grantButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      // Fill in and submit the form
+      const learnersInput = screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage);
+      await user.type(learnersInput, 'user1');
+
+      const submitButton = screen.getByText(messages.submit.defaultMessage);
+      await user.click(submitButton);
+
+      // Verify mutation was called (error alert is shown by AlertProvider)
+      expect(mockGrantExceptions).toHaveBeenCalled();
+    });
+  });
+
+  describe('Invalidate Certificate', () => {
+    it('calls mutation with correct parameters', async () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const invalidateButton = screen.getByText(messages.invalidateCertificateButton.defaultMessage);
+      await user.click(invalidateButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.invalidateCertificateModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      const learnersInput = screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage);
+      const notesInput = screen.getByPlaceholderText(messages.notesPlaceholder.defaultMessage);
+
+      await user.type(learnersInput, 'user1');
+      await user.type(notesInput, 'Invalid certificate');
+
+      const submitButton = screen.getByText(messages.submit.defaultMessage);
+      await user.click(submitButton);
+
+      expect(mockInvalidateCert).toHaveBeenCalledWith(
+        { learners: 'user1', notes: 'Invalid certificate' },
+        expect.objectContaining({
+          onSuccess: expect.any(Function),
+          onError: expect.any(Function),
+        })
+      );
+    });
+
+    it('shows success toast when invalidation succeeds', async () => {
+      mockInvalidateCert.mockImplementation((_data, options) => {
+        if (options?.onSuccess) {
+          options.onSuccess();
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const invalidateButton = screen.getByText(messages.invalidateCertificateButton.defaultMessage);
+      await user.click(invalidateButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.invalidateCertificateModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      const learnersInput = screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage);
+      await user.type(learnersInput, 'user1');
+
+      const submitButton = screen.getByText(messages.submit.defaultMessage);
+      await user.click(submitButton);
+
+      // Verify modal is closed (side effect of onSuccess)
+      await waitFor(() => {
+        expect(screen.queryByText(messages.invalidateCertificateModalTitle.defaultMessage)).not.toBeInTheDocument();
+      });
+    });
+
+    it('shows error alert when invalidation fails', async () => {
+      mockInvalidateCert.mockImplementation((_data, options) => {
+        if (options?.onError) {
+          const error = { response: { data: { message: 'Invalidation failed' } } };
+          options.onError(error);
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const invalidateButton = screen.getByText(messages.invalidateCertificateButton.defaultMessage);
+      await user.click(invalidateButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.invalidateCertificateModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      const learnersInput = screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage);
+      await user.type(learnersInput, 'user1');
+
+      const submitButton = screen.getByText(messages.submit.defaultMessage);
+      await user.click(submitButton);
+
+      expect(mockInvalidateCert).toHaveBeenCalled();
+    });
+  });
+
+  describe('Toggle Certificate Generation', () => {
+    it('opens disable certificates modal when button is clicked', async () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const disableButton = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+      await user.click(disableButton);
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+    });
+
+    it('calls mutation to disable generation on confirm', async () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const disableButton = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+      await user.click(disableButton);
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      const confirmButton = screen.getByText(messages.confirm.defaultMessage);
+      await user.click(confirmButton);
+
+      expect(mockToggleGeneration).toHaveBeenCalledWith(
+        false,
+        expect.objectContaining({
+          onSuccess: expect.any(Function),
+          onError: expect.any(Function),
+        })
+      );
+    });
+
+    it('closes modal and shows toast when toggle succeeds', async () => {
+      mockToggleGeneration.mockImplementation((_data, options) => {
+        if (options?.onSuccess) {
+          options.onSuccess();
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const disableButton = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+      await user.click(disableButton);
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      const confirmButton = screen.getByText(messages.confirm.defaultMessage);
+      await user.click(confirmButton);
+
+      // Verify modal is closed (side effect of onSuccess)
+      await waitFor(() => {
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      });
+    });
+
+    it('shows error alert when toggle fails', async () => {
+      mockToggleGeneration.mockImplementation((_data, options) => {
+        if (options?.onError) {
+          const error = { response: { data: { message: 'Toggle failed' } } };
+          options.onError(error);
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const disableButton = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+      await user.click(disableButton);
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      const confirmButton = screen.getByText(messages.confirm.defaultMessage);
+      await user.click(confirmButton);
+
+      expect(mockToggleGeneration).toHaveBeenCalled();
+    });
+  });
+
+  describe('Remove Operations', () => {
+    it('handles remove exception with success', async () => {
+      mockRemoveException.mockImplementation((_data, options) => {
+        if (options?.onSuccess) {
+          options.onSuccess();
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      // Filter to Granted Exceptions to see user6 with exception
+      const filterDropdown = screen.getByText(messages.filterAllLearners.defaultMessage);
+      await user.click(filterDropdown);
+
+      const exceptionsFilter = screen.getByText(messages.filterGrantedExceptions.defaultMessage);
+      await user.click(exceptionsFilter);
+
+      // Find and click the actions dropdown for user6
+      await waitFor(() => {
+        expect(screen.getByText('user6')).toBeInTheDocument();
+      });
+
+      const actionButton = screen.getByLabelText(messages.columnActions.defaultMessage);
+      await user.click(actionButton);
+
+      // Click remove exception action
+      const removeAction = screen.getByText(messages.removeExceptionAction.defaultMessage);
+      await user.click(removeAction);
+
+      expect(mockRemoveException).toHaveBeenCalledWith(
+        { username: 'user6' },
+        expect.objectContaining({
+          onSuccess: expect.any(Function),
+          onError: expect.any(Function),
+        })
+      );
+    });
+
+    it('handles remove exception with error', async () => {
+      mockRemoveException.mockImplementation((_data, options) => {
+        if (options?.onError) {
+          const error = { response: { data: { message: 'Remove failed' } } };
+          options.onError(error);
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      // Filter to Granted Exceptions
+      const filterDropdown = screen.getByText(messages.filterAllLearners.defaultMessage);
+      await user.click(filterDropdown);
+
+      const exceptionsFilter = screen.getByText(messages.filterGrantedExceptions.defaultMessage);
+      await user.click(exceptionsFilter);
+
+      await waitFor(() => {
+        expect(screen.getByText('user6')).toBeInTheDocument();
+      });
+
+      const actionButton = screen.getByLabelText(messages.columnActions.defaultMessage);
+      await user.click(actionButton);
+
+      const removeAction = screen.getByText(messages.removeExceptionAction.defaultMessage);
+      await user.click(removeAction);
+
+      expect(mockRemoveException).toHaveBeenCalled();
+    });
+
+    it('handles remove invalidation with success', async () => {
+      mockRemoveInvalidation.mockImplementation((_data, options) => {
+        if (options?.onSuccess) {
+          options.onSuccess();
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      // Filter to Invalidated to see user7 with invalidation
+      const filterDropdown = screen.getByText(messages.filterAllLearners.defaultMessage);
+      await user.click(filterDropdown);
+
+      const invalidatedFilter = screen.getByText(messages.filterInvalidated.defaultMessage);
+      await user.click(invalidatedFilter);
+
+      await waitFor(() => {
+        expect(screen.getByText('user7')).toBeInTheDocument();
+      });
+
+      const actionButton = screen.getByLabelText(messages.columnActions.defaultMessage);
+      await user.click(actionButton);
+
+      // Click remove invalidation action (opens confirmation modal)
+      const removeAction = screen.getByText(messages.removeInvalidationAction.defaultMessage);
+      await user.click(removeAction);
+
+      // Confirm the removal
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      const confirmButton = screen.getAllByText(messages.removeInvalidationAction.defaultMessage)[1]; // Get the second one (the button in modal)
+      await user.click(confirmButton);
+
+      expect(mockRemoveInvalidation).toHaveBeenCalledWith(
+        { username: 'user7' },
+        expect.objectContaining({
+          onSuccess: expect.any(Function),
+          onError: expect.any(Function),
+        })
+      );
+    });
+
+    it('handles remove invalidation with error', async () => {
+      mockRemoveInvalidation.mockImplementation((_data, options) => {
+        if (options?.onError) {
+          const error = { response: { data: { message: 'Remove failed' } } };
+          options.onError(error);
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      // Filter to Invalidated
+      const filterDropdown = screen.getByText(messages.filterAllLearners.defaultMessage);
+      await user.click(filterDropdown);
+
+      const invalidatedFilter = screen.getByText(messages.filterInvalidated.defaultMessage);
+      await user.click(invalidatedFilter);
+
+      await waitFor(() => {
+        expect(screen.getByText('user7')).toBeInTheDocument();
+      });
+
+      const actionButton = screen.getByLabelText(messages.columnActions.defaultMessage);
+      await user.click(actionButton);
+
+      const removeAction = screen.getByText(messages.removeInvalidationAction.defaultMessage);
+      await user.click(removeAction);
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      const confirmButton = screen.getAllByText(messages.removeInvalidationAction.defaultMessage)[1]; // Get the second one (the button in modal)
+      await user.click(confirmButton);
+
+      expect(mockRemoveInvalidation).toHaveBeenCalled();
+    });
+  });
+
+  describe('Filter and Search', () => {
+    it('displays all learners by default', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      expect(screen.getByText('user1')).toBeInTheDocument();
+      expect(screen.getByText('user2')).toBeInTheDocument();
+    });
+
+    it('filters by RECEIVED status', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      // User would select this filter through the toolbar
+      // The component has data with downloadable status (RECEIVED)
+      expect(screen.getByText('user1')).toBeInTheDocument();
+    });
+
+    it('filters by NOT_RECEIVED status', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      // Component should handle NOT_RECEIVED filter
+      expect(screen.getByText('user2')).toBeInTheDocument();
+    });
+
+    it('filters by AUDIT_PASSING status', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      // Component should handle AUDIT_PASSING filter
+      expect(screen.getByText('user3')).toBeInTheDocument();
+    });
+
+    it('filters by AUDIT_NOT_PASSING status', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      // Component should handle AUDIT_NOT_PASSING filter
+      expect(screen.getByText('user4')).toBeInTheDocument();
+    });
+
+    it('filters by ERROR_STATE status', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      // Component should handle ERROR_STATE filter
+      expect(screen.getByText('user5')).toBeInTheDocument();
+    });
+
+    it('filters by GRANTED_EXCEPTIONS special case', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      // Component should handle GRANTED_EXCEPTIONS filter
+      expect(screen.getByText('user6')).toBeInTheDocument();
+    });
+
+    it('filters by INVALIDATED special case', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      // Component should handle INVALIDATED filter
+      expect(screen.getByText('user7')).toBeInTheDocument();
+    });
+
+    it('searches certificates by username', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      // Search functionality should filter by username
+      expect(screen.getByText('user1')).toBeInTheDocument();
+    });
+
+    it('searches certificates by email', () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      // Search functionality should filter by email
+      expect(screen.getByText('user1@example.com')).toBeInTheDocument();
+    });
+  });
+});

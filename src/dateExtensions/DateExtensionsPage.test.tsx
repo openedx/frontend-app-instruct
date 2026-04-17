@@ -217,7 +217,7 @@ describe('DateExtensionsPage', () => {
 
     // Simulate successful add extension by directly calling the mutation with success callback
     addExtensionMutateMock.mockImplementation((_params, callbacks) => {
-      if (callbacks && callbacks.onSuccess) {
+      if (callbacks?.onSuccess) {
         callbacks.onSuccess({ message: 'Extension added successfully' });
       }
     });

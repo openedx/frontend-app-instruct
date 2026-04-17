@@ -18,11 +18,11 @@ export const renderWithIntl = (component) => {
 
 export const renderWithAlertAndIntl = (component) => {
   return render(
-    <AlertProvider>
-      <IntlProvider locale="en" messages={{}}>
+    <IntlProvider locale="en" messages={{}}>
+      <AlertProvider>
         {component}
-      </IntlProvider>
-    </AlertProvider>
+      </AlertProvider>
+    </IntlProvider>
   );
 };
 
