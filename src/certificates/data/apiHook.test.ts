@@ -34,8 +34,15 @@ const mockToggleCertificateGeneration = toggleCertificateGeneration as jest.Mock
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
+      queries: {
+        retry: false,
+        gcTime: 0, // Disable caching
+        staleTime: 0,
+      },
+      mutations: {
+        retry: false,
+        gcTime: 0,
+      },
     },
   });
 
@@ -43,12 +50,22 @@ const createWrapper = () => {
     return React.createElement(QueryClientProvider, { client: queryClient }, children);
   }
 
-  return Wrapper;
+  return { Wrapper, queryClient };
 };
 
 describe('certificates api hooks', () => {
+  let queryClient: QueryClient | null = null;
+
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    // Clean up QueryClient to prevent memory leaks
+    if (queryClient) {
+      queryClient.clear();
+      queryClient = null;
+    }
   });
 
   describe('useIssuedCertificates', () => {
@@ -71,6 +88,9 @@ describe('certificates api hooks', () => {
 
       mockGetIssuedCertificates.mockResolvedValue(mockData);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(
         () => useIssuedCertificates('course-v1:Test+Course+2024', {
           page: 0,
@@ -78,7 +98,7 @@ describe('certificates api hooks', () => {
           filter: CertificateFilter.ALL_LEARNERS,
           search: '',
         }),
-        { wrapper: createWrapper() }
+        { wrapper: Wrapper }
       );
 
       expect(result.current.isLoading).toBe(true);
@@ -100,6 +120,9 @@ describe('certificates api hooks', () => {
       const mockError = new Error('API Error');
       mockGetIssuedCertificates.mockRejectedValue(mockError);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(
         () => useIssuedCertificates('course-v1:Test+Course+2024', {
           page: 0,
@@ -107,7 +130,7 @@ describe('certificates api hooks', () => {
           filter: CertificateFilter.ALL_LEARNERS,
           search: '',
         }),
-        { wrapper: createWrapper() }
+        { wrapper: Wrapper }
       );
 
       await waitFor(() => {
@@ -118,6 +141,9 @@ describe('certificates api hooks', () => {
     });
 
     it('does not fetch when courseId is empty', () => {
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       renderHook(
         () => useIssuedCertificates('', {
           page: 0,
@@ -125,7 +151,7 @@ describe('certificates api hooks', () => {
           filter: CertificateFilter.ALL_LEARNERS,
           search: '',
         }),
-        { wrapper: createWrapper() }
+        { wrapper: Wrapper }
       );
 
       expect(mockGetIssuedCertificates).not.toHaveBeenCalled();
@@ -153,9 +179,12 @@ describe('certificates api hooks', () => {
 
       mockGetInstructorTasks.mockResolvedValue(mockData);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(
         () => useInstructorTasks('course-v1:Test+Course+2024', { page: 0, pageSize: 25 }),
-        { wrapper: createWrapper() }
+        { wrapper: Wrapper }
       );
 
       expect(result.current.isLoading).toBe(true);
@@ -175,9 +204,12 @@ describe('certificates api hooks', () => {
       const mockError = new Error('Task fetch error');
       mockGetInstructorTasks.mockRejectedValue(mockError);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(
         () => useInstructorTasks('course-v1:Test+Course+2024', { page: 0, pageSize: 25 }),
-        { wrapper: createWrapper() }
+        { wrapper: Wrapper }
       );
 
       await waitFor(() => {
@@ -192,8 +224,11 @@ describe('certificates api hooks', () => {
     it('grants bulk exceptions successfully', async () => {
       mockGrantBulkExceptions.mockResolvedValue(undefined);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(() => useGrantBulkExceptions('course-v1:Test+Course+2024'), {
-        wrapper: createWrapper(),
+        wrapper: Wrapper,
       });
 
       result.current.mutate({ learners: 'user1, user2', notes: 'Exception granted' });
@@ -212,8 +247,11 @@ describe('certificates api hooks', () => {
       const mockError = new Error('Failed to grant exceptions');
       mockGrantBulkExceptions.mockRejectedValue(mockError);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(() => useGrantBulkExceptions('course-v1:Test+Course+2024'), {
-        wrapper: createWrapper(),
+        wrapper: Wrapper,
       });
 
       result.current.mutate({ learners: 'user1', notes: 'Test' });
@@ -230,8 +268,11 @@ describe('certificates api hooks', () => {
     it('invalidates certificate successfully', async () => {
       mockInvalidateCertificate.mockResolvedValue(undefined);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(() => useInvalidateCertificate('course-v1:Test+Course+2024'), {
-        wrapper: createWrapper(),
+        wrapper: Wrapper,
       });
 
       result.current.mutate({ learners: 'user1', notes: 'Certificate invalid' });
@@ -250,8 +291,11 @@ describe('certificates api hooks', () => {
       const mockError = new Error('Failed to invalidate');
       mockInvalidateCertificate.mockRejectedValue(mockError);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(() => useInvalidateCertificate('course-v1:Test+Course+2024'), {
-        wrapper: createWrapper(),
+        wrapper: Wrapper,
       });
 
       result.current.mutate({ learners: 'user1', notes: '' });
@@ -266,8 +310,11 @@ describe('certificates api hooks', () => {
     it('removes exception successfully', async () => {
       mockRemoveException.mockResolvedValue(undefined);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(() => useRemoveException('course-v1:Test+Course+2024'), {
-        wrapper: createWrapper(),
+        wrapper: Wrapper,
       });
 
       result.current.mutate({ username: 'user1' });
@@ -285,8 +332,11 @@ describe('certificates api hooks', () => {
       const mockError = new Error('Failed to remove exception');
       mockRemoveException.mockRejectedValue(mockError);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(() => useRemoveException('course-v1:Test+Course+2024'), {
-        wrapper: createWrapper(),
+        wrapper: Wrapper,
       });
 
       result.current.mutate({ username: 'user1' });
@@ -301,8 +351,11 @@ describe('certificates api hooks', () => {
     it('removes invalidation successfully', async () => {
       mockRemoveInvalidation.mockResolvedValue(undefined);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(() => useRemoveInvalidation('course-v1:Test+Course+2024'), {
-        wrapper: createWrapper(),
+        wrapper: Wrapper,
       });
 
       result.current.mutate({ username: 'user1' });
@@ -320,8 +373,11 @@ describe('certificates api hooks', () => {
       const mockError = new Error('Failed to remove invalidation');
       mockRemoveInvalidation.mockRejectedValue(mockError);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(() => useRemoveInvalidation('course-v1:Test+Course+2024'), {
-        wrapper: createWrapper(),
+        wrapper: Wrapper,
       });
 
       result.current.mutate({ username: 'user1' });
@@ -336,9 +392,12 @@ describe('certificates api hooks', () => {
     it('enables certificate generation successfully', async () => {
       mockToggleCertificateGeneration.mockResolvedValue(undefined);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(
         () => useToggleCertificateGeneration('course-v1:Test+Course+2024'),
-        { wrapper: createWrapper() }
+        { wrapper: Wrapper }
       );
 
       result.current.mutate(true);
@@ -353,9 +412,12 @@ describe('certificates api hooks', () => {
     it('disables certificate generation successfully', async () => {
       mockToggleCertificateGeneration.mockResolvedValue(undefined);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(
         () => useToggleCertificateGeneration('course-v1:Test+Course+2024'),
-        { wrapper: createWrapper() }
+        { wrapper: Wrapper }
       );
 
       result.current.mutate(false);
@@ -371,9 +433,12 @@ describe('certificates api hooks', () => {
       const mockError = new Error('Failed to toggle');
       mockToggleCertificateGeneration.mockRejectedValue(mockError);
 
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
       const { result } = renderHook(
         () => useToggleCertificateGeneration('course-v1:Test+Course+2024'),
-        { wrapper: createWrapper() }
+        { wrapper: Wrapper }
       );
 
       result.current.mutate(true);
