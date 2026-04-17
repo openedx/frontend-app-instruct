@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { ActionRow, Button, Form, FormControl, FormLabel, ModalDialog } from '@openedx/paragon';
 import { useAddTeamMember, useRemoveTeamMember, useRoles } from '@src/courseTeam/data/apiHook';
 import messages from '@src/courseTeam/messages';
 import { CourseTeamMember, Role } from '@src/courseTeam/types';
+import { useAlert } from '@src/providers/AlertProvider';
 
 interface EditTeamMemberModalProps {
   isOpen: boolean,
@@ -16,11 +17,19 @@ const EditTeamMemberModal = ({ isOpen, user, onClose }: EditTeamMemberModalProps
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [selectedRole, setSelectedRole] = useState('');
-  const [keepRoles, setKeepRoles] = useState<string[]>(user.roles.map(role => role.role));
-  const { mutate: addTeamMember } = useAddTeamMember(courseId);
-  const { mutate: removeTeamMember } = useRemoveTeamMember(courseId);
+  const [keepRoles, setKeepRoles] = useState<string[]>([]);
+  const { mutate: addTeamMember, isPending: isAdding } = useAddTeamMember(courseId);
+  const { mutate: removeTeamMember, isPending: isRemoving } = useRemoveTeamMember(courseId);
+  const { showModal } = useAlert();
 
   const { data: { results } = { results: [] } } = useRoles(courseId);
+
+  useEffect(() => {
+    if (isOpen) {
+      setKeepRoles(user.roles.map(role => role.role));
+      setSelectedRole('');
+    }
+  }, [isOpen, user]);
 
   const filteredRoles = results?.filter(role => !user.roles.some(userRole => userRole.role === role.role)) || [];
 
@@ -36,11 +45,27 @@ const EditTeamMemberModal = ({ isOpen, user, onClose }: EditTeamMemberModalProps
 
   const handleSave = () => {
     if (selectedRole) {
-      addTeamMember({ identifiers: [user.username], role: selectedRole });
+      addTeamMember({ identifiers: [user.username], role: selectedRole }, {
+        onError: () => {
+          showModal({
+            message: intl.formatMessage(messages.addRoleError),
+            variant: 'danger',
+            confirmText: intl.formatMessage(messages.closeButton),
+          });
+        } }
+      );
     }
     const rolesToRemove = user.roles.filter(role => !keepRoles.includes(role.role)).map(role => role.role);
     if (rolesToRemove.length > 0) {
-      removeTeamMember({ identifier: user.username, role: rolesToRemove });
+      removeTeamMember({ identifier: user.username, roles: rolesToRemove }, {
+        onError: () => {
+          showModal({
+            message: intl.formatMessage(messages.removeTeamMemberError, { username: user.username }),
+            variant: 'danger',
+            confirmText: intl.formatMessage(messages.closeButton),
+          });
+        } }
+      );
     }
     onClose();
   };
@@ -86,7 +111,9 @@ const EditTeamMemberModal = ({ isOpen, user, onClose }: EditTeamMemberModalProps
       <ModalDialog.Footer className="border-light-700 border-top">
         <ActionRow>
           <Button variant="tertiary" onClick={onClose}>{intl.formatMessage(messages.cancelButton)}</Button>
-          <Button variant="primary" onClick={handleSave}>{intl.formatMessage(messages.saveButton)}</Button>
+          <Button variant="primary" onClick={handleSave} disabled={isAdding || isRemoving}>
+            {intl.formatMessage(messages.saveButton)}
+          </Button>
         </ActionRow>
       </ModalDialog.Footer>
     </ModalDialog>

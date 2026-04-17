@@ -41,10 +41,10 @@ export const addTeamMember = async (courseId: string, identifiers: string[], rol
   return camelCaseObject(data);
 };
 
-export const removeTeamMember = async (courseId: string, identifier: string, role: string[]): Promise<TeamMembersResponse> => {
+export const removeTeamMember = async (courseId: string, identifier: string, roles: string[]): Promise<TeamMembersResponse> => {
   const { data } = await getAuthenticatedHttpClient().delete(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/team/${identifier}`,
-    { data: { role } }
+    { data: { roles } }
   );
   return camelCaseObject(data);
 };

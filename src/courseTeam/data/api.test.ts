@@ -109,16 +109,16 @@ describe('courseTeam API', () => {
     it('should call the correct endpoint to remove a team member', async () => {
       const courseId = 'course-v1:edX+DemoX+Demo_Course';
       const identifier = 'testuser';
-      const role = ['instructor'];
+      const roles = ['instructor'];
       httpClientMock.delete.mockResolvedValue({ data: {
         identifier,
-        role,
+        roles,
       } });
 
-      await removeTeamMember(courseId, identifier, role);
+      await removeTeamMember(courseId, identifier, roles);
 
       const expectedUrl = `/api/instructor/v2/courses/${courseId}/team/${identifier}`;
-      expect(httpClientMock.delete).toHaveBeenCalledWith(expectedUrl, { data: { role } });
+      expect(httpClientMock.delete).toHaveBeenCalledWith(expectedUrl, { data: { roles } });
     });
   });
 });

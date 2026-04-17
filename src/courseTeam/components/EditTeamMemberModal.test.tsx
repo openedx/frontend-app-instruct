@@ -4,7 +4,7 @@ import EditTeamMemberModal from '@src/courseTeam/components/EditTeamMemberModal'
 import { useRoles, useAddTeamMember, useRemoveTeamMember } from '@src/courseTeam/data/apiHook';
 import messages from '@src/courseTeam/messages';
 import { CourseTeamMember } from '@src/courseTeam/types';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithAlertAndIntl } from '@src/testUtils';
 
 // Mocks
 jest.mock('react-router-dom', () => ({
@@ -50,28 +50,28 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('renders modal with correct title', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const expectedTitle = messages.editTeamTitle.defaultMessage.replace('{username}', mockUser.username);
     expect(screen.getByText(expectedTitle)).toBeInTheDocument();
   });
 
   it('renders modal header and body correctly', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const expectedTitle = messages.editTeamTitle.defaultMessage.replace('{username}', mockUser.username);
     expect(screen.getByText(expectedTitle)).toBeInTheDocument();
   });
 
   it('renders edit instructions with username', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const expectedInstructions = messages.editInstructions.defaultMessage.replace('{username}', mockUser.username);
     expect(screen.getByText(expectedInstructions)).toBeInTheDocument();
   });
 
   it('renders current user roles as checkboxes that are initially checked', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     mockUser.roles.forEach((role) => {
       const checkbox = screen.getByRole('checkbox', { name: role.displayName });
@@ -81,13 +81,13 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('renders add role label', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     expect(screen.getByText(messages.addRole.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders role selection dropdown with filtered roles', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const selectElement = screen.getByRole('combobox');
     expect(selectElement).toBeInTheDocument();
@@ -111,7 +111,7 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('renders cancel and save buttons', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     expect(screen.getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
@@ -119,7 +119,7 @@ describe('EditTeamMemberModal', () => {
 
   it('calls onClose when cancel button is clicked', async () => {
     const mockOnClose = jest.fn();
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
 
     const user = userEvent.setup();
     const cancelButton = screen.getByRole('button', { name: messages.cancelButton.defaultMessage });
@@ -130,7 +130,7 @@ describe('EditTeamMemberModal', () => {
 
   it('calls onClose when save button is clicked', async () => {
     const mockOnClose = jest.fn();
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
 
     const user = userEvent.setup();
     const saveButton = screen.getByRole('button', { name: messages.saveButton.defaultMessage });
@@ -140,7 +140,7 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('does not render when isOpen is false', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} isOpen={false} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} isOpen={false} />);
 
     const expectedTitle = messages.editTeamTitle.defaultMessage.replace('{username}', mockUser.username);
     expect(screen.queryByText(expectedTitle)).not.toBeInTheDocument();
@@ -148,7 +148,7 @@ describe('EditTeamMemberModal', () => {
 
   it('renders correctly when no roles data is available', () => {
     (useRoles as jest.Mock).mockReturnValue({ data: [] });
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     // Should only show placeholder in dropdown
     expect(screen.getByText(messages.rolePlaceholder.defaultMessage)).toBeInTheDocument();
@@ -167,7 +167,7 @@ describe('EditTeamMemberModal', () => {
 
   it('renders correctly when useRoles returns undefined data', () => {
     (useRoles as jest.Mock).mockReturnValue({ data: undefined });
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     // Should only show placeholder in dropdown
     expect(screen.getByText(messages.rolePlaceholder.defaultMessage)).toBeInTheDocument();
@@ -189,7 +189,7 @@ describe('EditTeamMemberModal', () => {
       ...mockUser,
       roles: mockRoles.map(role => ({ role: role.role, displayName: role.displayName })),
     };
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} user={userWithAllRoles} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} user={userWithAllRoles} />);
 
     // Should show all roles as checkboxes that are checked
     userWithAllRoles.roles.forEach((role) => {
@@ -205,7 +205,7 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('enables select when roles are available for assignment', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     // Should be enabled when there are roles available to assign
     const selectElement = screen.getByRole('combobox');
@@ -213,7 +213,7 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('handles checkbox interactions for keeping/removing roles', async () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const user = userEvent.setup();
     const staffCheckbox = screen.getByRole('checkbox', { name: 'Staff' });
@@ -231,7 +231,7 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('handles role selection from dropdown', async () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const user = userEvent.setup();
     const selectElement = screen.getByRole('combobox');
@@ -242,7 +242,7 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('calls addTeamMember when save is clicked with selected role', async () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const user = userEvent.setup();
     const selectElement = screen.getByRole('combobox');
@@ -254,12 +254,12 @@ describe('EditTeamMemberModal', () => {
 
     expect(mockAddTeamMember).toHaveBeenCalledWith({
       identifiers: [mockUser.username],
-      role: 'instructor'
-    });
+      role: 'instructor',
+    }, expect.any(Object));
   });
 
   it('calls removeTeamMember when save is clicked with roles unchecked for removal', async () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const user = userEvent.setup();
     const staffCheckbox = screen.getByRole('checkbox', { name: 'Staff' });
@@ -272,12 +272,12 @@ describe('EditTeamMemberModal', () => {
 
     expect(mockRemoveTeamMember).toHaveBeenCalledWith({
       identifier: mockUser.username,
-      role: ['staff']
-    });
+      roles: ['staff'],
+    }, expect.any(Object));
   });
 
   it('calls both addTeamMember and removeTeamMember when both actions are needed', async () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const user = userEvent.setup();
     const selectElement = screen.getByRole('combobox');
@@ -293,15 +293,15 @@ describe('EditTeamMemberModal', () => {
     expect(mockAddTeamMember).toHaveBeenCalledWith({
       identifiers: [mockUser.username],
       role: 'instructor'
-    });
+    }, expect.any(Object));
     expect(mockRemoveTeamMember).toHaveBeenCalledWith({
       identifier: mockUser.username,
-      role: ['staff']
-    });
+      roles: ['staff']
+    }, expect.any(Object));
   });
 
   it('does not call addTeamMember when no role is selected', async () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const user = userEvent.setup();
     const saveButton = screen.getByRole('button', { name: messages.saveButton.defaultMessage });
@@ -313,7 +313,7 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('does not call removeTeamMember when all roles remain checked', async () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const user = userEvent.setup();
     const saveButton = screen.getByRole('button', { name: messages.saveButton.defaultMessage });
@@ -325,7 +325,7 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('handles multiple role unchecking for removal', async () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const user = userEvent.setup();
     const staffCheckbox = screen.getByRole('checkbox', { name: 'Staff' });
@@ -341,12 +341,12 @@ describe('EditTeamMemberModal', () => {
 
     expect(mockRemoveTeamMember).toHaveBeenCalledWith({
       identifier: mockUser.username,
-      role: ['staff', 'admin']
-    });
+      roles: ['staff', 'admin']
+    }, expect.any(Object));
   });
 
   it('handles role selection with empty string value', async () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const user = userEvent.setup();
     const selectElement = screen.getByRole('combobox');
@@ -360,14 +360,14 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('renders correct number of user roles as checkboxes', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     const checkboxes = screen.getAllByRole('checkbox');
     expect(checkboxes).toHaveLength(mockUser.roles.length);
   });
 
   it('filters out user current roles from dropdown options', () => {
-    renderWithIntl(<EditTeamMemberModal {...defaultProps} />);
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
 
     // Should have placeholder + available roles (not user's current roles)
     const expectedAvailableRoles = mockRoles.filter(role =>

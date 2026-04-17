@@ -168,7 +168,7 @@ describe('apiHook', () => {
         wrapper: createWrapper(),
       });
 
-      result.current.mutate({ identifier: 'user1', role: ['admin'] }, {
+      result.current.mutate({ identifier: 'user1', roles: ['admin'] }, {
         onSuccess: jest.fn(),
         onError: jest.fn(),
       });

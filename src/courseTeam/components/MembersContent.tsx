@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { Button, DataTable, FormControl, Icon } from '@openedx/paragon';
-import { FilterList } from '@openedx/paragon/icons';
+import { Button, DataTable } from '@openedx/paragon';
 import UsernameFilter from '@src/components/UsernameFilter';
-import { useRoles, useTeamMembers } from '@src/courseTeam/data/apiHook';
+import RoleFilter from '@src/courseTeam/components/RoleFilter';
+import { useTeamMembers } from '@src/courseTeam/data/apiHook';
 import messages from '@src/courseTeam/messages';
 import { CourseTeamMember, Role } from '@src/courseTeam/types';
 import { DataTableFetchDataProps } from '@src/types';
@@ -14,39 +14,6 @@ const TEAM_MEMBERS_PAGE_SIZE = 25;
 interface MembersContentProps {
   onEdit: (user: CourseTeamMember) => void,
 }
-
-const RoleFilter = ({ column: { filterValue, setFilter } }: { column: { filterValue: string, setFilter: (value: string) => void } }) => {
-  const intl = useIntl();
-  const { courseId = '' } = useParams<{ courseId: string }>();
-  const { data } = useRoles(courseId);
-
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilter(e.target.value);
-  };
-
-  const roles = useMemo(() => {
-    return [{ value: '', label: intl.formatMessage(messages.allRoles) }, ...(data?.results || []).map((role: Role) => ({ value: role.role, label: role.displayName }))];
-  }, [data, intl]);
-
-  return (
-    <FormControl
-      as="select"
-      className="mb-0"
-      disabled={!data}
-      name="role"
-      size="md"
-      value={filterValue}
-      onChange={handleSelectChange}
-      leadingElement={<Icon src={FilterList} />}
-    >
-      {roles.map(role => (
-        <option key={role.value} value={role.value}>
-          {role.label}
-        </option>
-      ))}
-    </FormControl>
-  );
-};
 
 const MembersContent = ({ onEdit }: MembersContentProps) => {
   const intl = useIntl();

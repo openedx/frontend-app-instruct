@@ -231,6 +231,16 @@ const messages = defineMessages({
     defaultMessage: 'Add role',
     description: 'Label for adding a role to a team member',
   },
+  removeTeamMemberError: {
+    id: 'instruct.courseTeam.removeTeamMemberError',
+    defaultMessage: 'Failed to remove one or more roles from {username}.',
+    description: 'Error message displayed when removing a team member fails',
+  },
+  addRoleError: {
+    id: 'instruct.courseTeam.addRoleError',
+    defaultMessage: 'Failed to add role to {username}.',
+    description: 'Error message displayed when adding a role to a team member fails',
+  }
 });
 
 export default messages;
