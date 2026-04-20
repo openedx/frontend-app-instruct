@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { ActionRow, Button, Form, FormControl, FormGroup, FormLabel, ModalDialog } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
 import SpecifyLearnerField from '@src/components/SpecifyLearnerField';
-import messages from '../messages';
-import SelectGradedSubsection from './SelectGradedSubsection';
-import { AddDateExtensionFormData, AddDateExtensionParams } from '../types';
+import SelectGradedSubsection from '@src/dateExtensions/components/SelectGradedSubsection';
+import messages from '@src/dateExtensions/messages';
+import { AddDateExtensionFormData, AddDateExtensionParams } from '@src/dateExtensions/types';
 
 interface AddExtensionModalProps {
   isOpen: boolean,
@@ -17,7 +17,7 @@ const initialFormData: AddDateExtensionFormData = {
   emailOrUsername: '',
   blockId: '',
   dueDate: '',
-  dueTime: '',
+  dueTime: '23:59',
   reason: '',
 };
 
@@ -30,7 +30,6 @@ const AddExtensionModal = ({ isOpen, title, onClose, onSubmit }: AddExtensionMod
       formData.emailOrUsername.trim() !== ''
       && formData.blockId.trim() !== ''
       && formData.dueDate.trim() !== ''
-      && formData.dueTime.trim() !== ''
     );
   };
 
@@ -95,7 +94,7 @@ const AddExtensionModal = ({ isOpen, title, onClose, onSubmit }: AddExtensionMod
                 </FormLabel>
                 <div className="d-md-flex w-md-50 align-items-center">
                   <FormControl name="dueDate" type="date" size="md" onChange={onChange} />
-                  <FormControl name="dueTime" type="time" size="md" className="mt-sm-3 mt-md-0" onChange={onChange} />
+                  <FormControl name="dueTime" type="time" size="md" className="mt-sm-3 mt-md-0" defaultValue={initialFormData.dueTime} onChange={onChange} />
                 </div>
               </FormGroup>
               <FormGroup className="mt-3" size="sm">
