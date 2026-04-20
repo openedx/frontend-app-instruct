@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
-import { useTeamMembers, useRoles, useAddTeamMember } from '@src/courseTeam/data/apiHook';
+import { useTeamMembers, useRoles, useAddTeamMember, useRemoveTeamMember } from '@src/courseTeam/data/apiHook';
 import * as api from '@src/courseTeam/data/api';
 import { CourseTeamMember } from '@src/courseTeam/types';
 import { DataList } from '@src/types';
@@ -11,6 +11,7 @@ jest.mock('@src/courseTeam/data/api');
 const mockGetTeamMembers = api.getTeamMembers as jest.MockedFunction<typeof api.getTeamMembers>;
 const mockGetRoles = api.getRoles as jest.MockedFunction<typeof api.getRoles>;
 const mockAddTeamMember = api.addTeamMember as jest.MockedFunction<typeof api.addTeamMember>;
+const mockRemoveTeamMember = api.removeTeamMember as jest.MockedFunction<typeof api.removeTeamMember>;
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -36,8 +37,8 @@ describe('apiHook', () => {
         count: 2,
         numPages: 1,
         results: [
-          { username: 'john.doe', email: 'john@example.com', role: 'instructor' },
-          { username: 'jane.smith', email: 'jane@example.com', role: 'staff' },
+          { username: 'john.doe', fullName: 'John Doe', email: 'john@example.com', roles: [{ role: 'instructor', displayName: 'Admin' }] },
+          { username: 'jane.smith', fullName: 'Jane Smith', email: 'jane@example.com', roles: [{ role: 'staff', displayName: 'Staff' }, { role: 'admin', displayName: 'Admin' }] },
         ],
       };
 
@@ -156,6 +157,27 @@ describe('apiHook', () => {
       });
 
       expect(api.addTeamMember).toHaveBeenCalledWith('course-v1:org+course+run', ['user1', 'user2'], 'admin');
+    });
+  });
+
+  describe('useRemoveTeamMember', () => {
+    it('should call removeTeamMember API with correct parameters', async () => {
+      mockRemoveTeamMember.mockResolvedValue({ results: [] });
+
+      const { result } = renderHook(() => useRemoveTeamMember('course-v1:org+course+run'), {
+        wrapper: createWrapper(),
+      });
+
+      result.current.mutate({ identifier: 'user1', roles: ['admin'] }, {
+        onSuccess: jest.fn(),
+        onError: jest.fn(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(api.removeTeamMember).toHaveBeenCalledWith('course-v1:org+course+run', 'user1', ['admin']);
     });
   });
 });
