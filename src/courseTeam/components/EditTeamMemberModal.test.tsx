@@ -45,8 +45,22 @@ describe('EditTeamMemberModal', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useRoles as jest.Mock).mockReturnValue({ data: { results: mockRoles } });
-    (useAddTeamMember as jest.Mock).mockReturnValue({ mutate: mockAddTeamMember });
-    (useRemoveTeamMember as jest.Mock).mockReturnValue({ mutate: mockRemoveTeamMember });
+    (useAddTeamMember as jest.Mock).mockReturnValue({
+      mutate: mockAddTeamMember,
+      isPending: false
+    });
+    (useRemoveTeamMember as jest.Mock).mockReturnValue({
+      mutate: mockRemoveTeamMember,
+      isPending: false
+    });
+
+    // Mock successful operations by default
+    mockAddTeamMember.mockImplementation((_params, { onSuccess }) => {
+      if (onSuccess) onSuccess();
+    });
+    mockRemoveTeamMember.mockImplementation((_params, { onSuccess }) => {
+      if (onSuccess) onSuccess();
+    });
   });
 
   it('renders modal with correct title', () => {
@@ -124,17 +138,6 @@ describe('EditTeamMemberModal', () => {
     const user = userEvent.setup();
     const cancelButton = screen.getByRole('button', { name: messages.cancelButton.defaultMessage });
     await user.click(cancelButton);
-
-    expect(mockOnClose).toHaveBeenCalledTimes(1);
-  });
-
-  it('calls onClose when save button is clicked', async () => {
-    const mockOnClose = jest.fn();
-    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
-
-    const user = userEvent.setup();
-    const saveButton = screen.getByRole('button', { name: messages.saveButton.defaultMessage });
-    await user.click(saveButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
@@ -242,7 +245,8 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('calls addTeamMember when save is clicked with selected role', async () => {
-    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
+    const mockOnClose = jest.fn();
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
 
     const user = userEvent.setup();
     const selectElement = screen.getByRole('combobox');
@@ -255,11 +259,18 @@ describe('EditTeamMemberModal', () => {
     expect(mockAddTeamMember).toHaveBeenCalledWith({
       identifiers: [mockUser.username],
       role: 'instructor',
-    }, expect.any(Object));
+    }, expect.objectContaining({
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function)
+    }));
+
+    // Should close after successful operation
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it('calls removeTeamMember when save is clicked with roles unchecked for removal', async () => {
-    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
+    const mockOnClose = jest.fn();
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
 
     const user = userEvent.setup();
     const staffCheckbox = screen.getByRole('checkbox', { name: 'Staff' });
@@ -273,11 +284,29 @@ describe('EditTeamMemberModal', () => {
     expect(mockRemoveTeamMember).toHaveBeenCalledWith({
       identifier: mockUser.username,
       roles: ['staff'],
-    }, expect.any(Object));
+    }, expect.objectContaining({
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function)
+    }));
+
+    // Should close after successful operation
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it('calls both addTeamMember and removeTeamMember when both actions are needed', async () => {
-    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
+    const mockOnClose = jest.fn();
+
+    // Mock sequential execution: remove first, then add
+    let removeCallback: (() => void) | undefined;
+    mockRemoveTeamMember.mockImplementation((_params, { onSuccess }) => {
+      removeCallback = onSuccess;
+    });
+
+    mockAddTeamMember.mockImplementation((_params, { onSuccess }) => {
+      if (onSuccess) onSuccess();
+    });
+
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
 
     const user = userEvent.setup();
     const selectElement = screen.getByRole('combobox');
@@ -290,14 +319,28 @@ describe('EditTeamMemberModal', () => {
     await user.click(staffCheckbox);
     await user.click(saveButton);
 
-    expect(mockAddTeamMember).toHaveBeenCalledWith({
-      identifiers: [mockUser.username],
-      role: 'instructor'
-    }, expect.any(Object));
+    // Should call remove first
     expect(mockRemoveTeamMember).toHaveBeenCalledWith({
       identifier: mockUser.username,
       roles: ['staff']
-    }, expect.any(Object));
+    }, expect.objectContaining({
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function)
+    }));
+
+    // Simulate remove success to trigger add
+    if (removeCallback) removeCallback();
+
+    expect(mockAddTeamMember).toHaveBeenCalledWith({
+      identifiers: [mockUser.username],
+      role: 'instructor'
+    }, expect.objectContaining({
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function)
+    }));
+
+    // Should close after all operations succeed
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it('does not call addTeamMember when no role is selected', async () => {
@@ -325,7 +368,8 @@ describe('EditTeamMemberModal', () => {
   });
 
   it('handles multiple role unchecking for removal', async () => {
-    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
+    const mockOnClose = jest.fn();
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
 
     const user = userEvent.setup();
     const staffCheckbox = screen.getByRole('checkbox', { name: 'Staff' });
@@ -342,7 +386,13 @@ describe('EditTeamMemberModal', () => {
     expect(mockRemoveTeamMember).toHaveBeenCalledWith({
       identifier: mockUser.username,
       roles: ['staff', 'admin']
-    }, expect.any(Object));
+    }, expect.objectContaining({
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function)
+    }));
+
+    // Should close after successful operation
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it('handles role selection with empty string value', async () => {
@@ -376,5 +426,85 @@ describe('EditTeamMemberModal', () => {
 
     const options = screen.getAllByRole('option');
     expect(options).toHaveLength(expectedAvailableRoles.length + 1); // +1 for placeholder
+  });
+
+  it('handles add role error and keeps modal open', async () => {
+    const mockOnClose = jest.fn();
+    mockAddTeamMember.mockImplementation((_params, { onError }) => {
+      if (onError) onError();
+    });
+
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
+
+    const user = userEvent.setup();
+    const selectElement = screen.getByRole('combobox');
+    const saveButton = screen.getByRole('button', { name: messages.saveButton.defaultMessage });
+
+    await user.selectOptions(selectElement, 'instructor');
+    await user.click(saveButton);
+
+    expect(mockAddTeamMember).toHaveBeenCalled();
+    // Modal should NOT close on error
+    expect(mockOnClose).not.toHaveBeenCalled();
+  });
+
+  it('handles remove role error and keeps modal open', async () => {
+    const mockOnClose = jest.fn();
+    mockRemoveTeamMember.mockImplementation((_params, { onError }) => {
+      if (onError) onError();
+    });
+
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
+
+    const user = userEvent.setup();
+    const staffCheckbox = screen.getByRole('checkbox', { name: 'Staff' });
+    const saveButton = screen.getByRole('button', { name: messages.saveButton.defaultMessage });
+
+    await user.click(staffCheckbox);
+    await user.click(saveButton);
+
+    expect(mockRemoveTeamMember).toHaveBeenCalled();
+    // Modal should NOT close on error
+    expect(mockOnClose).not.toHaveBeenCalled();
+  });
+
+  it('handles remove success but add failure in sequential operations', async () => {
+    const mockOnClose = jest.fn();
+
+    // Remove succeeds, add fails
+    mockRemoveTeamMember.mockImplementation((_params, { onSuccess }) => {
+      if (onSuccess) onSuccess();
+    });
+    mockAddTeamMember.mockImplementation((_params, { onError }) => {
+      if (onError) onError();
+    });
+
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} onClose={mockOnClose} />);
+
+    const user = userEvent.setup();
+    const selectElement = screen.getByRole('combobox');
+    const staffCheckbox = screen.getByRole('checkbox', { name: 'Staff' });
+    const saveButton = screen.getByRole('button', { name: messages.saveButton.defaultMessage });
+
+    await user.selectOptions(selectElement, 'instructor');
+    await user.click(staffCheckbox);
+    await user.click(saveButton);
+
+    expect(mockRemoveTeamMember).toHaveBeenCalled();
+    expect(mockAddTeamMember).toHaveBeenCalled();
+    // Modal should NOT close due to add failure
+    expect(mockOnClose).not.toHaveBeenCalled();
+  });
+
+  it('disables save button when operations are pending', () => {
+    (useAddTeamMember as jest.Mock).mockReturnValue({
+      mutate: mockAddTeamMember,
+      isPending: true
+    });
+
+    renderWithAlertAndIntl(<EditTeamMemberModal {...defaultProps} />);
+
+    const saveButton = screen.getByRole('button', { name: messages.saveButton.defaultMessage });
+    expect(saveButton).toBeDisabled();
   });
 });

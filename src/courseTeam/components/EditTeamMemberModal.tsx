@@ -44,30 +44,55 @@ const EditTeamMemberModal = ({ isOpen, user, onClose }: EditTeamMemberModalProps
   };
 
   const handleSave = () => {
-    if (selectedRole) {
-      addTeamMember({ identifiers: [user.username], role: selectedRole }, {
-        onError: () => {
-          showModal({
-            message: intl.formatMessage(messages.addRoleError),
-            variant: 'danger',
-            confirmText: intl.formatMessage(messages.closeButton),
-          });
-        } }
-      );
-    }
     const rolesToRemove = user.roles.filter(role => !keepRoles.includes(role.role)).map(role => role.role);
-    if (rolesToRemove.length > 0) {
+    const hasRolesToAdd = selectedRole;
+    const hasRolesToRemove = rolesToRemove.length > 0;
+
+    // Sequential approach: remove roles first, then add new role
+    if (hasRolesToRemove) {
       removeTeamMember({ identifier: user.username, roles: rolesToRemove }, {
+        onSuccess: () => {
+          // After successful removal, add new role if needed
+          if (hasRolesToAdd) {
+            addTeamMember({ identifiers: [user.username], role: selectedRole }, {
+              onSuccess: () => {
+                onClose();
+              },
+              onError: () => {
+                showModal({
+                  message: intl.formatMessage(messages.addRoleError),
+                  variant: 'danger',
+                  confirmText: intl.formatMessage(messages.closeButton),
+                });
+              }
+            });
+          } else {
+            onClose();
+          }
+        },
         onError: () => {
           showModal({
             message: intl.formatMessage(messages.removeTeamMemberError, { username: user.username }),
             variant: 'danger',
             confirmText: intl.formatMessage(messages.closeButton),
           });
-        } }
-      );
+        }
+      });
+    } else if (hasRolesToAdd) {
+      // Only add operation needed
+      addTeamMember({ identifiers: [user.username], role: selectedRole }, {
+        onSuccess: () => {
+          onClose();
+        },
+        onError: () => {
+          showModal({
+            message: intl.formatMessage(messages.addRoleError),
+            variant: 'danger',
+            confirmText: intl.formatMessage(messages.closeButton),
+          });
+        }
+      });
     }
-    onClose();
   };
 
   return (
@@ -111,7 +136,7 @@ const EditTeamMemberModal = ({ isOpen, user, onClose }: EditTeamMemberModalProps
       <ModalDialog.Footer className="border-light-700 border-top">
         <ActionRow>
           <Button variant="tertiary" onClick={onClose}>{intl.formatMessage(messages.cancelButton)}</Button>
-          <Button variant="primary" onClick={handleSave} disabled={isAdding || isRemoving}>
+          <Button variant="primary" onClick={handleSave} disabled={isAdding || isRemoving || (keepRoles.length === user.roles.length && !selectedRole)}>
             {intl.formatMessage(messages.saveButton)}
           </Button>
         </ActionRow>
