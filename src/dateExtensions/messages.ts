@@ -98,7 +98,7 @@ const messages = defineMessages({
   },
   extensionDate: {
     id: 'instruct.dateExtensions.page.addIndividualDueDateExtensionModal.extensionDate',
-    defaultMessage: 'Extension Date',
+    defaultMessage: 'Extension Date and time (in UTC)',
     description: 'Label for the extension date field',
   },
   reasonForExtension: {
