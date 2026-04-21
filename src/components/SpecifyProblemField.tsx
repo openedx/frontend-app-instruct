@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useImperativeHandle, forwardRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Form, Icon, OverlayTrigger, Tooltip, useToggle } from '@openedx/paragon';
 import { InfoOutline, SpinnerIcon } from '@openedx/paragon/icons';
@@ -16,24 +16,35 @@ interface SpecifyProblemFieldProps {
   onClickSelect: (problemLocation: string, event: React.MouseEvent<HTMLButtonElement>) => void,
 }
 
-const SpecifyProblemField = ({
+interface SpecifyProblemFieldRef {
+  reset: () => void,
+}
+
+const SpecifyProblemField = forwardRef<SpecifyProblemFieldRef, SpecifyProblemFieldProps>(({
   buttonLabel,
   disabled,
   fieldLabel,
   problemResponsesError,
   usernameOrEmail = '',
   onClickSelect,
-}: SpecifyProblemFieldProps) => {
+}, ref) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [problemLocation, setProblemLocation] = useState('');
   const [showSelectedLocation, enableShowSelectedLocation, disableShowSelectedLocation] = useToggle(false);
 
-  const { inputValue, handleChange } = useDebouncedFilter({
+  const { inputValue, handleChange, resetFilter } = useDebouncedFilter({
     filterValue: problemLocation,
     setFilter: setProblemLocation,
   });
   const { data = { breadcrumbs: [], name: '', id: '' }, refetch } = useProblemDetails(courseId, inputValue, usernameOrEmail);
+
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      resetFilter();
+      disableShowSelectedLocation();
+    }
+  }));
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleChange(e.target.value);
@@ -112,6 +123,8 @@ const SpecifyProblemField = ({
       </div>
     </Form.Group>
   );
-};
+});
+
+SpecifyProblemField.displayName = 'SpecifyProblemField';
 
 export default SpecifyProblemField;

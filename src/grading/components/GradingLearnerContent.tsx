@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, FormControl } from '@openedx/paragon';
 import ActionCard, { ActionCardProps } from '@src/components/ActionCard';
@@ -21,6 +21,9 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [blockId, setBlockId] = useState('');
   const [score, setScore] = useState('');
+  const learnerFieldRef = useRef<{ reset: () => void }>(null);
+  const problemFieldRef = useRef<{ reset: () => void }>(null);
+
   const { mutate: resetAttempts } = useResetAttempts(courseId);
   const { mutate: deleteHistory } = useDeleteHistory(courseId);
   const { mutate: changeScore } = useChangeScore(courseId);
@@ -58,10 +61,11 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
   };
 
   useEffect(() => {
-    if (toolType === 'all') {
-      setUsernameOrEmail('');
-    }
+    setUsernameOrEmail('');
     setBlockId('');
+    setScore('');
+    learnerFieldRef.current?.reset();
+    problemFieldRef.current?.reset();
   }, [toolType]);
 
   const singleLearnerActionRows: ActionCardProps[] = [
@@ -146,11 +150,12 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
       <div className="d-flex justify-content-between gap-4">
         {toolType === 'single' && (
           <div className="w-50">
-            <SpecifyLearnerField onClickSelect={handleLearnerChange} />
+            <SpecifyLearnerField ref={learnerFieldRef} onClickSelect={handleLearnerChange} />
           </div>
         )}
         <div className="w-50">
           <SpecifyProblemField
+            ref={problemFieldRef}
             fieldLabel={intl.formatMessage(messages.specifyProblem)}
             buttonLabel={intl.formatMessage(messages.select)}
             disabled={!usernameOrEmail && toolType === 'single'}
