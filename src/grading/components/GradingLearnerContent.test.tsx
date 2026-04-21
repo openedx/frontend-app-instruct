@@ -50,7 +50,7 @@ const defaultProps = {
 };
 
 describe('GradingLearnerContent', () => {
-  const mockMutateReset = jest.fn();
+  const mockMutateReset = jest.fn().mockResolvedValue({ success: true });
   const mockMutateDelete = jest.fn();
   const mockMutateChangeScore = jest.fn();
   const mockMutateRescore = jest.fn();
@@ -303,5 +303,170 @@ describe('GradingLearnerContent', () => {
 
     const overrideButton = screen.getByText(messages.overrideScoreButtonLabel.defaultMessage);
     expect(overrideButton).toBeDisabled();
+  });
+
+  // Tests for "all learners" mode functionality
+  describe('All Learners Mode', () => {
+    it('renders all learners specific action cards', () => {
+      renderWithIntl(
+        <GradingLearnerContent
+          {...defaultProps}
+          toolType="all"
+        />
+      );
+
+      // Check that all action cards for all learners mode are rendered
+      expect(screen.getByText(messages.resetAttempts.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(messages.rescoreSubmission.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(messages.taskStatus.defaultMessage)).toBeInTheDocument();
+
+      // Check specific button labels for all learners mode
+      expect(screen.getByText(messages.rescoreAllSubmissionButtonLabel.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(messages.rescoreIfImprovesScoreButtonLabel.defaultMessage)).toBeInTheDocument();
+    });
+
+    it('calls reset attempts for all learners when button is clicked', async () => {
+      const user = userEvent.setup();
+      renderWithIntl(
+        <GradingLearnerContent
+          {...defaultProps}
+          toolType="all"
+        />
+      );
+
+      // Select problem first
+      await user.click(screen.getByText('Select Problem'));
+
+      // Click reset attempts button for all learners
+      const resetButton = screen.getByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage });
+      await user.click(resetButton);
+
+      expect(mockMutateReset).toHaveBeenCalledWith({
+        problem: 'block-v1:test+problem',
+        learner: '',
+      });
+    });
+
+    it('calls rescore all submissions when button is clicked', async () => {
+      const user = userEvent.setup();
+      renderWithIntl(
+        <GradingLearnerContent
+          {...defaultProps}
+          toolType="all"
+        />
+      );
+
+      // Select problem first
+      await user.click(screen.getByText('Select Problem'));
+
+      // Click rescore all submissions button
+      const rescoreAllButton = screen.getByRole('button', { name: messages.rescoreAllSubmissionButtonLabel.defaultMessage });
+      await user.click(rescoreAllButton);
+
+      expect(mockMutateRescore).toHaveBeenCalledWith({
+        problem: 'block-v1:test+problem',
+        onlyIfHigher: false,
+        learner: '',
+      });
+    });
+
+    it('calls rescore submissions with onlyIfHigher when "if improves" button is clicked', async () => {
+      const user = userEvent.setup();
+      renderWithIntl(
+        <GradingLearnerContent
+          {...defaultProps}
+          toolType="all"
+        />
+      );
+
+      // Select problem first
+      await user.click(screen.getByText('Select Problem'));
+
+      // Click rescore if improves button
+      const rescoreIfImprovesButton = screen.getByRole('button', { name: messages.rescoreIfImprovesScoreButtonLabel.defaultMessage });
+      await user.click(rescoreIfImprovesButton);
+
+      expect(mockMutateRescore).toHaveBeenCalledWith({
+        problem: 'block-v1:test+problem',
+        onlyIfHigher: true,
+        learner: '',
+      });
+    });
+
+    it('calls onShowTasks and refetches when task status button is clicked in all learners mode', async () => {
+      const user = userEvent.setup();
+      const mockOnShowTasks = jest.fn();
+
+      renderWithIntl(
+        <GradingLearnerContent
+          {...defaultProps}
+          toolType="all"
+          onShowTasks={mockOnShowTasks}
+        />
+      );
+
+      // Select problem first
+      await user.click(screen.getByText('Select Problem'));
+
+      // Click task status button
+      const taskStatusButton = screen.getByText(messages.taskStatusButtonLabel.defaultMessage);
+      await user.click(taskStatusButton);
+
+      expect(mockRefetch).toHaveBeenCalled();
+      expect(mockOnShowTasks).toHaveBeenCalled();
+    });
+
+    it('disables action buttons when problem is not selected in all learners mode', () => {
+      renderWithIntl(
+        <GradingLearnerContent
+          {...defaultProps}
+          toolType="all"
+        />
+      );
+
+      const resetButton = screen.getByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage });
+      const rescoreAllButton = screen.getByRole('button', { name: messages.rescoreAllSubmissionButtonLabel.defaultMessage });
+      const rescoreIfImprovesButton = screen.getByRole('button', { name: messages.rescoreIfImprovesScoreButtonLabel.defaultMessage });
+
+      expect(resetButton).toBeDisabled();
+      expect(rescoreAllButton).toBeDisabled();
+      expect(rescoreIfImprovesButton).toBeDisabled();
+    });
+
+    it('enables action buttons when problem is selected in all learners mode', async () => {
+      const user = userEvent.setup();
+      renderWithIntl(
+        <GradingLearnerContent
+          {...defaultProps}
+          toolType="all"
+        />
+      );
+
+      // Select problem
+      await user.click(screen.getByText('Select Problem'));
+
+      const resetButton = screen.getByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage });
+      const rescoreAllButton = screen.getByRole('button', { name: messages.rescoreAllSubmissionButtonLabel.defaultMessage });
+      const rescoreIfImprovesButton = screen.getByRole('button', { name: messages.rescoreIfImprovesScoreButtonLabel.defaultMessage });
+      const taskStatusButton = screen.getByRole('button', { name: messages.taskStatusButtonLabel.defaultMessage });
+
+      expect(resetButton).not.toBeDisabled();
+      expect(rescoreAllButton).not.toBeDisabled();
+      expect(rescoreIfImprovesButton).not.toBeDisabled();
+      expect(taskStatusButton).not.toBeDisabled();
+    });
+
+    it('task status button is always enabled in all learners mode (does not depend on problem selection)', () => {
+      renderWithIntl(
+        <GradingLearnerContent
+          {...defaultProps}
+          toolType="all"
+        />
+      );
+
+      // Task status button should be enabled even without selecting a problem
+      const taskStatusButton = screen.getByRole('button', { name: messages.taskStatusButtonLabel.defaultMessage });
+      expect(taskStatusButton).not.toBeDisabled();
+    });
   });
 });
