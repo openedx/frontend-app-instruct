@@ -91,6 +91,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
       customAction: (
         <div className="d-flex align-items-center gap-2">
           <FormControl
+            name={intl.formatMessage(messages.overrideScorePlaceholder)}
             type="number"
             placeholder={intl.formatMessage(messages.overrideScorePlaceholder)}
             value={score}
