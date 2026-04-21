@@ -1,28 +1,22 @@
 import { screen } from '@testing-library/react';
 import GenerationHistoryTable from './GenerationHistoryTable';
 import { renderWithIntl } from '@src/testUtils';
-import { InstructorTask } from '../types';
+import { CertificateGenerationHistory } from '../types';
 import messages from '../messages';
 
 describe('GenerationHistoryTable', () => {
   const mockOnPageChange = jest.fn();
 
-  const mockTaskData: InstructorTask[] = [
+  const mockTaskData: CertificateGenerationHistory[] = [
     {
-      taskId: 'task1',
       taskName: 'Generate Certificates',
-      taskState: 'SUCCESS',
-      created: '2024-01-15T14:30:00Z',
-      updated: '2024-01-15T14:35:00Z',
-      taskOutput: 'Successfully generated 50 certificates',
+      date: 'January 15, 2024',
+      details: 'Successfully generated 50 certificates',
     },
     {
-      taskId: 'task2',
       taskName: 'Regenerate Certificates',
-      taskState: 'FAILURE',
-      created: '2024-01-10T10:00:00Z',
-      updated: '2024-01-10T10:05:00Z',
-      taskOutput: 'Error: Failed to process',
+      date: 'January 10, 2024',
+      details: 'Error: Failed to process',
     },
   ];
 
@@ -54,25 +48,18 @@ describe('GenerationHistoryTable', () => {
     expect(screen.getByText(messages.columnDetails.defaultMessage)).toBeInTheDocument();
   });
 
-  it('displays task state in details column', () => {
-    renderWithIntl(<GenerationHistoryTable {...defaultProps} />);
-
-    expect(screen.getByText(/SUCCESS/)).toBeInTheDocument();
-    expect(screen.getByText(/FAILURE/)).toBeInTheDocument();
-  });
-
-  it('displays task output when available', () => {
+  it('displays details column', () => {
     renderWithIntl(<GenerationHistoryTable {...defaultProps} />);
 
     expect(screen.getByText('Successfully generated 50 certificates')).toBeInTheDocument();
     expect(screen.getByText('Error: Failed to process')).toBeInTheDocument();
   });
 
-  it('formats date correctly', () => {
+  it('displays formatted dates', () => {
     renderWithIntl(<GenerationHistoryTable {...defaultProps} />);
 
-    // Check that dates are rendered (format may vary based on locale)
-    expect(screen.getAllByText(/2024/).length).toBeGreaterThan(0);
+    expect(screen.getByText('January 15, 2024')).toBeInTheDocument();
+    expect(screen.getByText('January 10, 2024')).toBeInTheDocument();
   });
 
   it('displays empty message when no data', () => {
@@ -104,30 +91,21 @@ describe('GenerationHistoryTable', () => {
   });
 
   it('renders multiple task rows', () => {
-    const multipleTasksData: InstructorTask[] = [
+    const multipleTasksData: CertificateGenerationHistory[] = [
       {
-        taskId: 'task1',
         taskName: 'Task 1',
-        taskState: 'SUCCESS',
-        created: '2024-01-15T14:30:00Z',
-        updated: '2024-01-15T14:35:00Z',
-        taskOutput: 'Output 1',
+        date: 'January 15, 2024',
+        details: 'Output 1',
       },
       {
-        taskId: 'task2',
         taskName: 'Task 2',
-        taskState: 'PENDING',
-        created: '2024-01-14T10:00:00Z',
-        updated: '2024-01-14T10:05:00Z',
-        taskOutput: 'Output 2',
+        date: 'January 14, 2024',
+        details: 'Output 2',
       },
       {
-        taskId: 'task3',
         taskName: 'Task 3',
-        taskState: 'RUNNING',
-        created: '2024-01-13T08:00:00Z',
-        updated: '2024-01-13T08:05:00Z',
-        taskOutput: '',
+        date: 'January 13, 2024',
+        details: '',
       },
     ];
 
@@ -140,75 +118,46 @@ describe('GenerationHistoryTable', () => {
     expect(screen.getByText('Task 3')).toBeInTheDocument();
   });
 
-  it('handles task without output', () => {
-    const taskWithoutOutput: InstructorTask[] = [
+  it('handles task without details', () => {
+    const taskWithoutDetails: CertificateGenerationHistory[] = [
       {
-        taskId: 'task1',
         taskName: 'Running Task',
-        taskState: 'RUNNING',
-        created: '2024-01-15T14:30:00Z',
-        updated: '2024-01-15T14:35:00Z',
-        taskOutput: '',
+        date: 'January 15, 2024',
+        details: '',
       },
     ];
 
-    renderWithIntl(<GenerationHistoryTable {...defaultProps} data={taskWithoutOutput} />);
+    renderWithIntl(<GenerationHistoryTable {...defaultProps} data={taskWithoutDetails} />);
 
     expect(screen.getByText('Running Task')).toBeInTheDocument();
-    expect(screen.getByText(/RUNNING/)).toBeInTheDocument();
+    expect(screen.getByText('January 15, 2024')).toBeInTheDocument();
   });
 
-  it('handles task without created date', () => {
-    const taskWithoutDate: InstructorTask[] = [
+  it('displays different task types correctly', () => {
+    const tasksWithDifferentTypes: CertificateGenerationHistory[] = [
       {
-        taskId: 'task1',
-        taskName: 'Old Task',
-        taskState: 'SUCCESS',
-        created: '',
-        updated: '2024-01-15T14:35:00Z',
-        taskOutput: 'Completed',
-      },
-    ];
-
-    renderWithIntl(<GenerationHistoryTable {...defaultProps} data={taskWithoutDate} />);
-
-    expect(screen.getByText('Old Task')).toBeInTheDocument();
-  });
-
-  it('displays different task states correctly', () => {
-    const tasksWithDifferentStates: InstructorTask[] = [
-      {
-        taskId: 'task1',
-        taskName: 'Success Task',
-        taskState: 'SUCCESS',
-        created: '2024-01-15T14:30:00Z',
-        updated: '2024-01-15T14:35:00Z',
-        taskOutput: 'Done',
+        taskName: 'Generated',
+        date: 'January 15, 2024',
+        details: 'For all learners',
       },
       {
-        taskId: 'task2',
-        taskName: 'Pending Task',
-        taskState: 'PENDING',
-        created: '2024-01-14T14:30:00Z',
-        updated: '2024-01-14T14:35:00Z',
-        taskOutput: 'Waiting',
+        taskName: 'Regenerated',
+        date: 'January 14, 2024',
+        details: 'For exceptions',
       },
       {
-        taskId: 'task3',
-        taskName: 'Failed Task',
-        taskState: 'FAILURE',
-        created: '2024-01-13T14:30:00Z',
-        updated: '2024-01-13T14:35:00Z',
-        taskOutput: 'Error occurred',
+        taskName: 'Generated',
+        date: 'January 13, 2024',
+        details: 'audit not passing states',
       },
     ];
 
     renderWithIntl(
-      <GenerationHistoryTable {...defaultProps} data={tasksWithDifferentStates} itemCount={3} />
+      <GenerationHistoryTable {...defaultProps} data={tasksWithDifferentTypes} itemCount={3} />
     );
 
-    expect(screen.getByText(/SUCCESS/)).toBeInTheDocument();
-    expect(screen.getByText(/PENDING/)).toBeInTheDocument();
-    expect(screen.getByText(/FAILURE/)).toBeInTheDocument();
+    expect(screen.getByText('For all learners')).toBeInTheDocument();
+    expect(screen.getByText('For exceptions')).toBeInTheDocument();
+    expect(screen.getByText('audit not passing states')).toBeInTheDocument();
   });
 });

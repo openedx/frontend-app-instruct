@@ -9,4 +9,6 @@ export const certificatesQueryKeys = {
     [...certificatesQueryKeys.byCourse(courseId), 'issued', params] as const,
   tasks: (courseId: string, params: PaginationParams) =>
     [...certificatesQueryKeys.byCourse(courseId), 'tasks', params] as const,
+  generationHistory: (courseId: string, params: PaginationParams) =>
+    [...certificatesQueryKeys.byCourse(courseId), 'generationHistory', params] as const,
 };

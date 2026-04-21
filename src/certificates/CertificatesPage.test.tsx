@@ -6,6 +6,7 @@ import {
   useGrantBulkExceptions,
   useInstructorTasks,
   useInvalidateCertificate,
+  useIssuedCertificates,
   useRemoveException,
   useRemoveInvalidation,
   useToggleCertificateGeneration,
@@ -18,61 +19,9 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('./data/apiHook');
-jest.mock('./data/dummyData', () => ({
-  dummyCertificateData: [
-    {
-      username: 'user1',
-      email: 'user1@example.com',
-      enrollmentTrack: 'verified',
-      certificateStatus: 'downloadable',
-      specialCase: '',
-    },
-    {
-      username: 'user2',
-      email: 'user2@example.com',
-      enrollmentTrack: 'audit',
-      certificateStatus: 'notpassing',
-      specialCase: '',
-    },
-    {
-      username: 'user3',
-      email: 'user3@example.com',
-      enrollmentTrack: 'audit',
-      certificateStatus: 'audit_passing',
-      specialCase: '',
-    },
-    {
-      username: 'user4',
-      email: 'user4@example.com',
-      enrollmentTrack: 'audit',
-      certificateStatus: 'audit_notpassing',
-      specialCase: '',
-    },
-    {
-      username: 'user5',
-      email: 'user5@example.com',
-      enrollmentTrack: 'verified',
-      certificateStatus: 'error',
-      specialCase: '',
-    },
-    {
-      username: 'user6',
-      email: 'user6@example.com',
-      enrollmentTrack: 'verified',
-      certificateStatus: 'downloadable',
-      specialCase: 'exception',
-    },
-    {
-      username: 'user7',
-      email: 'user7@example.com',
-      enrollmentTrack: 'verified',
-      certificateStatus: 'notpassing',
-      specialCase: 'invalidated',
-    },
-  ],
-}));
 
 const mockUseInstructorTasks = useInstructorTasks as jest.MockedFunction<typeof useInstructorTasks>;
+const mockUseIssuedCertificates = useIssuedCertificates as jest.MockedFunction<typeof useIssuedCertificates>;
 const mockUseGrantBulkExceptions = useGrantBulkExceptions as jest.MockedFunction<typeof useGrantBulkExceptions>;
 const mockUseInvalidateCertificate = useInvalidateCertificate as jest.MockedFunction<typeof useInvalidateCertificate>;
 const mockUseRemoveException = useRemoveException as jest.MockedFunction<typeof useRemoveException>;
@@ -88,6 +37,67 @@ describe('CertificatesPage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockUseIssuedCertificates.mockReturnValue({
+      data: {
+        results: [
+          {
+            username: 'user1',
+            email: 'user1@example.com',
+            enrollmentTrack: 'verified',
+            certificateStatus: 'downloadable',
+            specialCase: '',
+          },
+          {
+            username: 'user2',
+            email: 'user2@example.com',
+            enrollmentTrack: 'audit',
+            certificateStatus: 'notpassing',
+            specialCase: '',
+          },
+          {
+            username: 'user3',
+            email: 'user3@example.com',
+            enrollmentTrack: 'audit',
+            certificateStatus: 'audit_passing',
+            specialCase: '',
+          },
+          {
+            username: 'user4',
+            email: 'user4@example.com',
+            enrollmentTrack: 'audit',
+            certificateStatus: 'audit_notpassing',
+            specialCase: '',
+          },
+          {
+            username: 'user5',
+            email: 'user5@example.com',
+            enrollmentTrack: 'verified',
+            certificateStatus: 'error',
+            specialCase: '',
+          },
+          {
+            username: 'user6',
+            email: 'user6@example.com',
+            enrollmentTrack: 'verified',
+            certificateStatus: 'downloadable',
+            specialCase: 'exception',
+          },
+          {
+            username: 'user7',
+            email: 'user7@example.com',
+            enrollmentTrack: 'verified',
+            certificateStatus: 'notpassing',
+            specialCase: 'invalidated',
+          },
+        ],
+        count: 7,
+        numPages: 1,
+        next: null,
+        previous: null,
+      },
+      isLoading: false,
+    } as unknown as ReturnType<typeof useIssuedCertificates>);
 
     mockUseInstructorTasks.mockReturnValue({
       data: {

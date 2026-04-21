@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { DataTable } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
-import type { InstructorTask } from '../types';
+import type { CertificateGenerationHistory } from '../types';
 import messages from '../messages';
 
 interface GenerationHistoryTableProps {
-  data: InstructorTask[],
+  data: CertificateGenerationHistory[],
   isLoading: boolean,
   itemCount: number,
   pageCount: number,
@@ -31,36 +31,11 @@ const GenerationHistoryTable = ({
       },
       {
         Header: intl.formatMessage(messages.columnDate),
-        accessor: 'created',
-        Cell: ({ value }: { value: string }) => {
-          if (!value) return null;
-          return intl.formatDate(new Date(value), {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-          });
-        },
+        accessor: 'date',
       },
       {
         Header: intl.formatMessage(messages.columnDetails),
-        accessor: 'taskOutput',
-        Cell: ({ row }: { row: { original: InstructorTask } }) => {
-          const { taskState, taskOutput } = row.original;
-          return (
-            <div>
-              <div>
-                <strong>Status:</strong> {taskState}
-              </div>
-              {taskOutput && (
-                <div className="mt-1 text-gray-700">
-                  <small>{taskOutput}</small>
-                </div>
-              )}
-            </div>
-          );
-        },
+        accessor: 'details',
       },
     ],
     [intl],

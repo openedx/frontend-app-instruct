@@ -311,6 +311,26 @@ const messages = defineMessages({
     defaultMessage: 'Certificate generation disabled',
     description: 'Success message when certificate generation is disabled',
   },
+  certificatesDisabledMessage: {
+    id: 'instruct.certificates.certificatesDisabledMessage',
+    defaultMessage: 'Certificate management features are not enabled for this course. Please contact your system administrator to enable certificate generation.',
+    description: 'Message displayed when certificate features are disabled',
+  },
+  certificatesRegeneratedToast: {
+    id: 'instruct.certificates.certificatesRegeneratedToast',
+    defaultMessage: 'Certificate regeneration started successfully',
+    description: 'Success message when certificates are regenerated',
+  },
+  errorRegenerateCertificates: {
+    id: 'instruct.certificates.errorRegenerateCertificates',
+    defaultMessage: 'Failed to regenerate certificates',
+    description: 'Error message when certificate regeneration fails',
+  },
+  regenerateCertificatesButtonWithFilter: {
+    id: 'instruct.certificates.regenerateCertificatesButtonWithFilter',
+    defaultMessage: 'Regenerate Certificates: {filter}',
+    description: 'Button to regenerate certificates with filter applied',
+  },
 });
 
 export default messages;

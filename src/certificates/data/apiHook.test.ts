@@ -222,7 +222,7 @@ describe('certificates api hooks', () => {
 
   describe('useGrantBulkExceptions', () => {
     it('grants bulk exceptions successfully', async () => {
-      mockGrantBulkExceptions.mockResolvedValue(undefined);
+      mockGrantBulkExceptions.mockResolvedValue({ success: ['user1', 'user2'], errors: [] });
 
       const { Wrapper, queryClient: qc } = createWrapper();
       queryClient = qc;
@@ -266,7 +266,7 @@ describe('certificates api hooks', () => {
 
   describe('useInvalidateCertificate', () => {
     it('invalidates certificate successfully', async () => {
-      mockInvalidateCertificate.mockResolvedValue(undefined);
+      mockInvalidateCertificate.mockResolvedValue({ success: ['user1'], errors: [] });
 
       const { Wrapper, queryClient: qc } = createWrapper();
       queryClient = qc;

@@ -77,7 +77,7 @@ describe('Certificate API', () => {
       });
 
       expect(mockGet).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/get_issued_certificates/',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/issued',
         {
           params: {
             page: 1,
@@ -161,7 +161,7 @@ describe('Certificate API', () => {
 
   describe('grantBulkExceptions', () => {
     it('grants bulk certificate exceptions', async () => {
-      mockPost.mockResolvedValue({ data: {} });
+      mockPost.mockResolvedValue({ data: { success: ['user1', 'user2'], errors: [] } });
 
       await grantBulkExceptions('course-v1:edX+Test+2024', {
         learners: 'user1, user2',
@@ -169,7 +169,7 @@ describe('Certificate API', () => {
       });
 
       expect(mockPost).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/generate_bulk_certificate_exceptions',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/exceptions',
         {
           learners: 'user1, user2',
           notes: 'Test exception',
@@ -191,7 +191,7 @@ describe('Certificate API', () => {
 
   describe('invalidateCertificate', () => {
     it('invalidates certificates for learners', async () => {
-      mockPost.mockResolvedValue({ data: {} });
+      mockPost.mockResolvedValue({ data: { success: ['user1', 'user2'], errors: [] } });
 
       await invalidateCertificate('course-v1:edX+Test+2024', {
         learners: 'user1, user2',
@@ -199,7 +199,7 @@ describe('Certificate API', () => {
       });
 
       expect(mockPost).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/certificate_invalidation_view/',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/invalidations',
         {
           learners: 'user1, user2',
           notes: 'Certificate invalidation',
@@ -228,7 +228,7 @@ describe('Certificate API', () => {
       });
 
       expect(mockDelete).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/certificate_exception_view/',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/exceptions',
         {
           data: {
             username: 'user1',
@@ -257,7 +257,7 @@ describe('Certificate API', () => {
       });
 
       expect(mockDelete).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/certificate_invalidation_view/',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/invalidations',
         {
           data: {
             username: 'user1',
@@ -284,7 +284,7 @@ describe('Certificate API', () => {
       await toggleCertificateGeneration('course-v1:edX+Test+2024', true);
 
       expect(mockPost).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/enable_certificate_generation',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/toggle_generation',
         {
           enabled: true,
         }
@@ -297,7 +297,7 @@ describe('Certificate API', () => {
       await toggleCertificateGeneration('course-v1:edX+Test+2024', false);
 
       expect(mockPost).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/enable_certificate_generation',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/toggle_generation',
         {
           enabled: false,
         }

@@ -8,10 +8,12 @@ import type {
   RemoveInvalidationRequest,
 } from '../types';
 import {
+  getCertificateGenerationHistory,
   getInstructorTasks,
   getIssuedCertificates,
   grantBulkExceptions,
   invalidateCertificate,
+  regenerateCertificates,
   removeException,
   removeInvalidation,
   toggleCertificateGeneration,
@@ -35,6 +37,16 @@ export const useInstructorTasks = (courseId: string, params: PaginationParams) =
   useQuery({
     queryKey: certificatesQueryKeys.tasks(courseId, params),
     queryFn: () => getInstructorTasks(courseId, params),
+    enabled: !!courseId,
+  });
+
+/**
+ * Hook to fetch certificate generation history
+ */
+export const useCertificateGenerationHistory = (courseId: string, params: PaginationParams) =>
+  useQuery({
+    queryKey: certificatesQueryKeys.generationHistory(courseId, params),
+    queryFn: () => getCertificateGenerationHistory(courseId, params),
     enabled: !!courseId,
   });
 
@@ -105,6 +117,21 @@ export const useToggleCertificateGeneration = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (enable: boolean) => toggleCertificateGeneration(courseId, enable),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: certificatesQueryKeys.byCourse(courseId),
+      });
+    },
+  });
+};
+
+/**
+ * Hook to regenerate certificates
+ */
+export const useRegenerateCertificates = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (filter: string) => regenerateCertificates(courseId, filter),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
