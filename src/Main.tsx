@@ -4,7 +4,7 @@ import { AlertProvider } from './providers/AlertProvider';
 import { appId } from './constants';
 import PageWrapper from './pageWrapper/PageWrapper';
 
-import './app.scss';
+import './style.scss';
 
 const Main = () => (
   <CurrentAppProvider appId={appId}>
