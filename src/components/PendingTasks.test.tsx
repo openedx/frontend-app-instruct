@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react';
-import { PendingTasks } from './PendingTasks';
+import { PendingTasks } from '@src/components/PendingTasks';
+import messages from '@src/components/messages';
 import { usePendingTasks } from '@src/data/apiHook';
 import { renderWithQueryClient } from '@src/testUtils';
 
@@ -12,14 +13,14 @@ describe('PendingTasks', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('should render the collapsible pending tasks section', () => {
     mockUsePendingTasks.mockReturnValue({
       data: undefined,
       isPending: false,
       isLoading: false,
     } as any);
-  });
-
-  it('should render the collapsible pending tasks section', () => {
     renderWithQueryClient(<PendingTasks />);
 
     expect(screen.getByText('Pending Tasks')).toBeInTheDocument();
@@ -37,9 +38,9 @@ describe('PendingTasks', () => {
     const toggleButton = screen.getByRole('button');
     await toggleButton.click();
 
-    expect(screen.queryByText('No tasks currently running.')).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.noTasksMessage.defaultMessage)).not.toBeInTheDocument();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
-    expect(screen.queryByText('Task Type')).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.taskTypeColumnName.defaultMessage)).not.toBeInTheDocument();
 
     const skeletons = container.querySelectorAll('.react-loading-skeleton');
     expect(skeletons).toHaveLength(3);
@@ -56,7 +57,7 @@ describe('PendingTasks', () => {
     const toggleButton = screen.getByRole('button');
     await toggleButton.click();
 
-    expect(screen.getByText('No tasks currently running.')).toBeInTheDocument();
+    expect(screen.getByText(messages.noTasksMessage.defaultMessage)).toBeInTheDocument();
   });
 
   it('should render data table with tasks when data is available', async () => {
@@ -85,13 +86,18 @@ describe('PendingTasks', () => {
     const toggleButton = screen.getByRole('button');
     await toggleButton.click();
 
-    expect(screen.getByText('Task Type')).toBeInTheDocument();
-    expect(screen.getByText('Task ID')).toBeInTheDocument();
+    expect(screen.getByText(messages.taskTypeColumnName.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.taskIdColumnName.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText('grade_course')).toBeInTheDocument();
     expect(screen.getByText('12345')).toBeInTheDocument();
   });
 
   it('should fetch tasks on component mount', async () => {
+    mockUsePendingTasks.mockReturnValue({
+      data: undefined,
+      isPending: false,
+      isLoading: false,
+    } as any);
     renderWithQueryClient(<PendingTasks />);
     expect(mockUsePendingTasks).toHaveBeenCalledTimes(1);
   });

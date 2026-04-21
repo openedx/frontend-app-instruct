@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import AddExtensionModal from './AddExtensionModal';
 import { renderWithQueryClient } from '@src/testUtils';
 import messages from '../messages';
+import { useLearner } from '@src/data/apiHook';
 
 const mockProps = {
   isOpen: true,
@@ -16,13 +17,29 @@ const items = [
   { displayName: 'Quiz 2', subsectionId: 'sub2' },
 ];
 
-jest.mock('../data/apiHook', () => ({
+const mockLearnerData = {
+  username: 'testuser',
+  fullName: 'Test User',
+  email: 'test@email.com',
+};
+
+jest.mock('@src/data/apiHook', () => ({
+  useLearner: jest.fn(),
+  useCourseInfo: jest.fn().mockReturnValue({ data: { permissions: { admin: true, dataResearcher: false } } }),
+}));
+
+jest.mock('@src/dateExtensions/data/apiHook', () => ({
   useGradedSubsections: jest.fn().mockReturnValue({ data: { items } }),
 }));
 
 describe('AddExtensionModal', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (useLearner as jest.Mock).mockReturnValue({
+      data: mockLearnerData,
+      refetch: jest.fn().mockResolvedValue({ data: mockLearnerData }),
+      error: null,
+    });
   });
 
   it('renders modal when isOpen is true', () => {
@@ -47,20 +64,23 @@ describe('AddExtensionModal', () => {
     const user = userEvent.setup();
 
     const learnerInput = screen.getByLabelText(/Specify Learner/i);
-    const blockInput = screen.getByRole('combobox');
+    const blockInput = screen.getByRole('combobox', { name: /Select Graded Subsection/i });
     const dueDateInput = screen.getByLabelText(messages.extensionDate.defaultMessage + ':');
     const dueTimeInput = document.querySelector('input[type="time"]') as HTMLInputElement;
     const reasonInput = screen.getByPlaceholderText(messages.reasonForExtension.defaultMessage);
 
+    await user.clear(learnerInput);
     await user.type(learnerInput, 'testuser');
-    await user.click(screen.getByRole('button', { name: /select/i }));
+    const selectButton = screen.getByRole('button', { name: /select/i });
+    await waitFor(() => expect(selectButton).not.toBeDisabled());
+    await user.click(selectButton);
     await user.selectOptions(blockInput, 'sub1');
     await user.type(dueDateInput, '2024-12-31');
     await user.type(dueTimeInput, '23:59');
     await user.type(reasonInput, 'Medical emergency');
 
     const submitButton = screen.getByRole('button', { name: messages.addExtension.defaultMessage });
-    await waitFor(() => expect(submitButton).not.toBeDisabled());
+    await waitFor(() => expect(submitButton).not.toBeDisabled(), { timeout: 2000 });
 
     await user.click(submitButton);
 

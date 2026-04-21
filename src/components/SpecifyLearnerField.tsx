@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useImperativeHandle, forwardRef } from 'react';
 import { isAxiosError } from 'axios';
 import { useParams } from 'react-router-dom';
 import { Avatar, Button, FormControl, FormGroup, FormLabel, useToggle } from '@openedx/paragon';
@@ -14,18 +14,29 @@ interface SpecifyLearnerFieldProps {
   onClickSelect: (emailOrUsername: string) => void,
 }
 
-const SpecifyLearnerField = ({ learner, onClickSelect }: SpecifyLearnerFieldProps) => {
+interface SpecifyLearnerFieldRef {
+  reset: () => void,
+}
+
+const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFieldProps>(({ learner, onClickSelect }, ref) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [identifier, setIdentifier] = useState('');
   const [showLearner, enableShowLearner, disableShowLearner] = useToggle(false);
   const { data: courseInfo } = useCourseInfo(courseId);
   const permissions = courseInfo?.permissions || { admin: false, dataResearcher: false };
-  const { inputValue, handleChange } = useDebouncedFilter({
+  const { inputValue, handleChange, resetFilter } = useDebouncedFilter({
     filterValue: identifier,
     setFilter: setIdentifier,
   });
   const { data = { email: '', fullName: '', username: '' }, refetch, error } = useLearner(courseId, inputValue);
+
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      resetFilter();
+      disableShowLearner();
+    }
+  }));
 
   const selectedLearner = learner || data;
 
@@ -39,9 +50,13 @@ const SpecifyLearnerField = ({ learner, onClickSelect }: SpecifyLearnerFieldProp
 
   const handleClickSelect = () => {
     if (inputValue) {
-      onClickSelect(inputValue);
-      refetch();
-      enableShowLearner();
+      refetch().then((result) => {
+        // Need to pass empty value if learner is not valid to clear out any previously selected learner
+        // We could have other conditions/fields depending on valid learner
+        const formValue = !result.error ? inputValue : '';
+        onClickSelect(formValue);
+        enableShowLearner();
+      });
     }
   };
 
@@ -86,6 +101,8 @@ const SpecifyLearnerField = ({ learner, onClickSelect }: SpecifyLearnerFieldProp
       )}
     </FormGroup>
   );
-};
+});
+
+SpecifyLearnerField.displayName = 'SpecifyLearnerField';
 
 export default SpecifyLearnerField;
