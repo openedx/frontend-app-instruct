@@ -42,6 +42,7 @@ describe('SpecifyProblemField', () => {
     mockUseDebouncedFilter.mockReturnValue({
       inputValue: '',
       handleChange: jest.fn(),
+      resetFilter: jest.fn(),
     });
 
     mockUseProblemDetails.mockReturnValue({
@@ -73,11 +74,12 @@ describe('SpecifyProblemField', () => {
   it('calls onClickSelect when select button is clicked', async () => {
     const user = userEvent.setup();
     const mockOnClickSelect = jest.fn();
-    const mockRefetch = jest.fn();
+    const mockRefetch = jest.fn().mockResolvedValue({ data: mockProblemData });
 
     mockUseDebouncedFilter.mockReturnValue({
       inputValue: 'test-problem-id',
       handleChange: jest.fn(),
+      resetFilter: jest.fn(),
     });
 
     mockUseProblemDetails.mockReturnValue({
@@ -103,6 +105,7 @@ describe('SpecifyProblemField', () => {
     mockUseDebouncedFilter.mockReturnValue({
       inputValue: '',
       handleChange: jest.fn(),
+      resetFilter: jest.fn(),
     });
 
     renderWithIntl(<SpecifyProblemField {...defaultProps} />);
@@ -115,6 +118,7 @@ describe('SpecifyProblemField', () => {
     mockUseDebouncedFilter.mockReturnValue({
       inputValue: 'test-problem-id',
       handleChange: jest.fn(),
+      resetFilter: jest.fn(),
     });
 
     renderWithIntl(
@@ -148,6 +152,7 @@ describe('SpecifyProblemField', () => {
     mockUseDebouncedFilter.mockReturnValue({
       inputValue: 'test',
       handleChange: mockHandleChange,
+      resetFilter: jest.fn(),
     });
 
     renderWithIntl(<SpecifyProblemField {...defaultProps} />);

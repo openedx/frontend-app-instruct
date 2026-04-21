@@ -73,7 +73,6 @@ describe('AddExtensionModal', () => {
     await user.type(learnerInput, 'testuser');
     const selectButton = screen.getByRole('button', { name: /select/i });
     await waitFor(() => expect(selectButton).not.toBeDisabled());
-    screen.debug();
     await user.click(selectButton);
     await user.selectOptions(blockInput, 'sub1');
     await user.type(dueDateInput, '2024-12-31');

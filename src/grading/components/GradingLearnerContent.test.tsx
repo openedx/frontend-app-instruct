@@ -215,7 +215,7 @@ describe('GradingLearnerContent', () => {
 
     // Find the score input field using placeholder text
     const scoreInput = screen.getByPlaceholderText(messages.overrideScorePlaceholder.defaultMessage) as HTMLInputElement;
-    screen.debug(scoreInput);
+
     // Try to type invalid characters
     await user.type(scoreInput, 'abc');
     expect(scoreInput.value).toBe('');

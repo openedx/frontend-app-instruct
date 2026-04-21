@@ -55,9 +55,10 @@ const SpecifyProblemField = forwardRef<SpecifyProblemFieldRef, SpecifyProblemFie
   };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    refetch();
-    onClickSelect(inputValue, event);
-    enableShowSelectedLocation();
+    refetch().then(() => {
+      onClickSelect(inputValue, event);
+      enableShowSelectedLocation();
+    });
   };
 
   return (
