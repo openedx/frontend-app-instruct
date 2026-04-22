@@ -31,11 +31,14 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
   });
   const { data = { email: '', fullName: '', username: '', isEnrolled: false }, refetch, error } = useLearner(courseId, inputValue);
 
+  const resetState = () => {
+    resetFilter();
+    onClickSelect('');
+    disableShowLearner();
+  };
+
   useImperativeHandle(ref, () => ({
-    reset: () => {
-      resetFilter();
-      disableShowLearner();
-    }
+    reset: resetState,
   }));
 
   const selectedLearner = learner || data;
@@ -51,13 +54,11 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
   const handleClickSelect = () => {
     if (inputValue) {
       refetch().then((result) => {
-        enableShowLearner();
-        if (result?.data?.isEnrolled) {
         // Need to pass empty value if learner is not valid to clear out any previously selected learner
         // We could have other conditions/fields depending on valid learner
-          const formValue = !result.error ? inputValue : '';
-          onClickSelect(formValue);
-        }
+        const formValue = !result.error && result.data?.isEnrolled ? inputValue : '';
+        onClickSelect(formValue);
+        enableShowLearner();
       });
     }
   };
@@ -88,7 +89,7 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
                 </div>
               )}
             </div>
-            {!learner && <Button iconBefore={SpinnerIcon} onClick={disableShowLearner}>{intl.formatMessage(messages.change)}</Button>}
+            {!learner && <Button iconBefore={SpinnerIcon} onClick={resetState}>{intl.formatMessage(messages.change)}</Button>}
           </>
         ) : (
           <Button onClick={handleClickSelect} disabled={!inputValue}>{intl.formatMessage(messages.select)}</Button>
@@ -102,7 +103,7 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
         </p>
       )}
       {
-        showLearner && !selectedLearner?.isEnrolled && (
+        showLearner && !error && !selectedLearner?.isEnrolled && (
           <p className="text-danger-500 mb-0 x-small mt-2">
             {intl.formatMessage(messages.learnerNotEnrolled, { identifier })}
           </p>

@@ -69,6 +69,78 @@ describe('SpecifyLearnerField', () => {
       expect(screen.getByText(mockLearnerData.email)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: messages.change.defaultMessage })).toBeInTheDocument();
     });
+
+    it('resets values when clicking change button', async () => {
+      const handleClick = jest.fn();
+      renderWithIntl(<SpecifyLearnerField onClickSelect={handleClick} />);
+      const input = screen.getByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage);
+      const user = userEvent.setup();
+
+      // First select a learner
+      await user.type(input, mockLearnerData.username);
+      const selectButton = screen.getByText(messages.select.defaultMessage);
+      await user.click(selectButton);
+
+      // Verify learner is shown and change button appears
+      expect(screen.getByText(mockLearnerData.username)).toBeInTheDocument();
+      const changeButton = screen.getByRole('button', { name: messages.change.defaultMessage });
+      expect(changeButton).toBeInTheDocument();
+
+      // Click change button
+      await user.click(changeButton);
+
+      // Verify reset behavior
+      expect(handleClick).toHaveBeenLastCalledWith('');
+      expect(screen.getByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage)).toBeVisible();
+      expect(screen.getByText(messages.select.defaultMessage)).toBeInTheDocument();
+      expect(screen.queryByText(mockLearnerData.username)).not.toBeInTheDocument();
+    });
+
+    it('clears input value when clicking change button', async () => {
+      const handleClick = jest.fn();
+      renderWithIntl(<SpecifyLearnerField onClickSelect={handleClick} />);
+      const input = screen.getByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage);
+      const user = userEvent.setup();
+
+      // First select a learner
+      await user.type(input, mockLearnerData.username);
+      const selectButton = screen.getByText(messages.select.defaultMessage);
+      await user.click(selectButton);
+
+      // Click change button
+      const changeButton = screen.getByRole('button', { name: messages.change.defaultMessage });
+      await user.click(changeButton);
+
+      // Verify input is cleared
+      const inputAfterReset = screen.getByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage);
+      expect(inputAfterReset).toHaveValue('');
+    });
+
+    it('hides learner information when clicking change button', async () => {
+      const handleClick = jest.fn();
+      renderWithIntl(<SpecifyLearnerField onClickSelect={handleClick} />);
+      const input = screen.getByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage);
+      const user = userEvent.setup();
+
+      // First select a learner
+      await user.type(input, mockLearnerData.username);
+      const selectButton = screen.getByText(messages.select.defaultMessage);
+      await user.click(selectButton);
+
+      // Verify learner info is visible
+      expect(screen.getByText(mockLearnerData.username)).toBeInTheDocument();
+      expect(screen.getByText(mockLearnerData.fullName)).toBeInTheDocument();
+      expect(screen.getByText(mockLearnerData.email)).toBeInTheDocument();
+
+      // Click change button
+      const changeButton = screen.getByRole('button', { name: messages.change.defaultMessage });
+      await user.click(changeButton);
+
+      // Verify learner info is hidden
+      expect(screen.queryByText(mockLearnerData.fullName)).not.toBeInTheDocument();
+      expect(screen.queryByText(mockLearnerData.email)).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: messages.change.defaultMessage })).not.toBeInTheDocument();
+    });
   });
 
   describe('when learner not found', () => {
@@ -93,6 +165,49 @@ describe('SpecifyLearnerField', () => {
       expect(
         screen.getByText(new RegExp(staticPart + ':'))
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('when learner is found but not enrolled', () => {
+    const mockNotEnrolledLearnerData = {
+      username: 'notenrolleduser',
+      fullName: 'Not Enrolled User',
+      email: 'notenrolled@email.com',
+      isEnrolled: false,
+    };
+
+    beforeEach(() => {
+      jest.resetAllMocks();
+      (useCourseInfo as jest.Mock).mockReturnValue({ data: { permissions: { admin: true, dataResearcher: false } } });
+      (useLearner as jest.Mock).mockReturnValue({
+        data: mockNotEnrolledLearnerData,
+        refetch: jest.fn().mockResolvedValue({ data: mockNotEnrolledLearnerData }),
+        error: null,
+      });
+    });
+
+    it('shows learner not enrolled message', async () => {
+      renderWithIntl(<SpecifyLearnerField onClickSelect={jest.fn()} />);
+      const input = screen.getByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage);
+      const user = userEvent.setup();
+      await user.type(input, mockNotEnrolledLearnerData.username);
+      const button = screen.getByText(messages.select.defaultMessage);
+      await user.click(button);
+
+      // Wait for the message to appear
+      await expect(screen.findByText(messages.learnerNotEnrolled.defaultMessage.replace('{identifier}', mockNotEnrolledLearnerData.username))).resolves.toBeInTheDocument();
+    });
+
+    it('calls onClickSelect with empty string when learner is not enrolled', async () => {
+      const handleClick = jest.fn();
+      renderWithIntl(<SpecifyLearnerField onClickSelect={handleClick} />);
+      const input = screen.getByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage);
+      const user = userEvent.setup();
+      await user.type(input, mockNotEnrolledLearnerData.username);
+      const button = screen.getByText(messages.select.defaultMessage);
+      await user.click(button);
+
+      expect(handleClick).toHaveBeenCalledWith('');
     });
   });
 });
