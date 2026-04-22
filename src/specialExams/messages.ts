@@ -51,11 +51,6 @@ const messages = defineMessages({
     defaultMessage: 'Status',
     description: 'Column header for status in exam attempts list',
   },
-  emailOrUsername: {
-    id: 'instruct.specialExams.emailOrUsername',
-    defaultMessage: 'username or email',
-    description: 'Placeholder for the username or email filter in exam attempts list',
-  },
   noAttempts: {
     id: 'instruct.specialExams.noAttempts',
     defaultMessage: 'No exam attempts found',

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
 import { DataTable } from '@openedx/paragon';
@@ -18,7 +18,7 @@ const AttemptsList = () => {
     pageSize: ATTEMPTS_PAGE_SIZE
   });
 
-  const columns = [
+  const columns = useMemo(() => [
     { accessor: 'username', Header: intl.formatMessage(messages.username), Filter: UsernameFilter, },
     { accessor: 'examName', Header: intl.formatMessage(messages.examName), disableFilters: true, },
     { accessor: 'timeLimit', Header: intl.formatMessage(messages.timeLimit), disableFilters: true, },
@@ -26,7 +26,7 @@ const AttemptsList = () => {
     { accessor: 'startedAt', Header: intl.formatMessage(messages.startedAt), disableFilters: true, },
     { accessor: 'completedAt', Header: intl.formatMessage(messages.completedAt), disableFilters: true, },
     { accessor: 'status', Header: intl.formatMessage(messages.status), disableFilters: true, },
-  ];
+  ], [intl]);
 
   const handleFetchData = (data: DataTableFetchDataProps) => {
     const emailOrUsernameFilter = data.filters?.find((f) => f.id === 'username');
