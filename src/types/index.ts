@@ -49,4 +49,5 @@ export interface Learner {
 
 export interface SelectedLearner extends Learner {
   progressUrl: string,
+  isEnrolled: boolean,
 }

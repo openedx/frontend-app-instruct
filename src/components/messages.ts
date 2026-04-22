@@ -140,6 +140,11 @@ const messages = defineMessages({
     id: 'instruct.specifyProblemField.selectedProblem',
     defaultMessage: 'Selected Problem:',
     description: 'Label for specify problem field when a problem has been selected',
+  },
+  learnerNotEnrolled: {
+    id: 'instruct.specifyLearner.learnerNotEnrolled',
+    defaultMessage: '{identifier} is not enrolled in this course',
+    description: 'Error message displayed when a learner is found based on the provided identifier (email or username) but is not enrolled in the course',
   }
 });
 
