@@ -55,7 +55,7 @@ const routes = [
       roles: [instructorDashboardRole]
     },
     async lazy() {
-      const module = await import('./Main');
+      const module = await import(/* webpackChunkName: "instructor-dashboard-main" */ './Main');
       return { Component: module.default };
     },
     children: [
