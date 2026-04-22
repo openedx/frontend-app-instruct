@@ -133,6 +133,7 @@ describe('api hooks', () => {
         fullName: 'Test User',
         email: 'test@example.com',
         progressUrl: '/progress/testuser',
+        isEnrolled: true,
       };
       mockGetLearner.mockResolvedValue(mockLearner);
 

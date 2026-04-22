@@ -14,6 +14,7 @@ const mockLearnerData = {
   username: 'testuser',
   fullName: 'Test User',
   email: 'test@email.com',
+  isEnrolled: true,
 };
 
 describe('SpecifyLearnerField', () => {

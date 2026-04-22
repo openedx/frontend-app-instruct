@@ -29,7 +29,7 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
     filterValue: identifier,
     setFilter: setIdentifier,
   });
-  const { data = { email: '', fullName: '', username: '' }, refetch, error } = useLearner(courseId, inputValue);
+  const { data = { email: '', fullName: '', username: '', isEnrolled: false }, refetch, error } = useLearner(courseId, inputValue);
 
   useImperativeHandle(ref, () => ({
     reset: () => {
@@ -51,11 +51,13 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
   const handleClickSelect = () => {
     if (inputValue) {
       refetch().then((result) => {
+        enableShowLearner();
+        if (result?.data?.isEnrolled) {
         // Need to pass empty value if learner is not valid to clear out any previously selected learner
         // We could have other conditions/fields depending on valid learner
-        const formValue = !result.error ? inputValue : '';
-        onClickSelect(formValue);
-        enableShowLearner();
+          const formValue = !result.error ? inputValue : '';
+          onClickSelect(formValue);
+        }
       });
     }
   };
@@ -99,6 +101,13 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
           {intl.formatMessage(messages.learnerNotFound, { identifier })}
         </p>
       )}
+      {
+        showLearner && !selectedLearner?.isEnrolled && (
+          <p className="text-danger-500 mb-0 x-small mt-2">
+            {intl.formatMessage(messages.learnerNotEnrolled, { identifier })}
+          </p>
+        )
+      }
     </FormGroup>
   );
 });
