@@ -59,3 +59,6 @@ build:
 	    mkdir -p "$$(dirname "$$d")"; \
 	    cp "$$f" "$$d"; \
 	  done' sh {} +
+
+build-ci:
+	SITE_CONFIG_PATH=site.config.ci.tsx openedx build
