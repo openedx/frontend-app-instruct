@@ -218,4 +218,44 @@ describe('SpecifyProblemField', () => {
       testUsername
     );
   });
+
+  describe('when problem not found', () => {
+    beforeEach(() => {
+      jest.resetAllMocks();
+      mockUseDebouncedFilter.mockReturnValue({
+        inputValue: 'invalid-problem-id',
+        handleChange: jest.fn(),
+        resetFilter: jest.fn(),
+      });
+      (useProblemDetails as jest.Mock).mockReturnValue({
+        data: { breadcrumbs: [], name: '', id: '' },
+        refetch: jest.fn().mockResolvedValue({ data: {} }),
+        error: { isAxiosError: true, response: { status: 400 } },
+      });
+    });
+
+    it('shows error message if problem not found', async () => {
+      renderWithIntl(<SpecifyProblemField {...defaultProps} onClickSelect={jest.fn()} />);
+      const input = screen.getByPlaceholderText(messages.problemLocationPlaceholder.defaultMessage);
+      const user = userEvent.setup();
+      await user.type(input, 'invalid-problem-id');
+      const button = screen.getByText('Select Problem');
+      await user.click(button);
+      const staticPart = messages.problemNotFound.defaultMessage.split(':')[0];
+      expect(
+        screen.getByText(new RegExp(staticPart + ':'))
+      ).toBeInTheDocument();
+    });
+
+    it('keeps input visible when error occurs', async () => {
+      renderWithIntl(<SpecifyProblemField {...defaultProps} onClickSelect={jest.fn()} />);
+      const input = screen.getByPlaceholderText(messages.problemLocationPlaceholder.defaultMessage);
+      const user = userEvent.setup();
+      await user.type(input, 'invalid-problem-id');
+      const button = screen.getByText('Select Problem');
+      await user.click(button);
+      // Input should still be visible for user to try again
+      expect(screen.getByPlaceholderText(messages.problemLocationPlaceholder.defaultMessage)).toBeVisible();
+    });
+  });
 });
