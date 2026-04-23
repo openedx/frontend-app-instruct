@@ -71,7 +71,7 @@ const DateExtensionsList = ({
       accessor: 'extendedDueDate',
       Header: intl.formatMessage(messages.extendedDueDate),
       Cell: ({ value }: { value: string }) => (
-        `${intl.formatDate(value, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })} ${intl.formatMessage(messages.utc)}`
+        `${intl.formatDate(value, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })} UTC`
       ),
       disableFilters: true,
     },
