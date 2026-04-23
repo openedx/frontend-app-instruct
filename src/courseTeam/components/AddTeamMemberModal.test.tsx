@@ -6,6 +6,7 @@ import { useAddTeamMember, useRoles } from '@src/courseTeam/data/apiHook';
 import messages from '@src/courseTeam/messages';
 import { useDebouncedFilter } from '@src/hooks/useDebouncedFilter';
 import { useAlert } from '@src/providers/AlertProvider';
+import { TEAM_MEMBER_ACTION } from '../constants';
 
 // Mocks
 jest.mock('react-router-dom', () => ({
@@ -97,7 +98,7 @@ describe('AddTeamMemberModal', () => {
     await user.click(screen.getByText(messages.saveButton.defaultMessage));
 
     expect(mutateMock).toHaveBeenCalledWith(
-      { identifiers: ['user1', 'user2'], role: 'admin' },
+      { identifiers: ['user1', 'user2'], role: 'admin', action: TEAM_MEMBER_ACTION.ALLOW },
       expect.any(Object)
     );
   });
@@ -207,7 +208,7 @@ describe('AddTeamMemberModal', () => {
     await user.click(screen.getByText(messages.saveButton.defaultMessage));
 
     expect(mutateMock).toHaveBeenCalledWith(
-      { identifiers: ['user1', 'user2', 'user3'], role: 'admin' },
+      { identifiers: ['user1', 'user2', 'user3'], role: 'admin', action: TEAM_MEMBER_ACTION.ALLOW },
       expect.any(Object)
     );
   });
@@ -225,7 +226,7 @@ describe('AddTeamMemberModal', () => {
     await user.click(screen.getByText(messages.saveButton.defaultMessage));
 
     expect(mutateMock).toHaveBeenCalledWith(
-      { identifiers: [], role: 'admin' },
+      { identifiers: [], role: 'admin', action: TEAM_MEMBER_ACTION.ALLOW },
       expect.any(Object)
     );
   });

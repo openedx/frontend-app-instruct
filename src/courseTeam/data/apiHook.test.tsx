@@ -5,6 +5,7 @@ import { useTeamMembers, useRoles, useAddTeamMember, useRemoveTeamMember } from 
 import * as api from '@src/courseTeam/data/api';
 import { CourseTeamMember } from '@src/courseTeam/types';
 import { DataList } from '@src/types';
+import { TEAM_MEMBER_ACTION } from '../constants';
 
 jest.mock('@src/courseTeam/data/api');
 
@@ -147,7 +148,7 @@ describe('apiHook', () => {
         wrapper: createWrapper(),
       });
 
-      result.current.mutate({ identifiers: ['user1', 'user2'], role: 'admin' }, {
+      result.current.mutate({ identifiers: ['user1', 'user2'], role: 'admin', action: TEAM_MEMBER_ACTION.ALLOW }, {
         onSuccess: jest.fn(),
         onError: jest.fn(),
       });
@@ -156,7 +157,7 @@ describe('apiHook', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(api.addTeamMember).toHaveBeenCalledWith('course-v1:org+course+run', ['user1', 'user2'], 'admin');
+      expect(api.addTeamMember).toHaveBeenCalledWith('course-v1:org+course+run', { identifiers: ['user1', 'user2'], role: 'admin', action: TEAM_MEMBER_ACTION.ALLOW });
     });
   });
 

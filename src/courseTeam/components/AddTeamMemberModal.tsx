@@ -7,6 +7,7 @@ import messages from '@src/courseTeam/messages';
 import { useCourseInfo } from '@src/data/apiHook';
 import { useDebouncedFilter } from '@src/hooks/useDebouncedFilter';
 import { useAlert } from '@src/providers/AlertProvider';
+import { TEAM_MEMBER_ACTION } from '../constants';
 
 interface AddTeamMemberModalProps {
   isOpen: boolean,
@@ -42,7 +43,7 @@ const AddTeamMemberModal = ({
 
   const handleSave = () => {
     const identifiers = inputValue.split(',').map(user => user.trim()).filter(user => user);
-    addTeamMember({ identifiers, role: selectedRole }, {
+    addTeamMember({ identifiers, role: selectedRole, action: TEAM_MEMBER_ACTION.ALLOW }, {
       onSuccess: (data) => {
         const failedUsernames = data.results?.filter(user => user.userDoesNotExist).map(user => user.identifier) || [];
         if (failedUsernames.length > 0) {

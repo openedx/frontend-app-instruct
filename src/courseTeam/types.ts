@@ -1,3 +1,5 @@
+import { TEAM_MEMBER_ACTION } from './constants';
+
 export interface CourseTeamMember {
   username: string,
   fullName: string,
@@ -22,4 +24,12 @@ export interface TeamMembersResponse {
     identifier: string,
     userDoesNotExist: boolean,
   }[],
+}
+
+export type TeamMemberActionType = typeof TEAM_MEMBER_ACTION[keyof typeof TEAM_MEMBER_ACTION];
+
+export interface AddTeamMemberParams {
+  identifiers: string[],
+  role: string,
+  action: TeamMemberActionType,
 }
