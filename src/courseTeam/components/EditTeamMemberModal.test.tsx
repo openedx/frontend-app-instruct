@@ -5,6 +5,7 @@ import { useRoles, useAddTeamMember, useRemoveTeamMember } from '@src/courseTeam
 import messages from '@src/courseTeam/messages';
 import { CourseTeamMember } from '@src/courseTeam/types';
 import { renderWithAlertAndIntl } from '@src/testUtils';
+import { TEAM_MEMBER_ACTION } from '../constants';
 
 // Mocks
 jest.mock('react-router-dom', () => ({
@@ -259,6 +260,7 @@ describe('EditTeamMemberModal', () => {
     expect(mockAddTeamMember).toHaveBeenCalledWith({
       identifiers: [mockUser.username],
       role: 'instructor',
+      action: TEAM_MEMBER_ACTION.ALLOW
     }, expect.objectContaining({
       onSuccess: expect.any(Function),
       onError: expect.any(Function)
@@ -333,7 +335,8 @@ describe('EditTeamMemberModal', () => {
 
     expect(mockAddTeamMember).toHaveBeenCalledWith({
       identifiers: [mockUser.username],
-      role: 'instructor'
+      role: 'instructor',
+      action: TEAM_MEMBER_ACTION.ALLOW
     }, expect.objectContaining({
       onSuccess: expect.any(Function),
       onError: expect.any(Function)

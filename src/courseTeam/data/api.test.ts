@@ -1,5 +1,6 @@
 import { getAuthenticatedHttpClient } from '@openedx/frontend-base';
 import { getTeamMembers, getRoles, addTeamMember, removeTeamMember } from '@src/courseTeam/data/api';
+import { TEAM_MEMBER_ACTION } from '@src/courseTeam/constants';
 
 jest.mock('@openedx/frontend-base', () => ({
   ...jest.requireActual('@openedx/frontend-base'),
@@ -91,18 +92,18 @@ describe('courseTeam API', () => {
   describe('addTeamMember', () => {
     it('should call the correct endpoint to add a team member', async () => {
       const courseId = 'course-v1:edX+DemoX+Demo_Course';
-      const identifiers = ['testuser'];
-      const role = 'instructor';
-      httpClientMock.post.mockResolvedValue({ data: {
-        identifiers,
-        role,
-        action: 'allow',
-      } });
+      const params = {
+        identifiers: ['testuser'],
+        role: 'instructor',
+        action: TEAM_MEMBER_ACTION.ALLOW,
+      };
 
-      await addTeamMember(courseId, identifiers, role);
+      httpClientMock.post.mockResolvedValue({ data: params });
+
+      await addTeamMember(courseId, params);
 
       const expectedUrl = `/api/instructor/v2/courses/${courseId}/team`;
-      expect(httpClientMock.post).toHaveBeenCalledWith(expectedUrl, { identifiers, role, action: 'allow' });
+      expect(httpClientMock.post).toHaveBeenCalledWith(expectedUrl, params);
     });
   });
 

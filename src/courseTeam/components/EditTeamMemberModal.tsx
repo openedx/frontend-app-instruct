@@ -6,6 +6,7 @@ import { useAddTeamMember, useRemoveTeamMember, useRoles } from '@src/courseTeam
 import messages from '@src/courseTeam/messages';
 import { CourseTeamMember, Role } from '@src/courseTeam/types';
 import { useAlert } from '@src/providers/AlertProvider';
+import { TEAM_MEMBER_ACTION } from '../constants';
 
 interface EditTeamMemberModalProps {
   isOpen: boolean,
@@ -54,7 +55,7 @@ const EditTeamMemberModal = ({ isOpen, user, onClose }: EditTeamMemberModalProps
         onSuccess: () => {
           // After successful removal, add new role if needed
           if (hasRolesToAdd) {
-            addTeamMember({ identifiers: [user.username], role: selectedRole }, {
+            addTeamMember({ identifiers: [user.username], role: selectedRole, action: TEAM_MEMBER_ACTION.ALLOW }, {
               onSuccess: () => {
                 onClose();
               },
@@ -80,7 +81,7 @@ const EditTeamMemberModal = ({ isOpen, user, onClose }: EditTeamMemberModalProps
       });
     } else if (hasRolesToAdd) {
       // Only add operation needed
-      addTeamMember({ identifiers: [user.username], role: selectedRole }, {
+      addTeamMember({ identifiers: [user.username], role: selectedRole, action: TEAM_MEMBER_ACTION.ALLOW }, {
         onSuccess: () => {
           onClose();
         },
