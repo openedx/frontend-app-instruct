@@ -1,4 +1,5 @@
 import { useState, useImperativeHandle, forwardRef } from 'react';
+import { isAxiosError } from 'axios';
 import { useParams } from 'react-router-dom';
 import { Button, Form, Icon, OverlayTrigger, Tooltip, useToggle } from '@openedx/paragon';
 import { InfoOutline, SpinnerIcon } from '@openedx/paragon/icons';
@@ -37,7 +38,7 @@ const SpecifyProblemField = forwardRef<SpecifyProblemFieldRef, SpecifyProblemFie
     filterValue: problemLocation,
     setFilter: setProblemLocation,
   });
-  const { data = { breadcrumbs: [], name: '', id: '' }, refetch } = useProblemDetails(courseId, inputValue, usernameOrEmail);
+  const { data = { breadcrumbs: [], name: '', id: '' }, refetch, error } = useProblemDetails(courseId, inputValue, usernameOrEmail);
 
   useImperativeHandle(ref, () => ({
     reset: () => {
@@ -55,10 +56,12 @@ const SpecifyProblemField = forwardRef<SpecifyProblemFieldRef, SpecifyProblemFie
   };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    refetch().then(() => {
-      onClickSelect(inputValue, event);
-      enableShowSelectedLocation();
-    });
+    if (inputValue) {
+      refetch().then(() => {
+        onClickSelect(inputValue, event);
+        enableShowSelectedLocation();
+      });
+    }
   };
 
   return (
@@ -82,7 +85,7 @@ const SpecifyProblemField = forwardRef<SpecifyProblemFieldRef, SpecifyProblemFie
             )}
       </Form.Label>
       <div className="d-flex align-items-center">
-        {showSelectedLocation && data ? (
+        {showSelectedLocation && data && !error ? (
           <div className="d-flex gap-3 align-items-center col-8 p-0">
             <div className="d-block w-100">
               <p className="x-small mb-0 text-primary-500 text-truncate">
@@ -122,6 +125,13 @@ const SpecifyProblemField = forwardRef<SpecifyProblemFieldRef, SpecifyProblemFie
           </>
         )}
       </div>
+      {showSelectedLocation && error
+      && isAxiosError(error)
+      && (error.response?.status === 400) && (
+        <p className="text-danger-500 mb-0 x-small mt-2">
+          {intl.formatMessage(messages.problemNotFound, { identifier: inputValue })}
+        </p>
+      )}
     </Form.Group>
   );
 });

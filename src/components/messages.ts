@@ -116,6 +116,11 @@ const messages = defineMessages({
     defaultMessage: 'Could not find student matching identifier: {identifier}',
     description: 'Error message displayed when a learner cannot be found based on the provided identifier (email or username)',
   },
+  problemNotFound: {
+    id: 'instruct.specifyProblemField.problemNotFound',
+    defaultMessage: 'Could not find problem matching identifier: {identifier}',
+    description: 'Error message displayed when a problem cannot be found based on the provided identifier',
+  },
   searchPlaceholder: {
     id: 'instruct.usernameFilter.searchPlaceholder',
     defaultMessage: 'Search By Username or Email',
