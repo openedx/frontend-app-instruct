@@ -55,7 +55,7 @@ describe('DateExtensionsList', () => {
     expect(screen.getByText(mockData[0].fullName)).toBeInTheDocument();
     expect(screen.getByText(mockData[0].email)).toBeInTheDocument();
     expect(screen.getByText(mockData[0].unitTitle)).toBeInTheDocument();
-    expect(screen.getByText('11/07/2025, 12:00 AM')).toBeInTheDocument();
+    expect(screen.getByText('11/07/2025, 12:00 AM UTC')).toBeInTheDocument();
     const resetExtensions = screen.getByRole('button', { name: /reset extensions/i });
     expect(resetExtensions).toBeInTheDocument();
     await user.click(resetExtensions);

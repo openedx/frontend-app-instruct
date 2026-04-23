@@ -43,7 +43,7 @@ const AddExtensionModal = ({ isOpen, title, onClose, onSubmit }: AddExtensionMod
     onSubmit({
       emailOrUsername,
       blockId,
-      dueDatetime: new Date(`${dueDate}T${dueTime}`).toISOString(),
+      dueDatetime: new Date(`${dueDate}T${dueTime}Z`).toISOString(),
       reason
     });
   };

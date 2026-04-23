@@ -121,6 +121,11 @@ const messages = defineMessages({
     defaultMessage: 'No results found',
     description: 'Message shown when there are no date extensions to display in the table',
   },
+  utc: {
+    id: 'instruct.dateExtensions.page.utc',
+    defaultMessage: 'UTC',
+    description: 'Label for Coordinated Universal Time (UTC)',
+  }
 });
 
 export default messages;
