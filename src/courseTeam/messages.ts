@@ -240,6 +240,11 @@ const messages = defineMessages({
     id: 'instruct.courseTeam.addRoleError',
     defaultMessage: 'Failed to add role to {username}.',
     description: 'Error message displayed when adding a role to a team member fails',
+  },
+  viewStudioRoles: {
+    id: 'instruct.courseTeam.viewStudioRoles',
+    defaultMessage: 'View Studio Roles',
+    description: 'Button label for viewing course team roles in Studio',
   }
 });
 

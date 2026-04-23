@@ -28,6 +28,7 @@ export interface CourseInfoResponse {
   },
   gradebookUrl: string,
   studioGradingUrl?: string,
+  adminConsoleUrl: string | null,
 }
 
 interface EnrollmentCounts extends Record<string, number> {
