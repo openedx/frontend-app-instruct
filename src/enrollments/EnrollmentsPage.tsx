@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useIntl } from '@openedx/frontend-base';
-import { ActionRow, Button, IconButton } from '@openedx/paragon';
+import { ActionRow, Button, IconButton, Menu, MenuItem, ModalPopup, useToggle } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import messages from '@src/enrollments/messages';
 import AddBetaTestersModal from '@src/enrollments/components/AddBetaTestersModal';
@@ -20,10 +20,13 @@ const EnrollmentsPage = () => {
   const [isUnenrollModalOpen, setIsUnenrollModalOpen] = useState(false);
   const [isUpdateBetaTesterModalOpen, setIsUpdateBetaTesterModalOpen] = useState(false);
   const [selectedLearner, setSelectedLearner] = useState<EnrolledLearner | null>(null);
+  const [statusMenuTarget, setStatusMenuTarget] = useState<HTMLButtonElement | null>(null);
+  const [isOpenMenu, openMenu, closeMenu] = useToggle(false);
   const { clearAlerts } = useAlert();
 
-  const handleMoreButton = () => {
+  const handleOpenEnrollmentStatusModal = () => {
     setIsEnrollmentStatusModalOpen(true);
+    closeMenu();
   };
 
   const handleUnenroll = (learner: EnrolledLearner) => {
@@ -64,6 +67,11 @@ const EnrollmentsPage = () => {
     setSelectedLearner(null);
   };
 
+  const handleStatusMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setStatusMenuTarget(event?.currentTarget);
+    openMenu();
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
@@ -73,12 +81,19 @@ const EnrollmentsPage = () => {
             alt={intl.formatMessage(messages.checkEnrollmentStatus)}
             className="lead"
             iconAs={MoreVert}
-            onClick={handleMoreButton}
+            onClick={handleStatusMenuClick}
           />
           <Button variant="outline-primary" onClick={handleAddBetaTesters}>+ {intl.formatMessage(messages.addBetaTesters)}</Button>
           <Button onClick={handleEnrollLearners}>+ {intl.formatMessage(messages.enrollLearners)}</Button>
         </ActionRow>
       </div>
+      <ModalPopup positionRef={statusMenuTarget} onClose={closeMenu} isOpen={isOpenMenu}>
+        <Menu>
+          <MenuItem onClick={handleOpenEnrollmentStatusModal}>
+            {intl.formatMessage(messages.checkEnrollmentStatus)}
+          </MenuItem>
+        </Menu>
+      </ModalPopup>
       <AlertOutlet />
       <EnrollmentsList onUnenroll={handleUnenroll} onBetaTesterChange={handleBetaTesterChange} />
       <EnrollmentStatusModal isOpen={isEnrollmentStatusModalOpen} onClose={handleCloseEnrollmentStatusModal} />
