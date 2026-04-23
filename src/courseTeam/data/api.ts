@@ -36,7 +36,7 @@ export const getRoles = async (courseId: string): Promise<Omit<DataList<Role>, '
 export const addTeamMember = async (courseId: string, identifiers: string[], role: string): Promise<TeamMembersResponse> => {
   const { data } = await getAuthenticatedHttpClient().post(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/team`,
-    { identifiers, role }
+    { identifiers, role, action: 'allow' }
   );
   return camelCaseObject(data);
 };

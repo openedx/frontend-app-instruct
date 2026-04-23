@@ -96,12 +96,13 @@ describe('courseTeam API', () => {
       httpClientMock.post.mockResolvedValue({ data: {
         identifiers,
         role,
+        action: 'allow',
       } });
 
       await addTeamMember(courseId, identifiers, role);
 
       const expectedUrl = `/api/instructor/v2/courses/${courseId}/team`;
-      expect(httpClientMock.post).toHaveBeenCalledWith(expectedUrl, { identifiers, role });
+      expect(httpClientMock.post).toHaveBeenCalledWith(expectedUrl, { identifiers, role, action: 'allow' });
     });
   });
 
