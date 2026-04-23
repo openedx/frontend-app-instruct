@@ -89,7 +89,7 @@ describe('AddExtensionModal', () => {
       expect(mockProps.onSubmit).toHaveBeenCalledWith({
         emailOrUsername: 'testuser',
         blockId: 'sub1',
-        dueDatetime: new Date('2024-12-31T23:59').toISOString(),
+        dueDatetime: new Date('2024-12-31T23:59Z').toISOString(),
         reason: 'Medical emergency'
       });
     });
