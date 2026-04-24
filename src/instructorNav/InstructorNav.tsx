@@ -4,7 +4,6 @@ import { Nav, Navbar, Skeleton } from '@openedx/paragon';
 import { useCourseInfo } from '@src/data/apiHook';
 import { useAlert } from '@src/providers/AlertProvider';
 import { useWidgetProps } from '@src/slots/SlotUtils';
-import { hasInstructorDashboardBasePath } from '@src/instructorNav/utils';
 
 export interface TabProps {
   tabId: string,
@@ -60,13 +59,13 @@ const InstructorNav = () => {
         <Navbar.Collapse id="instructor-nav">
           {
             sortedTabs.map((tab) => {
-              const isInstructorDashboardUrl = hasInstructorDashboardBasePath(tab.url, courseId);
+              const isInternal = tab.url.startsWith('/');
               return (
                 <Nav.Item key={tab.tabId}>
                   <Nav.Link
-                    {...(isInstructorDashboardUrl
+                    {...(isInternal
                       ? { to: tab.url, as: Link }
-                      : { href: tab.url, as: 'a' }
+                      : { href: tab.url }
                     )}
                     active={tab.tabId === tabId}
                     onClick={() => clearAlerts()}

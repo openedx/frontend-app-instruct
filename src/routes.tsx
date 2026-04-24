@@ -11,7 +11,7 @@ import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
 import SpecialExamsPage from '@src/specialExams/SpecialExamsPage';
 import PageNotFound from '@src/components/PageNotFound';
 import { useWidgetProps } from './slots/SlotUtils';
-import { instructorDashboardBasePath, instructorDashboardRole } from './constants';
+import { instructorDashboardRole } from './constants';
 
 interface InstructorRouteProps {
   tabId: string,
@@ -50,7 +50,7 @@ const TabContent = () => {
 const routes = [
   {
     id: 'org.openedx.frontend.route.instructorDashboard.main',
-    path: `${instructorDashboardBasePath}/:courseId`,
+    path: 'instructor-dashboard/:courseId',
     handle: {
       roles: [instructorDashboardRole]
     },
