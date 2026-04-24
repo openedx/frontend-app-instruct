@@ -4,10 +4,12 @@ import CertificatesPage from './CertificatesPage';
 import { renderWithAlertAndIntl } from '@src/testUtils';
 import { useCourseInfo } from '@src/data/apiHook';
 import {
+  useCertificateGenerationHistory,
   useGrantBulkExceptions,
   useInstructorTasks,
   useInvalidateCertificate,
   useIssuedCertificates,
+  useRegenerateCertificates,
   useRemoveException,
   useRemoveInvalidation,
   useToggleCertificateGeneration,
@@ -25,10 +27,12 @@ jest.mock('@src/data/apiHook', () => ({
 }));
 
 const mockUseCourseInfo = useCourseInfo as jest.MockedFunction<typeof useCourseInfo>;
+const mockUseCertificateGenerationHistory = useCertificateGenerationHistory as jest.MockedFunction<typeof useCertificateGenerationHistory>;
 const mockUseInstructorTasks = useInstructorTasks as jest.MockedFunction<typeof useInstructorTasks>;
 const mockUseIssuedCertificates = useIssuedCertificates as jest.MockedFunction<typeof useIssuedCertificates>;
 const mockUseGrantBulkExceptions = useGrantBulkExceptions as jest.MockedFunction<typeof useGrantBulkExceptions>;
 const mockUseInvalidateCertificate = useInvalidateCertificate as jest.MockedFunction<typeof useInvalidateCertificate>;
+const mockUseRegenerateCertificates = useRegenerateCertificates as jest.MockedFunction<typeof useRegenerateCertificates>;
 const mockUseRemoveException = useRemoveException as jest.MockedFunction<typeof useRemoveException>;
 const mockUseRemoveInvalidation = useRemoveInvalidation as jest.MockedFunction<typeof useRemoveInvalidation>;
 const mockUseToggleCertificateGeneration = useToggleCertificateGeneration as jest.MockedFunction<typeof useToggleCertificateGeneration>;
@@ -36,6 +40,7 @@ const mockUseToggleCertificateGeneration = useToggleCertificateGeneration as jes
 describe('CertificatesPage', () => {
   const mockGrantExceptions = jest.fn();
   const mockInvalidateCert = jest.fn();
+  const mockRegenerateCerts = jest.fn();
   const mockRemoveException = jest.fn();
   const mockRemoveInvalidation = jest.fn();
   const mockToggleGeneration = jest.fn();
@@ -48,6 +53,17 @@ describe('CertificatesPage', () => {
       isLoading: false,
       error: null,
     } as any);
+
+    mockUseCertificateGenerationHistory.mockReturnValue({
+      data: {
+        results: [],
+        count: 0,
+        numPages: 0,
+        next: null,
+        previous: null,
+      },
+      isLoading: false,
+    } as unknown as ReturnType<typeof useCertificateGenerationHistory>);
 
     mockUseIssuedCertificates.mockReturnValue({
       data: {
@@ -131,6 +147,11 @@ describe('CertificatesPage', () => {
       isPending: false,
     } as unknown as ReturnType<typeof useInvalidateCertificate>);
 
+    mockUseRegenerateCertificates.mockReturnValue({
+      mutate: mockRegenerateCerts,
+      isPending: false,
+    } as unknown as ReturnType<typeof useRegenerateCertificates>);
+
     mockUseRemoveException.mockReturnValue({
       mutate: mockRemoveException,
     } as unknown as ReturnType<typeof useRemoveException>);
@@ -209,10 +230,10 @@ describe('CertificatesPage', () => {
     expect(screen.getByText('user1@example.com')).toBeInTheDocument();
   });
 
-  it('fetches instructor tasks on mount', () => {
+  it('fetches certificate generation history on mount', () => {
     renderWithAlertAndIntl(<CertificatesPage />);
 
-    expect(mockUseInstructorTasks).toHaveBeenCalledWith(
+    expect(mockUseCertificateGenerationHistory).toHaveBeenCalledWith(
       'course-v1:edX+Test+2024',
       { page: 0, pageSize: 25 }
     );
@@ -281,10 +302,10 @@ describe('CertificatesPage', () => {
     });
 
     it('shows success toast when grant exceptions succeeds', async () => {
-      // Make mock invoke onSuccess callback when called
+      // Make mock invoke onSuccess callback with proper data structure
       mockGrantExceptions.mockImplementation((_data, options) => {
         if (options?.onSuccess) {
-          options.onSuccess();
+          options.onSuccess({ success: ['user1'], errors: [] });
         }
       });
 
@@ -375,7 +396,7 @@ describe('CertificatesPage', () => {
     it('shows success toast when invalidation succeeds', async () => {
       mockInvalidateCert.mockImplementation((_data, options) => {
         if (options?.onSuccess) {
-          options.onSuccess();
+          options.onSuccess({ success: ['user1'], errors: [] });
         }
       });
 
@@ -434,8 +455,13 @@ describe('CertificatesPage', () => {
       renderWithAlertAndIntl(<CertificatesPage />);
       const user = userEvent.setup();
 
-      const disableButton = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
-      await user.click(disableButton);
+      // Click the dropdown toggle button
+      const dropdownToggle = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+      await user.click(dropdownToggle);
+
+      // Click the disable certificates menu item
+      const disableMenuItem = screen.getByText(messages.disableCertificatesButton.defaultMessage);
+      await user.click(disableMenuItem);
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -446,8 +472,13 @@ describe('CertificatesPage', () => {
       renderWithAlertAndIntl(<CertificatesPage />);
       const user = userEvent.setup();
 
-      const disableButton = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
-      await user.click(disableButton);
+      // Click the dropdown toggle button
+      const dropdownToggle = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+      await user.click(dropdownToggle);
+
+      // Click the disable certificates menu item
+      const disableMenuItem = screen.getByText(messages.disableCertificatesButton.defaultMessage);
+      await user.click(disableMenuItem);
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -475,8 +506,13 @@ describe('CertificatesPage', () => {
       renderWithAlertAndIntl(<CertificatesPage />);
       const user = userEvent.setup();
 
-      const disableButton = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
-      await user.click(disableButton);
+      // Click the dropdown toggle button
+      const dropdownToggle = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+      await user.click(dropdownToggle);
+
+      // Click the disable certificates menu item
+      const disableMenuItem = screen.getByText(messages.disableCertificatesButton.defaultMessage);
+      await user.click(disableMenuItem);
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -502,8 +538,13 @@ describe('CertificatesPage', () => {
       renderWithAlertAndIntl(<CertificatesPage />);
       const user = userEvent.setup();
 
-      const disableButton = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
-      await user.click(disableButton);
+      // Click the dropdown toggle button
+      const dropdownToggle = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+      await user.click(dropdownToggle);
+
+      // Click the disable certificates menu item
+      const disableMenuItem = screen.getByText(messages.disableCertificatesButton.defaultMessage);
+      await user.click(disableMenuItem);
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -539,12 +580,22 @@ describe('CertificatesPage', () => {
         expect(screen.getByText('user6')).toBeInTheDocument();
       });
 
-      const actionButton = screen.getByLabelText(messages.columnActions.defaultMessage);
-      await user.click(actionButton);
+      // Find user6's row and click its action button
+      const user6Row = screen.getByText('user6').closest('tr');
+      const actionButton = user6Row?.querySelector('button[aria-label="Actions"]');
+      await user.click(actionButton!);
 
-      // Click remove exception action
+      // Click remove exception action (opens confirmation modal)
       const removeAction = screen.getByText(messages.removeExceptionAction.defaultMessage);
       await user.click(removeAction);
+
+      // Confirm the removal
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      const confirmButton = screen.getAllByText(messages.removeExceptionAction.defaultMessage)[1]; // Get the second one (the button in modal)
+      await user.click(confirmButton);
 
       expect(mockRemoveException).toHaveBeenCalledWith(
         { username: 'user6' },
@@ -577,11 +628,20 @@ describe('CertificatesPage', () => {
         expect(screen.getByText('user6')).toBeInTheDocument();
       });
 
-      const actionButton = screen.getByLabelText(messages.columnActions.defaultMessage);
-      await user.click(actionButton);
+      // Find user6's row and click its action button
+      const user6Row = screen.getByText('user6').closest('tr');
+      const actionButton = user6Row?.querySelector('button[aria-label="Actions"]');
+      await user.click(actionButton!);
 
       const removeAction = screen.getByText(messages.removeExceptionAction.defaultMessage);
       await user.click(removeAction);
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      const confirmButton = screen.getAllByText(messages.removeExceptionAction.defaultMessage)[1]; // Get the second one (the button in modal)
+      await user.click(confirmButton);
 
       expect(mockRemoveException).toHaveBeenCalled();
     });
@@ -607,8 +667,10 @@ describe('CertificatesPage', () => {
         expect(screen.getByText('user7')).toBeInTheDocument();
       });
 
-      const actionButton = screen.getByLabelText(messages.columnActions.defaultMessage);
-      await user.click(actionButton);
+      // Find user7's row and click its action button
+      const user7Row = screen.getByText('user7').closest('tr');
+      const actionButton = user7Row?.querySelector('button[aria-label="Actions"]');
+      await user.click(actionButton!);
 
       // Click remove invalidation action (opens confirmation modal)
       const removeAction = screen.getByText(messages.removeInvalidationAction.defaultMessage);
@@ -653,8 +715,10 @@ describe('CertificatesPage', () => {
         expect(screen.getByText('user7')).toBeInTheDocument();
       });
 
-      const actionButton = screen.getByLabelText(messages.columnActions.defaultMessage);
-      await user.click(actionButton);
+      // Find user7's row and click its action button
+      const user7Row = screen.getByText('user7').closest('tr');
+      const actionButton = user7Row?.querySelector('button[aria-label="Actions"]');
+      await user.click(actionButton!);
 
       const removeAction = screen.getByText(messages.removeInvalidationAction.defaultMessage);
       await user.click(removeAction);

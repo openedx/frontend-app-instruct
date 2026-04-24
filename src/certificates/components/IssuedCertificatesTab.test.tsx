@@ -68,7 +68,8 @@ describe('IssuedCertificatesTab', () => {
     renderWithIntl(<IssuedCertificatesTab {...defaultProps} filter={CertificateFilter.RECEIVED} />);
 
     // Filter dropdown button should show the selected filter
-    expect(screen.getByRole('button', { name: /Received/i })).toBeInTheDocument();
+    const receivedButtons = screen.getAllByRole('button', { name: /Received/i });
+    expect(receivedButtons.length).toBeGreaterThan(0);
   });
 
   it('calls onSearchChange when search input changes', async () => {
