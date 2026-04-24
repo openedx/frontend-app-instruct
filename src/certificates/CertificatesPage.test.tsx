@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CertificatesPage from './CertificatesPage';
 import { renderWithAlertAndIntl } from '@src/testUtils';
+import { useCourseInfo } from '@src/data/apiHook';
 import {
   useGrantBulkExceptions,
   useInstructorTasks,
@@ -19,7 +20,11 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('./data/apiHook');
+jest.mock('@src/data/apiHook', () => ({
+  useCourseInfo: jest.fn(),
+}));
 
+const mockUseCourseInfo = useCourseInfo as jest.MockedFunction<typeof useCourseInfo>;
 const mockUseInstructorTasks = useInstructorTasks as jest.MockedFunction<typeof useInstructorTasks>;
 const mockUseIssuedCertificates = useIssuedCertificates as jest.MockedFunction<typeof useIssuedCertificates>;
 const mockUseGrantBulkExceptions = useGrantBulkExceptions as jest.MockedFunction<typeof useGrantBulkExceptions>;
@@ -37,6 +42,12 @@ describe('CertificatesPage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockUseCourseInfo.mockReturnValue({
+      data: { certificatesEnabled: true },
+      isLoading: false,
+      error: null,
+    } as any);
 
     mockUseIssuedCertificates.mockReturnValue({
       data: {

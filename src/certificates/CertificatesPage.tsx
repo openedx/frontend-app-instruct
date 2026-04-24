@@ -181,8 +181,6 @@ const CertificatesPage = () => {
     // Backend accepts either username or email - use whichever is available
     const identifier = selectedUsername || selectedEmail;
 
-    console.log('handleRemoveInvalidationConfirm - selectedUsername:', selectedUsername, 'selectedEmail:', selectedEmail, 'identifier:', identifier);
-
     if (!identifier) {
       showModal({
         title: MODAL_TITLES.ERROR,
@@ -202,7 +200,6 @@ const CertificatesPage = () => {
           showToast(intl.formatMessage(messages.invalidationRemovedToast, { email: selectedEmail }));
         },
         onError: (error) => {
-          console.error('Remove invalidation error:', error);
           showModal({
             title: MODAL_TITLES.ERROR,
             message: getErrorMessage(error, intl.formatMessage(messages.errorRemoveInvalidation)),

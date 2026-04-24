@@ -262,6 +262,9 @@ describe('Certificate API', () => {
           data: {
             username: 'user1',
           },
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
       );
     });

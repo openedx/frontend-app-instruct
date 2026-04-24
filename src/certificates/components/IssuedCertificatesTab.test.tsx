@@ -67,8 +67,8 @@ describe('IssuedCertificatesTab', () => {
   it('passes filter prop to toolbar', () => {
     renderWithIntl(<IssuedCertificatesTab {...defaultProps} filter={CertificateFilter.RECEIVED} />);
 
-    // Filter dropdown should show the selected filter
-    expect(screen.getByText(/Received/i)).toBeInTheDocument();
+    // Filter dropdown button should show the selected filter
+    expect(screen.getByRole('button', { name: /Received/i })).toBeInTheDocument();
   });
 
   it('calls onSearchChange when search input changes', async () => {

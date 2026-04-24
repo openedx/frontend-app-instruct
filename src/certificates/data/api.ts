@@ -110,10 +110,6 @@ export const removeInvalidation = async (
     username: request.username,
   };
 
-  console.log('removeInvalidation - URL:', url);
-  console.log('removeInvalidation - Payload:', payload);
-  console.log('removeInvalidation - Username value:', request.username, 'Type:', typeof request.username, 'Length:', request.username?.length);
-
   await httpClient.delete(url, {
     data: payload,
     headers: {
