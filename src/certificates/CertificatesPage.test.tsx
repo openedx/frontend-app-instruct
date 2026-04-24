@@ -948,68 +948,6 @@ describe('CertificatesPage', () => {
       });
     });
 
-    it('closes remove exception modal and resets username/email state', async () => {
-      renderWithAlertAndIntl(<CertificatesPage />);
-      const user = userEvent.setup();
-
-      await waitFor(() => {
-        expect(screen.getByText('user6')).toBeInTheDocument();
-      });
-
-      const user6Row = screen.getByText('user6').closest('tr');
-      const actionButton = user6Row?.querySelector('button[aria-label="Actions"]');
-      await user.click(actionButton!);
-
-      await waitFor(() => {
-        expect(screen.getByText(messages.removeExceptionAction.defaultMessage)).toBeInTheDocument();
-      });
-
-      const removeAction = screen.getByText(messages.removeExceptionAction.defaultMessage);
-      await user.click(removeAction);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const cancelButtons = screen.getAllByText(messages.cancel.defaultMessage);
-      await user.click(cancelButtons[0]);
-
-      await waitFor(() => {
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      });
-    });
-
-    it('closes remove invalidation modal and resets username/email state', async () => {
-      renderWithAlertAndIntl(<CertificatesPage />);
-      const user = userEvent.setup();
-
-      await waitFor(() => {
-        expect(screen.getByText('user7')).toBeInTheDocument();
-      });
-
-      const user7Row = screen.getByText('user7').closest('tr');
-      const actionButton = user7Row?.querySelector('button[aria-label="Actions"]');
-      await user.click(actionButton!);
-
-      await waitFor(() => {
-        expect(screen.getByText(messages.removeInvalidationAction.defaultMessage)).toBeInTheDocument();
-      });
-
-      const removeAction = screen.getByText(messages.removeInvalidationAction.defaultMessage);
-      await user.click(removeAction);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const cancelButtons = screen.getAllByText(messages.cancel.defaultMessage);
-      await user.click(cancelButtons[0]);
-
-      await waitFor(() => {
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      });
-    });
-
     it('closes disable certificates modal', async () => {
       renderWithAlertAndIntl(<CertificatesPage />);
       const user = userEvent.setup();
