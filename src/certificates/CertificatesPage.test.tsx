@@ -860,4 +860,176 @@ describe('CertificatesPage', () => {
       expect(screen.getByText('user1@example.com')).toBeInTheDocument();
     });
   });
+
+  describe('Regenerate Certificates', () => {
+    it('shows toast when regeneration succeeds', async () => {
+      mockRegenerateCerts.mockImplementation((filter, options) => {
+        if (options?.onSuccess) {
+          options.onSuccess();
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const regenerateButton = screen.getByText(/Regenerate Certificates/i);
+      await user.click(regenerateButton);
+
+      expect(mockRegenerateCerts).toHaveBeenCalledWith('all', expect.any(Object));
+    });
+
+    it('shows error modal when regeneration fails', async () => {
+      mockRegenerateCerts.mockImplementation((filter, options) => {
+        if (options?.onError) {
+          options.onError({ response: { data: { message: 'Regeneration failed' } } });
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const regenerateButton = screen.getByText(/Regenerate Certificates/i);
+      await user.click(regenerateButton);
+
+      expect(mockRegenerateCerts).toHaveBeenCalled();
+    });
+  });
+
+  describe('Certificates Disabled', () => {
+    it('shows warning message when certificates are disabled', () => {
+      mockUseCourseInfo.mockReturnValue({
+        data: { certificatesEnabled: false },
+        isLoading: false,
+        error: null,
+      } as any);
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+
+      expect(screen.getByText(messages.certificatesDisabledMessage.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  describe('Modal Close Handlers', () => {
+    it('closes grant exceptions modal and resets state', async () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+      await user.click(grantButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      const closeButton = screen.getByLabelText('Close');
+      await user.click(closeButton);
+
+      await waitFor(() => {
+        expect(screen.queryByText(messages.grantExceptionsModalTitle.defaultMessage)).not.toBeInTheDocument();
+      });
+    });
+
+    it('closes invalidate modal and resets state', async () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const invalidateButton = screen.getByText(messages.invalidateCertificateButton.defaultMessage);
+      await user.click(invalidateButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.invalidateCertificateModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      const closeButton = screen.getByLabelText('Close');
+      await user.click(closeButton);
+
+      await waitFor(() => {
+        expect(screen.queryByText(messages.invalidateCertificateModalTitle.defaultMessage)).not.toBeInTheDocument();
+      });
+    });
+
+    it('closes remove exception modal and resets username/email state', async () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      await waitFor(() => {
+        expect(screen.getByText('user6')).toBeInTheDocument();
+      });
+
+      const user6Row = screen.getByText('user6').closest('tr');
+      const actionButton = user6Row?.querySelector('button[aria-label="Actions"]');
+      await user.click(actionButton!);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.removeExceptionAction.defaultMessage)).toBeInTheDocument();
+      });
+
+      const removeAction = screen.getByText(messages.removeExceptionAction.defaultMessage);
+      await user.click(removeAction);
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      const cancelButtons = screen.getAllByText(messages.cancel.defaultMessage);
+      await user.click(cancelButtons[0]);
+
+      await waitFor(() => {
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      });
+    });
+
+    it('closes remove invalidation modal and resets username/email state', async () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      await waitFor(() => {
+        expect(screen.getByText('user7')).toBeInTheDocument();
+      });
+
+      const user7Row = screen.getByText('user7').closest('tr');
+      const actionButton = user7Row?.querySelector('button[aria-label="Actions"]');
+      await user.click(actionButton!);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.removeInvalidationAction.defaultMessage)).toBeInTheDocument();
+      });
+
+      const removeAction = screen.getByText(messages.removeInvalidationAction.defaultMessage);
+      await user.click(removeAction);
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      const cancelButtons = screen.getAllByText(messages.cancel.defaultMessage);
+      await user.click(cancelButtons[0]);
+
+      await waitFor(() => {
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      });
+    });
+
+    it('closes disable certificates modal', async () => {
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const dropdownToggle = screen.getByRole('button', { name: messages.disableCertificatesButton.defaultMessage });
+      await user.click(dropdownToggle);
+
+      const disableMenuItem = screen.getByText(messages.disableCertificatesButton.defaultMessage);
+      await user.click(disableMenuItem);
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      const cancelButton = screen.getByText(messages.cancel.defaultMessage);
+      await user.click(cancelButton);
+
+      await waitFor(() => {
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      });
+    });
+  });
 });

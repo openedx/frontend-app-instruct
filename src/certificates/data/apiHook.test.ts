@@ -9,6 +9,8 @@ import {
   useRemoveException,
   useRemoveInvalidation,
   useToggleCertificateGeneration,
+  useCertificateGenerationHistory,
+  useRegenerateCertificates,
 } from './apiHook';
 import {
   getIssuedCertificates,
@@ -18,6 +20,8 @@ import {
   removeException,
   removeInvalidation,
   toggleCertificateGeneration,
+  getCertificateGenerationHistory,
+  regenerateCertificates,
 } from './api';
 import { CertificateFilter, CertificateStatus, SpecialCase } from '../types';
 
@@ -30,6 +34,8 @@ const mockInvalidateCertificate = invalidateCertificate as jest.MockedFunction<t
 const mockRemoveException = removeException as jest.MockedFunction<typeof removeException>;
 const mockRemoveInvalidation = removeInvalidation as jest.MockedFunction<typeof removeInvalidation>;
 const mockToggleCertificateGeneration = toggleCertificateGeneration as jest.MockedFunction<typeof toggleCertificateGeneration>;
+const mockGetCertificateGenerationHistory = getCertificateGenerationHistory as jest.MockedFunction<typeof getCertificateGenerationHistory>;
+const mockRegenerateCertificates = regenerateCertificates as jest.MockedFunction<typeof regenerateCertificates>;
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -446,6 +452,123 @@ describe('certificates api hooks', () => {
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
       });
+    });
+  });
+
+  describe('useCertificateGenerationHistory', () => {
+    it('fetches certificate generation history successfully', async () => {
+      const mockData = {
+        count: 1,
+        results: [
+          {
+            id: 1,
+            taskId: 'abc123',
+            status: 'success',
+            created: '2024-01-15T10:00:00Z',
+            completed: '2024-01-15T10:05:00Z',
+            certificatesGenerated: 100,
+          },
+        ],
+        numPages: 1,
+        next: null,
+        previous: null,
+      };
+
+      mockGetCertificateGenerationHistory.mockResolvedValue(mockData);
+
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
+      const { result } = renderHook(
+        () => useCertificateGenerationHistory('course-v1:Test+Course+2024', { page: 0, pageSize: 25 }),
+        { wrapper: Wrapper }
+      );
+
+      expect(result.current.isLoading).toBe(true);
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockGetCertificateGenerationHistory).toHaveBeenCalledWith('course-v1:Test+Course+2024', {
+        page: 0,
+        pageSize: 25,
+      });
+      expect(result.current.data).toEqual(mockData);
+    });
+
+    it('handles API error', async () => {
+      const mockError = new Error('History fetch error');
+      mockGetCertificateGenerationHistory.mockRejectedValue(mockError);
+
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
+      const { result } = renderHook(
+        () => useCertificateGenerationHistory('course-v1:Test+Course+2024', { page: 0, pageSize: 25 }),
+        { wrapper: Wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      });
+
+      expect(result.current.error).toBe(mockError);
+    });
+
+    it('does not fetch when courseId is empty', () => {
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
+      renderHook(
+        () => useCertificateGenerationHistory('', { page: 0, pageSize: 25 }),
+        { wrapper: Wrapper }
+      );
+
+      expect(mockGetCertificateGenerationHistory).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('useRegenerateCertificates', () => {
+    it('regenerates certificates successfully', async () => {
+      mockRegenerateCertificates.mockResolvedValue(undefined);
+
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
+      const { result } = renderHook(
+        () => useRegenerateCertificates('course-v1:Test+Course+2024'),
+        { wrapper: Wrapper }
+      );
+
+      result.current.mutate('all');
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockRegenerateCertificates).toHaveBeenCalledWith('course-v1:Test+Course+2024', 'all');
+    });
+
+    it('handles error when regenerating certificates', async () => {
+      const mockError = new Error('Regeneration failed');
+      mockRegenerateCertificates.mockRejectedValue(mockError);
+
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
+      const { result } = renderHook(
+        () => useRegenerateCertificates('course-v1:Test+Course+2024'),
+        { wrapper: Wrapper }
+      );
+
+      result.current.mutate('all');
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      });
+
+      expect(result.current.error).toBe(mockError);
     });
   });
 });
