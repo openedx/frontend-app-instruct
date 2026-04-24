@@ -480,7 +480,7 @@ describe('Certificate API', () => {
         'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/generation_history',
         {
           params: {
-            page: 3,  // page + 1
+            page: 3, // page + 1
             page_size: 50,
           },
         }
