@@ -191,6 +191,16 @@ const messages = defineMessages({
     defaultMessage: 'Enter usernames or emails, or upload a CSV file to invalidate certificates.',
     description: 'Description for invalidate certificate modal',
   },
+  removeExceptionModalTitle: {
+    id: 'instruct.certificates.removeExceptionModalTitle',
+    defaultMessage: 'Remove Exception',
+    description: 'Title for remove exception modal',
+  },
+  removeExceptionModalMessage: {
+    id: 'instruct.certificates.removeExceptionModalMessage',
+    defaultMessage: 'Are you sure you want to remove the certificate exception for {email}?',
+    description: 'Message for remove exception confirmation modal',
+  },
   removeInvalidationModalTitle: {
     id: 'instruct.certificates.removeInvalidationModalTitle',
     defaultMessage: 'Remove Invalidation',

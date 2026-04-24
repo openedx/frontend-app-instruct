@@ -39,31 +39,31 @@ const CertificatesToolbar = ({
   const buttonText = filter === CertificateFilter.ALL_LEARNERS
     ? intl.formatMessage(messages.regenerateCertificatesButton)
     : intl.formatMessage(messages.regenerateCertificatesButtonWithFilter, {
-      filter: getFilterLabel(filter, intl),
-    });
+        filter: getFilterLabel(filter, intl),
+      });
 
   return (
-    <div className="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center justify-content-between mb-4 mx-4 mt-3 gap-3">
-      <div className="d-flex flex-column flex-sm-row align-items-stretch gap-2">
+    <div className="d-flex flex-wrap align-items-center justify-content-between mb-4 mx-4 mt-3 gap-3">
+      <div className="d-flex align-items-center gap-3 flex-shrink-1" style={{ minWidth: 0 }}>
         <SearchField
           onSubmit={onSearchChange}
           onChange={onSearchChange}
           placeholder={intl.formatMessage(messages.searchPlaceholder)}
           value={search}
-          className="flex-grow-1 w-100 w-sm-auto"
-          style={{ minWidth: 'min(400px, 100%)' }}
+          className="flex-shrink-1"
+          style={{ minWidth: '320px', maxWidth: '400px' }}
         />
         <FilterDropdown
           value={filter}
           onChange={onFilterChange}
-          className="flex-shrink-0 w-100 w-sm-auto"
+          className="flex-shrink-0"
         />
       </div>
       <Button
         variant="outline-primary"
         iconBefore={SpinnerIcon}
         onClick={onRegenerateCertificates}
-        className="text-nowrap"
+        className="text-nowrap flex-shrink-0"
       >
         {buttonText}
       </Button>

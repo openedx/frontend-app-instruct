@@ -171,7 +171,7 @@ describe('Certificate API', () => {
       expect(mockPost).toHaveBeenCalledWith(
         'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/exceptions',
         {
-          learners: 'user1, user2',
+          learners: ['user1', 'user2'],
           notes: 'Test exception',
         }
       );
@@ -201,7 +201,7 @@ describe('Certificate API', () => {
       expect(mockPost).toHaveBeenCalledWith(
         'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/invalidations',
         {
-          learners: 'user1, user2',
+          learners: ['user1', 'user2'],
           notes: 'Certificate invalidation',
         }
       );

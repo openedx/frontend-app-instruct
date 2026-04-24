@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { DataTable, Dropdown, IconButton, Icon, TableFooter } from '@openedx/paragon';
+import { DataTable, IconButton, OverlayTrigger, Popover, TableFooter } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import { useIntl } from '@openedx/frontend-base';
 import type { CertificateData, CertificateFilter } from '../types';
@@ -119,36 +119,53 @@ const CertificateTable = ({
 
     return [
       {
-        id: 'actions',
+        id: 'action',
         Header: intl.formatMessage(messages.columnActions),
-        Cell: ({ row }: { row: { original: CertificateData } }) => (
-          <Dropdown className="certificate-actions-dropdown">
-            <Dropdown.Toggle
-              id={`actions-dropdown-${row.original.username}`}
-              as={IconButton}
-              src={MoreVert}
-              iconAs={Icon}
-              variant="secondary"
-              alt={intl.formatMessage(messages.columnActions)}
-            />
-            <Dropdown.Menu alignRight>
-              {filter === FilterEnum.GRANTED_EXCEPTIONS && (
-                <Dropdown.Item
-                  onClick={() => onRemoveException(row.original.username, row.original.email)}
-                >
-                  {intl.formatMessage(messages.removeExceptionAction)}
-                </Dropdown.Item>
-              )}
-              {filter === FilterEnum.INVALIDATED && (
-                <Dropdown.Item
-                  onClick={() => onRemoveInvalidation(row.original.username, row.original.email)}
-                >
-                  {intl.formatMessage(messages.removeInvalidationAction)}
-                </Dropdown.Item>
-              )}
-            </Dropdown.Menu>
-          </Dropdown>
-        ),
+        Cell: ({ row }: { row: { original: CertificateData } }) => {
+          const popoverContent = (
+            <Popover
+              id={`popover-${row.original.username}`}
+              className="border-0 shadow-sm"
+            >
+              <Popover.Content className="p-0 border-0">
+                <div className="dropdown-menu show position-static border shadow-sm">
+                  {filter === FilterEnum.GRANTED_EXCEPTIONS && (
+                    <button
+                      type="button"
+                      className="dropdown-item"
+                      onClick={() => onRemoveException(row.original.username, row.original.email)}
+                    >
+                      {intl.formatMessage(messages.removeExceptionAction)}
+                    </button>
+                  )}
+                  {filter === FilterEnum.INVALIDATED && (
+                    <button
+                      type="button"
+                      className="dropdown-item"
+                      onClick={() => onRemoveInvalidation(row.original.username, row.original.email)}
+                    >
+                      {intl.formatMessage(messages.removeInvalidationAction)}
+                    </button>
+                  )}
+                </div>
+              </Popover.Content>
+            </Popover>
+          );
+
+          return (
+            <OverlayTrigger
+              trigger="click"
+              placement="bottom-end"
+              overlay={popoverContent}
+              rootClose
+            >
+              <IconButton
+                alt={intl.formatMessage(messages.columnActions)}
+                iconAs={MoreVert}
+              />
+            </OverlayTrigger>
+          );
+        },
       },
     ];
   }, [filter, intl, onRemoveException, onRemoveInvalidation]);

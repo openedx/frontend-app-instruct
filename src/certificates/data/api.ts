@@ -49,11 +49,17 @@ export const getInstructorTasks = async (
 export const grantBulkExceptions = async (
   courseId: string,
   request: GrantExceptionRequest,
-): Promise<{ success: string[], errors: Array<{ learner: string, message: string }> }> => {
+): Promise<{ success: string[], errors: { learner: string, message: string }[] }> => {
+  // Convert comma-separated string to array
+  const learnersArray = request.learners
+    .split(',')
+    .map((learner) => learner.trim())
+    .filter((learner) => learner.length > 0);
+
   const { data } = await getAuthenticatedHttpClient().post(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/certificates/exceptions`,
     {
-      learners: request.learners,
+      learners: learnersArray,
       notes: request.notes,
     },
   );
@@ -63,11 +69,17 @@ export const grantBulkExceptions = async (
 export const invalidateCertificate = async (
   courseId: string,
   request: InvalidateCertificateRequest,
-): Promise<{ success: string[], errors: Array<{ learner: string, message: string }> }> => {
+): Promise<{ success: string[], errors: { learner: string, message: string }[] }> => {
+  // Convert comma-separated string to array
+  const learnersArray = request.learners
+    .split(',')
+    .map((learner) => learner.trim())
+    .filter((learner) => learner.length > 0);
+
   const { data } = await getAuthenticatedHttpClient().post(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/certificates/invalidations`,
     {
-      learners: request.learners,
+      learners: learnersArray,
       notes: request.notes,
     },
   );
@@ -92,14 +104,22 @@ export const removeInvalidation = async (
   courseId: string,
   request: RemoveInvalidationRequest,
 ): Promise<void> => {
-  await getAuthenticatedHttpClient().delete(
-    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/certificates/invalidations`,
-    {
-      data: {
-        username: request.username,
-      },
+  const httpClient = getAuthenticatedHttpClient();
+  const url = `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/certificates/invalidations`;
+  const payload = {
+    username: request.username,
+  };
+
+  console.log('removeInvalidation - URL:', url);
+  console.log('removeInvalidation - Payload:', payload);
+  console.log('removeInvalidation - Username value:', request.username, 'Type:', typeof request.username, 'Length:', request.username?.length);
+
+  await httpClient.delete(url, {
+    data: payload,
+    headers: {
+      'Content-Type': 'application/json',
     },
-  );
+  });
 };
 
 export const toggleCertificateGeneration = async (

@@ -10,6 +10,7 @@ import IssuedCertificatesTab from './components/IssuedCertificatesTab';
 import GenerationHistoryTable from './components/GenerationHistoryTable';
 import GrantExceptionsModal from './components/GrantExceptionsModal';
 import InvalidateCertificateModal from './components/InvalidateCertificateModal';
+import RemoveExceptionModal from './components/RemoveExceptionModal';
 import RemoveInvalidationModal from './components/RemoveInvalidationModal';
 import DisableCertificatesModal from './components/DisableCertificatesModal';
 import {
@@ -46,6 +47,7 @@ const CertificatesPage = () => {
 
   const [isGrantExceptionsOpen, setIsGrantExceptionsOpen] = useState(false);
   const [isInvalidateCertificateOpen, setIsInvalidateCertificateOpen] = useState(false);
+  const [isRemoveExceptionOpen, setIsRemoveExceptionOpen] = useState(false);
   const [isRemoveInvalidationOpen, setIsRemoveInvalidationOpen] = useState(false);
   const [isDisableCertificatesOpen, setIsDisableCertificatesOpen] = useState(false);
 
@@ -69,7 +71,7 @@ const CertificatesPage = () => {
 
   const { mutate: grantExceptions, isPending: isGrantingExceptions } = useGrantBulkExceptions(courseId);
   const { mutate: invalidateCert, isPending: isInvalidating } = useInvalidateCertificate(courseId);
-  const { mutate: removeExcept } = useRemoveException(courseId);
+  const { mutate: removeExcept, isPending: isRemovingException } = useRemoveException(courseId);
   const { mutate: removeInval, isPending: isRemovingInvalidation } = useRemoveInvalidation(courseId);
   const { mutate: toggleGeneration, isPending: isTogglingGeneration } = useToggleCertificateGeneration(courseId);
   const { mutate: regenerateCerts, isPending: isRegenerating } = useRegenerateCertificates(courseId);
@@ -132,12 +134,33 @@ const CertificatesPage = () => {
     );
   }, [invalidateCert, showToast, showModal, intl]);
 
-  const handleRemoveException = useCallback((username: string, email: string) => {
+  const handleRemoveExceptionClick = useCallback((username: string, email: string) => {
+    setSelectedUsername(username);
+    setSelectedEmail(email);
+    setIsRemoveExceptionOpen(true);
+  }, []);
+
+  const handleRemoveExceptionConfirm = useCallback(() => {
+    // Backend accepts either username or email - use whichever is available
+    const identifier = selectedUsername || selectedEmail;
+
+    if (!identifier) {
+      showModal({
+        title: MODAL_TITLES.ERROR,
+        message: intl.formatMessage(messages.errorRemoveException) + ': Username or email is required',
+        variant: ALERT_VARIANTS.DANGER,
+      });
+      return;
+    }
+
     removeExcept(
-      { username },
+      { username: identifier },
       {
         onSuccess: () => {
-          showToast(intl.formatMessage(messages.exceptionRemovedToast, { email }));
+          setIsRemoveExceptionOpen(false);
+          setSelectedUsername('');
+          setSelectedEmail('');
+          showToast(intl.formatMessage(messages.exceptionRemovedToast, { email: selectedEmail }));
         },
         onError: (error) => {
           showModal({
@@ -148,7 +171,7 @@ const CertificatesPage = () => {
         },
       },
     );
-  }, [removeExcept, showToast, showModal, intl]);
+  }, [removeExcept, selectedUsername, selectedEmail, showToast, showModal, intl]);
 
   const handleRemoveInvalidationClick = useCallback((username: string, email: string) => {
     setSelectedUsername(username);
@@ -157,8 +180,22 @@ const CertificatesPage = () => {
   }, []);
 
   const handleRemoveInvalidationConfirm = useCallback(() => {
+    // Backend accepts either username or email - use whichever is available
+    const identifier = selectedUsername || selectedEmail;
+
+    console.log('handleRemoveInvalidationConfirm - selectedUsername:', selectedUsername, 'selectedEmail:', selectedEmail, 'identifier:', identifier);
+
+    if (!identifier) {
+      showModal({
+        title: MODAL_TITLES.ERROR,
+        message: intl.formatMessage(messages.errorRemoveInvalidation) + ': Username or email is required',
+        variant: ALERT_VARIANTS.DANGER,
+      });
+      return;
+    }
+
     removeInval(
-      { username: selectedUsername },
+      { username: identifier },
       {
         onSuccess: () => {
           setIsRemoveInvalidationOpen(false);
@@ -167,6 +204,7 @@ const CertificatesPage = () => {
           showToast(intl.formatMessage(messages.invalidationRemovedToast, { email: selectedEmail }));
         },
         onError: (error) => {
+          console.error('Remove invalidation error:', error);
           showModal({
             title: MODAL_TITLES.ERROR,
             message: getErrorMessage(error, intl.formatMessage(messages.errorRemoveInvalidation)),
@@ -252,7 +290,7 @@ const CertificatesPage = () => {
               onFilterChange={setFilter}
               currentPage={certificatesPage}
               onPageChange={setCertificatesPage}
-              onRemoveException={handleRemoveException}
+              onRemoveException={handleRemoveExceptionClick}
               onRemoveInvalidation={handleRemoveInvalidationClick}
               onRegenerateCertificates={handleRegenerateCertificates}
             />
@@ -283,6 +321,17 @@ const CertificatesPage = () => {
         onClose={() => setIsInvalidateCertificateOpen(false)}
         onSubmit={handleInvalidateCertificate}
         isSubmitting={isInvalidating}
+      />
+      <RemoveExceptionModal
+        isOpen={isRemoveExceptionOpen}
+        email={selectedEmail}
+        onClose={() => {
+          setIsRemoveExceptionOpen(false);
+          setSelectedUsername('');
+          setSelectedEmail('');
+        }}
+        onConfirm={handleRemoveExceptionConfirm}
+        isSubmitting={isRemovingException}
       />
       <RemoveInvalidationModal
         isOpen={isRemoveInvalidationOpen}
