@@ -461,12 +461,9 @@ describe('certificates api hooks', () => {
         count: 1,
         results: [
           {
-            id: 1,
-            taskId: 'abc123',
-            status: 'success',
-            created: '2024-01-15T10:00:00Z',
-            completed: '2024-01-15T10:05:00Z',
-            certificatesGenerated: 100,
+            taskName: 'Generate Certificates',
+            date: '2024-01-15T10:00:00Z',
+            details: 'Generated 100 certificates',
           },
         ],
         numPages: 1,

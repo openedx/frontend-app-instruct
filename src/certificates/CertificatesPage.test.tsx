@@ -863,7 +863,7 @@ describe('CertificatesPage', () => {
 
   describe('Regenerate Certificates', () => {
     it('shows toast when regeneration succeeds', async () => {
-      mockRegenerateCerts.mockImplementation((filter, options) => {
+      mockRegenerateCerts.mockImplementation((_filter, options) => {
         if (options?.onSuccess) {
           options.onSuccess();
         }
@@ -879,7 +879,7 @@ describe('CertificatesPage', () => {
     });
 
     it('shows error modal when regeneration fails', async () => {
-      mockRegenerateCerts.mockImplementation((filter, options) => {
+      mockRegenerateCerts.mockImplementation((_filter, options) => {
         if (options?.onError) {
           options.onError({ response: { data: { message: 'Regeneration failed' } } });
         }
