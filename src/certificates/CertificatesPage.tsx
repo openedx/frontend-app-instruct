@@ -4,7 +4,6 @@ import { Card, Container, Tab, Tabs, Alert } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
 import { useAlert } from '@src/providers/AlertProvider';
 import { useCourseInfo } from '@src/data/apiHook';
-import { parseLearnersCount } from '@src/utils/formatters';
 import CertificatesPageHeader from './components/CertificatesPageHeader';
 import IssuedCertificatesTab from './components/IssuedCertificatesTab';
 import GenerationHistoryTable from './components/GenerationHistoryTable';
@@ -16,7 +15,6 @@ import DisableCertificatesModal from './components/DisableCertificatesModal';
 import {
   useCertificateGenerationHistory,
   useGrantBulkExceptions,
-  useInstructorTasks,
   useInvalidateCertificate,
   useIssuedCertificates,
   useRegenerateCertificates,
@@ -74,7 +72,7 @@ const CertificatesPage = () => {
   const { mutate: removeExcept, isPending: isRemovingException } = useRemoveException(courseId);
   const { mutate: removeInval, isPending: isRemovingInvalidation } = useRemoveInvalidation(courseId);
   const { mutate: toggleGeneration, isPending: isTogglingGeneration } = useToggleCertificateGeneration(courseId);
-  const { mutate: regenerateCerts, isPending: isRegenerating } = useRegenerateCertificates(courseId);
+  const { mutate: regenerateCerts } = useRegenerateCertificates(courseId);
 
   const handleGrantExceptions = useCallback((learners: string, notes: string) => {
     grantExceptions(
