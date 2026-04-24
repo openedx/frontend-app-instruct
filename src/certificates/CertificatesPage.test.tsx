@@ -361,6 +361,39 @@ describe('CertificatesPage', () => {
       // Verify mutation was called (error alert is shown by AlertProvider)
       expect(mockGrantExceptions).toHaveBeenCalled();
     });
+
+    it('shows warning modal when grant exceptions partially succeeds', async () => {
+      // Make mock invoke onSuccess with some errors
+      mockGrantExceptions.mockImplementation((_data, options) => {
+        if (options?.onSuccess) {
+          options.onSuccess({
+            success: ['user1'],
+            errors: [{ learner: 'user2', message: 'User not found' }]
+          });
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+      await user.click(grantButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      const learnersInput = screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage);
+      await user.type(learnersInput, 'user1, user2');
+
+      const submitButton = screen.getByText(messages.submit.defaultMessage);
+      await user.click(submitButton);
+
+      // Modal should close
+      await waitFor(() => {
+        expect(screen.queryByText(messages.grantExceptionsModalTitle.defaultMessage)).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe('Invalidate Certificate', () => {
@@ -447,6 +480,37 @@ describe('CertificatesPage', () => {
       await user.click(submitButton);
 
       expect(mockInvalidateCert).toHaveBeenCalled();
+    });
+
+    it('shows warning modal when invalidation partially succeeds', async () => {
+      mockInvalidateCert.mockImplementation((_data, options) => {
+        if (options?.onSuccess) {
+          options.onSuccess({
+            success: ['user1'],
+            errors: [{ learner: 'user2', message: 'Certificate not found' }]
+          });
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const invalidateButton = screen.getByText(messages.invalidateCertificateButton.defaultMessage);
+      await user.click(invalidateButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.invalidateCertificateModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      const learnersInput = screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage);
+      await user.type(learnersInput, 'user1, user2');
+
+      const submitButton = screen.getByText(messages.submit.defaultMessage);
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.queryByText(messages.invalidateCertificateModalTitle.defaultMessage)).not.toBeInTheDocument();
+      });
     });
   });
 
