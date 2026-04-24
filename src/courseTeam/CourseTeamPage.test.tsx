@@ -8,8 +8,16 @@ jest.mock('react-router-dom', () => ({
   useParams: jest.fn(() => ({ courseId: 'course-v1:test-course' })),
 }));
 
-jest.mock('./data/apiHook', () => ({
+jest.mock('@src/courseTeam/data/apiHook', () => ({
   useAddTeamMember: () => ({ mutate: jest.fn() }),
+}));
+
+jest.mock('@src/data/apiHook', () => ({
+  useCourseInfo: jest.fn(() => ({
+    data: {
+      adminConsoleUrl: 'http://example.com/admin-console',
+    },
+  })),
 }));
 
 // Mock the child components but allow passing through props
@@ -170,5 +178,12 @@ describe('CourseTeamPage', () => {
 
     // Modal should be visible
     expect(screen.getByText('Edit Team Member Modal for testuser')).toBeInTheDocument();
+  });
+
+  it('renders view studio roles button with correct URL', () => {
+    renderWithAlertAndIntl(<CourseTeamPage />);
+    const viewRolesButton = screen.getByRole('link', { name: /view studio roles/i });
+    expect(viewRolesButton).toBeInTheDocument();
+    expect(viewRolesButton).toHaveAttribute('href', 'http://example.com/admin-console');
   });
 });
