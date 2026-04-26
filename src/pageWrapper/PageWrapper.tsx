@@ -2,6 +2,7 @@ import { useIntl } from '@openedx/frontend-base';
 import messages from './messages';
 import { Container } from '@openedx/paragon';
 import InstructorNav from '@src/instructorNav/InstructorNav';
+import { ForbiddenErrorGuard } from '@src/providers/ForbiddenErrorProvider';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   const { formatMessage } = useIntl();
@@ -9,9 +10,11 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
     <Container size="xl" fluid>
       <h2 className="text-primary-700 m-4">{formatMessage(messages.pageTitle)}</h2>
       <InstructorNav />
-      <div className="m-4">
-        {children}
-      </div>
+      <ForbiddenErrorGuard>
+        <div className="m-4">
+          {children}
+        </div>
+      </ForbiddenErrorGuard>
     </Container>
   );
 };
