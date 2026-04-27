@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import GrantExceptionsModal from './GrantExceptionsModal';
+import GrantExceptionsModal from '@src/certificates/components/GrantExceptionsModal';
 import { renderWithIntl } from '@src/testUtils';
-import messages from '../messages';
+import messages from '@src/certificates/messages';
 
 describe('GrantExceptionsModal', () => {
   const mockOnClose = jest.fn();
@@ -65,7 +65,7 @@ describe('GrantExceptionsModal', () => {
     const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
     await user.click(submitButton);
 
-    expect(mockOnSubmit).toHaveBeenCalledWith('user1@example.com', 'Granting exception for completion');
+    expect(mockOnSubmit).toHaveBeenCalledWith(['user1@example.com'], 'Granting exception for completion');
   });
 
   it('calls onClose when cancel button is clicked', async () => {
@@ -104,6 +104,6 @@ describe('GrantExceptionsModal', () => {
     const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
     await user.click(submitButton);
 
-    expect(mockOnSubmit).toHaveBeenCalledWith('user1, user2, user3', '');
+    expect(mockOnSubmit).toHaveBeenCalledWith(['user1', 'user2', 'user3'], '');
   });
 });

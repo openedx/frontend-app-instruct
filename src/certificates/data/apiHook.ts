@@ -6,17 +6,19 @@ import type {
   InvalidateCertificateRequest,
   RemoveExceptionRequest,
   RemoveInvalidationRequest,
-} from '../types';
+} from '@src/certificates/types';
 import {
+  getCertificateGenerationHistory,
   getInstructorTasks,
   getIssuedCertificates,
   grantBulkExceptions,
   invalidateCertificate,
+  regenerateCertificates,
   removeException,
   removeInvalidation,
   toggleCertificateGeneration,
-} from './api';
-import { certificatesQueryKeys } from './queryKeys';
+} from '@src/certificates/data/api';
+import { certificatesQueryKeys } from '@src/certificates/data/queryKeys';
 
 /**
  * Hook to fetch issued certificates
@@ -39,6 +41,16 @@ export const useInstructorTasks = (courseId: string, params: PaginationParams) =
   });
 
 /**
+ * Hook to fetch certificate generation history
+ */
+export const useCertificateGenerationHistory = (courseId: string, params: PaginationParams) =>
+  useQuery({
+    queryKey: certificatesQueryKeys.generationHistory(courseId, params),
+    queryFn: () => getCertificateGenerationHistory(courseId, params),
+    enabled: !!courseId,
+  });
+
+/**
  * Hook to grant bulk certificate exceptions
  */
 export const useGrantBulkExceptions = (courseId: string) => {
@@ -48,6 +60,7 @@ export const useGrantBulkExceptions = (courseId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
+        exact: false,
       });
     },
   });
@@ -63,6 +76,7 @@ export const useInvalidateCertificate = (courseId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
+        exact: false,
       });
     },
   });
@@ -78,6 +92,7 @@ export const useRemoveException = (courseId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
+        exact: false,
       });
     },
   });
@@ -93,6 +108,7 @@ export const useRemoveInvalidation = (courseId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
+        exact: false,
       });
     },
   });
@@ -108,6 +124,23 @@ export const useToggleCertificateGeneration = (courseId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: certificatesQueryKeys.byCourse(courseId),
+        exact: false,
+      });
+    },
+  });
+};
+
+/**
+ * Hook to regenerate certificates
+ */
+export const useRegenerateCertificates = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (filter: string) => regenerateCertificates(courseId, filter),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: certificatesQueryKeys.byCourse(courseId),
+        exact: false,
       });
     },
   });

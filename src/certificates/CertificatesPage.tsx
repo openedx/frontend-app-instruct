@@ -1,35 +1,38 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Container, Tab, Tabs } from '@openedx/paragon';
+import { Card, Container, Tab, Tabs, Alert } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
 import { useAlert } from '@src/providers/AlertProvider';
-import { filterCertificates, parseLearnersCount } from '@src/utils/formatters';
-import CertificatesPageHeader from './components/CertificatesPageHeader';
-import IssuedCertificatesTab from './components/IssuedCertificatesTab';
-import GenerationHistoryTable from './components/GenerationHistoryTable';
-import GrantExceptionsModal from './components/GrantExceptionsModal';
-import InvalidateCertificateModal from './components/InvalidateCertificateModal';
-import RemoveInvalidationModal from './components/RemoveInvalidationModal';
-import DisableCertificatesModal from './components/DisableCertificatesModal';
-import { dummyCertificateData } from './data/dummyData';
+import { useCourseInfo } from '@src/data/apiHook';
+import CertificatesPageHeader from '@src/certificates/components/CertificatesPageHeader';
+import IssuedCertificatesTab from '@src/certificates/components/IssuedCertificatesTab';
+import GenerationHistoryTable from '@src/certificates/components/GenerationHistoryTable';
+import GrantExceptionsModal from '@src/certificates/components/GrantExceptionsModal';
+import InvalidateCertificateModal from '@src/certificates/components/InvalidateCertificateModal';
+import RemoveExceptionModal from '@src/certificates/components/RemoveExceptionModal';
+import RemoveInvalidationModal from '@src/certificates/components/RemoveInvalidationModal';
+import DisableCertificatesModal from '@src/certificates/components/DisableCertificatesModal';
 import {
+  useCertificateGenerationHistory,
   useGrantBulkExceptions,
-  useInstructorTasks,
   useInvalidateCertificate,
+  useIssuedCertificates,
+  useRegenerateCertificates,
   useRemoveException,
   useRemoveInvalidation,
   useToggleCertificateGeneration,
-} from './data/apiHook';
-import { CertificateFilter, CertificateStatus, SpecialCase } from './types';
-import { CERTIFICATES_PAGE_SIZE, TAB_KEYS, MODAL_TITLES, ALERT_VARIANTS } from './constants';
-import { getErrorMessage } from './utils/errorHandling';
-import messages from './messages';
-import './CertificatesPage.scss';
+} from '@src/certificates/data/apiHook';
+import { CertificateFilter } from '@src/certificates/types';
+import { CERTIFICATES_PAGE_SIZE, TAB_KEYS, MODAL_TITLES, ALERT_VARIANTS } from '@src/certificates/constants';
+import { getErrorMessage } from '@src/certificates/utils/errorHandling';
+import messages from '@src/certificates/messages';
+import '@src/certificates/CertificatesPage.scss';
 
 const CertificatesPage = () => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const { showToast, showModal } = useAlert();
+  const { data: courseInfo } = useCourseInfo(courseId);
 
   const [filter, setFilter] = useState<CertificateFilter>(CertificateFilter.ALL_LEARNERS);
   const [search, setSearch] = useState('');
@@ -42,58 +45,52 @@ const CertificatesPage = () => {
 
   const [isGrantExceptionsOpen, setIsGrantExceptionsOpen] = useState(false);
   const [isInvalidateCertificateOpen, setIsInvalidateCertificateOpen] = useState(false);
+  const [isRemoveExceptionOpen, setIsRemoveExceptionOpen] = useState(false);
   const [isRemoveInvalidationOpen, setIsRemoveInvalidationOpen] = useState(false);
   const [isDisableCertificatesOpen, setIsDisableCertificatesOpen] = useState(false);
 
   const {
-    data: tasksData,
-    isLoading: isLoadingTasks,
-  } = useInstructorTasks(courseId, {
+    data: certificatesData,
+    isLoading: isLoadingCertificates,
+  } = useIssuedCertificates(courseId, {
+    page: certificatesPage,
+    pageSize: CERTIFICATES_PAGE_SIZE,
+    filter,
+    search,
+  });
+
+  const {
+    data: historyData,
+    isLoading: isLoadingHistory,
+  } = useCertificateGenerationHistory(courseId, {
     page: tasksPage,
     pageSize: CERTIFICATES_PAGE_SIZE,
   });
 
   const { mutate: grantExceptions, isPending: isGrantingExceptions } = useGrantBulkExceptions(courseId);
   const { mutate: invalidateCert, isPending: isInvalidating } = useInvalidateCertificate(courseId);
-  const { mutate: removeExcept } = useRemoveException(courseId);
+  const { mutate: removeExcept, isPending: isRemovingException } = useRemoveException(courseId);
   const { mutate: removeInval, isPending: isRemovingInvalidation } = useRemoveInvalidation(courseId);
   const { mutate: toggleGeneration, isPending: isTogglingGeneration } = useToggleCertificateGeneration(courseId);
+  const { mutate: regenerateCerts } = useRegenerateCertificates(courseId);
 
-  const matchesFilter = useCallback((item: typeof dummyCertificateData[0]) => {
-    switch (filter) {
-      case CertificateFilter.RECEIVED:
-        return item.certificateStatus === CertificateStatus.RECEIVED;
-      case CertificateFilter.NOT_RECEIVED:
-        return item.certificateStatus === CertificateStatus.NOT_RECEIVED;
-      case CertificateFilter.AUDIT_PASSING:
-        return item.certificateStatus === CertificateStatus.AUDIT_PASSING;
-      case CertificateFilter.AUDIT_NOT_PASSING:
-        return item.certificateStatus === CertificateStatus.AUDIT_NOT_PASSING;
-      case CertificateFilter.ERROR_STATE:
-        return item.certificateStatus === CertificateStatus.ERROR_STATE;
-      case CertificateFilter.GRANTED_EXCEPTIONS:
-        return item.specialCase === SpecialCase.EXCEPTION;
-      case CertificateFilter.INVALIDATED:
-        return item.specialCase === SpecialCase.INVALIDATION;
-      case CertificateFilter.ALL_LEARNERS:
-      default:
-        return true;
-    }
-  }, [filter]);
-
-  const filteredData = useMemo(
-    () => filterCertificates(dummyCertificateData, matchesFilter, search),
-    [matchesFilter, search],
-  );
-
-  const handleGrantExceptions = useCallback((learners: string, notes: string) => {
-    const count = parseLearnersCount(learners);
+  const handleGrantExceptions = useCallback((learners: string[], notes: string) => {
     grantExceptions(
       { learners, notes },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           setIsGrantExceptionsOpen(false);
-          showToast(intl.formatMessage(messages.exceptionsGrantedToast, { count }));
+          if (data.errors && data.errors.length > 0) {
+            const errorMessages = data.errors.map(err => `${err.learner}: ${err.message}`).join('\n');
+            showModal({
+              title: MODAL_TITLES.ERROR,
+              message: `Some exceptions failed:\n${errorMessages}`,
+              variant: ALERT_VARIANTS.WARNING,
+            });
+          }
+          if (data.success && data.success.length > 0) {
+            showToast(intl.formatMessage(messages.exceptionsGrantedToast, { count: data.success.length }));
+          }
         },
         onError: (error) => {
           showModal({
@@ -106,14 +103,23 @@ const CertificatesPage = () => {
     );
   }, [grantExceptions, showToast, showModal, intl]);
 
-  const handleInvalidateCertificate = useCallback((learners: string, notes: string) => {
-    const count = parseLearnersCount(learners);
+  const handleInvalidateCertificate = useCallback((learners: string[], notes: string) => {
     invalidateCert(
       { learners, notes },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           setIsInvalidateCertificateOpen(false);
-          showToast(intl.formatMessage(messages.certificatesInvalidatedToast, { count }));
+          if (data.errors && data.errors.length > 0) {
+            const errorMessages = data.errors.map(err => `${err.learner}: ${err.message}`).join('\n');
+            showModal({
+              title: MODAL_TITLES.ERROR,
+              message: `Some invalidations failed:\n${errorMessages}`,
+              variant: ALERT_VARIANTS.WARNING,
+            });
+          }
+          if (data.success && data.success.length > 0) {
+            showToast(intl.formatMessage(messages.certificatesInvalidatedToast, { count: data.success.length }));
+          }
         },
         onError: (error) => {
           showModal({
@@ -126,12 +132,33 @@ const CertificatesPage = () => {
     );
   }, [invalidateCert, showToast, showModal, intl]);
 
-  const handleRemoveException = useCallback((username: string, email: string) => {
+  const handleRemoveExceptionClick = useCallback((username: string, email: string) => {
+    setSelectedUsername(username);
+    setSelectedEmail(email);
+    setIsRemoveExceptionOpen(true);
+  }, []);
+
+  const handleRemoveExceptionConfirm = useCallback(() => {
+    // Backend accepts either username or email - use whichever is available
+    const identifier = selectedUsername || selectedEmail;
+
+    if (!identifier) {
+      showModal({
+        title: MODAL_TITLES.ERROR,
+        message: intl.formatMessage(messages.errorRemoveException) + ': Username or email is required',
+        variant: ALERT_VARIANTS.DANGER,
+      });
+      return;
+    }
+
     removeExcept(
-      { username },
+      { username: identifier },
       {
         onSuccess: () => {
-          showToast(intl.formatMessage(messages.exceptionRemovedToast, { email }));
+          setIsRemoveExceptionOpen(false);
+          setSelectedUsername('');
+          setSelectedEmail('');
+          showToast(intl.formatMessage(messages.exceptionRemovedToast, { email: selectedEmail }));
         },
         onError: (error) => {
           showModal({
@@ -142,7 +169,7 @@ const CertificatesPage = () => {
         },
       },
     );
-  }, [removeExcept, showToast, showModal, intl]);
+  }, [removeExcept, selectedUsername, selectedEmail, showToast, showModal, intl]);
 
   const handleRemoveInvalidationClick = useCallback((username: string, email: string) => {
     setSelectedUsername(username);
@@ -151,8 +178,20 @@ const CertificatesPage = () => {
   }, []);
 
   const handleRemoveInvalidationConfirm = useCallback(() => {
+    // Backend accepts either username or email - use whichever is available
+    const identifier = selectedUsername || selectedEmail;
+
+    if (!identifier) {
+      showModal({
+        title: MODAL_TITLES.ERROR,
+        message: intl.formatMessage(messages.errorRemoveInvalidation) + ': Username or email is required',
+        variant: ALERT_VARIANTS.DANGER,
+      });
+      return;
+    }
+
     removeInval(
-      { username: selectedUsername },
+      { username: identifier },
       {
         onSuccess: () => {
           setIsRemoveInvalidationOpen(false);
@@ -194,8 +233,30 @@ const CertificatesPage = () => {
   }, [isCertificateGenerationEnabled, toggleGeneration, showToast, showModal, intl]);
 
   const handleRegenerateCertificates = useCallback(() => {
-    // TODO: Implement when API is ready
-  }, []);
+    regenerateCerts(filter, {
+      onSuccess: () => {
+        showToast(intl.formatMessage(messages.certificatesRegeneratedToast));
+      },
+      onError: (error) => {
+        showModal({
+          title: MODAL_TITLES.ERROR,
+          message: getErrorMessage(error, intl.formatMessage(messages.errorRegenerateCertificates)),
+          variant: ALERT_VARIANTS.DANGER,
+        });
+      },
+    });
+  }, [regenerateCerts, filter, showToast, showModal, intl]);
+
+  // Check if certificate management is disabled
+  if (courseInfo && !courseInfo.certificatesEnabled) {
+    return (
+      <Container className="mt-4.5 mb-4" fluid>
+        <Alert variant="warning">
+          {intl.formatMessage(messages.certificatesDisabledMessage)}
+        </Alert>
+      </Container>
+    );
+  }
 
   return (
     <Container className="mt-4.5 mb-4" fluid>
@@ -214,17 +275,17 @@ const CertificatesPage = () => {
         >
           <Tab eventKey={TAB_KEYS.ISSUED} title={intl.formatMessage(messages.issuedCertificatesTab)}>
             <IssuedCertificatesTab
-              data={filteredData}
-              isLoading={false}
-              itemCount={filteredData.length}
-              pageCount={Math.ceil(filteredData.length / CERTIFICATES_PAGE_SIZE)}
+              data={certificatesData?.results || []}
+              isLoading={isLoadingCertificates}
+              itemCount={certificatesData?.count || 0}
+              pageCount={certificatesData?.numPages || 0}
               search={search}
               onSearchChange={setSearch}
               filter={filter}
               onFilterChange={setFilter}
               currentPage={certificatesPage}
               onPageChange={setCertificatesPage}
-              onRemoveException={handleRemoveException}
+              onRemoveException={handleRemoveExceptionClick}
               onRemoveInvalidation={handleRemoveInvalidationClick}
               onRegenerateCertificates={handleRegenerateCertificates}
             />
@@ -232,10 +293,10 @@ const CertificatesPage = () => {
           <Tab eventKey={TAB_KEYS.HISTORY} title={intl.formatMessage(messages.generationHistoryTab)}>
             <div className="d-flex flex-column mt-3 mt-md-4">
               <GenerationHistoryTable
-                data={tasksData?.results || []}
-                isLoading={isLoadingTasks}
-                itemCount={tasksData?.count || 0}
-                pageCount={tasksData?.numPages || 0}
+                data={historyData?.results || []}
+                isLoading={isLoadingHistory}
+                itemCount={historyData?.count || 0}
+                pageCount={historyData?.numPages || 0}
                 currentPage={tasksPage}
                 onPageChange={setTasksPage}
               />
@@ -255,6 +316,17 @@ const CertificatesPage = () => {
         onClose={() => setIsInvalidateCertificateOpen(false)}
         onSubmit={handleInvalidateCertificate}
         isSubmitting={isInvalidating}
+      />
+      <RemoveExceptionModal
+        isOpen={isRemoveExceptionOpen}
+        email={selectedEmail}
+        onClose={() => {
+          setIsRemoveExceptionOpen(false);
+          setSelectedUsername('');
+          setSelectedEmail('');
+        }}
+        onConfirm={handleRemoveExceptionConfirm}
+        isSubmitting={isRemovingException}
       />
       <RemoveInvalidationModal
         isOpen={isRemoveInvalidationOpen}

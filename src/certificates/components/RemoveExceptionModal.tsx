@@ -2,50 +2,49 @@ import { ActionRow, Button, ModalDialog } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
 import messages from '@src/certificates/messages';
 
-interface DisableCertificatesModalProps {
+interface RemoveExceptionModalProps {
   isOpen: boolean,
-  isEnabled: boolean,
+  email: string,
   onClose: () => void,
   onConfirm: () => void,
   isSubmitting: boolean,
 }
 
-const DisableCertificatesModal = ({
+const RemoveExceptionModal = ({
   isOpen,
-  isEnabled,
+  email,
   onClose,
   onConfirm,
   isSubmitting,
-}: DisableCertificatesModalProps) => {
+}: RemoveExceptionModalProps) => {
   const intl = useIntl();
-
-  const title = isEnabled
-    ? intl.formatMessage(messages.disableCertificatesModalTitle)
-    : intl.formatMessage(messages.enableCertificatesModalTitle);
-
-  const message = isEnabled
-    ? intl.formatMessage(messages.disableCertificatesModalMessage)
-    : intl.formatMessage(messages.enableCertificatesModalMessage);
 
   return (
     <ModalDialog
-      title={title}
-      onClose={onClose}
       isOpen={isOpen}
-      size="sm"
+      onClose={onClose}
       hasCloseButton={false}
+      title={intl.formatMessage(messages.removeExceptionModalTitle)}
+      className="p-4"
       isOverflowVisible={false}
     >
-      <div className="mx-4 mt-4 mb-2.5">
-        <p>{message}</p>
-      </div>
+      <ModalDialog.Header>
+        <ModalDialog.Title>
+          {intl.formatMessage(messages.removeExceptionModalTitle)}
+        </ModalDialog.Title>
+      </ModalDialog.Header>
+      <ModalDialog.Body>
+        <p className="mb-2.5">
+          {intl.formatMessage(messages.removeExceptionModalMessage, { email })}
+        </p>
+      </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
           <Button variant="tertiary" onClick={onClose} disabled={isSubmitting}>
             {intl.formatMessage(messages.cancel)}
           </Button>
           <Button variant="primary" onClick={onConfirm} disabled={isSubmitting}>
-            {intl.formatMessage(messages.confirm)}
+            {intl.formatMessage(messages.removeExceptionAction)}
           </Button>
         </ActionRow>
       </ModalDialog.Footer>
@@ -53,4 +52,4 @@ const DisableCertificatesModal = ({
   );
 };
 
-export default DisableCertificatesModal;
+export default RemoveExceptionModal;

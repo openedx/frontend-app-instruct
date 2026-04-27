@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import IssuedCertificatesTab from './IssuedCertificatesTab';
+import IssuedCertificatesTab from '@src/certificates/components/IssuedCertificatesTab';
 import { renderWithIntl } from '@src/testUtils';
-import { CertificateData, CertificateFilter, CertificateStatus, SpecialCase } from '../types';
+import { CertificateData, CertificateFilter, CertificateStatus, SpecialCase } from '@src/certificates/types';
 
 describe('IssuedCertificatesTab', () => {
   const mockOnSearchChange = jest.fn();
@@ -67,8 +67,9 @@ describe('IssuedCertificatesTab', () => {
   it('passes filter prop to toolbar', () => {
     renderWithIntl(<IssuedCertificatesTab {...defaultProps} filter={CertificateFilter.RECEIVED} />);
 
-    // Filter dropdown should show the selected filter
-    expect(screen.getByText(/Received/i)).toBeInTheDocument();
+    // Filter dropdown button should show the selected filter
+    const receivedButtons = screen.getAllByRole('button', { name: /Received/i });
+    expect(receivedButtons.length).toBeGreaterThan(0);
   });
 
   it('calls onSearchChange when search input changes', async () => {

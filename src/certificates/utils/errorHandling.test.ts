@@ -1,4 +1,4 @@
-import { getErrorMessage, parseLearnersCount, type ApiError } from './errorHandling';
+import { getErrorMessage, parseLearnersCount, type ApiError } from '@src/certificates/utils/errorHandling';
 
 describe('errorHandling', () => {
   describe('getErrorMessage', () => {

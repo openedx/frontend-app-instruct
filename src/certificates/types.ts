@@ -47,18 +47,24 @@ export interface InstructorTask {
   updated: string,
 }
 
+export interface CertificateGenerationHistory {
+  taskName: string,
+  date: string,
+  details: string,
+}
+
 export interface CertificateQueryParams extends PaginationParams {
   filter: CertificateFilter,
   search: string,
 }
 
 export interface GrantExceptionRequest {
-  learners: string,
+  learners: string[],
   notes?: string,
 }
 
 export interface InvalidateCertificateRequest {
-  learners: string,
+  learners: string[],
   notes?: string,
 }
 

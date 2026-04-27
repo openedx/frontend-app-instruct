@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import InvalidateCertificateModal from './InvalidateCertificateModal';
+import InvalidateCertificateModal from '@src/certificates/components/InvalidateCertificateModal';
 import { renderWithIntl } from '@src/testUtils';
-import messages from '../messages';
+import messages from '@src/certificates/messages';
 
 describe('InvalidateCertificateModal', () => {
   const mockOnClose = jest.fn();
@@ -59,7 +59,7 @@ describe('InvalidateCertificateModal', () => {
     await user.click(submitButton);
 
     expect(mockOnSubmit).toHaveBeenCalledWith(
-      'user1@example.com, user2@example.com',
+      ['user1@example.com', 'user2@example.com'],
       'Certificate invalidated due to violation'
     );
   });
@@ -107,6 +107,6 @@ describe('InvalidateCertificateModal', () => {
     const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
     await user.click(submitButton);
 
-    expect(mockOnSubmit).toHaveBeenCalledWith('user1@example.com', '');
+    expect(mockOnSubmit).toHaveBeenCalledWith(['user1@example.com'], '');
   });
 });

@@ -9,7 +9,9 @@ import {
   useRemoveException,
   useRemoveInvalidation,
   useToggleCertificateGeneration,
-} from './apiHook';
+  useCertificateGenerationHistory,
+  useRegenerateCertificates,
+} from '@src/certificates/data/apiHook';
 import {
   getIssuedCertificates,
   getInstructorTasks,
@@ -18,10 +20,12 @@ import {
   removeException,
   removeInvalidation,
   toggleCertificateGeneration,
-} from './api';
-import { CertificateFilter, CertificateStatus, SpecialCase } from '../types';
+  getCertificateGenerationHistory,
+  regenerateCertificates,
+} from '@src/certificates/data/api';
+import { CertificateFilter, CertificateStatus, SpecialCase } from '@src/certificates/types';
 
-jest.mock('./api');
+jest.mock('@src/certificates/data/api');
 
 const mockGetIssuedCertificates = getIssuedCertificates as jest.MockedFunction<typeof getIssuedCertificates>;
 const mockGetInstructorTasks = getInstructorTasks as jest.MockedFunction<typeof getInstructorTasks>;
@@ -30,6 +34,8 @@ const mockInvalidateCertificate = invalidateCertificate as jest.MockedFunction<t
 const mockRemoveException = removeException as jest.MockedFunction<typeof removeException>;
 const mockRemoveInvalidation = removeInvalidation as jest.MockedFunction<typeof removeInvalidation>;
 const mockToggleCertificateGeneration = toggleCertificateGeneration as jest.MockedFunction<typeof toggleCertificateGeneration>;
+const mockGetCertificateGenerationHistory = getCertificateGenerationHistory as jest.MockedFunction<typeof getCertificateGenerationHistory>;
+const mockRegenerateCertificates = regenerateCertificates as jest.MockedFunction<typeof regenerateCertificates>;
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -222,7 +228,7 @@ describe('certificates api hooks', () => {
 
   describe('useGrantBulkExceptions', () => {
     it('grants bulk exceptions successfully', async () => {
-      mockGrantBulkExceptions.mockResolvedValue(undefined);
+      mockGrantBulkExceptions.mockResolvedValue({ success: ['user1', 'user2'], errors: [] });
 
       const { Wrapper, queryClient: qc } = createWrapper();
       queryClient = qc;
@@ -231,14 +237,14 @@ describe('certificates api hooks', () => {
         wrapper: Wrapper,
       });
 
-      result.current.mutate({ learners: 'user1, user2', notes: 'Exception granted' });
+      result.current.mutate({ learners: ['user1', 'user2'], notes: 'Exception granted' });
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
 
       expect(mockGrantBulkExceptions).toHaveBeenCalledWith('course-v1:Test+Course+2024', {
-        learners: 'user1, user2',
+        learners: ['user1', 'user2'],
         notes: 'Exception granted',
       });
     });
@@ -254,7 +260,7 @@ describe('certificates api hooks', () => {
         wrapper: Wrapper,
       });
 
-      result.current.mutate({ learners: 'user1', notes: 'Test' });
+      result.current.mutate({ learners: ['user1'], notes: 'Test' });
 
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
@@ -266,7 +272,7 @@ describe('certificates api hooks', () => {
 
   describe('useInvalidateCertificate', () => {
     it('invalidates certificate successfully', async () => {
-      mockInvalidateCertificate.mockResolvedValue(undefined);
+      mockInvalidateCertificate.mockResolvedValue({ success: ['user1'], errors: [] });
 
       const { Wrapper, queryClient: qc } = createWrapper();
       queryClient = qc;
@@ -275,14 +281,14 @@ describe('certificates api hooks', () => {
         wrapper: Wrapper,
       });
 
-      result.current.mutate({ learners: 'user1', notes: 'Certificate invalid' });
+      result.current.mutate({ learners: ['user1'], notes: 'Certificate invalid' });
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
 
       expect(mockInvalidateCertificate).toHaveBeenCalledWith('course-v1:Test+Course+2024', {
-        learners: 'user1',
+        learners: ['user1'],
         notes: 'Certificate invalid',
       });
     });
@@ -298,7 +304,7 @@ describe('certificates api hooks', () => {
         wrapper: Wrapper,
       });
 
-      result.current.mutate({ learners: 'user1', notes: '' });
+      result.current.mutate({ learners: ['user1'], notes: '' });
 
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
@@ -446,6 +452,120 @@ describe('certificates api hooks', () => {
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
       });
+    });
+  });
+
+  describe('useCertificateGenerationHistory', () => {
+    it('fetches certificate generation history successfully', async () => {
+      const mockData = {
+        count: 1,
+        results: [
+          {
+            taskName: 'Generate Certificates',
+            date: '2024-01-15T10:00:00Z',
+            details: 'Generated 100 certificates',
+          },
+        ],
+        numPages: 1,
+        next: null,
+        previous: null,
+      };
+
+      mockGetCertificateGenerationHistory.mockResolvedValue(mockData);
+
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
+      const { result } = renderHook(
+        () => useCertificateGenerationHistory('course-v1:Test+Course+2024', { page: 0, pageSize: 25 }),
+        { wrapper: Wrapper }
+      );
+
+      expect(result.current.isLoading).toBe(true);
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockGetCertificateGenerationHistory).toHaveBeenCalledWith('course-v1:Test+Course+2024', {
+        page: 0,
+        pageSize: 25,
+      });
+      expect(result.current.data).toEqual(mockData);
+    });
+
+    it('handles API error', async () => {
+      const mockError = new Error('History fetch error');
+      mockGetCertificateGenerationHistory.mockRejectedValue(mockError);
+
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
+      const { result } = renderHook(
+        () => useCertificateGenerationHistory('course-v1:Test+Course+2024', { page: 0, pageSize: 25 }),
+        { wrapper: Wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      });
+
+      expect(result.current.error).toBe(mockError);
+    });
+
+    it('does not fetch when courseId is empty', () => {
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
+      renderHook(
+        () => useCertificateGenerationHistory('', { page: 0, pageSize: 25 }),
+        { wrapper: Wrapper }
+      );
+
+      expect(mockGetCertificateGenerationHistory).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('useRegenerateCertificates', () => {
+    it('regenerates certificates successfully', async () => {
+      mockRegenerateCertificates.mockResolvedValue(undefined);
+
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
+      const { result } = renderHook(
+        () => useRegenerateCertificates('course-v1:Test+Course+2024'),
+        { wrapper: Wrapper }
+      );
+
+      result.current.mutate('all');
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockRegenerateCertificates).toHaveBeenCalledWith('course-v1:Test+Course+2024', 'all');
+    });
+
+    it('handles error when regenerating certificates', async () => {
+      const mockError = new Error('Regeneration failed');
+      mockRegenerateCertificates.mockRejectedValue(mockError);
+
+      const { Wrapper, queryClient: qc } = createWrapper();
+      queryClient = qc;
+
+      const { result } = renderHook(
+        () => useRegenerateCertificates('course-v1:Test+Course+2024'),
+        { wrapper: Wrapper }
+      );
+
+      result.current.mutate('all');
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      });
+
+      expect(result.current.error).toBe(mockError);
     });
   });
 });

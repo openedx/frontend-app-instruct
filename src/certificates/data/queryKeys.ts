@@ -1,6 +1,6 @@
 import { appId } from '@src/constants';
 import type { PaginationParams } from '@src/types';
-import type { CertificateQueryParams } from '../types';
+import type { CertificateQueryParams } from '@src/certificates/types';
 
 export const certificatesQueryKeys = {
   all: [appId, 'certificates'] as const,
@@ -9,4 +9,6 @@ export const certificatesQueryKeys = {
     [...certificatesQueryKeys.byCourse(courseId), 'issued', params] as const,
   tasks: (courseId: string, params: PaginationParams) =>
     [...certificatesQueryKeys.byCourse(courseId), 'tasks', params] as const,
+  generationHistory: (courseId: string, params: PaginationParams) =>
+    [...certificatesQueryKeys.byCourse(courseId), 'generationHistory', params] as const,
 };

@@ -1,8 +1,8 @@
 import { Dropdown } from '@openedx/paragon';
 import { FilterList } from '@openedx/paragon/icons';
 import { useIntl } from '@openedx/frontend-base';
-import { CertificateFilter } from '../types';
-import messages from '../messages';
+import { CertificateFilter } from '@src/certificates/types';
+import messages from '@src/certificates/messages';
 
 interface FilterDropdownProps {
   value: CertificateFilter,

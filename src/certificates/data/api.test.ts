@@ -8,8 +8,10 @@ import {
   removeException,
   removeInvalidation,
   toggleCertificateGeneration,
-} from './api';
-import type { CertificateFilter } from '../types';
+  regenerateCertificates,
+  getCertificateGenerationHistory,
+} from '@src/certificates/data/api';
+import type { CertificateFilter } from '@src/certificates/types';
 
 jest.mock('@openedx/frontend-base');
 jest.mock('@src/data/api');
@@ -77,7 +79,7 @@ describe('Certificate API', () => {
       });
 
       expect(mockGet).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/get_issued_certificates/',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/issued',
         {
           params: {
             page: 1,
@@ -161,17 +163,17 @@ describe('Certificate API', () => {
 
   describe('grantBulkExceptions', () => {
     it('grants bulk certificate exceptions', async () => {
-      mockPost.mockResolvedValue({ data: {} });
+      mockPost.mockResolvedValue({ data: { success: ['user1', 'user2'], errors: [] } });
 
       await grantBulkExceptions('course-v1:edX+Test+2024', {
-        learners: 'user1, user2',
+        learners: ['user1', 'user2'],
         notes: 'Test exception',
       });
 
       expect(mockPost).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/generate_bulk_certificate_exceptions',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/exceptions',
         {
-          learners: 'user1, user2',
+          learners: ['user1', 'user2'],
           notes: 'Test exception',
         }
       );
@@ -182,7 +184,7 @@ describe('Certificate API', () => {
 
       await expect(
         grantBulkExceptions('course-v1:edX+Test+2024', {
-          learners: 'user1',
+          learners: ['user1'],
           notes: 'Test',
         })
       ).rejects.toThrow('Permission denied');
@@ -191,17 +193,17 @@ describe('Certificate API', () => {
 
   describe('invalidateCertificate', () => {
     it('invalidates certificates for learners', async () => {
-      mockPost.mockResolvedValue({ data: {} });
+      mockPost.mockResolvedValue({ data: { success: ['user1', 'user2'], errors: [] } });
 
       await invalidateCertificate('course-v1:edX+Test+2024', {
-        learners: 'user1, user2',
+        learners: ['user1', 'user2'],
         notes: 'Certificate invalidation',
       });
 
       expect(mockPost).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/certificate_invalidation_view/',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/invalidations',
         {
-          learners: 'user1, user2',
+          learners: ['user1', 'user2'],
           notes: 'Certificate invalidation',
         }
       );
@@ -212,7 +214,7 @@ describe('Certificate API', () => {
 
       await expect(
         invalidateCertificate('course-v1:edX+Test+2024', {
-          learners: 'user1',
+          learners: ['user1'],
           notes: 'Test',
         })
       ).rejects.toThrow('Invalid request');
@@ -228,7 +230,7 @@ describe('Certificate API', () => {
       });
 
       expect(mockDelete).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/certificate_exception_view/',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/exceptions',
         {
           data: {
             username: 'user1',
@@ -257,10 +259,13 @@ describe('Certificate API', () => {
       });
 
       expect(mockDelete).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/certificate_invalidation_view/',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/invalidations',
         {
           data: {
             username: 'user1',
+          },
+          headers: {
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -284,7 +289,7 @@ describe('Certificate API', () => {
       await toggleCertificateGeneration('course-v1:edX+Test+2024', true);
 
       expect(mockPost).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/enable_certificate_generation',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/toggle_generation',
         {
           enabled: true,
         }
@@ -297,7 +302,7 @@ describe('Certificate API', () => {
       await toggleCertificateGeneration('course-v1:edX+Test+2024', false);
 
       expect(mockPost).toHaveBeenCalledWith(
-        'http://localhost:18000/courses/course-v1:edX+Test+2024/instructor/api/enable_certificate_generation',
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/toggle_generation',
         {
           enabled: false,
         }
@@ -310,6 +315,187 @@ describe('Certificate API', () => {
       await expect(
         toggleCertificateGeneration('course-v1:edX+Test+2024', true)
       ).rejects.toThrow('Server error');
+    });
+  });
+
+  describe('regenerateCertificates', () => {
+    it('regenerates all certificates', async () => {
+      mockPost.mockResolvedValue({ data: {} });
+
+      await regenerateCertificates('course-v1:edX+Test+2024', 'all');
+
+      expect(mockPost).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/regenerate',
+        { student_set: 'all' }
+      );
+    });
+
+    it('regenerates certificates with received filter', async () => {
+      mockPost.mockResolvedValue({ data: {} });
+
+      await regenerateCertificates('course-v1:edX+Test+2024', 'received');
+
+      expect(mockPost).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/regenerate',
+        { statuses: ['downloadable'] }
+      );
+    });
+
+    it('regenerates certificates with not_received filter', async () => {
+      mockPost.mockResolvedValue({ data: {} });
+
+      await regenerateCertificates('course-v1:edX+Test+2024', 'not_received');
+
+      expect(mockPost).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/regenerate',
+        { statuses: ['notpassing', 'unavailable'] }
+      );
+    });
+
+    it('regenerates certificates with audit_passing filter', async () => {
+      mockPost.mockResolvedValue({ data: {} });
+
+      await regenerateCertificates('course-v1:edX+Test+2024', 'audit_passing');
+
+      expect(mockPost).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/regenerate',
+        { statuses: ['audit_passing'] }
+      );
+    });
+
+    it('regenerates certificates with audit_not_passing filter', async () => {
+      mockPost.mockResolvedValue({ data: {} });
+
+      await regenerateCertificates('course-v1:edX+Test+2024', 'audit_not_passing');
+
+      expect(mockPost).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/regenerate',
+        { statuses: ['audit_notpassing'] }
+      );
+    });
+
+    it('regenerates certificates with error filter', async () => {
+      mockPost.mockResolvedValue({ data: {} });
+
+      await regenerateCertificates('course-v1:edX+Test+2024', 'error');
+
+      expect(mockPost).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/regenerate',
+        { statuses: ['error'] }
+      );
+    });
+
+    it('regenerates certificates with granted_exceptions filter', async () => {
+      mockPost.mockResolvedValue({ data: {} });
+
+      await regenerateCertificates('course-v1:edX+Test+2024', 'granted_exceptions');
+
+      expect(mockPost).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/regenerate',
+        { student_set: 'allowlisted' }
+      );
+    });
+
+    it('regenerates certificates with invalidated filter', async () => {
+      mockPost.mockResolvedValue({ data: {} });
+
+      await regenerateCertificates('course-v1:edX+Test+2024', 'invalidated');
+
+      expect(mockPost).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/regenerate',
+        { statuses: ['unavailable'] }
+      );
+    });
+
+    it('handles unknown filter by defaulting to all', async () => {
+      mockPost.mockResolvedValue({ data: {} });
+
+      await regenerateCertificates('course-v1:edX+Test+2024', 'unknown_filter');
+
+      expect(mockPost).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/regenerate',
+        { student_set: 'all' }
+      );
+    });
+
+    it('handles errors when regenerating certificates', async () => {
+      mockPost.mockRejectedValue(new Error('Regeneration failed'));
+
+      await expect(
+        regenerateCertificates('course-v1:edX+Test+2024', 'all')
+      ).rejects.toThrow('Regeneration failed');
+    });
+  });
+
+  describe('getCertificateGenerationHistory', () => {
+    it('fetches certificate generation history with pagination', async () => {
+      const mockData = {
+        count: 3,
+        num_pages: 1,
+        next: null,
+        previous: null,
+        results: [
+          {
+            id: 1,
+            task_id: 'abc123',
+            status: 'success',
+            created: '2024-01-15T10:00:00Z',
+            completed: '2024-01-15T10:05:00Z',
+            certificates_generated: 100,
+          },
+        ],
+      };
+
+      mockGet.mockResolvedValue({ data: mockData });
+
+      const result = await getCertificateGenerationHistory('course-v1:edX+Test+2024', {
+        page: 0,
+        pageSize: 25,
+      });
+
+      expect(mockGet).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/generation_history',
+        {
+          params: {
+            page: 1,
+            page_size: 25,
+          },
+        }
+      );
+
+      expect(result).toHaveProperty('count');
+      expect(result).toHaveProperty('numPages');
+      expect(result).toHaveProperty('results');
+    });
+
+    it('handles different page numbers correctly', async () => {
+      mockGet.mockResolvedValue({ data: { count: 0, num_pages: 0, results: [] } });
+
+      await getCertificateGenerationHistory('course-v1:edX+Test+2024', {
+        page: 2,
+        pageSize: 50,
+      });
+
+      expect(mockGet).toHaveBeenCalledWith(
+        'http://localhost:18000/api/instructor/v2/courses/course-v1:edX+Test+2024/certificates/generation_history',
+        {
+          params: {
+            page: 3, // page + 1
+            page_size: 50,
+          },
+        }
+      );
+    });
+
+    it('handles API errors gracefully', async () => {
+      mockGet.mockRejectedValue(new Error('Network error'));
+
+      await expect(
+        getCertificateGenerationHistory('course-v1:edX+Test+2024', {
+          page: 0,
+          pageSize: 25,
+        })
+      ).rejects.toThrow('Network error');
     });
   });
 });

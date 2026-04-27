@@ -191,6 +191,16 @@ const messages = defineMessages({
     defaultMessage: 'Enter usernames or emails, or upload a CSV file to invalidate certificates.',
     description: 'Description for invalidate certificate modal',
   },
+  removeExceptionModalTitle: {
+    id: 'instruct.certificates.removeExceptionModalTitle',
+    defaultMessage: 'Remove Exception',
+    description: 'Title for remove exception modal',
+  },
+  removeExceptionModalMessage: {
+    id: 'instruct.certificates.removeExceptionModalMessage',
+    defaultMessage: 'Are you sure you want to remove the certificate exception for {email}?',
+    description: 'Message for remove exception confirmation modal',
+  },
   removeInvalidationModalTitle: {
     id: 'instruct.certificates.removeInvalidationModalTitle',
     defaultMessage: 'Remove Invalidation',
@@ -310,6 +320,26 @@ const messages = defineMessages({
     id: 'instruct.certificates.successDisableCertificates',
     defaultMessage: 'Certificate generation disabled',
     description: 'Success message when certificate generation is disabled',
+  },
+  certificatesDisabledMessage: {
+    id: 'instruct.certificates.certificatesDisabledMessage',
+    defaultMessage: 'Certificate management features are not enabled for this course. Please contact your system administrator to enable certificate generation.',
+    description: 'Message displayed when certificate features are disabled',
+  },
+  certificatesRegeneratedToast: {
+    id: 'instruct.certificates.certificatesRegeneratedToast',
+    defaultMessage: 'Certificate regeneration started successfully',
+    description: 'Success message when certificates are regenerated',
+  },
+  errorRegenerateCertificates: {
+    id: 'instruct.certificates.errorRegenerateCertificates',
+    defaultMessage: 'Failed to regenerate certificates',
+    description: 'Error message when certificate regeneration fails',
+  },
+  regenerateCertificatesButtonWithFilter: {
+    id: 'instruct.certificates.regenerateCertificatesButtonWithFilter',
+    defaultMessage: 'Regenerate Certificates: {filter}',
+    description: 'Button to regenerate certificates with filter applied',
   },
 });
 
