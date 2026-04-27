@@ -80,7 +80,7 @@ describe('LearnerActionModal', () => {
     const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
 
-    expect(mockOnSubmit).toHaveBeenCalledWith('user1, user2', 'Test notes');
+    expect(mockOnSubmit).toHaveBeenCalledWith(['user1', 'user2'], 'Test notes');
   });
 
   it('clears form fields after successful submit', async () => {
@@ -152,7 +152,7 @@ describe('LearnerActionModal', () => {
     const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
 
-    expect(mockOnSubmit).toHaveBeenCalledWith('user1', '');
+    expect(mockOnSubmit).toHaveBeenCalledWith(['user1'], '');
   });
 
   it('handles multiline learner input', async () => {
@@ -165,7 +165,7 @@ describe('LearnerActionModal', () => {
     const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
 
-    expect(mockOnSubmit).toHaveBeenCalledWith('user1\nuser2\nuser3', '');
+    expect(mockOnSubmit).toHaveBeenCalledWith(['user1\nuser2\nuser3'], '');
   });
 
   it('renders textarea with correct number of rows', () => {

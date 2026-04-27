@@ -65,7 +65,7 @@ describe('GrantExceptionsModal', () => {
     const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
     await user.click(submitButton);
 
-    expect(mockOnSubmit).toHaveBeenCalledWith('user1@example.com', 'Granting exception for completion');
+    expect(mockOnSubmit).toHaveBeenCalledWith(['user1@example.com'], 'Granting exception for completion');
   });
 
   it('calls onClose when cancel button is clicked', async () => {
@@ -104,6 +104,6 @@ describe('GrantExceptionsModal', () => {
     const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
     await user.click(submitButton);
 
-    expect(mockOnSubmit).toHaveBeenCalledWith('user1, user2, user3', '');
+    expect(mockOnSubmit).toHaveBeenCalledWith(['user1', 'user2', 'user3'], '');
   });
 });

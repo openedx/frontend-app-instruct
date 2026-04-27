@@ -293,7 +293,7 @@ describe('CertificatesPage', () => {
 
       // Verify mutation was called
       expect(mockGrantExceptions).toHaveBeenCalledWith(
-        { learners: 'user1', notes: 'Test note' },
+        { learners: ['user1'], notes: 'Test note' },
         expect.objectContaining({
           onSuccess: expect.any(Function),
           onError: expect.any(Function),
@@ -418,7 +418,7 @@ describe('CertificatesPage', () => {
       await user.click(submitButton);
 
       expect(mockInvalidateCert).toHaveBeenCalledWith(
-        { learners: 'user1', notes: 'Invalid certificate' },
+        { learners: ['user1'], notes: 'Invalid certificate' },
         expect.objectContaining({
           onSuccess: expect.any(Function),
           onError: expect.any(Function),
