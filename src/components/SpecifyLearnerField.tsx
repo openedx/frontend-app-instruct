@@ -18,18 +18,25 @@ interface SpecifyLearnerFieldRef {
   reset: () => void,
 }
 
+const initialLearnerState = {
+  username: '',
+  fullName: '',
+  email: '',
+  isEnrolled: false,
+};
+
 const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFieldProps>(({ learner, onClickSelect }, ref) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [identifier, setIdentifier] = useState('');
-  const [showLearner, enableShowLearner, disableShowLearner] = useToggle(false);
+  const [showLearner, enableShowLearner, disableShowLearner] = useToggle(!!learner);
   const { data: courseInfo } = useCourseInfo(courseId);
   const permissions = courseInfo?.permissions || { admin: false, dataResearcher: false };
   const { inputValue, handleChange, resetFilter } = useDebouncedFilter({
     filterValue: identifier,
     setFilter: setIdentifier,
   });
-  const { data = { email: '', fullName: '', username: '', isEnrolled: false }, refetch, error } = useLearner(courseId, inputValue);
+  const { data, refetch, error } = useLearner(courseId, inputValue);
 
   const resetState = () => {
     resetFilter();
@@ -41,7 +48,7 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
     reset: resetState,
   }));
 
-  const selectedLearner = learner || data;
+  const selectedLearner = learner || data || initialLearnerState;
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     handleChange(event.target.value);
@@ -65,7 +72,7 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
 
   return (
     <FormGroup className="mb-0" size="sm">
-      <FormLabel className="text-primary-500 d-flex">{intl.formatMessage(messages.specifyLearner)}</FormLabel>
+      <FormLabel className="text-primary-500 d-flex">{selectedLearner.username ? intl.formatMessage(messages.selectedLearner) : intl.formatMessage(messages.specifyLearner)}</FormLabel>
       <div className="d-flex align-items-center">
         <FormControl
           className={`mr-2 ${selectedLearner.username && showLearner ? 'd-none' : ''}`}

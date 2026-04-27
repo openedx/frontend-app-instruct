@@ -1,12 +1,13 @@
-import { camelCaseObject, getAuthenticatedHttpClient } from '@openedx/frontend-base';
+import { camelCaseObject, getAuthenticatedHttpClient, snakeCaseObject } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '@src/data/api';
-import { getAttempts } from '@src/specialExams/data/api';
-import { AttemptsParams, Attempt } from '@src/specialExams/types';
+import { getAttempts, getAllowances, addAllowance, deleteAllowance, getSpecialExams } from '@src/specialExams/data/api';
+import { AttemptsParams, Attempt, AddAllowanceParams, DeleteAllowanceParams } from '@src/specialExams/types';
 import { DataList } from '@src/types';
 
 jest.mock('@openedx/frontend-base', () => ({
   ...jest.requireActual('@openedx/frontend-base'),
   camelCaseObject: jest.fn((obj) => obj),
+  snakeCaseObject: jest.fn((obj) => obj),
   getAuthenticatedHttpClient: jest.fn(),
 }));
 
@@ -16,6 +17,7 @@ jest.mock('@src/data/api', () => ({
 
 const mockGetAuthenticatedHttpClient = getAuthenticatedHttpClient as jest.MockedFunction<typeof getAuthenticatedHttpClient>;
 const mockCamelCaseObject = camelCaseObject as jest.MockedFunction<typeof camelCaseObject>;
+const mockSnakeCaseObject = snakeCaseObject as jest.MockedFunction<typeof snakeCaseObject>;
 const mockGetApiBaseUrl = getApiBaseUrl as jest.MockedFunction<typeof getApiBaseUrl>;
 
 describe('specialExams api', () => {
@@ -40,21 +42,29 @@ describe('specialExams api', () => {
       num_pages: 1,
       results: [
         {
-          username: 'student1',
+          id: 1,
+          exam_id: 101,
+          user: {
+            username: 'student1',
+          },
           exam_name: 'Final Exam',
-          time_limit: 180,
+          allowed_time_limit_mins: 180,
           type: 'proctored',
-          started_at: '2023-01-01T10:00:00Z',
-          completed_at: '2023-01-01T13:00:00Z',
+          start_time: '2023-01-01T10:00:00Z',
+          end_time: '2023-01-01T13:00:00Z',
           status: 'completed',
         },
         {
-          username: 'student2',
+          id: 2,
+          exam_id: 102,
+          user: {
+            username: 'student2',
+          },
           exam_name: 'Midterm Exam',
-          time_limit: 120,
+          allowed_time_limit_mins: 120,
           type: 'timed',
-          started_at: '2023-01-02T14:00:00Z',
-          completed_at: '2023-01-02T16:00:00Z',
+          start_time: '2023-01-02T14:00:00Z',
+          end_time: '2023-01-02T16:00:00Z',
           status: 'completed',
         },
       ],
@@ -65,21 +75,29 @@ describe('specialExams api', () => {
       numPages: 1,
       results: [
         {
-          username: 'student1',
+          id: 1,
+          examId: 101,
+          user: {
+            username: 'student1',
+          },
           examName: 'Final Exam',
-          timeLimit: 180,
+          allowedTimeLimitMins: 180,
           type: 'proctored',
-          startedAt: '2023-01-01T10:00:00Z',
-          completedAt: '2023-01-01T13:00:00Z',
+          startTime: '2023-01-01T10:00:00Z',
+          endTime: '2023-01-01T13:00:00Z',
           status: 'completed',
         },
         {
-          username: 'student2',
+          id: 2,
+          examId: 102,
+          user: {
+            username: 'student2',
+          },
           examName: 'Midterm Exam',
-          timeLimit: 120,
+          allowedTimeLimitMins: 120,
           type: 'timed',
-          startedAt: '2023-01-02T14:00:00Z',
-          completedAt: '2023-01-02T16:00:00Z',
+          startTime: '2023-01-02T14:00:00Z',
+          endTime: '2023-01-02T16:00:00Z',
           status: 'completed',
         },
       ],
@@ -157,6 +175,189 @@ describe('specialExams api', () => {
       expect(mockHttpClient.get).toHaveBeenCalledWith(
         'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Special%20Course+2023/special_exams/attempts?page=1&page_size=20&search=user%40example.com'
       );
+    });
+  });
+
+  describe('getAllowances', () => {
+    const params: AttemptsParams = { page: 1, pageSize: 25, emailOrUsername: '' };
+
+    it('makes correct API call and returns camelCase data', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const mockResponseData = {
+        count: 1,
+        num_pages: 1,
+        results: [
+          {
+            id: 1,
+            user: {
+              username: 'john_doe',
+              email: 'john.doe@example.com',
+              id: 5,
+            },
+            proctored_exam: {
+              exam_name: 'Midterm Exam',
+              exam_type: 'proctored',
+              id: 1,
+            },
+            key: 'additional_time_granted',
+            value: '30 minutes',
+          },
+        ],
+      };
+
+      mockHttpClient.get.mockResolvedValue({ data: mockResponseData });
+      mockCamelCaseObject.mockReturnValue(mockResponseData);
+
+      const result = await getAllowances(courseId, params);
+
+      expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
+      expect(mockHttpClient.get).toHaveBeenCalledWith(
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/special_exams/allowances?page=2&page_size=25'
+      );
+      expect(mockCamelCaseObject).toHaveBeenCalledWith(mockResponseData);
+      expect(result).toBe(mockResponseData);
+    });
+
+    it('handles search parameter correctly', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const paramsWithSearch: AttemptsParams = { page: 0, pageSize: 20, emailOrUsername: 'john@example.com' };
+      const mockResponseData = { count: 0, num_pages: 0, results: [] };
+
+      mockHttpClient.get.mockResolvedValue({ data: mockResponseData });
+      await getAllowances(courseId, paramsWithSearch);
+
+      expect(mockHttpClient.get).toHaveBeenCalledWith(
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/special_exams/allowances?page=1&page_size=20&search=john%40example.com'
+      );
+    });
+  });
+
+  describe('addAllowance', () => {
+    it('makes correct API call and returns camelCase data', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const newAllowanceData: AddAllowanceParams = {
+        userIds: ['john_doe'],
+        examType: 'proctored',
+        examIds: [1],
+        allowanceType: 'additional_time_granted',
+        value: '30',
+      };
+      const mockResponseData = [{ id: 1, key: 'additional_time_granted' }];
+      const mockSnakeCaseData = { user_ids: ['john_doe'], exam_type: 'proctored' };
+
+      mockHttpClient.post.mockResolvedValue({ data: mockResponseData });
+      mockSnakeCaseObject.mockReturnValue(mockSnakeCaseData);
+      mockCamelCaseObject.mockReturnValue(mockResponseData);
+
+      const result = await addAllowance(courseId, newAllowanceData);
+
+      expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
+      expect(mockSnakeCaseObject).toHaveBeenCalledWith(newAllowanceData);
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/special_exams/allowances',
+        mockSnakeCaseData
+      );
+      expect(mockCamelCaseObject).toHaveBeenCalledWith(mockResponseData);
+      expect(result).toBe(mockResponseData);
+    });
+
+    it('handles API error', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const newAllowanceData: AddAllowanceParams = {
+        userIds: ['john_doe'],
+        examType: 'proctored',
+        examIds: [1],
+        allowanceType: 'additional_time_granted',
+        value: '30',
+      };
+      const error = new Error('Failed to add allowance');
+
+      mockHttpClient.post.mockRejectedValue(error);
+
+      await expect(addAllowance(courseId, newAllowanceData)).rejects.toThrow('Failed to add allowance');
+    });
+  });
+
+  describe('deleteAllowance', () => {
+    it('makes correct API call', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const deleteParams: DeleteAllowanceParams = {
+        examId: 1,
+        userIds: [5],
+        allowanceType: 'additional_time_granted',
+      };
+      const mockSnakeCaseData = { exam_id: 1, user_ids: [5], allowance_type: 'additional_time_granted' };
+
+      mockHttpClient.delete.mockResolvedValue({});
+      mockSnakeCaseObject.mockReturnValue(mockSnakeCaseData);
+
+      await deleteAllowance(courseId, deleteParams);
+
+      expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
+      expect(mockSnakeCaseObject).toHaveBeenCalledWith(deleteParams);
+      expect(mockHttpClient.delete).toHaveBeenCalledWith(
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/special_exams/1/allowance',
+        { data: mockSnakeCaseData }
+      );
+    });
+
+    it('handles API error', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const deleteParams: DeleteAllowanceParams = {
+        examId: 1,
+        userIds: [5],
+        allowanceType: 'additional_time_granted',
+      };
+      const error = new Error('Failed to delete allowance');
+
+      mockHttpClient.delete.mockRejectedValue(error);
+
+      await expect(deleteAllowance(courseId, deleteParams)).rejects.toThrow('Failed to delete allowance');
+    });
+  });
+
+  describe('getSpecialExams', () => {
+    it('makes correct API call and returns camelCase data', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const examType = 'proctored';
+      const mockResponseData = [
+        {
+          id: 1,
+          exam_name: 'Midterm Exam',
+          exam_type: 'proctored',
+          time_limit_mins: 120,
+          content_id: 'content-123',
+          course_id: 'course-v1:edX+Test+2023',
+          due_date: '2023-12-01T23:59:00Z',
+          is_proctored: true,
+          is_active: true,
+          is_practice_exam: false,
+          hide_after_due: false,
+        },
+      ];
+
+      mockHttpClient.get.mockResolvedValue({ data: mockResponseData });
+      mockCamelCaseObject.mockReturnValue(mockResponseData);
+
+      const result = await getSpecialExams(courseId, examType);
+
+      expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
+      expect(mockHttpClient.get).toHaveBeenCalledWith(
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/special_exams',
+        { params: { exam_type: examType } }
+      );
+      expect(mockCamelCaseObject).toHaveBeenCalledWith(mockResponseData);
+      expect(result).toBe(mockResponseData);
+    });
+
+    it('handles API error', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const examType = 'timed';
+      const error = new Error('Network error');
+
+      mockHttpClient.get.mockRejectedValue(error);
+
+      await expect(getSpecialExams(courseId, examType)).rejects.toThrow('Network error');
     });
   });
 });
