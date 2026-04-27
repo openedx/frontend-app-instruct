@@ -4,14 +4,14 @@ import { Card, Container, Tab, Tabs, Alert } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
 import { useAlert } from '@src/providers/AlertProvider';
 import { useCourseInfo } from '@src/data/apiHook';
-import CertificatesPageHeader from './components/CertificatesPageHeader';
-import IssuedCertificatesTab from './components/IssuedCertificatesTab';
-import GenerationHistoryTable from './components/GenerationHistoryTable';
-import GrantExceptionsModal from './components/GrantExceptionsModal';
-import InvalidateCertificateModal from './components/InvalidateCertificateModal';
-import RemoveExceptionModal from './components/RemoveExceptionModal';
-import RemoveInvalidationModal from './components/RemoveInvalidationModal';
-import DisableCertificatesModal from './components/DisableCertificatesModal';
+import CertificatesPageHeader from '@src/certificates/components/CertificatesPageHeader';
+import IssuedCertificatesTab from '@src/certificates/components/IssuedCertificatesTab';
+import GenerationHistoryTable from '@src/certificates/components/GenerationHistoryTable';
+import GrantExceptionsModal from '@src/certificates/components/GrantExceptionsModal';
+import InvalidateCertificateModal from '@src/certificates/components/InvalidateCertificateModal';
+import RemoveExceptionModal from '@src/certificates/components/RemoveExceptionModal';
+import RemoveInvalidationModal from '@src/certificates/components/RemoveInvalidationModal';
+import DisableCertificatesModal from '@src/certificates/components/DisableCertificatesModal';
 import {
   useCertificateGenerationHistory,
   useGrantBulkExceptions,
@@ -21,11 +21,11 @@ import {
   useRemoveException,
   useRemoveInvalidation,
   useToggleCertificateGeneration,
-} from './data/apiHook';
-import { CertificateFilter } from './types';
-import { CERTIFICATES_PAGE_SIZE, TAB_KEYS, MODAL_TITLES, ALERT_VARIANTS } from './constants';
-import { getErrorMessage } from './utils/errorHandling';
-import messages from './messages';
+} from '@src/certificates/data/apiHook';
+import { CertificateFilter } from '@src/certificates/types';
+import { CERTIFICATES_PAGE_SIZE, TAB_KEYS, MODAL_TITLES, ALERT_VARIANTS } from '@src/certificates/constants';
+import { getErrorMessage } from '@src/certificates/utils/errorHandling';
+import messages from '@src/certificates/messages';
 import './CertificatesPage.scss';
 
 const CertificatesPage = () => {

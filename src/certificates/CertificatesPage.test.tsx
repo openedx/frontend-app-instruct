@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import CertificatesPage from './CertificatesPage';
+import CertificatesPage from '@src/certificates/CertificatesPage';
 import { renderWithAlertAndIntl } from '@src/testUtils';
 import { useCourseInfo } from '@src/data/apiHook';
 import {
@@ -13,15 +13,15 @@ import {
   useRemoveException,
   useRemoveInvalidation,
   useToggleCertificateGeneration,
-} from './data/apiHook';
-import messages from './messages';
+} from '@src/certificates/data/apiHook';
+import messages from '@src/certificates/messages';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ courseId: 'course-v1:edX+Test+2024' }),
 }));
 
-jest.mock('./data/apiHook');
+jest.mock('@src/certificates/data/apiHook');
 jest.mock('@src/data/apiHook', () => ({
   useCourseInfo: jest.fn(),
 }));
