@@ -18,7 +18,7 @@ const GradingConfigurationModal = ({ isOpen, onClose }: GradingConfigurationModa
   return (
     <ModalDialog size="lg" title={intl.formatMessage(messages.gradingConfiguration)} isOpen={isOpen} onClose={onClose} isOverflowVisible={false}>
       <ModalDialog.Header className="px-0">
-        <h3 className="border-bottom pb-3 px-4 mb-3 text-primary">
+        <h3 className="border-bottom pb-3 px-4 mb-3 text-primary-500">
           {intl.formatMessage(messages.gradingConfiguration)}
         </h3>
       </ModalDialog.Header>
