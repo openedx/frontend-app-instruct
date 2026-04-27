@@ -17,15 +17,15 @@ const GradingConfigurationModal = ({ isOpen, onClose }: GradingConfigurationModa
 
   return (
     <ModalDialog size="lg" title={intl.formatMessage(messages.gradingConfiguration)} isOpen={isOpen} onClose={onClose} isOverflowVisible={false}>
-      <ModalDialog.Header className="px-0">
-        <h3 className="border-bottom pb-3 px-4 mb-3 text-primary-500">
+      <ModalDialog.Header className="p-3 pl-4 border-bottom">
+        <ModalDialog.Title as="h3" className="m-0">
           {intl.formatMessage(messages.gradingConfiguration)}
-        </h3>
+        </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
         {data ? <CodeEditor data={data} /> : <p>{intl.formatMessage(messages.noGradingConfiguration)}</p>}
       </ModalDialog.Body>
-      <ModalDialog.Footer>
+      <ModalDialog.Footer className="p-4 border-top">
         <Button onClick={onClose}>{intl.formatMessage(messages.close)}</Button>
       </ModalDialog.Footer>
     </ModalDialog>
