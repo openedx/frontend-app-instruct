@@ -6,5 +6,5 @@ export const specialExamsQueryKeys = {
   byCourse: (courseId: string) => [...specialExamsQueryKeys.all, courseId] as const,
   attempts: (courseId: string, params: AttemptsParams) => [...specialExamsQueryKeys.byCourse(courseId), 'attempts', params.page, params.emailOrUsername] as const,
   allowances: (courseId: string, params?: AttemptsParams) => [...specialExamsQueryKeys.byCourse(courseId), 'allowances', params?.page || 1, params?.emailOrUsername || ''] as const,
-  specialExams: (courseId: string) => [...specialExamsQueryKeys.byCourse(courseId), 'specialExams'] as const,
+  specialExams: (courseId: string, examType: string) => [...specialExamsQueryKeys.byCourse(courseId), 'specialExams', examType] as const,
 };

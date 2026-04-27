@@ -42,7 +42,7 @@ export const useDeleteAllowance = (courseId: string) => {
 
 export const useSpecialExams = (courseId: string, examType: string) => (
   useQuery({
-    queryKey: specialExamsQueryKeys.specialExams(courseId),
+    queryKey: specialExamsQueryKeys.specialExams(courseId, examType),
     queryFn: () => getSpecialExams(courseId, examType),
     enabled: !!courseId && !!examType,
   })
