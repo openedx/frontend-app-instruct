@@ -18,13 +18,14 @@ jest.mock('react-router-dom', () => ({
 }));
 
 const mockTeamMembers = [
-  { username: 'user1', email: 'user1@example.com', role: 'Admin' },
-  { username: 'user2', email: 'user2@example.com', role: 'Staff' },
+  { username: 'user1', fullName: 'User One', email: 'user1@example.com', roles: [{ role: 'Admin', displayName: 'Admin' }] },
+  { username: 'user2', fullName: 'User Two', email: 'user2@example.com', roles: [{ role: 'Staff', displayName: 'Staff' }] },
 ];
 
 const mockRoles = { results: [{ role: 'Admin', displayName: 'Admin' }, { role: 'Staff', displayName: 'Staff' }] };
+const mockOnEdit = jest.fn();
 
-const renderComponent = () => renderWithIntl(<MembersContent />);
+const renderComponent = () => renderWithIntl(<MembersContent onEdit={mockOnEdit} />);
 
 describe('MembersContent', () => {
   beforeEach(() => {
@@ -52,10 +53,10 @@ describe('MembersContent', () => {
 
     expect(screen.getByText(mockTeamMembers[0].username)).toBeInTheDocument();
     expect(screen.getByText(mockTeamMembers[0].email)).toBeInTheDocument();
-    expect(screen.getByRole('cell', { name: mockTeamMembers[0].role })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: mockTeamMembers[0].roles.map((role) => role.displayName).join(', ') })).toBeInTheDocument();
     expect(screen.getByText(mockTeamMembers[1].username)).toBeInTheDocument();
     expect(screen.getByText(mockTeamMembers[1].email)).toBeInTheDocument();
-    expect(screen.getByRole('cell', { name: mockTeamMembers[1].role })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: mockTeamMembers[1].roles.map((role) => role.displayName).join(', ') })).toBeInTheDocument();
   });
 
   it('renders empty state when no team members', () => {
@@ -128,5 +129,41 @@ describe('MembersContent', () => {
     expect(screen.getByText(messages.email.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.role.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.actions.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('calls onEdit when edit button is clicked', async () => {
+    (useTeamMembers as jest.Mock).mockReturnValue({
+      data: { results: mockTeamMembers, numPages: 1, count: 2 },
+      isLoading: false,
+    });
+
+    renderComponent();
+
+    const user = userEvent.setup();
+    const editButtons = screen.getAllByText(messages.edit.defaultMessage);
+
+    // Click the first edit button
+    await user.click(editButtons[0]);
+
+    expect(mockOnEdit).toHaveBeenCalledTimes(1);
+    expect(mockOnEdit).toHaveBeenCalledWith(mockTeamMembers[0]);
+  });
+
+  it('calls onEdit with correct user data for second edit button', async () => {
+    (useTeamMembers as jest.Mock).mockReturnValue({
+      data: { results: mockTeamMembers, numPages: 1, count: 2 },
+      isLoading: false,
+    });
+
+    renderComponent();
+
+    const user = userEvent.setup();
+    const editButtons = screen.getAllByText(messages.edit.defaultMessage);
+
+    // Click the second edit button
+    await user.click(editButtons[1]);
+
+    expect(mockOnEdit).toHaveBeenCalledTimes(1);
+    expect(mockOnEdit).toHaveBeenCalledWith(mockTeamMembers[1]);
   });
 });

@@ -10,6 +10,11 @@ import { GradingToolsType } from '@src/grading/types';
 const GradingPage = () => {
   const intl = useIntl();
   const [selectedTools, setSelectedTools] = useState<GradingToolsType>('single');
+  const [isPendingTasksOpen, setIsPendingTasksOpen] = useState(false);
+
+  const handleOpenPendingTasks = () => {
+    setIsPendingTasksOpen(true);
+  };
 
   return (
     <>
@@ -32,9 +37,9 @@ const GradingPage = () => {
             {intl.formatMessage(messages.allLearners)}
           </Button>
         </ButtonGroup>
-        <GradingLearnerContent toolType={selectedTools} />
+        <GradingLearnerContent toolType={selectedTools} onShowTasks={handleOpenPendingTasks} />
       </Card>
-      <PendingTasks />
+      <PendingTasks isOpen={isPendingTasksOpen} onToggle={() => setIsPendingTasksOpen(prev => !prev)} />
     </>
   );
 };

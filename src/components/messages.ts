@@ -116,10 +116,40 @@ const messages = defineMessages({
     defaultMessage: 'Could not find student matching identifier: {identifier}',
     description: 'Error message displayed when a learner cannot be found based on the provided identifier (email or username)',
   },
+  problemNotFound: {
+    id: 'instruct.specifyProblemField.problemNotFound',
+    defaultMessage: 'Could not find problem matching identifier: {identifier}',
+    description: 'Error message displayed when a problem cannot be found based on the provided identifier',
+  },
   searchPlaceholder: {
     id: 'instruct.usernameFilter.searchPlaceholder',
     defaultMessage: 'Search By Username or Email',
     description: 'Placeholder text for the username filter input',
+  },
+  problemLocationPlaceholder: {
+    id: 'instruct.specifyProblemField.locationPlaceholder',
+    defaultMessage: 'Problem location',
+    description: 'Placeholder text for problem location input',
+  },
+  problemLocationInfoIconLabel: {
+    id: 'instruct.specifyProblemField.infoIconLabel',
+    defaultMessage: 'Example format for problem location',
+    description: 'Aria label for the info icon next to the problem location input',
+  },
+  problemLocationTooltip: {
+    id: 'instruct.specifyProblemField.locationTooltip',
+    defaultMessage: 'Example: block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378',
+    description: 'Tooltip text showing an example problem location format',
+  },
+  selectedProblem: {
+    id: 'instruct.specifyProblemField.selectedProblem',
+    defaultMessage: 'Selected Problem:',
+    description: 'Label for specify problem field when a problem has been selected',
+  },
+  learnerNotEnrolled: {
+    id: 'instruct.specifyLearner.learnerNotEnrolled',
+    defaultMessage: '{identifier} is not enrolled in this course',
+    description: 'Error message displayed when a learner is found based on the provided identifier (email or username) but is not enrolled in the course',
   }
 });
 

@@ -37,8 +37,14 @@ export const useDebouncedFilter = ({
     debouncedSetFilter(value);
   };
 
+  const resetFilter = () => {
+    setInputValue('');
+    setFilter('');
+  };
+
   return {
     inputValue,
     handleChange,
+    resetFilter,
   };
 };

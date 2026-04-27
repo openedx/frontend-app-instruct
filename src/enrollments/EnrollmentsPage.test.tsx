@@ -84,16 +84,31 @@ describe('EnrollmentsPage', () => {
     const user = userEvent.setup();
     await user.click(moreButton);
 
+    // Verify popup menu is opened
+    const checkEnrollmentStatusOption = screen.getByText(messages.checkEnrollmentStatus.defaultMessage);
+    expect(checkEnrollmentStatusOption).toBeInTheDocument();
+    await user.click(checkEnrollmentStatusOption);
+
+    // Verify dialog is opened and popup is closed
     expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(checkEnrollmentStatusOption).not.toBeInTheDocument();
   });
 
   it('closes enrollment status modal', async () => {
     renderWithAlertAndIntl(<EnrollmentsPage />);
 
+    // Open the popup menu first
     const moreButton = screen.getByRole('button', { name: messages.checkEnrollmentStatus.defaultMessage });
     const user = userEvent.setup();
     await user.click(moreButton);
 
+    // Click on the "Check Enrollment Status" option to open the dialog
+    const checkEnrollmentStatusOption = screen.getByText(messages.checkEnrollmentStatus.defaultMessage);
+    await user.click(checkEnrollmentStatusOption);
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+
+    // Close the dialog
     const closeButton = screen.getByText('Close');
     await user.click(closeButton);
 

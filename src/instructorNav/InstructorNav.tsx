@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Nav, Navbar, Skeleton } from '@openedx/paragon';
 import { useCourseInfo } from '@src/data/apiHook';
 import { useAlert } from '@src/providers/AlertProvider';
-import { useWidgetProps } from '../slots/SlotUtils';
+import { useWidgetProps } from '@src/slots/SlotUtils';
 
 export interface TabProps {
   tabId: string,
@@ -58,18 +58,23 @@ const InstructorNav = () => {
         <Navbar.Toggle aria-controls="instructor-nav" />
         <Navbar.Collapse id="instructor-nav">
           {
-            sortedTabs.map((tab) => (
-              <Nav.Item key={tab.tabId}>
-                <Nav.Link
-                  as={Link}
-                  to={tab.url}
-                  active={tab.tabId === tabId}
-                  onClick={() => clearAlerts()}
-                >
-                  {tab.title}
-                </Nav.Link>
-              </Nav.Item>
-            ))
+            sortedTabs.map((tab) => {
+              const isInternal = tab.url.startsWith('/');
+              return (
+                <Nav.Item key={tab.tabId}>
+                  <Nav.Link
+                    {...(isInternal
+                      ? { to: tab.url, as: Link }
+                      : { href: tab.url }
+                    )}
+                    active={tab.tabId === tabId}
+                    onClick={() => clearAlerts()}
+                  >
+                    {tab.title}
+                  </Nav.Link>
+                </Nav.Item>
+              );
+            })
           }
         </Navbar.Collapse>
       </Nav>
