@@ -10,8 +10,8 @@ import {
   toggleCertificateGeneration,
   regenerateCertificates,
   getCertificateGenerationHistory,
-} from './api';
-import type { CertificateFilter } from '../types';
+} from '@src/certificates/data/api';
+import type { CertificateFilter } from '@src/certificates/types';
 
 jest.mock('@openedx/frontend-base');
 jest.mock('@src/data/api');
@@ -166,7 +166,7 @@ describe('Certificate API', () => {
       mockPost.mockResolvedValue({ data: { success: ['user1', 'user2'], errors: [] } });
 
       await grantBulkExceptions('course-v1:edX+Test+2024', {
-        learners: 'user1, user2',
+        learners: ['user1', 'user2'],
         notes: 'Test exception',
       });
 
@@ -184,7 +184,7 @@ describe('Certificate API', () => {
 
       await expect(
         grantBulkExceptions('course-v1:edX+Test+2024', {
-          learners: 'user1',
+          learners: ['user1'],
           notes: 'Test',
         })
       ).rejects.toThrow('Permission denied');
@@ -196,7 +196,7 @@ describe('Certificate API', () => {
       mockPost.mockResolvedValue({ data: { success: ['user1', 'user2'], errors: [] } });
 
       await invalidateCertificate('course-v1:edX+Test+2024', {
-        learners: 'user1, user2',
+        learners: ['user1', 'user2'],
         notes: 'Certificate invalidation',
       });
 
@@ -214,7 +214,7 @@ describe('Certificate API', () => {
 
       await expect(
         invalidateCertificate('course-v1:edX+Test+2024', {
-          learners: 'user1',
+          learners: ['user1'],
           notes: 'Test',
         })
       ).rejects.toThrow('Invalid request');

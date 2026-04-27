@@ -59,12 +59,12 @@ export interface CertificateQueryParams extends PaginationParams {
 }
 
 export interface GrantExceptionRequest {
-  learners: string,
+  learners: string[],
   notes?: string,
 }
 
 export interface InvalidateCertificateRequest {
-  learners: string,
+  learners: string[],
   notes?: string,
 }
 

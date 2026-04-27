@@ -1,9 +1,10 @@
 import { Button, SearchField } from '@openedx/paragon';
 import { SpinnerIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@openedx/frontend-base';
-import FilterDropdown from './FilterDropdown';
-import { CertificateFilter } from '../types';
-import messages from '../messages';
+import FilterDropdown from '@src/certificates/components/FilterDropdown';
+import { CertificateFilter } from '@src/certificates/types';
+import messages from '@src/certificates/messages';
+import '@src/certificates/CertificatesPage.scss';
 
 interface CertificatesToolbarProps {
   search: string,
@@ -44,14 +45,13 @@ const CertificatesToolbar = ({
 
   return (
     <div className="d-flex flex-wrap align-items-center justify-content-between mb-4 mx-4 mt-3 gap-3">
-      <div className="d-flex align-items-center gap-3 flex-shrink-1" style={{ minWidth: 0 }}>
+      <div className="d-flex align-items-center gap-3 flex-shrink-1 certificates-toolbar-wrapper">
         <SearchField
           onSubmit={onSearchChange}
           onChange={onSearchChange}
           placeholder={intl.formatMessage(messages.searchPlaceholder)}
           value={search}
-          className="flex-shrink-1"
-          style={{ minWidth: '320px', maxWidth: '400px' }}
+          className="flex-shrink-1 certificates-search-field"
         />
         <FilterDropdown
           value={filter}

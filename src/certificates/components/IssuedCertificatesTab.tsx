@@ -1,6 +1,6 @@
-import CertificateTable from './CertificateTable';
-import CertificatesToolbar from './CertificatesToolbar';
-import { CertificateData, CertificateFilter } from '../types';
+import CertificateTable from '@src/certificates/components/CertificateTable';
+import CertificatesToolbar from '@src/certificates/components/CertificatesToolbar';
+import { CertificateData, CertificateFilter } from '@src/certificates/types';
 
 interface IssuedCertificatesTabProps {
   data: CertificateData[],

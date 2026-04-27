@@ -1,6 +1,6 @@
 import { ActionRow, Button, ModalDialog } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
-import messages from '../messages';
+import messages from '@src/certificates/messages';
 
 interface DisableCertificatesModalProps {
   isOpen: boolean,

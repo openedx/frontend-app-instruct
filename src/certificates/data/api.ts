@@ -10,7 +10,7 @@ import type {
   InvalidateCertificateRequest,
   RemoveExceptionRequest,
   RemoveInvalidationRequest,
-} from '../types';
+} from '@src/certificates/types';
 
 export const getIssuedCertificates = async (
   courseId: string,
@@ -50,16 +50,10 @@ export const grantBulkExceptions = async (
   courseId: string,
   request: GrantExceptionRequest,
 ): Promise<{ success: string[], errors: { learner: string, message: string }[] }> => {
-  // Convert comma-separated string to array
-  const learnersArray = request.learners
-    .split(',')
-    .map((learner) => learner.trim())
-    .filter((learner) => learner.length > 0);
-
   const { data } = await getAuthenticatedHttpClient().post(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/certificates/exceptions`,
     {
-      learners: learnersArray,
+      learners: request.learners,
       notes: request.notes,
     },
   );
@@ -70,16 +64,10 @@ export const invalidateCertificate = async (
   courseId: string,
   request: InvalidateCertificateRequest,
 ): Promise<{ success: string[], errors: { learner: string, message: string }[] }> => {
-  // Convert comma-separated string to array
-  const learnersArray = request.learners
-    .split(',')
-    .map((learner) => learner.trim())
-    .filter((learner) => learner.length > 0);
-
   const { data } = await getAuthenticatedHttpClient().post(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/certificates/invalidations`,
     {
-      learners: learnersArray,
+      learners: request.learners,
       notes: request.notes,
     },
   );

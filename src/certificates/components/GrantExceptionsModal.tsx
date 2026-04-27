@@ -1,11 +1,11 @@
 import { useIntl } from '@openedx/frontend-base';
-import LearnerActionModal from './LearnerActionModal';
-import messages from '../messages';
+import LearnerActionModal from '@src/certificates/components/LearnerActionModal';
+import messages from '@src/certificates/messages';
 
 interface GrantExceptionsModalProps {
   isOpen: boolean,
   onClose: () => void,
-  onSubmit: (learners: string, notes: string) => void,
+  onSubmit: (learners: string[], notes: string) => void,
   isSubmitting: boolean,
 }
 

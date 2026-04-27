@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import GrantExceptionsModal from './GrantExceptionsModal';
+import GrantExceptionsModal from '@src/certificates/components/GrantExceptionsModal';
 import { renderWithIntl } from '@src/testUtils';
-import messages from '../messages';
+import messages from '@src/certificates/messages';
 
 describe('GrantExceptionsModal', () => {
   const mockOnClose = jest.fn();

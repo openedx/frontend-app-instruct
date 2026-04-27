@@ -1,4 +1,4 @@
-import { CertificateData, CertificateFilter, CertificateStatus, SpecialCase } from '../types';
+import { CertificateData, CertificateFilter, CertificateStatus, SpecialCase } from '@src/certificates/types';
 
 export const matchesFilter = (item: CertificateData, filter: CertificateFilter): boolean => {
   switch (filter) {

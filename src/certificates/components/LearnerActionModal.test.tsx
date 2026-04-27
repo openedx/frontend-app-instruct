@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import LearnerActionModal from './LearnerActionModal';
+import LearnerActionModal from '@src/certificates/components/LearnerActionModal';
 import { renderWithIntl } from '@src/testUtils';
 
 describe('LearnerActionModal', () => {

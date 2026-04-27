@@ -11,7 +11,7 @@ import {
   useToggleCertificateGeneration,
   useCertificateGenerationHistory,
   useRegenerateCertificates,
-} from './apiHook';
+} from '@src/certificates/data/apiHook';
 import {
   getIssuedCertificates,
   getInstructorTasks,
@@ -22,10 +22,10 @@ import {
   toggleCertificateGeneration,
   getCertificateGenerationHistory,
   regenerateCertificates,
-} from './api';
-import { CertificateFilter, CertificateStatus, SpecialCase } from '../types';
+} from '@src/certificates/data/api';
+import { CertificateFilter, CertificateStatus, SpecialCase } from '@src/certificates/types';
 
-jest.mock('./api');
+jest.mock('@src/certificates/data/api');
 
 const mockGetIssuedCertificates = getIssuedCertificates as jest.MockedFunction<typeof getIssuedCertificates>;
 const mockGetInstructorTasks = getInstructorTasks as jest.MockedFunction<typeof getInstructorTasks>;
@@ -237,14 +237,14 @@ describe('certificates api hooks', () => {
         wrapper: Wrapper,
       });
 
-      result.current.mutate({ learners: 'user1, user2', notes: 'Exception granted' });
+      result.current.mutate({ learners: ['user1', 'user2'], notes: 'Exception granted' });
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
 
       expect(mockGrantBulkExceptions).toHaveBeenCalledWith('course-v1:Test+Course+2024', {
-        learners: 'user1, user2',
+        learners: ['user1', 'user2'],
         notes: 'Exception granted',
       });
     });
@@ -260,7 +260,7 @@ describe('certificates api hooks', () => {
         wrapper: Wrapper,
       });
 
-      result.current.mutate({ learners: 'user1', notes: 'Test' });
+      result.current.mutate({ learners: ['user1'], notes: 'Test' });
 
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
@@ -281,14 +281,14 @@ describe('certificates api hooks', () => {
         wrapper: Wrapper,
       });
 
-      result.current.mutate({ learners: 'user1', notes: 'Certificate invalid' });
+      result.current.mutate({ learners: ['user1'], notes: 'Certificate invalid' });
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
       });
 
       expect(mockInvalidateCertificate).toHaveBeenCalledWith('course-v1:Test+Course+2024', {
-        learners: 'user1',
+        learners: ['user1'],
         notes: 'Certificate invalid',
       });
     });
@@ -304,7 +304,7 @@ describe('certificates api hooks', () => {
         wrapper: Wrapper,
       });
 
-      result.current.mutate({ learners: 'user1', notes: '' });
+      result.current.mutate({ learners: ['user1'], notes: '' });
 
       await waitFor(() => {
         expect(result.current.isError).toBe(true);

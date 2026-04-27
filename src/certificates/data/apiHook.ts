@@ -6,7 +6,7 @@ import type {
   InvalidateCertificateRequest,
   RemoveExceptionRequest,
   RemoveInvalidationRequest,
-} from '../types';
+} from '@src/certificates/types';
 import {
   getCertificateGenerationHistory,
   getInstructorTasks,
@@ -17,8 +17,8 @@ import {
   removeException,
   removeInvalidation,
   toggleCertificateGeneration,
-} from './api';
-import { certificatesQueryKeys } from './queryKeys';
+} from '@src/certificates/data/api';
+import { certificatesQueryKeys } from '@src/certificates/data/queryKeys';
 
 /**
  * Hook to fetch issued certificates

@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { DataTable, IconButton, OverlayTrigger, Popover, TableFooter } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import { useIntl } from '@openedx/frontend-base';
-import type { CertificateData, CertificateFilter } from '../types';
-import { CertificateFilter as FilterEnum } from '../types';
-import { CERTIFICATES_TABLE_PAGE_SIZE } from '../constants';
-import messages from '../messages';
+import type { CertificateData, CertificateFilter } from '@src/certificates/types';
+import { CertificateFilter as FilterEnum } from '@src/certificates/types';
+import { CERTIFICATES_TABLE_PAGE_SIZE } from '@src/certificates/constants';
+import messages from '@src/certificates/messages';
 
 interface CertificateTableProps {
   data: CertificateData[],

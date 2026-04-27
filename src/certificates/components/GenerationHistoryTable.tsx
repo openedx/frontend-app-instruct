@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { DataTable } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
-import type { CertificateGenerationHistory } from '../types';
-import messages from '../messages';
+import type { CertificateGenerationHistory } from '@src/certificates/types';
+import messages from '@src/certificates/messages';
 
 interface GenerationHistoryTableProps {
   data: CertificateGenerationHistory[],

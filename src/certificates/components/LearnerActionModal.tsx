@@ -4,7 +4,7 @@ import { ActionRow, Button, Form, ModalDialog } from '@openedx/paragon';
 interface LearnerActionModalProps {
   isOpen: boolean,
   onClose: () => void,
-  onSubmit: (learners: string, notes: string) => void,
+  onSubmit: (learners: string[], notes: string) => void,
   isSubmitting: boolean,
   title: string,
   description: string,
@@ -34,8 +34,14 @@ const LearnerActionModal = ({
   const [notes, setNotes] = useState('');
 
   const handleSubmit = () => {
-    if (learners.trim()) {
-      onSubmit(learners, notes);
+    // Parse comma-separated learners and filter out empty strings
+    const learnersArray = learners
+      .split(',')
+      .map((learner) => learner.trim())
+      .filter((learner) => learner.length > 0);
+
+    if (learnersArray.length > 0) {
+      onSubmit(learnersArray, notes);
       setLearners('');
       setNotes('');
     }

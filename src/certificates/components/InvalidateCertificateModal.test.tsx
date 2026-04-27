@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import InvalidateCertificateModal from './InvalidateCertificateModal';
+import InvalidateCertificateModal from '@src/certificates/components/InvalidateCertificateModal';
 import { renderWithIntl } from '@src/testUtils';
-import messages from '../messages';
+import messages from '@src/certificates/messages';
 
 describe('InvalidateCertificateModal', () => {
   const mockOnClose = jest.fn();

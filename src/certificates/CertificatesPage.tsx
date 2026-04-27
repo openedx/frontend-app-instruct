@@ -26,7 +26,7 @@ import { CertificateFilter } from '@src/certificates/types';
 import { CERTIFICATES_PAGE_SIZE, TAB_KEYS, MODAL_TITLES, ALERT_VARIANTS } from '@src/certificates/constants';
 import { getErrorMessage } from '@src/certificates/utils/errorHandling';
 import messages from '@src/certificates/messages';
-import './CertificatesPage.scss';
+import '@src/certificates/CertificatesPage.scss';
 
 const CertificatesPage = () => {
   const intl = useIntl();
@@ -74,7 +74,7 @@ const CertificatesPage = () => {
   const { mutate: toggleGeneration, isPending: isTogglingGeneration } = useToggleCertificateGeneration(courseId);
   const { mutate: regenerateCerts } = useRegenerateCertificates(courseId);
 
-  const handleGrantExceptions = useCallback((learners: string, notes: string) => {
+  const handleGrantExceptions = useCallback((learners: string[], notes: string) => {
     grantExceptions(
       { learners, notes },
       {
@@ -103,7 +103,7 @@ const CertificatesPage = () => {
     );
   }, [grantExceptions, showToast, showModal, intl]);
 
-  const handleInvalidateCertificate = useCallback((learners: string, notes: string) => {
+  const handleInvalidateCertificate = useCallback((learners: string[], notes: string) => {
     invalidateCert(
       { learners, notes },
       {

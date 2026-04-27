@@ -1,7 +1,7 @@
 import { Button, Dropdown, IconButton, Stack } from '@openedx/paragon';
 import { Add, Close, MoreVert } from '@openedx/paragon/icons';
 import { useIntl } from '@openedx/frontend-base';
-import messages from '../messages';
+import messages from '@src/certificates/messages';
 
 interface CertificatesPageHeaderProps {
   onGrantExceptions: () => void,
