@@ -4,7 +4,7 @@ import { useIntl } from '@openedx/frontend-base';
 import FilterDropdown from '@src/certificates/components/FilterDropdown';
 import { CertificateFilter } from '@src/certificates/types';
 import messages from '@src/certificates/messages';
-import '@src/certificates/CertificatesPage.scss';
+import '../CertificatesPage.scss';
 
 interface CertificatesToolbarProps {
   search: string,
