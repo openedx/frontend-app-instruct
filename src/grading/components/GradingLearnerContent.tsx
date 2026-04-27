@@ -110,7 +110,6 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
       description: intl.formatMessage(messages.deleteHistoryDescription),
       customAction: (
         <div className="d-flex flex-column gap-3">
-          <Button disabled={!usernameOrEmail || !blockId} onClick={handleResetAttempts}>{intl.formatMessage(messages.resetAttemptsButtonLabel)}</Button>
           <Button disabled={!usernameOrEmail || !blockId} onClick={handleDeleteHistory}>{intl.formatMessage(messages.deleteHistoryButtonLabel)}</Button>
         </div>
       ),
