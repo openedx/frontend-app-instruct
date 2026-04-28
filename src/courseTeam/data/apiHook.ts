@@ -13,7 +13,7 @@ export const useTeamMembers = (courseId: string, params: CourseTeamMemberQueryPa
 
 export const useRoles = (courseId: string, editableRoles = false) => (
   useQuery({
-    queryKey: courseTeamQueryKeys.roles(courseId),
+    queryKey: courseTeamQueryKeys.roles(courseId, editableRoles),
     queryFn: () => getRoles(courseId, editableRoles),
     enabled: !!courseId,
   })
