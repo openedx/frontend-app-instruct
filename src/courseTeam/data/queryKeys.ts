@@ -14,5 +14,5 @@ export const courseTeamQueryKeys = {
     params.emailOrUsername || '',
     params.role || ''
   ] as const,
-  roles: (courseId: string) => [...courseTeamQueryKeys.byCourse(courseId), 'roles'] as const,
+  roles: (courseId: string, editableRoles: boolean) => [...courseTeamQueryKeys.byCourse(courseId), 'roles', editableRoles] as const,
 };

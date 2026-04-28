@@ -176,7 +176,7 @@ describe('AddBetaTestersModal', () => {
 
   it('calls onClose when mutation succeeds with no failures', async () => {
     const mutateWithCallback = (_users: any, callbacks: any) => {
-      callbacks.onSuccess({ results: [{ identifier: 'test@example.com', userDoesNotExist: false }] });
+      callbacks.onSuccess({ results: [{ identifier: 'test@example.com', userDoesNotExist: false, isActive: true }] });
     };
     mutateMock.mockImplementation(mutateWithCallback);
 
@@ -194,12 +194,13 @@ describe('AddBetaTestersModal', () => {
     expect(defaultProps.onClose).toHaveBeenCalled();
   });
 
-  it('shows alert for failed users and still calls onClose', async () => {
+  it('shows alert for failed users, inactive users, and still calls onClose', async () => {
     const mutateWithCallback = (_users: any, callbacks: any) => {
       callbacks.onSuccess({
         results: [
-          { identifier: 'valid@example.com', userDoesNotExist: false },
-          { identifier: 'invalid@example.com', userDoesNotExist: true }
+          { identifier: 'valid@example.com', userDoesNotExist: false, isActive: true },
+          { identifier: 'invalid@example.com', userDoesNotExist: true, isActive: null },
+          { identifier: 'inactive@example.com', userDoesNotExist: false, isActive: false },
         ]
       });
     };
@@ -210,7 +211,7 @@ describe('AddBetaTestersModal', () => {
       messages.userIdentifierPlaceholder.defaultMessage
     );
     const user = userEvent.setup();
-    await user.type(textarea, 'valid@example.com, invalid@example.com');
+    await user.type(textarea, 'valid@example.com, invalid@example.com, inactive@example.com');
     const saveBtn = screen.getByRole('button', {
       name: messages.saveButton.defaultMessage,
     });
@@ -219,6 +220,11 @@ describe('AddBetaTestersModal', () => {
     expect(mockAddAlert).toHaveBeenCalledWith({
       type: 'danger',
       message: messages.failedBetaTesters.defaultMessage,
+      extraContent: expect.any(Array),
+    });
+    expect(mockAddAlert).toHaveBeenCalledWith({
+      type: 'warning',
+      message: messages.inactiveUsers.defaultMessage,
       extraContent: expect.any(Array),
     });
     expect(defaultProps.onClose).toHaveBeenCalled();

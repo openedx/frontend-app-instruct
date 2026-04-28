@@ -344,7 +344,7 @@ describe('enrollments api hooks', () => {
     const courseId = 'course-v1:edX+Test+2023';
 
     it('calls updateEnrollments and succeeds', async () => {
-      mockPostUpdateBetaTesters.mockResolvedValue({ results: [{ identifier: 'student1', userDoesNotExist: false }] });
+      mockPostUpdateBetaTesters.mockResolvedValue({ results: [{ identifier: 'student1', userDoesNotExist: false, isActive: true }] });
 
       const { result } = renderHook(() => useUpdateBetaTesters(courseId), {
         wrapper: createWrapper(),

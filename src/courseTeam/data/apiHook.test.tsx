@@ -111,7 +111,7 @@ describe('apiHook', () => {
       });
 
       expect(result.current.data).toEqual(mockRoles);
-      expect(mockGetRoles).toHaveBeenCalledWith('course-v1:org+course+run');
+      expect(mockGetRoles).toHaveBeenCalledWith('course-v1:org+course+run', false);
     });
 
     it('should handle error when fetching roles fails', async () => {

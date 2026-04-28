@@ -281,13 +281,12 @@ describe('GradingLearnerContent', () => {
   it('disables action buttons when learner or problem is not selected', () => {
     renderWithIntl(<GradingLearnerContent {...defaultProps} />);
 
-    const resetButtons = screen.getAllByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage });
+    const resetButton = screen.getByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage });
     const rescoreButton = screen.getByRole('button', { name: messages.rescoreSubmissionButtonLabel.defaultMessage });
     const deleteButton = screen.getByRole('button', { name: messages.deleteHistoryButtonLabel.defaultMessage });
     const taskStatusButton = screen.getByRole('button', { name: messages.taskStatusButtonLabel.defaultMessage });
 
-    expect(resetButtons[0]).toBeDisabled();
-    expect(resetButtons[1]).toBeDisabled();
+    expect(resetButton).toBeDisabled();
     expect(rescoreButton).toBeDisabled();
     expect(deleteButton).toBeDisabled();
     expect(taskStatusButton).toBeDisabled();

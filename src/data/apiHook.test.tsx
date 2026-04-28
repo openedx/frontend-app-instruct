@@ -36,6 +36,7 @@ const mockCourseData = {
   },
   gradebookUrl: 'http://example.com/gradebook',
   adminConsoleUrl: 'http://example.com/admin-console',
+  username: 'testuser',
 };
 
 const createWrapper = () => {

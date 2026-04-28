@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { ActionRow, Button, Form, FormControl, FormLabel, ModalDialog } from '@openedx/paragon';
+import { ActionRow, Button, Form, FormControl, FormLabel, ModalDialog, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { useAddTeamMember, useRemoveTeamMember, useRoles } from '@src/courseTeam/data/apiHook';
 import messages from '@src/courseTeam/messages';
 import { CourseTeamMember, Role } from '@src/courseTeam/types';
 import { useAlert } from '@src/providers/AlertProvider';
 import { TEAM_MEMBER_ACTION } from '../constants';
+import { useCourseInfo } from '@src/data/apiHook';
 
 interface EditTeamMemberModalProps {
   isOpen: boolean,
@@ -23,7 +24,10 @@ const EditTeamMemberModal = ({ isOpen, user, onClose }: EditTeamMemberModalProps
   const { mutate: removeTeamMember, isPending: isRemoving } = useRemoveTeamMember(courseId);
   const { showModal } = useAlert();
 
-  const { data: { results } = { results: [] } } = useRoles(courseId);
+  const { data: { results } = { results: [] } } = useRoles(courseId, true);
+
+  const { data } = useCourseInfo(courseId);
+  const { username: currentUser } = data || {};
 
   useEffect(() => {
     if (isOpen) {
@@ -111,11 +115,32 @@ const EditTeamMemberModal = ({ isOpen, user, onClose }: EditTeamMemberModalProps
         <Form.CheckboxSet onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleToggleRole(e.target.value)} value={keepRoles} name="keepRoles">
           {
             (user.roles || [])
-              .map((role: Role) => (
-                <Form.Checkbox className="mt-2" key={role.role} value={role.role}>
-                  {role.displayName}
-                </Form.Checkbox>
-              ))
+              .map((role: Role) => {
+                // Disable roles that user is not available to edit based on his current role
+                // Also Admins cannot remove their own Admin role
+                // Discussion Admins cannot remove their own Discussion Admins role, unless they have Admin role as well
+                const isDiscussionAdminWithoutAdminRole = currentUser === user.username && role.role === 'Administrator' && !user.roles.some(r => r.role === 'instructor');
+                const isOwnAdminRole = currentUser === user.username && role.role === 'instructor';
+                const isEditAvailable = results?.some(availableRole => availableRole.role === role.role) && !isOwnAdminRole && !isDiscussionAdminWithoutAdminRole;
+                return (
+                  isEditAvailable ? (
+                    <Form.Checkbox className="mt-2" key={role.role} value={role.role}>
+                      {role.displayName}
+                    </Form.Checkbox>
+                  ) : (
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={
+                        <Tooltip id={`tooltip-${role.role}`} className="info-tooltip">{isOwnAdminRole || isDiscussionAdminWithoutAdminRole ? intl.formatMessage(messages.cannotRemoveOwnRole) : intl.formatMessage(messages.roleNotEditable)}</Tooltip>
+                      }
+                    >
+                      <Form.Checkbox className="mt-2" key={role.role} value={role.role} disabled>
+                        {role.displayName}
+                      </Form.Checkbox>
+                    </OverlayTrigger>
+                  )
+                );
+              })
           }
         </Form.CheckboxSet>
         <FormLabel className="mt-4">{intl.formatMessage(messages.addRole)}</FormLabel>

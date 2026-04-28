@@ -206,6 +206,16 @@ const messages = defineMessages({
     defaultMessage: 'The following usernames and/or email addresses are invalid. All other beta testers have been added.',
     description: 'Message displaying the learners that could not be added as beta testers',
   },
+  inactiveUsers: {
+    id: 'instruct.enrollments.modals.addBetaTesters.inactiveUsers',
+    defaultMessage: 'The following users are inactive. They have been added as beta testers, but may not have access to the course until their accounts are active.',
+    description: 'Message displaying the learners that are inactive when adding beta testers',
+  },
+  inactiveLearner: {
+    id: 'instruct.enrollments.inactiveLearner',
+    defaultMessage: 'Inactive learner: {learner}',
+    description: 'Displayed when a learner is inactive',
+  },
   addBetaTesterError: {
     id: 'instruct.enrollments.modals.addBetaTesters.addBetaTesterError',
     defaultMessage: 'Error adding users as beta testers.',
