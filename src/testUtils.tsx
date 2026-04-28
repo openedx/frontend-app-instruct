@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 
 export const renderWithQueryClient = (ui: React.ReactElement) =>
-  renderWithIntl(
+  renderWithAlertAndIntl(
     <QueryClientProvider client={queryClient}>
       {ui}
     </QueryClientProvider>

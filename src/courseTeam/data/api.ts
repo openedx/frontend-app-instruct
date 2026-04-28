@@ -32,9 +32,9 @@ export const getTeamMembers = async (
   return camelCaseObject(data);
 };
 
-export const getRoles = async (courseId: string): Promise<Omit<DataList<Role>, 'numPages' | 'count'>> => {
+export const getRoles = async (courseId: string, editableRoles = false): Promise<Omit<DataList<Role>, 'numPages' | 'count'>> => {
   const { data } = await getAuthenticatedHttpClient().get(
-    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/team/roles`
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/team/roles${editableRoles ? '?editable=true' : ''}`
   );
   return camelCaseObject(data);
 };

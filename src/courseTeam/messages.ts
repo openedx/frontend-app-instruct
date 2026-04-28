@@ -245,6 +245,16 @@ const messages = defineMessages({
     id: 'instruct.courseTeam.viewStudioRoles',
     defaultMessage: 'View Studio Roles',
     description: 'Button label for viewing course team roles in Studio',
+  },
+  roleNotEditable: {
+    id: 'instruct.courseTeam.roleNotEditable',
+    defaultMessage: 'You do not have permission to change this role.',
+    description: 'Tooltip message displayed when a role cannot be edited by the user',
+  },
+  cannotRemoveOwnRole: {
+    id: 'instruct.courseTeam.cannotRemoveOwnRole',
+    defaultMessage: 'Admins cannot remove their own admin access.',
+    description: 'Tooltip message displayed when a user tries to remove their own admin role',
   }
 });
 

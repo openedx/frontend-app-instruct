@@ -11,10 +11,10 @@ export const useTeamMembers = (courseId: string, params: CourseTeamMemberQueryPa
   })
 );
 
-export const useRoles = (courseId: string) => (
+export const useRoles = (courseId: string, editableRoles = false) => (
   useQuery({
     queryKey: courseTeamQueryKeys.roles(courseId),
-    queryFn: () => getRoles(courseId),
+    queryFn: () => getRoles(courseId, editableRoles),
     enabled: !!courseId,
   })
 );
