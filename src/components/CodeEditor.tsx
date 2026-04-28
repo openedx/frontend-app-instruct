@@ -27,7 +27,6 @@ const CodeEditor = ({ data }: CodeEditorProps) => {
           extensions: [
             basicSetup,
             EditorState.readOnly.of(true),
-            EditorView.editable.of(false),
           ],
         }),
         parent: node,
