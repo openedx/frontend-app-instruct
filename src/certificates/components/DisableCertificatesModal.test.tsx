@@ -128,4 +128,15 @@ describe('DisableCertificatesModal', () => {
     const closeButtons = screen.queryAllByLabelText('Close');
     expect(closeButtons.length).toBeGreaterThan(0);
   });
+
+  it('calls onClose when save button is clicked without changes', async () => {
+    renderWithIntl(<DisableCertificatesModal {...defaultProps} />);
+    const user = userEvent.setup();
+
+    const saveButton = screen.getByRole('button', { name: messages.save.defaultMessage });
+    await user.click(saveButton);
+
+    expect(mockOnClose).toHaveBeenCalled();
+    expect(mockOnConfirm).not.toHaveBeenCalled();
+  });
 });

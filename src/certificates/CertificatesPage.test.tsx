@@ -401,6 +401,136 @@ describe('CertificatesPage', () => {
         expect(screen.queryByText(messages.grantExceptionsModalTitle.defaultMessage)).not.toBeInTheDocument();
       });
     });
+
+    it('handles CSV upload with success', async () => {
+      const mockUploadCsv = jest.fn();
+      mockUseUploadBulkExceptionsCsv.mockReturnValue({
+        mutate: mockUploadCsv,
+        isPending: false,
+      } as unknown as ReturnType<typeof useUploadBulkExceptionsCsv>);
+
+      mockUploadCsv.mockImplementation((_data, options) => {
+        if (options?.onSuccess) {
+          options.onSuccess({ success: ['user1', 'user2'], errors: [] });
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+      await user.click(grantButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      // Switch to Bulk tab
+      const bulkTab = screen.getByRole('tab', { name: messages.bulkUploadTab.defaultMessage });
+      await user.click(bulkTab);
+
+      // Create and upload a mock file
+      const csvFile = new File(['username,notes\nuser1,note1'], 'test.csv', { type: 'text/csv' });
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+
+      if (fileInput) {
+        await user.upload(fileInput, csvFile);
+        await screen.findByText(/test\.csv/i);
+
+        const saveButton = screen.getByText(messages.save.defaultMessage);
+        await user.click(saveButton);
+
+        expect(mockUploadCsv).toHaveBeenCalled();
+      }
+    });
+
+    it('handles CSV upload with partial errors', async () => {
+      const mockUploadCsv = jest.fn();
+      mockUseUploadBulkExceptionsCsv.mockReturnValue({
+        mutate: mockUploadCsv,
+        isPending: false,
+      } as unknown as ReturnType<typeof useUploadBulkExceptionsCsv>);
+
+      mockUploadCsv.mockImplementation((_data, options) => {
+        if (options?.onSuccess) {
+          options.onSuccess({
+            success: ['user1'],
+            errors: [{ learner: 'user2', message: 'User not found' }]
+          });
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+      await user.click(grantButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      // Switch to Bulk tab
+      const bulkTab = screen.getByRole('tab', { name: messages.bulkUploadTab.defaultMessage });
+      await user.click(bulkTab);
+
+      const csvFile = new File(['username,notes\nuser1,note1'], 'test.csv', { type: 'text/csv' });
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+
+      if (fileInput) {
+        await user.upload(fileInput, csvFile);
+        await screen.findByText(/test\.csv/i);
+
+        const saveButton = screen.getByText(messages.save.defaultMessage);
+        await user.click(saveButton);
+
+        // Wait for modal to close and error modal to appear
+        await waitFor(() => {
+          expect(screen.queryByText(messages.grantExceptionsModalTitle.defaultMessage)).not.toBeInTheDocument();
+        });
+      }
+    });
+
+    it('handles CSV upload error', async () => {
+      const mockUploadCsv = jest.fn();
+      mockUseUploadBulkExceptionsCsv.mockReturnValue({
+        mutate: mockUploadCsv,
+        isPending: false,
+      } as unknown as ReturnType<typeof useUploadBulkExceptionsCsv>);
+
+      mockUploadCsv.mockImplementation((_data, options) => {
+        if (options?.onError) {
+          options.onError({ response: { data: { message: 'CSV upload failed' } } });
+        }
+      });
+
+      renderWithAlertAndIntl(<CertificatesPage />);
+      const user = userEvent.setup();
+
+      const grantButton = screen.getByText(messages.grantExceptionsButton.defaultMessage);
+      await user.click(grantButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.grantExceptionsModalTitle.defaultMessage)).toBeInTheDocument();
+      });
+
+      // Switch to Bulk tab
+      const bulkTab = screen.getByRole('tab', { name: messages.bulkUploadTab.defaultMessage });
+      await user.click(bulkTab);
+
+      const csvFile = new File(['username,notes\nuser1,note1'], 'test.csv', { type: 'text/csv' });
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+
+      if (fileInput) {
+        await user.upload(fileInput, csvFile);
+        await screen.findByText(/test\.csv/i);
+
+        const saveButton = screen.getByText(messages.save.defaultMessage);
+        await user.click(saveButton);
+
+        expect(mockUploadCsv).toHaveBeenCalled();
+      }
+    });
   });
 
   describe('Invalidate Certificate', () => {

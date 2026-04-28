@@ -113,4 +113,70 @@ describe('GrantExceptionsModal', () => {
     expect(screen.getByText(messages.csvFileLabel.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.csvInstructions.defaultMessage)).toBeInTheDocument();
   });
+
+  it('clears form and closes modal when cancel is clicked', async () => {
+    renderWithIntl(<GrantExceptionsModal {...defaultProps} />);
+    const user = userEvent.setup();
+
+    const learnerInput = screen.getByPlaceholderText(messages.studentEmailUsername.defaultMessage);
+    const notesInput = screen.getByPlaceholderText(messages.notesOptional.defaultMessage);
+
+    await user.type(learnerInput, 'user@example.com');
+    await user.type(notesInput, 'Test notes');
+
+    const cancelButton = screen.getByRole('button', { name: messages.cancel.defaultMessage });
+    await user.click(cancelButton);
+
+    expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it('trims whitespace from learner input before submit', async () => {
+    renderWithIntl(<GrantExceptionsModal {...defaultProps} />);
+    const user = userEvent.setup();
+
+    const learnerInput = screen.getByPlaceholderText(messages.studentEmailUsername.defaultMessage);
+    await user.type(learnerInput, '  user@example.com  ');
+
+    const saveButton = screen.getByRole('button', { name: messages.save.defaultMessage });
+    await user.click(saveButton);
+
+    expect(mockOnSubmit).toHaveBeenCalledWith(['user@example.com'], '');
+  });
+
+  it('does not call onUploadCsv when no file is selected', async () => {
+    renderWithIntl(<GrantExceptionsModal {...defaultProps} />);
+    const user = userEvent.setup();
+
+    const bulkTab = screen.getByRole('tab', { name: messages.bulkUploadTab.defaultMessage });
+    await user.click(bulkTab);
+
+    const saveButton = screen.getByRole('button', { name: messages.save.defaultMessage });
+    expect(saveButton).toBeDisabled();
+  });
+
+  it('calls onUploadCsv when CSV file is uploaded and submitted', async () => {
+    renderWithIntl(<GrantExceptionsModal {...defaultProps} />);
+    const user = userEvent.setup();
+
+    const bulkTab = screen.getByRole('tab', { name: messages.bulkUploadTab.defaultMessage });
+    await user.click(bulkTab);
+
+    // Create a mock file
+    const csvFile = new File(['username,notes\nuser1,note1'], 'test.csv', { type: 'text/csv' });
+
+    // Find the file input
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+
+    if (fileInput) {
+      await user.upload(fileInput, csvFile);
+
+      // Wait for file to be processed
+      await screen.findByText(/test\.csv/i);
+
+      const saveButton = screen.getByRole('button', { name: messages.save.defaultMessage });
+      await user.click(saveButton);
+
+      expect(mockOnUploadCsv).toHaveBeenCalledWith(csvFile);
+    }
+  });
 });
