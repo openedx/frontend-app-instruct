@@ -2,6 +2,8 @@ import { EnvironmentTypes, SiteConfig, footerApp, headerApp, shellApp } from '@o
 
 import { instructorDashboardApp } from './src';
 
+import '@openedx/frontend-base/shell/style';
+
 const siteConfig: SiteConfig = {
   siteId: 'instructor-dev',
   siteName: 'Instructor Dev',
