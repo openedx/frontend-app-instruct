@@ -38,6 +38,7 @@ const AddBetaTestersModal = ({
     addBetaTesters({ identifier, action: 'add', autoEnroll, emailStudents }, {
       onSuccess: (data) => {
         const failedUsernames = data.results?.filter(user => user.userDoesNotExist).map(user => user.identifier) || [];
+        const inactiveUsernames = data.results?.filter(user => !user.isActive && user.isActive !== null && !user.userDoesNotExist).map(user => user.identifier) || [];
         if (failedUsernames.length > 0) {
           addAlert({
             type: 'danger',
@@ -45,6 +46,17 @@ const AddBetaTestersModal = ({
             extraContent: (
               failedUsernames.map((learner: string) => (
                 <p key={learner} className="mb-0">• {intl.formatMessage(messages.unknownLearner, { learner })}</p>
+              ))
+            )
+          });
+        }
+        if (inactiveUsernames.length > 0) {
+          addAlert({
+            type: 'warning',
+            message: intl.formatMessage(messages.inactiveUsers),
+            extraContent: (
+              inactiveUsernames.map((learner: string) => (
+                <p key={learner} className="mb-0">• {intl.formatMessage(messages.inactiveLearner, { learner })}</p>
               ))
             )
           });

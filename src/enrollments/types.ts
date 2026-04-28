@@ -39,5 +39,6 @@ export interface UpdateBetaTestersResponse {
   results: {
     identifier: string,
     userDoesNotExist: boolean,
+    isActive: boolean | null,
   }[],
 }
