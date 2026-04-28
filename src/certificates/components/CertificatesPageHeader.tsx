@@ -24,7 +24,7 @@ const CertificatesPageHeader = ({
           <Dropdown.Toggle
             as={IconButton}
             src={MoreVert}
-            alt="More actions"
+            alt={intl.formatMessage(messages.moreActionsButton)}
             id="certificates-more-menu"
           />
           <Dropdown.Menu>

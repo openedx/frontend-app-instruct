@@ -301,6 +301,11 @@ const messages = defineMessages({
     defaultMessage: 'Student Generated Certificates',
     description: 'Menu item for student generated certificates',
   },
+  moreActionsButton: {
+    id: 'instruct.certificates.moreActionsButton',
+    defaultMessage: 'More actions',
+    description: 'Button for more actions menu',
+  },
   studentGeneratedCertificatesModalTitle: {
     id: 'instruct.certificates.studentGeneratedCertificatesModalTitle',
     defaultMessage: 'Student Generated Certificates',
