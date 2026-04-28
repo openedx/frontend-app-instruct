@@ -7,11 +7,13 @@ import messages from '@src/certificates/messages';
 describe('GrantExceptionsModal', () => {
   const mockOnClose = jest.fn();
   const mockOnSubmit = jest.fn();
+  const mockOnUploadCsv = jest.fn();
 
   const defaultProps = {
     isOpen: true,
     onClose: mockOnClose,
     onSubmit: mockOnSubmit,
+    onUploadCsv: mockOnUploadCsv,
     isSubmitting: false,
   };
 
@@ -31,39 +33,44 @@ describe('GrantExceptionsModal', () => {
     expect(screen.getByText(messages.grantExceptionsModalDescription.defaultMessage)).toBeInTheDocument();
   });
 
-  it('renders learners input field', () => {
+  it('renders Individual and Bulk tabs', () => {
     renderWithIntl(<GrantExceptionsModal {...defaultProps} />);
 
-    expect(screen.getByText(messages.learnersLabel.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: messages.singleLearnerTab.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: messages.bulkUploadTab.defaultMessage })).toBeInTheDocument();
   });
 
-  it('renders notes input field', () => {
+  it('renders learner input field in Individual tab', () => {
     renderWithIntl(<GrantExceptionsModal {...defaultProps} />);
 
-    expect(screen.getByText(messages.notesLabel.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(messages.notesPlaceholder.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(messages.studentEmailUsername.defaultMessage)).toBeInTheDocument();
   });
 
-  it('renders submit and cancel buttons', () => {
+  it('renders notes input field in Individual tab', () => {
     renderWithIntl(<GrantExceptionsModal {...defaultProps} />);
 
-    expect(screen.getByRole('button', { name: messages.submit.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(messages.notesOptional.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders save and cancel buttons', () => {
+    renderWithIntl(<GrantExceptionsModal {...defaultProps} />);
+
+    expect(screen.getByRole('button', { name: messages.save.defaultMessage })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: messages.cancel.defaultMessage })).toBeInTheDocument();
   });
 
-  it('calls onSubmit with learners and notes when form is submitted', async () => {
+  it('calls onSubmit with learner and notes when form is submitted', async () => {
     renderWithIntl(<GrantExceptionsModal {...defaultProps} />);
     const user = userEvent.setup();
 
-    const learnersInput = screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage);
-    const notesInput = screen.getByPlaceholderText(messages.notesPlaceholder.defaultMessage);
+    const learnerInput = screen.getByPlaceholderText(messages.studentEmailUsername.defaultMessage);
+    const notesInput = screen.getByPlaceholderText(messages.notesOptional.defaultMessage);
 
-    await user.type(learnersInput, 'user1@example.com');
+    await user.type(learnerInput, 'user1@example.com');
     await user.type(notesInput, 'Granting exception for completion');
 
-    const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
-    await user.click(submitButton);
+    const saveButton = screen.getByRole('button', { name: messages.save.defaultMessage });
+    await user.click(saveButton);
 
     expect(mockOnSubmit).toHaveBeenCalledWith(['user1@example.com'], 'Granting exception for completion');
   });
@@ -81,10 +88,10 @@ describe('GrantExceptionsModal', () => {
   it('disables buttons when isSubmitting is true', () => {
     renderWithIntl(<GrantExceptionsModal {...defaultProps} isSubmitting={true} />);
 
-    const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
+    const saveButton = screen.getByRole('button', { name: messages.save.defaultMessage });
     const cancelButton = screen.getByRole('button', { name: messages.cancel.defaultMessage });
 
-    expect(submitButton).toBeDisabled();
+    expect(saveButton).toBeDisabled();
     expect(cancelButton).toBeDisabled();
   });
 
@@ -94,16 +101,16 @@ describe('GrantExceptionsModal', () => {
     expect(screen.queryByText(messages.grantExceptionsModalTitle.defaultMessage)).not.toBeInTheDocument();
   });
 
-  it('handles multiple learners input', async () => {
+  it('renders CSV upload in Bulk tab', async () => {
     renderWithIntl(<GrantExceptionsModal {...defaultProps} />);
     const user = userEvent.setup();
 
-    const learnersInput = screen.getByPlaceholderText(messages.learnersPlaceholder.defaultMessage);
-    await user.type(learnersInput, 'user1, user2, user3');
+    // Click on Bulk tab
+    const bulkTab = screen.getByRole('tab', { name: messages.bulkUploadTab.defaultMessage });
+    await user.click(bulkTab);
 
-    const submitButton = screen.getByRole('button', { name: messages.submit.defaultMessage });
-    await user.click(submitButton);
-
-    expect(mockOnSubmit).toHaveBeenCalledWith(['user1', 'user2', 'user3'], '');
+    // Check for CSV upload elements
+    expect(screen.getByText(messages.csvFileLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.csvInstructions.defaultMessage)).toBeInTheDocument();
   });
 });
