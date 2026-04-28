@@ -64,6 +64,7 @@ describe('DisableCertificatesModal', () => {
 
     const buttons = screen.getAllByRole('button');
     const closeButton = buttons.find(btn => btn.textContent === messages.close.defaultMessage);
+    if (!closeButton) throw new Error('Close button not found');
     await user.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);

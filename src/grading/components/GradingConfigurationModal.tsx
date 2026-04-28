@@ -3,7 +3,6 @@ import { Button, ModalDialog } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
 import messages from '@src/grading/messages';
 import { useGradingConfiguration } from '@src/grading/data/apiHook';
-import CodeEditor from '@src/components/CodeEditor';
 
 interface GradingConfigurationModalProps {
   isOpen: boolean,
@@ -16,16 +15,14 @@ const GradingConfigurationModal = ({ isOpen, onClose }: GradingConfigurationModa
   const { data = null } = useGradingConfiguration(courseId);
 
   return (
-    <ModalDialog size="lg" title={intl.formatMessage(messages.gradingConfiguration)} isOpen={isOpen} onClose={onClose} isOverflowVisible={false}>
-      <ModalDialog.Header className="p-3 pl-4 border-bottom">
-        <ModalDialog.Title as="h3" className="m-0">
-          {intl.formatMessage(messages.gradingConfiguration)}
-        </ModalDialog.Title>
+    <ModalDialog title={intl.formatMessage(messages.gradingConfiguration)} isOpen={isOpen} onClose={onClose} isOverflowVisible={false}>
+      <ModalDialog.Header>
+        <h3>{intl.formatMessage(messages.gradingConfiguration)}</h3>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        {data ? <CodeEditor data={data} /> : <p>{intl.formatMessage(messages.noGradingConfiguration)}</p>}
+        <p>{data ?? intl.formatMessage(messages.noGradingConfiguration)}</p>
       </ModalDialog.Body>
-      <ModalDialog.Footer className="p-4 border-top">
+      <ModalDialog.Footer>
         <Button onClick={onClose}>{intl.formatMessage(messages.close)}</Button>
       </ModalDialog.Footer>
     </ModalDialog>
