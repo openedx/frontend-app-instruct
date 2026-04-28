@@ -19,19 +19,20 @@ const AttemptsList = () => {
   });
 
   const columns = useMemo(() => [
-    { accessor: 'username', Header: intl.formatMessage(messages.username), Filter: UsernameFilter, },
+    { accessor: 'user.username', Header: intl.formatMessage(messages.username), Filter: UsernameFilter, },
     { accessor: 'examName', Header: intl.formatMessage(messages.examName), disableFilters: true, },
-    { accessor: 'timeLimit', Header: intl.formatMessage(messages.timeLimit), disableFilters: true, },
+    { accessor: 'allowedTimeLimitMins', Header: intl.formatMessage(messages.timeLimit), disableFilters: true, },
     { accessor: 'type', Header: intl.formatMessage(messages.type), disableFilters: true, },
-    { accessor: 'startedAt', Header: intl.formatMessage(messages.startedAt), disableFilters: true, },
-    { accessor: 'completedAt', Header: intl.formatMessage(messages.completedAt), disableFilters: true, },
+    { accessor: 'startTime', Header: intl.formatMessage(messages.startedAt), disableFilters: true, },
+    { accessor: 'endTime', Header: intl.formatMessage(messages.completedAt), disableFilters: true, },
     { accessor: 'status', Header: intl.formatMessage(messages.status), disableFilters: true, },
   ], [intl]);
 
   const handleFetchData = (data: DataTableFetchDataProps) => {
-    const emailOrUsernameFilter = data.filters?.find((f) => f.id === 'username');
-    if (emailOrUsernameFilter && emailOrUsernameFilter.value !== filters.emailOrUsername) {
-      setFilters((prevFilters) => ({ ...prevFilters, emailOrUsername: emailOrUsernameFilter.value, page: 0 }));
+    const emailOrUsernameFilter = data.filters?.find((f) => f.id === 'user.username');
+    const newEmailOrUsername = emailOrUsernameFilter ? emailOrUsernameFilter.value : '';
+    if (filters.emailOrUsername !== newEmailOrUsername) {
+      setFilters((prevFilters) => ({ ...prevFilters, emailOrUsername: newEmailOrUsername, page: 0 }));
       return;
     }
     if (data.pageIndex !== filters.page) {

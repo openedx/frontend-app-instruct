@@ -15,23 +15,51 @@ const mockLearnerData = {
   fullName: 'Test User',
   email: 'test@email.com',
   isEnrolled: true,
+  progressUrl: 'http://example.com/progress',
 };
 
 describe('SpecifyLearnerField', () => {
-  describe('when learner is found', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    (useCourseInfo as jest.Mock).mockReturnValue({ data: { permissions: { admin: true, dataResearcher: false } } });
+  });
+
+  describe('when learner is provided', () => {
     beforeEach(() => {
-      jest.resetAllMocks();
-      (useCourseInfo as jest.Mock).mockReturnValue({ data: { permissions: { admin: true, dataResearcher: false } } });
       (useLearner as jest.Mock).mockReturnValue({
         data: mockLearnerData,
         refetch: jest.fn().mockResolvedValue({ data: mockLearnerData }),
         error: null,
       });
     });
-    it('renders label and input', () => {
-      renderWithIntl(<SpecifyLearnerField onClickSelect={jest.fn()} />);
-      expect(screen.getByText(messages.specifyLearner.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage)).toBeInTheDocument();
+
+    it('renders selected learner label when learner is provided', () => {
+      renderWithIntl(<SpecifyLearnerField learner={mockLearnerData} onClickSelect={jest.fn()} />);
+      expect(screen.getByText(messages.selectedLearner.defaultMessage)).toBeInTheDocument();
+      expect(screen.queryByText(messages.specifyLearner.defaultMessage)).not.toBeInTheDocument();
+    });
+
+    it('shows learner details when learner is provided', () => {
+      renderWithIntl(<SpecifyLearnerField learner={mockLearnerData} onClickSelect={jest.fn()} />);
+      expect(screen.getByText(mockLearnerData.username)).toBeInTheDocument();
+      expect(screen.getByText(mockLearnerData.fullName)).toBeInTheDocument();
+      expect(screen.getByText(mockLearnerData.email)).toBeInTheDocument();
+    });
+
+    it('hides input field when learner is shown', () => {
+      renderWithIntl(<SpecifyLearnerField learner={mockLearnerData} onClickSelect={jest.fn()} />);
+      const input = screen.queryByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage);
+      expect(input?.parentNode).toHaveClass('d-none');
+    });
+  });
+
+  describe('when learner is found after search', () => {
+    beforeEach(() => {
+      (useLearner as jest.Mock).mockReturnValue({
+        data: null,
+        refetch: jest.fn().mockResolvedValue({ data: mockLearnerData }),
+        error: null,
+      });
     });
 
     it('renders select button', () => {
@@ -48,6 +76,43 @@ describe('SpecifyLearnerField', () => {
       const button = screen.getByText(messages.select.defaultMessage);
       await user.click(button);
       expect(handleClick).toHaveBeenCalledWith(mockLearnerData.username);
+    });
+
+    it('changes to selected learner label after selection', async () => {
+      const handleClick = jest.fn();
+      renderWithIntl(<SpecifyLearnerField onClickSelect={handleClick} />);
+
+      // Initially shows default label
+      expect(screen.getByText(messages.specifyLearner.defaultMessage)).toBeInTheDocument();
+
+      // After learner is found and has username, should show selected label
+      renderWithIntl(<SpecifyLearnerField learner={mockLearnerData} onClickSelect={handleClick} />);
+      expect(screen.getByText(messages.selectedLearner.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  describe('when no learner is provided', () => {
+    beforeEach(() => {
+      (useLearner as jest.Mock).mockReturnValue({
+        data: mockLearnerData,
+        refetch: jest.fn().mockResolvedValue({ data: mockLearnerData }),
+        error: null,
+      });
+    });
+
+    it('renders default label', () => {
+      (useLearner as jest.Mock).mockReturnValue({
+        data: null,
+        refetch: jest.fn().mockResolvedValue({ data: mockLearnerData }),
+        error: null,
+      });
+      renderWithIntl(<SpecifyLearnerField onClickSelect={jest.fn()} />);
+      expect(screen.getByText(messages.specifyLearner.defaultMessage)).toBeInTheDocument();
+    });
+
+    it('renders input field and placeholder', () => {
+      renderWithIntl(<SpecifyLearnerField onClickSelect={jest.fn()} />);
+      expect(screen.getByPlaceholderText(messages.specifyLearnerPlaceholder.defaultMessage)).toBeInTheDocument();
     });
 
     it('input has correct name attribute', () => {

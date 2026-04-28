@@ -59,7 +59,7 @@ describe('InvalidateCertificateModal', () => {
     await user.click(saveButton);
 
     expect(mockOnSubmit).toHaveBeenCalledWith(
-      ['user1@example.com'],
+      ['user1@example.com', 'user2@example.com'],
       'Certificate invalidated due to violation'
     );
   });

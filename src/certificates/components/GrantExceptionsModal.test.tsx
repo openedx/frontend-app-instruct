@@ -112,5 +112,6 @@ describe('GrantExceptionsModal', () => {
     // Check for CSV upload elements
     expect(screen.getByText(messages.csvFileLabel.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.csvInstructions.defaultMessage)).toBeInTheDocument();
+    expect(mockOnSubmit).toHaveBeenCalledWith(['user1', 'user2', 'user3'], '');
   });
 });

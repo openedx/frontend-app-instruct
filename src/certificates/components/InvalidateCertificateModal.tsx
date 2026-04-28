@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useIntl } from '@openedx/frontend-base';
 import { ActionRow, Button, Form, ModalDialog } from '@openedx/paragon';
+import LearnerActionModal from '@src/certificates/components/LearnerActionModal';
 import messages from '@src/certificates/messages';
 
 interface InvalidateCertificateModalProps {
