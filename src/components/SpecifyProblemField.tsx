@@ -127,7 +127,7 @@ const SpecifyProblemField = forwardRef<SpecifyProblemFieldRef, SpecifyProblemFie
       </div>
       {showSelectedLocation && error
       && isAxiosError(error)
-      && (error.response?.status === 400) && (
+      && ((error.response?.status === 400) || (error.response?.status === 404)) && (
         <p className="text-danger-500 mb-0 x-small mt-2">
           {intl.formatMessage(messages.problemNotFound, { identifier: inputValue })}
         </p>

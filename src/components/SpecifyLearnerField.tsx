@@ -18,6 +18,24 @@ interface SpecifyLearnerFieldRef {
   reset: () => void,
 }
 
+type ErrorState = 'not_enrolled' | 'not_found' | 'generic_error' | null;
+
+const errorMessages = {
+  not_found: messages.learnerNotFound,
+  generic_error: messages.learnerGenericError,
+  not_enrolled: messages.learnerNotEnrolled,
+};
+
+const getErrorState = (error: Error | null, data?: SelectedLearner): ErrorState => {
+  const isNotFoundError = isAxiosError(error)
+    && (error.response?.status === 404 || error.response?.status === 400);
+
+  if (isNotFoundError) return 'not_found';
+  if (data && !data.isEnrolled) return 'not_enrolled';
+  if (error && !isNotFoundError) return 'generic_error';
+  return null;
+};
+
 const initialLearnerState = {
   username: '',
   fullName: '',
@@ -30,18 +48,20 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [identifier, setIdentifier] = useState('');
   const [showLearner, enableShowLearner, disableShowLearner] = useToggle(!!learner);
+  const [errorState, setErrorState] = useState<ErrorState>(null);
   const { data: courseInfo } = useCourseInfo(courseId);
   const permissions = courseInfo?.permissions || { admin: false, dataResearcher: false };
   const { inputValue, handleChange, resetFilter } = useDebouncedFilter({
     filterValue: identifier,
     setFilter: setIdentifier,
   });
-  const { data, refetch, error } = useLearner(courseId, inputValue);
+  const { data, refetch } = useLearner(courseId, inputValue);
 
   const resetState = () => {
     resetFilter();
     onClickSelect('');
     disableShowLearner();
+    setErrorState(null);
   };
 
   useImperativeHandle(ref, () => ({
@@ -52,6 +72,10 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     handleChange(event.target.value);
+
+    if (errorState) {
+      setErrorState(null);
+    }
 
     if (showLearner) {
       disableShowLearner();
@@ -64,6 +88,8 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
         // Need to pass empty value if learner is not valid to clear out any previously selected learner
         // We could have other conditions/fields depending on valid learner
         const formValue = !result.error && result.data?.isEnrolled ? inputValue : '';
+
+        setErrorState(getErrorState(result.error, result?.data));
         onClickSelect(formValue);
         enableShowLearner();
       });
@@ -102,20 +128,11 @@ const SpecifyLearnerField = forwardRef<SpecifyLearnerFieldRef, SpecifyLearnerFie
           <Button onClick={handleClickSelect} disabled={!inputValue}>{intl.formatMessage(messages.select)}</Button>
         )}
       </div>
-      {showLearner && error
-      && isAxiosError(error)
-      && error.response?.status === 404 && (
+      {showLearner && errorState && (
         <p className="text-danger-500 mb-0 x-small mt-2">
-          {intl.formatMessage(messages.learnerNotFound, { identifier })}
+          {intl.formatMessage(errorMessages[errorState], { identifier: inputValue })}
         </p>
       )}
-      {
-        showLearner && !error && !selectedLearner?.isEnrolled && (
-          <p className="text-danger-500 mb-0 x-small mt-2">
-            {intl.formatMessage(messages.learnerNotEnrolled, { identifier })}
-          </p>
-        )
-      }
     </FormGroup>
   );
 });
