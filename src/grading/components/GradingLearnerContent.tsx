@@ -1,14 +1,14 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { useIntl } from '@openedx/frontend-base';
-import { Button, FormControl } from '@openedx/paragon';
+import { Button, FormControl, Stack } from '@openedx/paragon';
 import ActionCard, { ActionCardProps } from '@src/components/ActionCard';
 import SpecifyLearnerField from '@src/components/SpecifyLearnerField';
 import SpecifyProblemField from '@src/components/SpecifyProblemField';
 import { useChangeScore, useDeleteHistory, useRescoreSubmission, useResetAttempts } from '@src/grading/data/apiHook';
 import messages from '@src/grading/messages';
 import { GradingToolsType } from '@src/grading/types';
-import { usePendingTasks } from '@src/data/apiHook';
+import { useLearner, usePendingTasks, useProblemDetails } from '@src/data/apiHook';
 
 interface GradingLearnerContentProps {
   toolType: GradingToolsType,
@@ -23,6 +23,9 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
   const [score, setScore] = useState('');
   const learnerFieldRef = useRef<{ reset: () => void }>(null);
   const problemFieldRef = useRef<{ reset: () => void }>(null);
+  const [showCurrentStatus, setShowCurrentStatus] = useState(false);
+  const { data: problemData = { currentScore: { score: 0, total: null }, attempts: { current: null, total: 0 } } } = useProblemDetails(courseId, blockId, usernameOrEmail);
+  const { data: learnerData = { username: '', progressUrl: '' } } = useLearner(courseId, usernameOrEmail);
 
   const { mutate: resetAttempts } = useResetAttempts(courseId);
   const { mutate: deleteHistory } = useDeleteHistory(courseId);
@@ -64,6 +67,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
     setUsernameOrEmail('');
     setBlockId('');
     setScore('');
+    setShowCurrentStatus(false);
     learnerFieldRef.current?.reset();
     problemFieldRef.current?.reset();
   }, [toolType]);
@@ -161,6 +165,9 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
 
   const handleProblemChange = (location: string): void => {
     setBlockId(location);
+    if (usernameOrEmail && location) {
+      setShowCurrentStatus(true);
+    }
   };
 
   const handleLearnerChange = (usernameOrEmail: string): void => {
@@ -168,6 +175,9 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
     // Reset problem field when learner changes due to progress and attempts change for every learner
     setBlockId('');
     problemFieldRef.current?.reset();
+    if (showCurrentStatus) {
+      setShowCurrentStatus(false);
+    }
   };
 
   return (
@@ -196,6 +206,27 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
           />
         </div>
       </div>
+      {
+        showCurrentStatus && (
+          <>
+            <p className="text-primary-500 x-small mb-0 mt-3">{intl.formatMessage(messages.currentScore)}</p>
+            <Stack direction="horizontal" gap={2} className="align-items-center justify-content-between mr-3.5">
+              <Stack direction="horizontal" gap={5} className="align-items-end">
+                <p className="text-primary-500 mb-0">{learnerData.username}</p>
+                <Stack className="align-items-center">
+                  <p className="x-small mb-0 text-gray-500">{intl.formatMessage(messages.score)}</p>
+                  <p className="lead m-0 text-primary-700">{problemData.currentScore?.score || 0} {problemData.currentScore?.total && `/ ${problemData.currentScore.total}`}</p>
+                </Stack>
+                <Stack className="align-items-center">
+                  <p className="x-small mb-0 text-gray-500">{intl.formatMessage(messages.attempts)}</p>
+                  <p className="lead m-0 text-primary-700">{problemData.attempts?.current || 0} {problemData.attempts?.total && `/ ${problemData.attempts.total}`}</p>
+                </Stack>
+              </Stack>
+              <Button as="a" href={learnerData.progressUrl} className="bg-white" variant="outline-primary">{intl.formatMessage(messages.viewProgress)}</Button>
+            </Stack>
+          </>
+        )
+      }
       {
         rows.map(({ title, description, buttonLabel, customAction, onButtonClick }, index) => (
           <ActionCard key={title} buttonLabel={buttonLabel} description={description} title={title} hasBorderBottom={index !== rows.length - 1} customAction={customAction} onButtonClick={onButtonClick} />

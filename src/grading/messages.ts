@@ -170,6 +170,26 @@ const messages = defineMessages({
     id: 'instruct.grading.rescoreAllSubmissionButtonLabel',
     defaultMessage: 'Rescore All Learners\' Submissions',
     description: 'Button label for the rescore submission action card in the all learners view'
+  },
+  currentScore: {
+    id: 'instruct.grading.currentScore',
+    defaultMessage: 'Current Score',
+    description: 'Label for the current score displayed in the single learner view'
+  },
+  viewProgress: {
+    id: 'instruct.grading.viewProgress',
+    defaultMessage: 'View Progress Page',
+    description: 'Label for the view progress button displayed next to the current score in the single learner view'
+  },
+  score: {
+    id: 'instruct.grading.score',
+    defaultMessage: 'Score',
+    description: 'Label for the score displayed in the current status section of the single learner view'
+  },
+  attempts: {
+    id: 'instruct.grading.attempts',
+    defaultMessage: 'Attempts',
+    description: 'Label for the attempts displayed in the current status section of the single learner view'
   }
 });
 
