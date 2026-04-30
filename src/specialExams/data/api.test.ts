@@ -103,7 +103,7 @@ describe('specialExams api', () => {
       ],
     };
 
-    const params: AttemptsParams = { page: 1, pageSize: 20, emailOrUsername: '' };
+    const params: AttemptsParams = { page: 1, pageSize: 20, emailOrUsername: '', ordering: '' };
 
     beforeEach(() => {
       mockHttpClient.get.mockResolvedValue({ data: mockAttemptsData });
@@ -125,7 +125,7 @@ describe('specialExams api', () => {
 
     it('handles search parameter correctly', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const paramsWithSearch: AttemptsParams = { page: 0, pageSize: 10, emailOrUsername: 'student1' };
+      const paramsWithSearch: AttemptsParams = { page: 0, pageSize: 10, emailOrUsername: 'student1', ordering: '' };
 
       await getAttempts(courseId, paramsWithSearch);
 
@@ -136,7 +136,7 @@ describe('specialExams api', () => {
 
     it('handles different page and pageSize parameters', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const customParams: AttemptsParams = { page: 5, pageSize: 50, emailOrUsername: '' };
+      const customParams: AttemptsParams = { page: 5, pageSize: 50, emailOrUsername: '', ordering: '' };
 
       await getAttempts(courseId, customParams);
 
@@ -147,7 +147,7 @@ describe('specialExams api', () => {
 
     it('handles empty emailOrUsername parameter', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const paramsWithEmptySearch: AttemptsParams = { page: 2, pageSize: 25, emailOrUsername: '' };
+      const paramsWithEmptySearch: AttemptsParams = { page: 2, pageSize: 25, emailOrUsername: '', ordering: '' };
 
       await getAttempts(courseId, paramsWithEmptySearch);
 
@@ -168,7 +168,7 @@ describe('specialExams api', () => {
 
     it('handles special characters in courseId and search', async () => {
       const courseId = 'course-v1:edX+Special%20Course+2023';
-      const paramsWithSpecialChars: AttemptsParams = { page: 0, pageSize: 20, emailOrUsername: 'user@example.com' };
+      const paramsWithSpecialChars: AttemptsParams = { page: 0, pageSize: 20, emailOrUsername: 'user@example.com', ordering: '' };
 
       await getAttempts(courseId, paramsWithSpecialChars);
 
@@ -179,7 +179,7 @@ describe('specialExams api', () => {
   });
 
   describe('getAllowances', () => {
-    const params: AttemptsParams = { page: 1, pageSize: 25, emailOrUsername: '' };
+    const params: AttemptsParams = { page: 1, pageSize: 25, emailOrUsername: '', ordering: '' };
 
     it('makes correct API call and returns camelCase data', async () => {
       const courseId = 'course-v1:edX+Test+2023';
@@ -220,7 +220,7 @@ describe('specialExams api', () => {
 
     it('handles search parameter correctly', async () => {
       const courseId = 'course-v1:edX+Test+2023';
-      const paramsWithSearch: AttemptsParams = { page: 0, pageSize: 20, emailOrUsername: 'john@example.com' };
+      const paramsWithSearch: AttemptsParams = { page: 0, pageSize: 20, emailOrUsername: 'john@example.com', ordering: '' };
       const mockResponseData = { count: 0, num_pages: 0, results: [] };
 
       mockHttpClient.get.mockResolvedValue({ data: mockResponseData });

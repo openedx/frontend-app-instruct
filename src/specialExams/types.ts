@@ -16,6 +16,7 @@ export interface Attempt {
 
 export interface AttemptsParams extends PaginationParams {
   emailOrUsername: string,
+  ordering: string,
 }
 
 export interface Allowance {

@@ -1,4 +1,5 @@
 import { getAuthenticatedHttpClient, camelCaseObject, snakeCaseObject } from '@openedx/frontend-base';
+import { snakeCase } from 'lodash';
 import { getApiBaseUrl } from '@src/data/api';
 import { DataList } from '@src/types';
 import { AddAllowanceParams, Allowance, Attempt, AttemptsParams, DeleteAllowanceParams, SpecialExam } from '../types';
@@ -11,6 +12,11 @@ const getQueryParams = (params: AttemptsParams) => {
 
   if (params.emailOrUsername) {
     queryParams.append('search', params.emailOrUsername);
+  }
+
+  if (params.ordering) {
+    const orderingParam = params.ordering.split('.').map((part) => snakeCase(part)).join('.');
+    queryParams.append('ordering', orderingParam);
   }
 
   return queryParams;

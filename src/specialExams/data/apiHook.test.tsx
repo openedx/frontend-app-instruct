@@ -106,7 +106,7 @@ describe('specialExams api hooks', () => {
 
   describe('useAttempts', () => {
     const courseId = 'course-v1:edX+Test+2023';
-    const params: AttemptsParams = { page: 1, pageSize: 20, emailOrUsername: '' };
+    const params: AttemptsParams = { page: 1, pageSize: 20, emailOrUsername: '', ordering: '' };
 
     it('fetches attempts successfully', async () => {
       mockGetAttempts.mockResolvedValue(mockAttemptsData);
@@ -144,7 +144,7 @@ describe('specialExams api hooks', () => {
     });
 
     it('handles different params parameters', async () => {
-      const customParams: AttemptsParams = { page: 3, pageSize: 50, emailOrUsername: 'student1' };
+      const customParams: AttemptsParams = { page: 3, pageSize: 50, emailOrUsername: 'student1', ordering: '' };
       mockGetAttempts.mockResolvedValue(mockAttemptsData);
 
       const { result } = renderHook(() => useAttempts(courseId, customParams), {
@@ -203,7 +203,7 @@ describe('specialExams api hooks', () => {
       expect(mockGetAttempts).toHaveBeenCalledWith(courseId, params);
 
       // Change params
-      const newParams: AttemptsParams = { page: 2, pageSize: 10, emailOrUsername: 'student2' };
+      const newParams: AttemptsParams = { page: 2, pageSize: 10, emailOrUsername: 'student2', ordering: '' };
       rerender({ params: newParams });
 
       await waitFor(() => {
@@ -245,7 +245,7 @@ describe('specialExams api hooks', () => {
 
   describe('useAllowances', () => {
     const courseId = 'course-v1:edX+Test+2023';
-    const params: AttemptsParams = { page: 0, pageSize: 25, emailOrUsername: '' };
+    const params: AttemptsParams = { page: 0, pageSize: 25, emailOrUsername: '', ordering: '' };
 
     it('fetches allowances successfully', async () => {
       mockGetAllowances.mockResolvedValue(mockAllowancesData);
