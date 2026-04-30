@@ -39,6 +39,7 @@ export interface PendingTask {
 export interface DataTableFetchDataProps {
   filters: { id: string, value: string }[],
   pageIndex: number,
+  sortBy: { id: string, desc: boolean }[],
 }
 
 export interface Learner {

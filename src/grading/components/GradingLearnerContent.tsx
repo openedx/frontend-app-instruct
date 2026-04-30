@@ -165,6 +165,9 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
 
   const handleLearnerChange = (usernameOrEmail: string): void => {
     setUsernameOrEmail(usernameOrEmail);
+    // Reset problem field when learner changes due to progress and attempts change for every learner
+    setBlockId('');
+    problemFieldRef.current?.reset();
   };
 
   return (

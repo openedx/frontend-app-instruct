@@ -81,7 +81,7 @@ const EditAllowanceModal = ({ isOpen, onClose, allowance }: EditAllowanceModalPr
           </Form.Group>
           <Form.Group controlId="select-exam-type">
             <Form.Label className="text-primary-500 x-small">{intl.formatMessage(messages.selectExamType)}:</Form.Label>
-            <Form.Control as="select" disabled>
+            <Form.Control as="select" disabled controlClassName="text-capitalize">
               <option value="">{allowance.proctoredExam.examType}</option>
             </Form.Control>
           </Form.Group>

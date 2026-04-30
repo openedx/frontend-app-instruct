@@ -156,6 +156,11 @@ const messages = defineMessages({
     defaultMessage: 'Selected Learner:',
     description: 'Label for specify learner field when a learner has been selected',
   },
+  learnerGenericError: {
+    id: 'instruct.specifyLearner.learnerGenericError',
+    defaultMessage: 'An error occurred while looking up {identifier}. Please try again.',
+    description: 'Generic error message displayed when there is an error looking up a learner based on the provided identifier (email or username)',
+  }
 });
 
 export default messages;

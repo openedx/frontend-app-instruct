@@ -19,7 +19,7 @@ interface AllowanceList {
 const AllowancesList = ({ onClickAdd, onEdit, onDelete }: AllowanceList) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const [filters, setFilters] = useState({ page: 0, emailOrUsername: '' });
+  const [filters, setFilters] = useState({ page: 0, emailOrUsername: '', ordering: '' });
   const { data = { results: [], count: 0, numPages: 1 }, isLoading = false } = useAllowances(courseId, {
     pageSize: ALLOWANCES_PAGE_SIZE,
     ...filters,
@@ -91,8 +91,10 @@ const AllowancesList = ({ onClickAdd, onEdit, onDelete }: AllowanceList) => {
   const handleFetchData = (data: DataTableFetchDataProps) => {
     const emailOrUsernameFilter = data.filters?.find((f) => f.id === 'user.username');
     const newEmailOrUsername = emailOrUsernameFilter ? emailOrUsernameFilter.value : '';
-    if (filters.emailOrUsername !== newEmailOrUsername) {
-      setFilters((prevFilters) => ({ ...prevFilters, emailOrUsername: newEmailOrUsername, page: 0 }));
+    const newOrdering = data.sortBy?.[0] ? `${data.sortBy[0].desc ? '-' : ''}${data.sortBy[0].id}` : '';
+    const filtersChanged = newEmailOrUsername !== filters.emailOrUsername || newOrdering !== filters.ordering;
+    if (filtersChanged) {
+      setFilters((prevFilters) => ({ ...prevFilters, emailOrUsername: newEmailOrUsername, ordering: newOrdering, page: 0 }));
       return;
     }
     if (data.pageIndex !== filters.page) {
@@ -111,6 +113,9 @@ const AllowancesList = ({ onClickAdd, onEdit, onDelete }: AllowanceList) => {
         pageSize: ALLOWANCES_PAGE_SIZE,
         filters: [
           { id: 'emailOrUsername', value: filters.emailOrUsername }
+        ],
+        sortBy: [
+          { id: filters.ordering.replace(/^-/, ''), desc: filters.ordering.startsWith('-') }
         ]
       }}
       fetchData={handleFetchData}

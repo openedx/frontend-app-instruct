@@ -214,7 +214,7 @@ describe('SpecifyLearnerField', () => {
       (useCourseInfo as jest.Mock).mockReturnValue({ data: { permissions: { admin: true, dataResearcher: false } } });
       (useLearner as jest.Mock).mockReturnValue({
         data: {},
-        refetch: jest.fn().mockResolvedValue({ data: {} }),
+        refetch: jest.fn().mockResolvedValue({ data: {}, error: { isAxiosError: true, response: { status: 404 } } }),
         error: { isAxiosError: true, response: { status: 404 } },
       });
     });
