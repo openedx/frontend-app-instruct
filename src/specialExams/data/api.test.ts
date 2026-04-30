@@ -176,6 +176,38 @@ describe('specialExams api', () => {
         'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Special%20Course+2023/special_exams/attempts?page=1&page_size=20&search=user%40example.com'
       );
     });
+
+    it('handles ordering parameter correctly', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const paramsWithOrdering: AttemptsParams = {
+        page: 0,
+        pageSize: 20,
+        emailOrUsername: '',
+        ordering: '-examType'
+      };
+
+      await getAttempts(courseId, paramsWithOrdering);
+
+      expect(mockHttpClient.get).toHaveBeenCalledWith(
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/special_exams/attempts?page=1&page_size=20&ordering=-exam_type'
+      );
+    });
+
+    it('handles complex ordering parameter with multiple parts', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const paramsWithComplexOrdering: AttemptsParams = {
+        page: 1,
+        pageSize: 10,
+        emailOrUsername: 'test@example.com',
+        ordering: 'proctoringExam.examName'
+      };
+
+      await getAttempts(courseId, paramsWithComplexOrdering);
+
+      expect(mockHttpClient.get).toHaveBeenCalledWith(
+        'https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/special_exams/attempts?page=2&page_size=10&search=test%40example.com&ordering=proctoring_exam.exam_name'
+      );
+    });
   });
 
   describe('getAllowances', () => {

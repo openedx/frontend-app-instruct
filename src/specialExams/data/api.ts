@@ -15,8 +15,11 @@ const getQueryParams = (params: AttemptsParams) => {
   }
 
   if (params.ordering) {
+    const hasNegativePrefix = params.ordering.startsWith('-');
+
     const orderingParam = params.ordering.split('.').map((part) => snakeCase(part)).join('.');
-    queryParams.append('ordering', orderingParam);
+
+    queryParams.append('ordering', `${hasNegativePrefix ? '-' : ''}${orderingParam}`);
   }
 
   return queryParams;

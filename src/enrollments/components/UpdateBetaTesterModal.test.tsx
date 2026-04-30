@@ -181,8 +181,8 @@ describe('UpdateBetaTesterModal', () => {
     it('shows alert with failed usernames when some users fail (remove action)', async () => {
       const mockSuccessData = {
         results: [
-          { identifier: 'failed-user', userDoesNotExist: true },
-          { identifier: 'jane.doe', userDoesNotExist: false },
+          { identifier: 'failed-user', userDoesNotExist: true, isActive: true },
+          { identifier: 'jane.doe', userDoesNotExist: false, isActive: true },
         ]
       };
 
@@ -206,7 +206,7 @@ describe('UpdateBetaTesterModal', () => {
     it('shows alert with failed usernames when some users fail (add action)', async () => {
       const mockSuccessData = {
         results: [
-          { identifier: 'failed-user', userDoesNotExist: true },
+          { identifier: 'failed-user', userDoesNotExist: true, isActive: null },
         ]
       };
 
@@ -231,10 +231,39 @@ describe('UpdateBetaTesterModal', () => {
       });
     });
 
+    it('shows alert with inactive usernames when some users are inactive', async () => {
+      const mockSuccessData = {
+        results: [
+          { identifier: 'inactive-user', userDoesNotExist: false, isActive: false },
+          { identifier: 'jane.doe', userDoesNotExist: false, isActive: true },
+        ]
+      };
+
+      const mutateWithSuccess = (_params: UpdateBetaTestersParams, callbacks: any) => {
+        callbacks.onSuccess(mockSuccessData);
+      };
+      mutateMock.mockImplementation(mutateWithSuccess);
+
+      const nonBetaTesterProps = {
+        ...defaultProps,
+        learner: learnerNonBetaTester,
+      };
+
+      renderWithAlertAndIntl(
+        <UpdateBetaTesterModal {...nonBetaTesterProps} />
+      );
+
+      expect(mockAddAlert).toHaveBeenCalledWith({
+        type: 'warning',
+        message: messages.inactiveUsers.defaultMessage,
+        extraContent: expect.any(Array),
+      });
+    });
+
     it('does not show alert when all users succeed', async () => {
       const mockSuccessData = {
         results: [
-          { identifier: 'jane.doe', userDoesNotExist: false },
+          { identifier: 'jane.doe', userDoesNotExist: false, isActive: true },
         ]
       };
 

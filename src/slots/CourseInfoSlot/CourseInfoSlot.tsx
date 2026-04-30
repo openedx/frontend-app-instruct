@@ -9,7 +9,7 @@ const CourseInfoSlot = () => {
     return null;
   }
 
-  const { org = '', courseNumber, displayName = '' } = data;
+  const { org = '', courseNumber = '', displayName = '' } = data;
 
   return (
     <div style={{ minWidth: 0, lineHeight: '1' }}>
