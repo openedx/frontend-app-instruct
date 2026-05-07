@@ -1,5 +1,6 @@
 import { ActionRow, Button, ModalDialog } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
+import { useMemo } from 'react';
 import { CertificateFilter } from '@src/certificates/types';
 import messages from '@src/certificates/messages';
 
@@ -22,8 +23,7 @@ const RegenerateCertificatesModal = ({
 }: RegenerateCertificatesModalProps) => {
   const intl = useIntl();
 
-  // Determine title and message based on filter
-  const getModalContent = () => {
+  const { title, message } = useMemo(() => {
     switch (filter) {
       case CertificateFilter.RECEIVED:
         return {
@@ -56,9 +56,7 @@ const RegenerateCertificatesModal = ({
           message: intl.formatMessage(messages.regenerateModalMessageDefault, { number: learnerCount }),
         };
     }
-  };
-
-  const { title, message } = getModalContent();
+  }, [filter, learnerCount, intl]);
 
   return (
     <ModalDialog

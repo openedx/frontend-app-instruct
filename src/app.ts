@@ -9,6 +9,9 @@ const app: App = {
   routes,
   provides,
   slots,
+  config: {
+    SUPPORT_URL: 'https://support.openedx.org',
+  },
 };
 
 export default app;
