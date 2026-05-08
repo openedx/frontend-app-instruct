@@ -3,11 +3,11 @@ import { addAllowance, deleteAllowance, getAllowances, getAttempts, getSpecialEx
 import { specialExamsQueryKeys } from './queryKeys';
 import { AddAllowanceParams, AttemptsParams, DeleteAllowanceParams } from '../types';
 
-export const useAttempts = (courseId: string, params: AttemptsParams) => (
+export const useAttempts = (courseId: string, params: AttemptsParams, enabled = true) => (
   useQuery({
     queryKey: specialExamsQueryKeys.attempts(courseId, params),
     queryFn: () => getAttempts(courseId, params),
-    enabled: !!courseId,
+    enabled: !!courseId && enabled,
   })
 );
 

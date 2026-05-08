@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import Allowances from '@src/specialExams/components/Allowances';
 import { renderWithAlertAndIntl } from '@src/testUtils';
 import messages from '@src/specialExams/messages';
-import { useAddAllowance, useAllowances, useSpecialExams } from '@src/specialExams/data/apiHook';
+import { useAddAllowance, useAllowances, useAttempts, useSpecialExams } from '@src/specialExams/data/apiHook';
 import { useLearner } from '@src/data/apiHook';
 
 const mockLearnerData = {
@@ -15,13 +15,16 @@ const mockLearnerData = {
 };
 
 const mockAllowance = {
+  id: 1,
   user: {
     username: 'john_doe',
     email: 'john.doe@hotmail.com',
+    id: 5,
   },
   proctoredExam: {
     examName: 'Midterm Exam',
     examType: 'proctored',
+    id: 101,
   },
   value: '30 minutes',
   key: 'additional_time_granted',
@@ -47,14 +50,17 @@ jest.mock('@src/specialExams/data/apiHook', () => ({
   useAddAllowance: jest.fn(),
   useSpecialExams: jest.fn(),
   useDeleteAllowance: jest.fn().mockReturnValue({ mutate: jest.fn() }),
+  useAttempts: jest.fn(),
 }));
 
 describe('Allowances', () => {
   let mockAddAllowance: jest.Mock;
+  let mockRefetchAttempts: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockAddAllowance = jest.fn();
+    mockRefetchAttempts = jest.fn();
     (useLearner as jest.Mock).mockReturnValue({
       data: mockLearnerData,
       refetch: jest.fn().mockResolvedValue({ data: mockLearnerData }),
@@ -68,6 +74,10 @@ describe('Allowances', () => {
     (useSpecialExams as jest.Mock).mockReturnValue({
       data: mockSpecialExams,
       refetch: jest.fn().mockResolvedValue({ data: mockSpecialExams }),
+    });
+    (useAttempts as jest.Mock).mockReturnValue({
+      data: { results: [], count: 0, numPages: 0 },
+      refetch: mockRefetchAttempts.mockResolvedValue({ data: { results: [], count: 0, numPages: 0 } }),
     });
   });
 
@@ -272,5 +282,142 @@ describe('Allowances', () => {
     renderWithAlertAndIntl(<Allowances />);
     // DeleteAllowanceModal should not render without selectedAllowance
     expect(screen.queryByRole('dialog', { name: messages.deleteAllowance.defaultMessage })).not.toBeInTheDocument();
+  });
+
+  describe('checkAttemptAndProceed', () => {
+    it('shows warning modal when user has already attempted the exam on edit', async () => {
+      const mockAttemptData = {
+        results: [
+          {
+            id: 1,
+            examId: 101,
+            user: { username: 'john_doe' },
+            examName: 'Midterm Exam',
+            allowedTimeLimitMins: 60,
+            type: 'proctored',
+            startTime: '2023-01-01T10:00:00Z',
+            endTime: '2023-01-01T11:00:00Z',
+            status: 'completed',
+          },
+        ],
+        count: 1,
+        numPages: 1,
+      };
+      (useAllowances as jest.Mock).mockReturnValue({
+        data: { results: [mockAllowance], count: 1, numPages: 1 },
+        isLoading: false,
+      });
+      (useAttempts as jest.Mock).mockReturnValue({
+        data: mockAttemptData,
+        refetch: jest.fn().mockResolvedValue({ data: mockAttemptData }),
+      });
+      const user = userEvent.setup();
+      renderWithAlertAndIntl(<Allowances />);
+      await user.click(screen.getByRole('button', { name: messages.actions.defaultMessage }));
+      const editBtn = await screen.findByRole('button', { name: /edit/i });
+      await user.click(editBtn);
+      await waitFor(() => {
+        expect(screen.getByText(/Cannot edit allowance: john_doe has already attempted the exam/i)).toBeInTheDocument();
+      });
+      expect(screen.queryByRole('dialog', { name: messages.editAllowance.defaultMessage })).not.toBeInTheDocument();
+    });
+
+    it('shows warning modal when user has already attempted the exam on delete', async () => {
+      const mockAttemptData = {
+        results: [
+          {
+            id: 1,
+            examId: 101,
+            user: { username: 'john_doe' },
+            examName: 'Midterm Exam',
+            allowedTimeLimitMins: 60,
+            type: 'proctored',
+            startTime: '2023-01-01T10:00:00Z',
+            endTime: '2023-01-01T11:00:00Z',
+            status: 'completed',
+          },
+        ],
+        count: 1,
+        numPages: 1,
+      };
+      (useAllowances as jest.Mock).mockReturnValue({
+        data: { results: [mockAllowance], count: 1, numPages: 1 },
+        isLoading: false,
+      });
+      (useAttempts as jest.Mock).mockReturnValue({
+        data: mockAttemptData,
+        refetch: jest.fn().mockResolvedValue({ data: mockAttemptData }),
+      });
+      const user = userEvent.setup();
+      renderWithAlertAndIntl(<Allowances />);
+      await user.click(screen.getByRole('button', { name: messages.actions.defaultMessage }));
+      const deleteBtn = await screen.findByRole('button', { name: /delete/i });
+      await user.click(deleteBtn);
+      await waitFor(() => {
+        expect(screen.getByText(/Cannot delete allowance: john_doe has already attempted the exam/i)).toBeInTheDocument();
+      });
+      expect(screen.queryByRole('dialog', { name: messages.deleteAllowance.defaultMessage })).not.toBeInTheDocument();
+    });
+
+    it('opens edit modal when user has not attempted the exam', async () => {
+      const mockAttemptData = {
+        results: [
+          {
+            id: 1,
+            examId: 999, // different exam, not the one in the allowance
+            user: { username: 'john_doe' },
+            examName: 'Other Exam',
+            allowedTimeLimitMins: 60,
+            type: 'proctored',
+            startTime: '2023-01-01T10:00:00Z',
+            endTime: '2023-01-01T11:00:00Z',
+            status: 'completed',
+          },
+        ],
+        count: 1,
+        numPages: 1,
+      };
+      (useAllowances as jest.Mock).mockReturnValue({
+        data: { results: [mockAllowance], count: 1, numPages: 1 },
+        isLoading: false,
+      });
+      (useAttempts as jest.Mock).mockReturnValue({
+        data: mockAttemptData,
+        refetch: jest.fn().mockResolvedValue({ data: mockAttemptData }),
+      });
+      const user = userEvent.setup();
+      renderWithAlertAndIntl(<Allowances />);
+      await user.click(screen.getByRole('button', { name: messages.actions.defaultMessage }));
+      const editBtn = await screen.findByRole('button', { name: /edit/i });
+      await user.click(editBtn);
+      await waitFor(() => {
+        expect(screen.getByRole('dialog', { name: messages.editAllowance.defaultMessage })).toBeInTheDocument();
+      });
+    });
+
+    it('opens delete modal when user has not attempted the exam', async () => {
+      const mockAttemptData = {
+        results: [], // no attempts
+        count: 0,
+        numPages: 0,
+      };
+
+      (useAllowances as jest.Mock).mockReturnValue({
+        data: { results: [mockAllowance], count: 1, numPages: 1 },
+        isLoading: false,
+      });
+      (useAttempts as jest.Mock).mockReturnValue({
+        data: mockAttemptData,
+        refetch: jest.fn().mockResolvedValue({ data: mockAttemptData }),
+      });
+      const user = userEvent.setup();
+      renderWithAlertAndIntl(<Allowances />);
+      await user.click(screen.getByRole('button', { name: messages.actions.defaultMessage }));
+      const deleteBtn = await screen.findByRole('button', { name: /delete/i });
+      await user.click(deleteBtn);
+      await waitFor(() => {
+        expect(screen.getByRole('dialog', { name: messages.deleteAllowance.defaultMessage })).toBeInTheDocument();
+      });
+    });
   });
 });
