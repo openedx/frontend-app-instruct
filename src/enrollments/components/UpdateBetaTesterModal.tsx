@@ -16,51 +16,49 @@ interface UpdateBetaTesterModalProps {
 const UpdateBetaTesterModal = ({ learner, isOpen, onClose }: UpdateBetaTesterModalProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const { mutate: updateBetaTester, isPending } = useUpdateBetaTesters(courseId);
+  // Using mutateAsync avoids mutate callbacks being discarded on useEffect re-runs
+  const { mutateAsync: updateBetaTester, isPending } = useUpdateBetaTesters(courseId);
   const { addAlert, showModal } = useAlert();
 
-  const handleUpdateBetaTester = useCallback(() => {
-    updateBetaTester({
-      identifier: [learner.username],
-      action: learner.isBetaTester ? 'remove' : 'add',
-    }, {
-      onSuccess: (data) => {
-        const failedUsernames = data.results?.filter(user => user.userDoesNotExist).map(user => user.identifier) || [];
-        const inactiveUsernames = data.results?.filter(user => !user.isActive && user.isActive !== null && !user.userDoesNotExist).map(user => user.identifier) || [];
-        if (failedUsernames.length > 0) {
-          addAlert({
-            type: 'danger',
-            message: intl.formatMessage(messages.failedBetaTesters),
-            extraContent: (
-              failedUsernames.map((learner: string) => (
-                <p key={learner} className="mb-0">• {intl.formatMessage(messages.unknownLearner, { learner })}</p>
-              ))
-            )
-          });
-        }
-        if (inactiveUsernames.length > 0) {
-          addAlert({
-            type: 'warning',
-            message: intl.formatMessage(messages.inactiveUsers),
-            extraContent: (
-              inactiveUsernames.map((learner: string) => (
-                <p key={learner} className="mb-0">• {intl.formatMessage(messages.inactiveLearner, { learner })}</p>
-              ))
-            )
-          });
-        }
-      },
-      onError: () => {
-        showModal({
-          message: learner.isBetaTester ? intl.formatMessage(messages.removeBetaTesterError) : intl.formatMessage(messages.addBetaTesterError),
-          variant: 'danger',
-          confirmText: intl.formatMessage(messages.closeButton),
+  const handleUpdateBetaTester = useCallback(async () => {
+    try {
+      const data = await updateBetaTester({
+        identifier: [learner.username],
+        action: learner.isBetaTester ? 'remove' : 'add',
+      });
+      const failedUsernames = data.results?.filter(user => user.userDoesNotExist).map(user => user.identifier) || [];
+      const inactiveUsernames = data.results?.filter(user => !user.isActive && user.isActive !== null && !user.userDoesNotExist).map(user => user.identifier) || [];
+      if (failedUsernames.length > 0) {
+        addAlert({
+          type: 'danger',
+          message: intl.formatMessage(messages.failedBetaTesters),
+          extraContent: (
+            failedUsernames.map((learner: string) => (
+              <p key={learner} className="mb-0">• {intl.formatMessage(messages.unknownLearner, { learner })}</p>
+            ))
+          )
         });
       }
-    });
-
-    onClose();
-  }, [updateBetaTester, learner.username, learner.isBetaTester, addAlert, intl, showModal, onClose]);
+      if (inactiveUsernames.length > 0) {
+        addAlert({
+          type: 'warning',
+          message: intl.formatMessage(messages.inactiveUsers),
+          extraContent: (
+            inactiveUsernames.map((learner: string) => (
+              <p key={learner} className="mb-0">• {intl.formatMessage(messages.inactiveLearner, { learner })}</p>
+            ))
+          )
+        });
+      }
+      onClose();
+    } catch {
+      showModal({
+        message: learner.isBetaTester ? intl.formatMessage(messages.removeBetaTesterError) : intl.formatMessage(messages.addBetaTesterError),
+        variant: 'danger',
+        confirmText: intl.formatMessage(messages.closeButton),
+      });
+    }
+  }, [updateBetaTester, learner, addAlert, intl, showModal, onClose]);
 
   useEffect(() => {
     if (isOpen && !learner.isBetaTester) {
