@@ -9,6 +9,7 @@ import { useChangeScore, useDeleteHistory, useRescoreSubmission, useResetAttempt
 import messages from '@src/grading/messages';
 import { GradingToolsType } from '@src/grading/types';
 import { useLearner, usePendingTasks, useProblemDetails } from '@src/data/apiHook';
+import { useAlert } from '@src/providers/AlertProvider';
 
 interface GradingLearnerContentProps {
   toolType: GradingToolsType,
@@ -27,6 +28,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
   const [confirmationModalData, setConfirmationModalData] = useState<{ message: string, confirmButtonLabel: string, action?: () => void }>({ message: '', confirmButtonLabel: '', action: undefined });
   const { data: problemData = { currentScore: { score: 0, total: null }, attempts: { current: null, total: 0 } }, isError: isProblemDataError } = useProblemDetails(courseId, blockId, usernameOrEmail);
   const { data: learnerData = { username: '', progressUrl: '' } } = useLearner(courseId, usernameOrEmail);
+  const { showModal, showToast } = useAlert();
 
   const { mutate: resetAttempts } = useResetAttempts(courseId);
   const { mutate: deleteHistory } = useDeleteHistory(courseId);
@@ -34,20 +36,74 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
   const { mutate: rescoreSubmission } = useRescoreSubmission(courseId);
   const { refetch: refetchTasks } = usePendingTasks(courseId);
 
+  const resetConfirmationModalData = () => setConfirmationModalData({ message: '', confirmButtonLabel: '', action: undefined });
+
   const handleResetAttempts = (): void => {
-    resetAttempts({ learner: usernameOrEmail, problem: blockId });
+    resetAttempts({ learner: usernameOrEmail, problem: blockId }, {
+      onSuccess: () => {
+        resetConfirmationModalData();
+        showToast(intl.formatMessage(messages.resetAttemptsSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
+      },
+      onError: () => {
+        resetConfirmationModalData();
+        showModal({
+          message: intl.formatMessage(messages.unexpectedError),
+          variant: 'danger',
+          confirmText: intl.formatMessage(messages.close),
+        });
+      }
+    });
   };
 
   const handleRescoreSubmission = (onlyIfHigher = false): void => {
-    rescoreSubmission({ learner: usernameOrEmail, problem: blockId, onlyIfHigher });
+    rescoreSubmission({ learner: usernameOrEmail, problem: blockId, onlyIfHigher }, {
+      onSuccess: () => {
+        resetConfirmationModalData();
+        showToast(intl.formatMessage(messages.rescoreSubmissionSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
+      },
+      onError: () => {
+        resetConfirmationModalData();
+        showModal({
+          message: intl.formatMessage(messages.unexpectedError),
+          variant: 'danger',
+          confirmText: intl.formatMessage(messages.close),
+        });
+      }
+    });
   };
 
   const handleDeleteHistory = (): void => {
-    deleteHistory({ learner: usernameOrEmail, problem: blockId });
+    deleteHistory({ learner: usernameOrEmail, problem: blockId }, {
+      onSuccess: () => {
+        resetConfirmationModalData();
+        showToast(intl.formatMessage(messages.deleteHistorySuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
+      },
+      onError: () => {
+        resetConfirmationModalData();
+        showModal({
+          message: intl.formatMessage(messages.unexpectedError),
+          variant: 'danger',
+          confirmText: intl.formatMessage(messages.close),
+        });
+      }
+    });
   };
 
   const handleOverrideScore = (): void => {
-    changeScore({ learner: usernameOrEmail, problem: blockId, newScore: Number(score) });
+    changeScore({ learner: usernameOrEmail, problem: blockId, newScore: Number(score) }, {
+      onSuccess: () => {
+        resetConfirmationModalData();
+        showToast(intl.formatMessage(messages.overrideScoreSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
+      },
+      onError: () => {
+        resetConfirmationModalData();
+        showModal({
+          message: intl.formatMessage(messages.unexpectedError),
+          variant: 'danger',
+          confirmText: intl.formatMessage(messages.close),
+        });
+      }
+    });
   };
 
   const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -143,7 +199,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
             value={score}
             onChange={handleScoreChange}
           />
-          <Button disabled={!usernameOrEmail || !blockId || !score} onClick={handleOverrideScore}>{intl.formatMessage(messages.overrideScoreButtonLabel)}</Button>
+          <Button disabled={!usernameOrEmail || !blockId || !score} onClick={() => openConfirmationModal('overrideScore')}>{intl.formatMessage(messages.overrideScoreButtonLabel)}</Button>
         </div>
       )
     },
@@ -279,8 +335,8 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
             isOverflowVisible={false}
             hasCloseButton={false}
           >
-            <ModalDialog.Body>
-              <p>{confirmationModalData.message}</p>
+            <ModalDialog.Body className="pt-4">
+              <p className="text-break">{confirmationModalData.message}</p>
             </ModalDialog.Body>
             <ModalDialog.Footer>
               <Button variant="tertiary" onClick={() => setConfirmationModalData({ message: '', confirmButtonLabel: '', action: undefined })}>{intl.formatMessage(messages.close)}</Button>
