@@ -1,9 +1,8 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UpdateBetaTesterModal from '@src/enrollments/components/UpdateBetaTesterModal';
 import { useUpdateBetaTesters } from '@src/enrollments/data/apiHook';
 import messages from '@src/enrollments/messages';
-import { UpdateBetaTestersParams } from '@src/enrollments/types';
 import { renderWithAlertAndIntl } from '@src/testUtils';
 
 const learnerBetaTester = {
@@ -52,9 +51,10 @@ describe('UpdateBetaTesterModal', () => {
   const mutateMock = jest.fn();
 
   beforeEach(() => {
+    mutateMock.mockResolvedValue({ results: [] });
     (useUpdateBetaTesters as jest.Mock).mockReturnValue({
-      mutate: mutateMock,
-      isPending: false
+      mutateAsync: mutateMock,
+      isPending: false,
     });
     mockShowModal.mockClear();
     mockAddAlert.mockClear();
@@ -99,24 +99,25 @@ describe('UpdateBetaTesterModal', () => {
       expect(mutateMock).toHaveBeenCalledWith({
         identifier: [learnerBetaTester.username],
         action: 'remove',
-      }, {
-        onSuccess: expect.any(Function),
-        onError: expect.any(Function),
       });
     });
 
     it('calls onClose when Revoke button is clicked', async () => {
+      mutateMock.mockResolvedValue({ results: [] });
       renderWithAlertAndIntl(
         <UpdateBetaTesterModal {...defaultProps} />
       );
       await userEvent.click(screen.getByRole('button', { name: /revoke/i }));
-      expect(defaultProps.onClose).toHaveBeenCalled();
+
+      await waitFor(() => {
+        expect(defaultProps.onClose).toHaveBeenCalled();
+      });
     });
 
     it('disables revoke button when pending', () => {
       (useUpdateBetaTesters as jest.Mock).mockReturnValue({
-        mutate: mutateMock,
-        isPending: true
+        mutateAsync: mutateMock,
+        isPending: true,
       });
 
       renderWithAlertAndIntl(
@@ -159,9 +160,6 @@ describe('UpdateBetaTesterModal', () => {
       expect(mutateMock).toHaveBeenCalledWith({
         identifier: [learnerNonBetaTester.username],
         action: 'add',
-      }, {
-        onSuccess: expect.any(Function),
-        onError: expect.any(Function),
       });
 
       // Modal should not be rendered
@@ -169,11 +167,15 @@ describe('UpdateBetaTesterModal', () => {
       expect(screen.queryByRole('button', { name: /revoke/i })).not.toBeInTheDocument();
     });
 
-    it('calls onClose when automatically adding beta tester', () => {
+    it('calls onClose when automatically adding beta tester', async () => {
+      mutateMock.mockResolvedValue({ results: [] });
       renderWithAlertAndIntl(
         <UpdateBetaTesterModal {...nonBetaTesterProps} />
       );
-      expect(defaultProps.onClose).toHaveBeenCalled();
+
+      await waitFor(() => {
+        expect(defaultProps.onClose).toHaveBeenCalled();
+      });
     });
   });
 
@@ -185,21 +187,19 @@ describe('UpdateBetaTesterModal', () => {
           { identifier: 'jane.doe', userDoesNotExist: false, isActive: true },
         ]
       };
-
-      const mutateWithSuccess = (_params: UpdateBetaTestersParams, callbacks: any) => {
-        callbacks.onSuccess(mockSuccessData);
-      };
-      mutateMock.mockImplementation(mutateWithSuccess);
+      mutateMock.mockResolvedValue(mockSuccessData);
 
       renderWithAlertAndIntl(
         <UpdateBetaTesterModal {...defaultProps} />
       );
       await userEvent.click(screen.getByRole('button', { name: /revoke/i }));
 
-      expect(mockAddAlert).toHaveBeenCalledWith({
-        type: 'danger',
-        message: messages.failedBetaTesters.defaultMessage,
-        extraContent: expect.any(Array),
+      await waitFor(() => {
+        expect(mockAddAlert).toHaveBeenCalledWith({
+          type: 'danger',
+          message: messages.failedBetaTesters.defaultMessage,
+          extraContent: expect.any(Array),
+        });
       });
     });
 
@@ -209,11 +209,7 @@ describe('UpdateBetaTesterModal', () => {
           { identifier: 'failed-user', userDoesNotExist: true, isActive: null },
         ]
       };
-
-      const mutateWithSuccess = (_params: UpdateBetaTestersParams, callbacks: any) => {
-        callbacks.onSuccess(mockSuccessData);
-      };
-      mutateMock.mockImplementation(mutateWithSuccess);
+      mutateMock.mockResolvedValue(mockSuccessData);
 
       const nonBetaTesterProps = {
         ...defaultProps,
@@ -224,10 +220,12 @@ describe('UpdateBetaTesterModal', () => {
         <UpdateBetaTesterModal {...nonBetaTesterProps} />
       );
 
-      expect(mockAddAlert).toHaveBeenCalledWith({
-        type: 'danger',
-        message: messages.failedBetaTesters.defaultMessage,
-        extraContent: expect.any(Array),
+      await waitFor(() => {
+        expect(mockAddAlert).toHaveBeenCalledWith({
+          type: 'danger',
+          message: messages.failedBetaTesters.defaultMessage,
+          extraContent: expect.any(Array),
+        });
       });
     });
 
@@ -238,11 +236,7 @@ describe('UpdateBetaTesterModal', () => {
           { identifier: 'jane.doe', userDoesNotExist: false, isActive: true },
         ]
       };
-
-      const mutateWithSuccess = (_params: UpdateBetaTestersParams, callbacks: any) => {
-        callbacks.onSuccess(mockSuccessData);
-      };
-      mutateMock.mockImplementation(mutateWithSuccess);
+      mutateMock.mockResolvedValue(mockSuccessData);
 
       const nonBetaTesterProps = {
         ...defaultProps,
@@ -253,10 +247,12 @@ describe('UpdateBetaTesterModal', () => {
         <UpdateBetaTesterModal {...nonBetaTesterProps} />
       );
 
-      expect(mockAddAlert).toHaveBeenCalledWith({
-        type: 'warning',
-        message: messages.inactiveUsers.defaultMessage,
-        extraContent: expect.any(Array),
+      await waitFor(() => {
+        expect(mockAddAlert).toHaveBeenCalledWith({
+          type: 'warning',
+          message: messages.inactiveUsers.defaultMessage,
+          extraContent: expect.any(Array),
+        });
       });
     });
 
@@ -266,63 +262,54 @@ describe('UpdateBetaTesterModal', () => {
           { identifier: 'jane.doe', userDoesNotExist: false, isActive: true },
         ]
       };
-
-      const mutateWithSuccess = (_params: UpdateBetaTestersParams, callbacks: any) => {
-        callbacks.onSuccess(mockSuccessData);
-      };
-      mutateMock.mockImplementation(mutateWithSuccess);
+      mutateMock.mockResolvedValue(mockSuccessData);
 
       renderWithAlertAndIntl(
         <UpdateBetaTesterModal {...defaultProps} />
       );
       await userEvent.click(screen.getByRole('button', { name: /revoke/i }));
 
+      await waitFor(() => {
+        expect(defaultProps.onClose).toHaveBeenCalled();
+      });
       expect(mockAddAlert).not.toHaveBeenCalled();
     });
 
     it('does not show alert when results array is empty', async () => {
-      const mockSuccessData = {
-        results: []
-      };
-
-      const mutateWithSuccess = (_params: UpdateBetaTestersParams, callbacks: any) => {
-        callbacks.onSuccess(mockSuccessData);
-      };
-      mutateMock.mockImplementation(mutateWithSuccess);
+      mutateMock.mockResolvedValue({ results: [] });
 
       renderWithAlertAndIntl(
         <UpdateBetaTesterModal {...defaultProps} />
       );
       await userEvent.click(screen.getByRole('button', { name: /revoke/i }));
 
+      await waitFor(() => {
+        expect(defaultProps.onClose).toHaveBeenCalled();
+      });
       expect(mockAddAlert).not.toHaveBeenCalled();
     });
   });
 
   describe('mutation error scenarios', () => {
     it('shows error modal when removing beta tester fails', async () => {
-      const mutateWithError = (_params: UpdateBetaTestersParams, callbacks: any) => {
-        callbacks.onError();
-      };
-      mutateMock.mockImplementation(mutateWithError);
+      mutateMock.mockRejectedValue(new Error('API error'));
 
       renderWithAlertAndIntl(
         <UpdateBetaTesterModal {...defaultProps} />
       );
       await userEvent.click(screen.getByRole('button', { name: /revoke/i }));
 
-      expect(mockShowModal).toHaveBeenCalledWith({
-        message: messages.removeBetaTesterError.defaultMessage,
-        variant: 'danger',
-        confirmText: messages.closeButton.defaultMessage,
+      await waitFor(() => {
+        expect(mockShowModal).toHaveBeenCalledWith({
+          message: messages.removeBetaTesterError.defaultMessage,
+          variant: 'danger',
+          confirmText: messages.closeButton.defaultMessage,
+        });
       });
     });
 
     it('shows error modal when adding beta tester fails', async () => {
-      const mutateWithError = (_params: UpdateBetaTestersParams, callbacks: any) => {
-        callbacks.onError();
-      };
-      mutateMock.mockImplementation(mutateWithError);
+      mutateMock.mockRejectedValue(new Error('API error'));
 
       const nonBetaTesterProps = {
         ...defaultProps,
@@ -333,46 +320,42 @@ describe('UpdateBetaTesterModal', () => {
         <UpdateBetaTesterModal {...nonBetaTesterProps} />
       );
 
-      expect(mockShowModal).toHaveBeenCalledWith({
-        message: messages.addBetaTesterError.defaultMessage,
-        variant: 'danger',
-        confirmText: messages.closeButton.defaultMessage,
+      await waitFor(() => {
+        expect(mockShowModal).toHaveBeenCalledWith({
+          message: messages.addBetaTesterError.defaultMessage,
+          variant: 'danger',
+          confirmText: messages.closeButton.defaultMessage,
+        });
       });
     });
   });
 
   describe('edge cases', () => {
     it('handles success callback with undefined results', async () => {
-      const mockSuccessData = {};
-
-      const mutateWithSuccess = (_params: UpdateBetaTestersParams, callbacks: any) => {
-        callbacks.onSuccess(mockSuccessData);
-      };
-      mutateMock.mockImplementation(mutateWithSuccess);
+      mutateMock.mockResolvedValue({});
 
       renderWithAlertAndIntl(
         <UpdateBetaTesterModal {...defaultProps} />
       );
       await userEvent.click(screen.getByRole('button', { name: /revoke/i }));
 
+      await waitFor(() => {
+        expect(defaultProps.onClose).toHaveBeenCalled();
+      });
       expect(mockAddAlert).not.toHaveBeenCalled();
     });
 
     it('handles success callback with null results', async () => {
-      const mockSuccessData = {
-        results: null
-      };
-
-      const mutateWithSuccess = (_params: UpdateBetaTestersParams, callbacks: any) => {
-        callbacks.onSuccess(mockSuccessData);
-      };
-      mutateMock.mockImplementation(mutateWithSuccess);
+      mutateMock.mockResolvedValue({ results: null });
 
       renderWithAlertAndIntl(
         <UpdateBetaTesterModal {...defaultProps} />
       );
       await userEvent.click(screen.getByRole('button', { name: /revoke/i }));
 
+      await waitFor(() => {
+        expect(defaultProps.onClose).toHaveBeenCalled();
+      });
       expect(mockAddAlert).not.toHaveBeenCalled();
     });
 
@@ -383,16 +366,16 @@ describe('UpdateBetaTesterModal', () => {
           { identifier: 'user2', userDoesNotExist: true },
         ]
       };
-
-      const mutateWithSuccess = (_params: UpdateBetaTestersParams, callbacks: any) => {
-        callbacks.onSuccess(mockSuccessData);
-      };
-      mutateMock.mockImplementation(mutateWithSuccess);
+      mutateMock.mockResolvedValue(mockSuccessData);
 
       renderWithAlertAndIntl(
         <UpdateBetaTesterModal {...defaultProps} />
       );
       await userEvent.click(screen.getByRole('button', { name: /revoke/i }));
+
+      await waitFor(() => {
+        expect(mockAddAlert).toHaveBeenCalled();
+      });
 
       const alertCall = mockAddAlert.mock.calls[0][0];
       expect(alertCall.extraContent).toHaveLength(2);

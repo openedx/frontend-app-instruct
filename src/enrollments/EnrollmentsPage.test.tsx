@@ -91,7 +91,7 @@ describe('EnrollmentsPage', () => {
 
     // Verify dialog is opened and popup is closed
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(checkEnrollmentStatusOption).not.toBeInTheDocument();
+    expect(checkEnrollmentStatusOption).not.toHaveClass('show');
   });
 
   it('closes enrollment status modal', async () => {
