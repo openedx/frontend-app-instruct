@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
+import { isAxiosError } from 'axios';
 import { useIntl } from '@openedx/frontend-base';
 import { Button, FormControl, ModalDialog, Stack } from '@openedx/paragon';
 import ActionCard, { ActionCardProps } from '@src/components/ActionCard';
@@ -44,10 +45,11 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
         resetConfirmationModalData();
         showToast(intl.formatMessage(messages.resetAttemptsSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
       },
-      onError: () => {
+      onError: (error) => {
         resetConfirmationModalData();
+        const errorMessage = isAxiosError(error) && error.response?.data?.error ? error.response.data.error : intl.formatMessage(messages.unexpectedError);
         showModal({
-          message: intl.formatMessage(messages.unexpectedError),
+          message: errorMessage,
           variant: 'danger',
           confirmText: intl.formatMessage(messages.close),
         });
@@ -61,10 +63,11 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
         resetConfirmationModalData();
         showToast(intl.formatMessage(messages.rescoreSubmissionSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
       },
-      onError: () => {
+      onError: (error) => {
         resetConfirmationModalData();
+        const errorMessage = isAxiosError(error) && error.response?.data?.error ? error.response.data.error : intl.formatMessage(messages.unexpectedError);
         showModal({
-          message: intl.formatMessage(messages.unexpectedError),
+          message: errorMessage,
           variant: 'danger',
           confirmText: intl.formatMessage(messages.close),
         });
@@ -78,10 +81,11 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
         resetConfirmationModalData();
         showToast(intl.formatMessage(messages.deleteHistorySuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
       },
-      onError: () => {
+      onError: (error) => {
         resetConfirmationModalData();
+        const errorMessage = isAxiosError(error) && error.response?.data?.error ? error.response.data.error : intl.formatMessage(messages.unexpectedError);
         showModal({
-          message: intl.formatMessage(messages.unexpectedError),
+          message: errorMessage,
           variant: 'danger',
           confirmText: intl.formatMessage(messages.close),
         });
@@ -95,10 +99,11 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
         resetConfirmationModalData();
         showToast(intl.formatMessage(messages.overrideScoreSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
       },
-      onError: () => {
+      onError: (error) => {
         resetConfirmationModalData();
+        const errorMessage = isAxiosError(error) && error.response?.data?.error ? error.response.data.error : intl.formatMessage(messages.unexpectedError);
         showModal({
-          message: intl.formatMessage(messages.unexpectedError),
+          message: errorMessage,
           variant: 'danger',
           confirmText: intl.formatMessage(messages.close),
         });
