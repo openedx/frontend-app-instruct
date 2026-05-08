@@ -9,7 +9,7 @@ const isForbiddenError = (error: any): boolean => {
 };
 
 export const useCourseInfo = (courseId: string) => {
-  const { setForbiddenError } = useForbiddenError();
+  const { setForbiddenError, setLoading } = useForbiddenError();
 
   const query = useQuery({
     queryKey: courseInfoQueryKeys.byCourse(courseId),
@@ -17,13 +17,17 @@ export const useCourseInfo = (courseId: string) => {
     enabled: !!courseId,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
+    retry: false,
   });
 
   useEffect(() => {
+    setLoading(query.isLoading);
     if (query.error && isForbiddenError(query.error)) {
       setForbiddenError(true);
+    } else {
+      setForbiddenError(false);
     }
-  }, [query.error, setForbiddenError]);
+  }, [query.isLoading, query.error, setForbiddenError, setLoading]);
 
   return query;
 };
