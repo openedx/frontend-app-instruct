@@ -190,6 +190,36 @@ const messages = defineMessages({
     id: 'instruct.grading.attempts',
     defaultMessage: 'Attempts',
     description: 'Label for the attempts displayed in the current status section of the single learner view'
+  },
+  rescore: {
+    id: 'instruct.grading.rescore',
+    defaultMessage: 'Rescore',
+    description: 'Label for the rescore confirmation action'
+  },
+  resetAttemptsConfirmation: {
+    id: 'instruct.grading.resetAttemptsConfirmation',
+    defaultMessage: 'Reset attempts for {student} on problem \'{blockId}\'?',
+    description: 'Confirmation message for resetting attempts'
+  },
+  overrideScoreConfirmation: {
+    id: 'instruct.grading.overrideScoreConfirmation',
+    defaultMessage: 'Override score for {student} for problem \'{blockId}\'?',
+    description: 'Confirmation message for overriding score'
+  },
+  deleteStateConfirmation: {
+    id: 'instruct.grading.deleteStateConfirmation',
+    defaultMessage: 'Delete state for student \'{student}\' on problem \'{blockId}\'?',
+    description: 'Confirmation message for deleting state'
+  },
+  rescoreConfirmation: {
+    id: 'instruct.grading.rescoreConfirmation',
+    defaultMessage: 'Rescore problem for {student} for \'{blockId}\'?',
+    description: 'Confirmation message for rescoring a submission'
+  },
+  deleteStateButtonLabel: {
+    id: 'instruct.grading.deleteStateButtonLabel',
+    defaultMessage: 'Delete State',
+    description: 'Button label for the delete state confirmation action'
   }
 });
 
