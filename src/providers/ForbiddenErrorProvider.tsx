@@ -1,13 +1,15 @@
 import { createContext, useContext, useState, ReactNode, useCallback, useMemo, FC } from 'react';
-import { Alert, Container, Skeleton } from '@openedx/paragon';
+import { Alert, Skeleton } from '@openedx/paragon';
 import { Error as ErrorIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@openedx/frontend-base';
 import messages from '@src/providers/messages';
 
+type ErrorType = 'forbidden' | 'unauthorized' | 'generic' | null;
+
 interface ForbiddenErrorContextType {
-  hasForbiddenError: boolean,
-  setForbiddenError: (error: boolean) => void,
-  clearForbiddenError: () => void,
+  errorType: ErrorType,
+  setErrorType: (error: ErrorType) => void,
+  clearError: () => void,
   isLoading: boolean,
   setLoading: (loading: boolean) => void,
 }
@@ -19,24 +21,20 @@ interface ForbiddenErrorProviderProps {
 }
 
 export const ForbiddenErrorProvider: FC<ForbiddenErrorProviderProps> = ({ children }) => {
-  const [hasForbiddenError, setHasForbiddenError] = useState(false);
+  const [errorType, setErrorType] = useState<ErrorType>(null);
   const [isLoading, setLoading] = useState(false);
 
-  const setForbiddenError = useCallback((error: boolean) => {
-    setHasForbiddenError(error);
-  }, []);
-
-  const clearForbiddenError = useCallback(() => {
-    setHasForbiddenError(false);
+  const clearError = useCallback(() => {
+    setErrorType(null);
   }, []);
 
   const value = useMemo(() => ({
-    hasForbiddenError,
-    setForbiddenError,
-    clearForbiddenError,
+    errorType,
+    setErrorType,
+    clearError,
     isLoading,
     setLoading,
-  }), [hasForbiddenError, setForbiddenError, clearForbiddenError, isLoading, setLoading]);
+  }), [errorType, clearError, isLoading]);
 
   return (
     <ForbiddenErrorContext.Provider value={value}>
@@ -51,26 +49,34 @@ interface ForbiddenErrorGuardProps {
 
 export const ForbiddenErrorGuard: FC<ForbiddenErrorGuardProps> = ({ children }) => {
   const intl = useIntl();
-  const { hasForbiddenError, isLoading } = useForbiddenError();
+  const { errorType, isLoading } = useForbiddenError();
 
   if (isLoading) {
     return <Skeleton className="lead" />;
   }
 
-  if (hasForbiddenError) {
+  if (errorType) {
+    const headingMap = {
+      unauthorized: messages.unauthorizedErrorHeading,
+      forbidden: messages.forbiddenErrorHeading,
+      generic: messages.genericErrorHeading,
+    };
+    const messageMap = {
+      unauthorized: messages.unauthorizedErrorMessage,
+      forbidden: messages.forbiddenErrorMessage,
+      generic: messages.genericErrorMessage,
+    };
+
     return (
-      <Container className="d-flex justify-content-center align-items-center my-6">
-        <Alert
-          variant="danger"
-          icon={ErrorIcon}
-          className="text-center"
-        >
-          <Alert.Heading>{intl.formatMessage(messages.forbiddenErrorHeading)}</Alert.Heading>
-          <p>
-            {intl.formatMessage(messages.forbiddenErrorMessage)}
-          </p>
-        </Alert>
-      </Container>
+      <Alert
+        variant="danger"
+        icon={ErrorIcon}
+      >
+        <Alert.Heading>{intl.formatMessage(headingMap[errorType])}</Alert.Heading>
+        <p>
+          {intl.formatMessage(messageMap[errorType])}
+        </p>
+      </Alert>
     );
   }
 

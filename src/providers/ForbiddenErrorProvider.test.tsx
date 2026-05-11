@@ -1,18 +1,25 @@
 import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { IntlProvider } from '@openedx/frontend-base';
 import { ForbiddenErrorProvider, ForbiddenErrorGuard, useForbiddenError } from './ForbiddenErrorProvider';
 
 const TestComponent = () => {
-  const { hasForbiddenError, setForbiddenError } = useForbiddenError();
+  const { errorType, setErrorType } = useForbiddenError();
 
   return (
     <div>
-      <p data-testid="error-status">{hasForbiddenError ? 'forbidden' : 'allowed'}</p>
+      <p data-testid="error-status">{errorType ?? 'allowed'}</p>
       <button
-        data-testid="trigger-error"
-        onClick={() => setForbiddenError(true)}
+        data-testid="trigger-forbidden"
+        onClick={() => setErrorType('forbidden')}
       >
-        Trigger Error
+        Trigger Forbidden
+      </button>
+      <button
+        data-testid="trigger-unauthorized"
+        onClick={() => setErrorType('unauthorized')}
+      >
+        Trigger Unauthorized
       </button>
       <ForbiddenErrorGuard>
         <div data-testid="protected-content">Protected Content</div>
@@ -24,33 +31,55 @@ const TestComponent = () => {
 describe('ForbiddenErrorProvider', () => {
   it('should render protected content when no error', () => {
     render(
-      <ForbiddenErrorProvider>
-        <TestComponent />
-      </ForbiddenErrorProvider>
+      <IntlProvider locale="en" messages={{}}>
+        <ForbiddenErrorProvider>
+          <TestComponent />
+        </ForbiddenErrorProvider>
+      </IntlProvider>
     );
 
     expect(screen.getByTestId('error-status')).toHaveTextContent('allowed');
     expect(screen.getByTestId('protected-content')).toBeInTheDocument();
   });
 
-  it('should show error message when forbidden error is set', async () => {
+  it('should show forbidden error message when errorType is forbidden', async () => {
     const user = userEvent.setup();
 
     render(
-      <ForbiddenErrorProvider>
-        <TestComponent />
-      </ForbiddenErrorProvider>
+      <IntlProvider locale="en" messages={{}}>
+        <ForbiddenErrorProvider>
+          <TestComponent />
+        </ForbiddenErrorProvider>
+      </IntlProvider>
     );
 
-    const triggerButton = screen.getByTestId('trigger-error');
-
     await act(async () => {
-      await user.click(triggerButton);
+      await user.click(screen.getByTestId('trigger-forbidden'));
     });
 
     expect(screen.getByTestId('error-status')).toHaveTextContent('forbidden');
     expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
-    expect(screen.getByText('Acceso Denegado')).toBeInTheDocument();
+    expect(screen.getByText('Access Denied')).toBeInTheDocument();
+  });
+
+  it('should show unauthorized error message when errorType is unauthorized', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <IntlProvider locale="en" messages={{}}>
+        <ForbiddenErrorProvider>
+          <TestComponent />
+        </ForbiddenErrorProvider>
+      </IntlProvider>
+    );
+
+    await act(async () => {
+      await user.click(screen.getByTestId('trigger-unauthorized'));
+    });
+
+    expect(screen.getByTestId('error-status')).toHaveTextContent('unauthorized');
+    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
+    expect(screen.getByText('Unauthorized')).toBeInTheDocument();
   });
 
   it('should throw error when used outside provider', () => {

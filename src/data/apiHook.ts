@@ -1,36 +1,25 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchPendingTasks, getCourseInfo, getLearner, getProblemDetails } from './api';
 import { courseInfoQueryKeys, learnerQueryKeys, pendingTasksQueryKey, problemQueryKeys } from './queryKeys';
-import { useForbiddenError } from '@src/providers/ForbiddenErrorProvider';
-import { useEffect } from 'react';
 
-const isForbiddenError = (error: any): boolean => {
+export const isForbiddenError = (error: any): boolean => {
   return error?.response?.status === 403 || error?.status === 403;
 };
 
-export const useCourseInfo = (courseId: string) => {
-  const { setForbiddenError, setLoading } = useForbiddenError();
+export const isUnauthorizedError = (error: any): boolean => {
+  return error?.response?.status === 401 || error?.status === 401;
+};
 
-  const query = useQuery({
+export const useCourseInfo = (courseId: string) => (
+  useQuery({
     queryKey: courseInfoQueryKeys.byCourse(courseId),
     queryFn: () => getCourseInfo(courseId),
     enabled: !!courseId,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     retry: false,
-  });
-
-  useEffect(() => {
-    setLoading(query.isLoading);
-    if (query.error && isForbiddenError(query.error)) {
-      setForbiddenError(true);
-    } else {
-      setForbiddenError(false);
-    }
-  }, [query.isLoading, query.error, setForbiddenError, setLoading]);
-
-  return query;
-};
+  })
+);
 
 export const usePendingTasks = (courseId: string, options?: { enablePolling?: boolean }) => {
   return useQuery({

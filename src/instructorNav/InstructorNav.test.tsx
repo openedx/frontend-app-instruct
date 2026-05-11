@@ -21,6 +21,12 @@ jest.mock('@src/data/apiHook', () => ({
 jest.mock('@src/providers/AlertProvider', () => ({
   useAlert: jest.fn(),
 }));
+jest.mock('@src/providers/ForbiddenErrorProvider', () => ({
+  useForbiddenError: jest.fn(() => ({
+    clearError: jest.fn(),
+    errorType: null,
+  })),
+}));
 jest.mock('../slots/SlotUtils', () => ({
   useWidgetProps: jest.fn(),
 }));

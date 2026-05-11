@@ -18,15 +18,17 @@ const InstructorNav = () => {
   const { data: courseInfo, isLoading } = useCourseInfo(courseId);
   const widgetPropsArray = useWidgetProps('org.openedx.frontend.slot.instructorDashboard.tabs.v1') as TabProps[];
   const { clearAlerts } = useAlert();
-  const { clearForbiddenError, hasForbiddenError } = useForbiddenError();
+  const { clearError, errorType } = useForbiddenError();
 
   const handleTabClick = () => {
     clearAlerts();
-    clearForbiddenError();
+    clearError();
   };
 
+  const hasError = errorType !== null;
+
   const sortedTabs = useMemo(() => {
-    if (isLoading || hasForbiddenError) return [];
+    if (isLoading || hasError) return [];
     const apiTabs: TabProps[] = courseInfo?.tabs ?? [];
     const tabMap = new Map<string, TabProps>();
 
@@ -48,13 +50,13 @@ const InstructorNav = () => {
 
     // Tabs are sorted by sortOrder, with a fallback to 1000 to be placed at the end for tabs that don't have sortOrder defined (to avoid NaN issues)
     return allTabs.sort((a, b) => (a.sortOrder ?? 1000) - (b.sortOrder ?? 1000));
-  }, [courseInfo?.tabs, isLoading, widgetPropsArray, hasForbiddenError]);
+  }, [courseInfo?.tabs, isLoading, widgetPropsArray, hasError]);
 
   if (isLoading) {
     return <Skeleton className="lead" />;
   }
 
-  if (sortedTabs.length === 0 || hasForbiddenError) return null;
+  if (sortedTabs.length === 0 || hasError) return null;
 
   return (
     <Navbar expand="md" className="py-0">
