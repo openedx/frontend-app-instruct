@@ -39,21 +39,23 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
 
   const resetConfirmationModalData = () => setConfirmationModalData({ message: '', confirmButtonLabel: '', action: undefined });
 
+  const manageOnError = (error: Error) => {
+    resetConfirmationModalData();
+    const errorMessage = isAxiosError(error) && error.response?.data?.error ? error.response.data.error : intl.formatMessage(messages.unexpectedError);
+    showModal({
+      message: errorMessage,
+      variant: 'danger',
+      confirmText: intl.formatMessage(messages.close),
+    });
+  };
+
   const handleResetAttempts = (): void => {
     resetAttempts({ learner: usernameOrEmail, problem: blockId }, {
       onSuccess: () => {
         resetConfirmationModalData();
         showToast(intl.formatMessage(messages.resetAttemptsSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
       },
-      onError: (error) => {
-        resetConfirmationModalData();
-        const errorMessage = isAxiosError(error) && error.response?.data?.error ? error.response.data.error : intl.formatMessage(messages.unexpectedError);
-        showModal({
-          message: errorMessage,
-          variant: 'danger',
-          confirmText: intl.formatMessage(messages.close),
-        });
-      }
+      onError: manageOnError
     });
   };
 
@@ -63,15 +65,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
         resetConfirmationModalData();
         showToast(intl.formatMessage(messages.rescoreSubmissionSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
       },
-      onError: (error) => {
-        resetConfirmationModalData();
-        const errorMessage = isAxiosError(error) && error.response?.data?.error ? error.response.data.error : intl.formatMessage(messages.unexpectedError);
-        showModal({
-          message: errorMessage,
-          variant: 'danger',
-          confirmText: intl.formatMessage(messages.close),
-        });
-      }
+      onError: manageOnError
     });
   };
 
@@ -81,15 +75,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
         resetConfirmationModalData();
         showToast(intl.formatMessage(messages.deleteHistorySuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
       },
-      onError: (error) => {
-        resetConfirmationModalData();
-        const errorMessage = isAxiosError(error) && error.response?.data?.error ? error.response.data.error : intl.formatMessage(messages.unexpectedError);
-        showModal({
-          message: errorMessage,
-          variant: 'danger',
-          confirmText: intl.formatMessage(messages.close),
-        });
-      }
+      onError: manageOnError
     });
   };
 
@@ -99,15 +85,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
         resetConfirmationModalData();
         showToast(intl.formatMessage(messages.overrideScoreSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
       },
-      onError: (error) => {
-        resetConfirmationModalData();
-        const errorMessage = isAxiosError(error) && error.response?.data?.error ? error.response.data.error : intl.formatMessage(messages.unexpectedError);
-        showModal({
-          message: errorMessage,
-          variant: 'danger',
-          confirmText: intl.formatMessage(messages.close),
-        });
-      }
+      onError: manageOnError
     });
   };
 
