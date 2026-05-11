@@ -1,8 +1,8 @@
-import { providesCourseNavigationRolesId } from '@openedx/frontend-base';
+import { providesCourseBarRolesId } from '@openedx/frontend-base';
 import { instructorDashboardRole } from './constants';
 
 const provides = {
-  [providesCourseNavigationRolesId]: instructorDashboardRole
+  [providesCourseBarRolesId]: instructorDashboardRole
 };
 
 export default provides;

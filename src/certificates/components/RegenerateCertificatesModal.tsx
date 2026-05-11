@@ -67,9 +67,9 @@ const RegenerateCertificatesModal = ({
       hasCloseButton={false}
       isOverflowVisible={false}
     >
-      <div className="mx-4 mt-4 mb-2.5">
+      <ModalDialog.Body>
         <p>{message}</p>
-      </div>
+      </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
           <Button variant="tertiary" onClick={onClose} disabled={isSubmitting}>
