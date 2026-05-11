@@ -35,10 +35,6 @@ const siteConfig: SiteConfig = {
   ],
 
   accessTokenCookieName: 'edx-jwt-cookie-header-payload',
-
-  commonAppConfig: {
-    SUPPORT_URL: 'https://support.edx.org',
-  },
 };
 
 export default siteConfig;
