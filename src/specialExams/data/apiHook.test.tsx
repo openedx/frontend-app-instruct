@@ -241,6 +241,40 @@ describe('specialExams api hooks', () => {
 
       expect(mockGetAttempts).toHaveBeenLastCalledWith(newCourseId, params);
     });
+
+    it('does not fetch when enabled is false', () => {
+      const { result } = renderHook(() => useAttempts(courseId, params, false), {
+        wrapper: createWrapper(),
+      });
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.fetchStatus).toBe('idle');
+      expect(mockGetAttempts).not.toHaveBeenCalled();
+    });
+
+    it('fetches when enabled is true', async () => {
+      mockGetAttempts.mockResolvedValue(mockAttemptsData);
+      const { result } = renderHook(() => useAttempts(courseId, params, true), {
+        wrapper: createWrapper(),
+      });
+      expect(result.current.isLoading).toBe(true);
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+      expect(mockGetAttempts).toHaveBeenCalledWith(courseId, params);
+      expect(result.current.data).toBe(mockAttemptsData);
+    });
+
+    it('can be manually refetched when enabled is false', async () => {
+      mockGetAttempts.mockResolvedValue(mockAttemptsData);
+      const { result } = renderHook(() => useAttempts(courseId, params, false), {
+        wrapper: createWrapper(),
+      });
+      expect(mockGetAttempts).not.toHaveBeenCalled();
+      expect(result.current.fetchStatus).toBe('idle');
+      const refetchResult = await result.current.refetch();
+      expect(mockGetAttempts).toHaveBeenCalledWith(courseId, params);
+      expect(refetchResult.data).toBe(mockAttemptsData);
+    });
   });
 
   describe('useAllowances', () => {

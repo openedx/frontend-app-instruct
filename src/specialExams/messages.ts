@@ -220,6 +220,11 @@ const messages = defineMessages({
     id: 'instruct.specialExams.editAllowanceError',
     defaultMessage: 'An error occurred while editing the allowance. Please try again.',
     description: 'Error message displayed when there is an issue editing an allowance'
+  },
+  cannotModifyAllowance: {
+    id: 'instruct.specialExams.cannotModifyAllowance',
+    defaultMessage: 'Cannot {action} allowance: {username} has already attempted the exam',
+    description: 'Warning message shown when trying to edit or delete an allowance for a student who has already attempted the exam'
   }
 });
 
