@@ -21,8 +21,8 @@ jest.mock('@src/data/apiHook', () => ({
 jest.mock('@src/providers/AlertProvider', () => ({
   useAlert: jest.fn(),
 }));
-jest.mock('@src/providers/ForbiddenErrorProvider', () => ({
-  useForbiddenError: jest.fn(() => ({
+jest.mock('@src/providers/AccessErrorProvider', () => ({
+  useAccessError: jest.fn(() => ({
     clearError: jest.fn(),
     errorType: null,
   })),

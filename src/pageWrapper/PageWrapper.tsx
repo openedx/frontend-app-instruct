@@ -2,21 +2,21 @@ import { useIntl } from '@openedx/frontend-base';
 import messages from './messages';
 import { Container } from '@openedx/paragon';
 import InstructorNav from '@src/instructorNav/InstructorNav';
-import { ForbiddenErrorGuard } from '@src/providers/ForbiddenErrorProvider';
-import ForbiddenErrorObserver from '@src/providers/ForbiddenErrorObserver';
+import { AccessErrorGuard } from '@src/providers/AccessErrorProvider';
+import AccessErrorObserver from '@src/providers/AccessErrorObserver';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   const { formatMessage } = useIntl();
   return (
     <Container size="xl" fluid>
-      <ForbiddenErrorObserver />
+      <AccessErrorObserver />
       <h2 className="text-primary-700 m-4">{formatMessage(messages.pageTitle)}</h2>
       <InstructorNav />
-      <ForbiddenErrorGuard>
+      <AccessErrorGuard>
         <div className="m-4">
           {children}
         </div>
-      </ForbiddenErrorGuard>
+      </AccessErrorGuard>
     </Container>
   );
 };

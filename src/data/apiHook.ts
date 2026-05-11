@@ -2,14 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchPendingTasks, getCourseInfo, getLearner, getProblemDetails } from './api';
 import { courseInfoQueryKeys, learnerQueryKeys, pendingTasksQueryKey, problemQueryKeys } from './queryKeys';
 
-export const isForbiddenError = (error: any): boolean => {
-  return error?.response?.status === 403 || error?.status === 403;
-};
-
-export const isUnauthorizedError = (error: any): boolean => {
-  return error?.response?.status === 401 || error?.status === 401;
-};
-
 export const useCourseInfo = (courseId: string) => (
   useQuery({
     queryKey: courseInfoQueryKeys.byCourse(courseId),

@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
-import ForbiddenErrorObserver from './ForbiddenErrorObserver';
+import AccessErrorObserver from './AccessErrorObserver';
 import { useCourseInfo } from '@src/data/apiHook';
-import { useForbiddenError } from '@src/providers/ForbiddenErrorProvider';
+import { useAccessError } from '@src/providers/AccessErrorProvider';
 
 jest.mock('react-router-dom', () => ({
   useParams: () => ({ courseId: 'course-v1:edX+DemoX+Demo_Course' }),
@@ -9,21 +9,19 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('@src/data/apiHook', () => ({
   useCourseInfo: jest.fn(),
-  isForbiddenError: jest.requireActual('@src/data/apiHook').isForbiddenError,
-  isUnauthorizedError: jest.requireActual('@src/data/apiHook').isUnauthorizedError,
 }));
 
-jest.mock('@src/providers/ForbiddenErrorProvider', () => ({
-  useForbiddenError: jest.fn(),
+jest.mock('@src/providers/AccessErrorProvider', () => ({
+  useAccessError: jest.fn(),
 }));
 
 const mockSetErrorType = jest.fn();
 const mockSetLoading = jest.fn();
 
-describe('ForbiddenErrorObserver', () => {
+describe('AccessErrorObserver', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (useForbiddenError as jest.Mock).mockReturnValue({
+    (useAccessError as jest.Mock).mockReturnValue({
       setErrorType: mockSetErrorType,
       setLoading: mockSetLoading,
     });
@@ -32,14 +30,14 @@ describe('ForbiddenErrorObserver', () => {
   it('renders nothing', () => {
     (useCourseInfo as jest.Mock).mockReturnValue({ isLoading: false, error: null });
 
-    const { container } = render(<ForbiddenErrorObserver />);
+    const { container } = render(<AccessErrorObserver />);
     expect(container).toBeEmptyDOMElement();
   });
 
   it('sets loading state when query is loading', () => {
     (useCourseInfo as jest.Mock).mockReturnValue({ isLoading: true, error: null });
 
-    render(<ForbiddenErrorObserver />);
+    render(<AccessErrorObserver />);
 
     expect(mockSetLoading).toHaveBeenCalledWith(true);
     expect(mockSetErrorType).toHaveBeenCalledWith(null);
@@ -49,7 +47,7 @@ describe('ForbiddenErrorObserver', () => {
     const error = { response: { status: 403 } };
     (useCourseInfo as jest.Mock).mockReturnValue({ isLoading: false, error });
 
-    render(<ForbiddenErrorObserver />);
+    render(<AccessErrorObserver />);
 
     expect(mockSetLoading).toHaveBeenCalledWith(false);
     expect(mockSetErrorType).toHaveBeenCalledWith('forbidden');
@@ -59,7 +57,7 @@ describe('ForbiddenErrorObserver', () => {
     const error = { response: { status: 401 } };
     (useCourseInfo as jest.Mock).mockReturnValue({ isLoading: false, error });
 
-    render(<ForbiddenErrorObserver />);
+    render(<AccessErrorObserver />);
 
     expect(mockSetLoading).toHaveBeenCalledWith(false);
     expect(mockSetErrorType).toHaveBeenCalledWith('unauthorized');
@@ -68,7 +66,7 @@ describe('ForbiddenErrorObserver', () => {
   it('clears errorType when there is no error', () => {
     (useCourseInfo as jest.Mock).mockReturnValue({ isLoading: false, error: null });
 
-    render(<ForbiddenErrorObserver />);
+    render(<AccessErrorObserver />);
 
     expect(mockSetLoading).toHaveBeenCalledWith(false);
     expect(mockSetErrorType).toHaveBeenCalledWith(null);
@@ -78,7 +76,7 @@ describe('ForbiddenErrorObserver', () => {
     const error = { response: { status: 500 } };
     (useCourseInfo as jest.Mock).mockReturnValue({ isLoading: false, error });
 
-    render(<ForbiddenErrorObserver />);
+    render(<AccessErrorObserver />);
 
     expect(mockSetErrorType).toHaveBeenCalledWith('generic');
   });
@@ -87,7 +85,7 @@ describe('ForbiddenErrorObserver', () => {
     const error = { status: 403 };
     (useCourseInfo as jest.Mock).mockReturnValue({ isLoading: false, error });
 
-    render(<ForbiddenErrorObserver />);
+    render(<AccessErrorObserver />);
 
     expect(mockSetErrorType).toHaveBeenCalledWith('forbidden');
   });

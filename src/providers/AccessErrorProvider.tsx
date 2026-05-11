@@ -6,7 +6,7 @@ import messages from '@src/providers/messages';
 
 type ErrorType = 'forbidden' | 'unauthorized' | 'generic' | null;
 
-interface ForbiddenErrorContextType {
+interface AccessErrorContextType {
   errorType: ErrorType,
   setErrorType: (error: ErrorType) => void,
   clearError: () => void,
@@ -14,13 +14,13 @@ interface ForbiddenErrorContextType {
   setLoading: (loading: boolean) => void,
 }
 
-const ForbiddenErrorContext = createContext<ForbiddenErrorContextType | undefined>(undefined);
+const AccessErrorContext = createContext<AccessErrorContextType | undefined>(undefined);
 
-interface ForbiddenErrorProviderProps {
+interface AccessErrorProviderProps {
   children: ReactNode,
 }
 
-export const ForbiddenErrorProvider: FC<ForbiddenErrorProviderProps> = ({ children }) => {
+export const AccessErrorProvider: FC<AccessErrorProviderProps> = ({ children }) => {
   const [errorType, setErrorType] = useState<ErrorType>(null);
   const [isLoading, setLoading] = useState(false);
 
@@ -37,19 +37,19 @@ export const ForbiddenErrorProvider: FC<ForbiddenErrorProviderProps> = ({ childr
   }), [errorType, clearError, isLoading]);
 
   return (
-    <ForbiddenErrorContext.Provider value={value}>
+    <AccessErrorContext.Provider value={value}>
       {children}
-    </ForbiddenErrorContext.Provider>
+    </AccessErrorContext.Provider>
   );
 };
 
-interface ForbiddenErrorGuardProps {
+interface AccessErrorGuardProps {
   children: ReactNode,
 }
 
-export const ForbiddenErrorGuard: FC<ForbiddenErrorGuardProps> = ({ children }) => {
+export const AccessErrorGuard: FC<AccessErrorGuardProps> = ({ children }) => {
   const intl = useIntl();
-  const { errorType, isLoading } = useForbiddenError();
+  const { errorType, isLoading } = useAccessError();
 
   if (isLoading) {
     return <Skeleton className="lead" />;
@@ -83,10 +83,10 @@ export const ForbiddenErrorGuard: FC<ForbiddenErrorGuardProps> = ({ children }) 
   return <>{children}</>;
 };
 
-export const useForbiddenError = (): ForbiddenErrorContextType => {
-  const context = useContext(ForbiddenErrorContext);
+export const useAccessError = (): AccessErrorContextType => {
+  const context = useContext(AccessErrorContext);
   if (context === undefined) {
-    throw new Error('useForbiddenError must be used within a ForbiddenErrorProvider');
+    throw new Error('useAccessError must be used within a AccessErrorProvider');
   }
   return context;
 };

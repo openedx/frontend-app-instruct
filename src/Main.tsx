@@ -2,7 +2,7 @@ import { CurrentAppProvider, getSiteConfig, useIntl } from '@openedx/frontend-ba
 import { Helmet } from 'react-helmet';
 import { Outlet } from 'react-router-dom';
 import { AlertProvider } from './providers/AlertProvider';
-import { ForbiddenErrorProvider } from './providers/ForbiddenErrorProvider';
+import { AccessErrorProvider } from './providers/AccessErrorProvider';
 import { appId } from './constants';
 import messages from './messages';
 import PageWrapper from './pageWrapper/PageWrapper';
@@ -21,13 +21,13 @@ const Main = () => {
         </title>
       </Helmet>
       <AlertProvider>
-        <ForbiddenErrorProvider>
+        <AccessErrorProvider>
           <main className="d-flex flex-column flex-grow-1">
             <PageWrapper>
               <Outlet />
             </PageWrapper>
           </main>
-        </ForbiddenErrorProvider>
+        </AccessErrorProvider>
       </AlertProvider>
     </CurrentAppProvider>
   );

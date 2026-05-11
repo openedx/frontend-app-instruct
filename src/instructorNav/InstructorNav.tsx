@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Nav, Navbar, Skeleton } from '@openedx/paragon';
 import { useCourseInfo } from '@src/data/apiHook';
 import { useAlert } from '@src/providers/AlertProvider';
-import { useForbiddenError } from '@src/providers/ForbiddenErrorProvider';
+import { useAccessError } from '@src/providers/AccessErrorProvider';
 import { useWidgetProps } from '@src/slots/SlotUtils';
 
 export interface TabProps {
@@ -18,7 +18,7 @@ const InstructorNav = () => {
   const { data: courseInfo, isLoading } = useCourseInfo(courseId);
   const widgetPropsArray = useWidgetProps('org.openedx.frontend.slot.instructorDashboard.tabs.v1') as TabProps[];
   const { clearAlerts } = useAlert();
-  const { clearError, errorType } = useForbiddenError();
+  const { clearError, errorType } = useAccessError();
 
   const handleTabClick = () => {
     clearAlerts();

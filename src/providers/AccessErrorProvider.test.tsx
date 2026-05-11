@@ -1,10 +1,10 @@
 import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@openedx/frontend-base';
-import { ForbiddenErrorProvider, ForbiddenErrorGuard, useForbiddenError } from './ForbiddenErrorProvider';
+import { AccessErrorProvider, AccessErrorGuard, useAccessError } from './AccessErrorProvider';
 
 const TestComponent = () => {
-  const { errorType, setErrorType } = useForbiddenError();
+  const { errorType, setErrorType } = useAccessError();
 
   return (
     <div>
@@ -21,20 +21,20 @@ const TestComponent = () => {
       >
         Trigger Unauthorized
       </button>
-      <ForbiddenErrorGuard>
+      <AccessErrorGuard>
         <div data-testid="protected-content">Protected Content</div>
-      </ForbiddenErrorGuard>
+      </AccessErrorGuard>
     </div>
   );
 };
 
-describe('ForbiddenErrorProvider', () => {
+describe('AccessErrorProvider', () => {
   it('should render protected content when no error', () => {
     render(
       <IntlProvider locale="en" messages={{}}>
-        <ForbiddenErrorProvider>
+        <AccessErrorProvider>
           <TestComponent />
-        </ForbiddenErrorProvider>
+        </AccessErrorProvider>
       </IntlProvider>
     );
 
@@ -47,9 +47,9 @@ describe('ForbiddenErrorProvider', () => {
 
     render(
       <IntlProvider locale="en" messages={{}}>
-        <ForbiddenErrorProvider>
+        <AccessErrorProvider>
           <TestComponent />
-        </ForbiddenErrorProvider>
+        </AccessErrorProvider>
       </IntlProvider>
     );
 
@@ -67,9 +67,9 @@ describe('ForbiddenErrorProvider', () => {
 
     render(
       <IntlProvider locale="en" messages={{}}>
-        <ForbiddenErrorProvider>
+        <AccessErrorProvider>
           <TestComponent />
-        </ForbiddenErrorProvider>
+        </AccessErrorProvider>
       </IntlProvider>
     );
 
@@ -87,7 +87,7 @@ describe('ForbiddenErrorProvider', () => {
 
     expect(() => {
       render(<TestComponent />);
-    }).toThrow('useForbiddenError must be used within a ForbiddenErrorProvider');
+    }).toThrow('useAccessError must be used within a AccessErrorProvider');
 
     spy.mockRestore();
   });
