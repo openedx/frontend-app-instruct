@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Nav, Navbar, Skeleton } from '@openedx/paragon';
 import { useCourseInfo } from '@src/data/apiHook';
 import { useAlert } from '@src/providers/AlertProvider';
+import { useAccessError } from '@src/providers/AccessErrorProvider';
 import { useWidgetProps } from '@src/slots/SlotUtils';
 
 export interface TabProps {
@@ -17,9 +18,17 @@ const InstructorNav = () => {
   const { data: courseInfo, isLoading } = useCourseInfo(courseId);
   const widgetPropsArray = useWidgetProps('org.openedx.frontend.slot.instructorDashboard.tabs.v1') as TabProps[];
   const { clearAlerts } = useAlert();
+  const { clearError, errorType } = useAccessError();
+
+  const handleTabClick = () => {
+    clearAlerts();
+    clearError();
+  };
+
+  const hasError = errorType !== null;
 
   const sortedTabs = useMemo(() => {
-    if (isLoading) return [];
+    if (isLoading || hasError) return [];
     const apiTabs: TabProps[] = courseInfo?.tabs ?? [];
     const tabMap = new Map<string, TabProps>();
 
@@ -41,13 +50,13 @@ const InstructorNav = () => {
 
     // Tabs are sorted by sortOrder, with a fallback to 1000 to be placed at the end for tabs that don't have sortOrder defined (to avoid NaN issues)
     return allTabs.sort((a, b) => (a.sortOrder ?? 1000) - (b.sortOrder ?? 1000));
-  }, [courseInfo?.tabs, isLoading, widgetPropsArray]);
+  }, [courseInfo?.tabs, isLoading, widgetPropsArray, hasError]);
 
   if (isLoading) {
     return <Skeleton className="lead" />;
   }
 
-  if (sortedTabs.length === 0) return null;
+  if (sortedTabs.length === 0 || hasError) return null;
 
   return (
     <Navbar expand="md" className="py-0">
@@ -68,7 +77,7 @@ const InstructorNav = () => {
                       : { href: tab.url }
                     )}
                     active={tab.tabId === tabId}
-                    onClick={() => clearAlerts()}
+                    onClick={handleTabClick}
                   >
                     {tab.title}
                   </Nav.Link>

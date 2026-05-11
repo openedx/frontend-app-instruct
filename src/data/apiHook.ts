@@ -9,6 +9,7 @@ export const useCourseInfo = (courseId: string) => (
     enabled: !!courseId,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
+    retry: false,
   })
 );
 

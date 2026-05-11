@@ -1,0 +1,94 @@
+import { render, screen, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { IntlProvider } from '@openedx/frontend-base';
+import { AccessErrorProvider, AccessErrorGuard, useAccessError } from './AccessErrorProvider';
+
+const TestComponent = () => {
+  const { errorType, setErrorType } = useAccessError();
+
+  return (
+    <div>
+      <p data-testid="error-status">{errorType ?? 'allowed'}</p>
+      <button
+        data-testid="trigger-forbidden"
+        onClick={() => setErrorType('forbidden')}
+      >
+        Trigger Forbidden
+      </button>
+      <button
+        data-testid="trigger-unauthorized"
+        onClick={() => setErrorType('unauthorized')}
+      >
+        Trigger Unauthorized
+      </button>
+      <AccessErrorGuard>
+        <div data-testid="protected-content">Protected Content</div>
+      </AccessErrorGuard>
+    </div>
+  );
+};
+
+describe('AccessErrorProvider', () => {
+  it('should render protected content when no error', () => {
+    render(
+      <IntlProvider locale="en" messages={{}}>
+        <AccessErrorProvider>
+          <TestComponent />
+        </AccessErrorProvider>
+      </IntlProvider>
+    );
+
+    expect(screen.getByTestId('error-status')).toHaveTextContent('allowed');
+    expect(screen.getByTestId('protected-content')).toBeInTheDocument();
+  });
+
+  it('should show forbidden error message when errorType is forbidden', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <IntlProvider locale="en" messages={{}}>
+        <AccessErrorProvider>
+          <TestComponent />
+        </AccessErrorProvider>
+      </IntlProvider>
+    );
+
+    await act(async () => {
+      await user.click(screen.getByTestId('trigger-forbidden'));
+    });
+
+    expect(screen.getByTestId('error-status')).toHaveTextContent('forbidden');
+    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
+    expect(screen.getByText('Access Denied')).toBeInTheDocument();
+  });
+
+  it('should show unauthorized error message when errorType is unauthorized', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <IntlProvider locale="en" messages={{}}>
+        <AccessErrorProvider>
+          <TestComponent />
+        </AccessErrorProvider>
+      </IntlProvider>
+    );
+
+    await act(async () => {
+      await user.click(screen.getByTestId('trigger-unauthorized'));
+    });
+
+    expect(screen.getByTestId('error-status')).toHaveTextContent('unauthorized');
+    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
+    expect(screen.getByText('Unauthorized')).toBeInTheDocument();
+  });
+
+  it('should throw error when used outside provider', () => {
+    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    expect(() => {
+      render(<TestComponent />);
+    }).toThrow('useAccessError must be used within a AccessErrorProvider');
+
+    spy.mockRestore();
+  });
+});
