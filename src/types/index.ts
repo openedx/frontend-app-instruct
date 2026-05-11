@@ -52,3 +52,14 @@ export interface SelectedLearner extends Learner {
   progressUrl: string,
   isEnrolled: boolean,
 }
+
+export interface ProblemDetails {
+  currentScore: {
+    score: number,
+    total: number | null,
+  },
+  attempts: {
+    current: number | null,
+    total: number,
+  },
+}

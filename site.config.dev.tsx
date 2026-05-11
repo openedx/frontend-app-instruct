@@ -18,7 +18,13 @@ const siteConfig: SiteConfig = {
     shellApp,
     headerApp,
     footerApp,
-    instructorDashboardApp
+    {
+      ...instructorDashboardApp,
+      config: {
+        ...instructorDashboardApp.config,
+        SUPPORT_URL: 'https://docs.openedx.org/en/latest/educators/index.html',
+      }
+    }
   ],
   externalRoutes: [
     {

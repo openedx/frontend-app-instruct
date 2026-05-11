@@ -2,13 +2,19 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import GradingLearnerContent from '@src/grading/components/GradingLearnerContent';
 import { useChangeScore, useDeleteHistory, useRescoreSubmission, useResetAttempts } from '@src/grading/data/apiHook';
-import { usePendingTasks } from '@src/data/apiHook';
+import { useLearner, usePendingTasks, useProblemDetails } from '@src/data/apiHook';
 import messages from '@src/grading/messages';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithAlertAndIntl } from '@src/testUtils';
 
 // Mock dependencies
 jest.mock('@src/grading/data/apiHook');
-jest.mock('@src/data/apiHook');
+jest.mock('@src/data/apiHook', () => ({
+  ...jest.requireActual('@src/data/apiHook'),
+  usePendingTasks: jest.fn(),
+  useProblemDetails: jest.fn(),
+  useLearner: jest.fn(),
+}));
+
 jest.mock('@src/components/SpecifyLearnerField', () => ({
   __esModule: true,
   default: ({ onClickSelect }: { onClickSelect: (value: string) => void }) => (
@@ -56,6 +62,11 @@ describe('GradingLearnerContent', () => {
   const mockMutateRescore = jest.fn();
   const mockRefetch = jest.fn();
 
+  const axiosError = (msg = 'custom error') => ({
+    isAxiosError: true,
+    response: { data: { error: msg } },
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -64,10 +75,12 @@ describe('GradingLearnerContent', () => {
     mockUseChangeScore.mockReturnValue({ mutate: mockMutateChangeScore } as any);
     mockUseRescoreSubmission.mockReturnValue({ mutate: mockMutateRescore } as any);
     mockUsePendingTasks.mockReturnValue({ refetch: mockRefetch } as any);
+    (useLearner as jest.Mock).mockReturnValue({ data: { username: 'testuser', email: 'testuser@example.com', progressUrl: '/progress' }, isLoading: false, error: null });
+    (useProblemDetails as jest.Mock).mockReturnValue({ data: { currentScore: { score: 0, total: null }, attempts: { current: 1, total: 1 } }, isLoading: false, error: null });
   });
 
   it('renders correctly for single learner mode', () => {
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     expect(screen.getByText(messages.descriptionSingleLearner.defaultMessage)).toBeInTheDocument();
     expect(screen.getByTestId('specify-learner-field')).toBeInTheDocument();
@@ -82,7 +95,7 @@ describe('GradingLearnerContent', () => {
   });
 
   it('renders correctly for all learners mode', () => {
-    renderWithIntl(
+    renderWithAlertAndIntl(
       <GradingLearnerContent
         {...defaultProps}
         toolType="all"
@@ -96,7 +109,7 @@ describe('GradingLearnerContent', () => {
 
   it('handles learner selection correctly', async () => {
     const user = userEvent.setup();
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     const selectLearnerButton = screen.getByText('Select Learner');
     await user.click(selectLearnerButton);
@@ -108,7 +121,7 @@ describe('GradingLearnerContent', () => {
 
   it('handles problem selection correctly', async () => {
     const user = userEvent.setup();
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     // First select learner
     const selectLearnerButton = screen.getByText('Select Learner');
@@ -125,7 +138,7 @@ describe('GradingLearnerContent', () => {
 
   it('calls reset attempts when button is clicked', async () => {
     const user = userEvent.setup();
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     // Select learner and problem first
     await user.click(screen.getByText('Select Learner'));
@@ -135,15 +148,25 @@ describe('GradingLearnerContent', () => {
     const resetButton = screen.getAllByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage })[0];
     await user.click(resetButton);
 
+    const confirmationModal = screen.getByRole('dialog');
+    expect(confirmationModal).toBeInTheDocument();
+
+    const confirmButton = screen.getByRole('button', { name: messages.resetAttempts.defaultMessage });
+    await user.click(confirmButton);
+
     expect(mockMutateReset).toHaveBeenCalledWith({
       learner: 'testuser@example.com',
       problem: 'block-v1:test+problem',
-    });
+    },
+    expect.objectContaining({
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function),
+    }));
   });
 
   it('calls rescore submission when button is clicked', async () => {
     const user = userEvent.setup();
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     // Select learner and problem first
     await user.click(screen.getByText('Select Learner'));
@@ -153,16 +176,26 @@ describe('GradingLearnerContent', () => {
     const rescoreButton = screen.getByText(messages.rescoreSubmissionButtonLabel.defaultMessage);
     await user.click(rescoreButton);
 
+    const confirmationModal = screen.getByRole('dialog');
+    expect(confirmationModal).toBeInTheDocument();
+
+    const confirmButton = screen.getByRole('button', { name: messages.rescore.defaultMessage });
+    await user.click(confirmButton);
+
     expect(mockMutateRescore).toHaveBeenCalledWith({
       learner: 'testuser@example.com',
       problem: 'block-v1:test+problem',
       onlyIfHigher: false,
-    });
+    },
+    expect.objectContaining({
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function),
+    }));
   });
 
   it('calls rescore submission with onlyIfHigher when "only if improves" button is clicked', async () => {
     const user = userEvent.setup();
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     // Select learner and problem first
     await user.click(screen.getByText('Select Learner'));
@@ -172,16 +205,26 @@ describe('GradingLearnerContent', () => {
     const rescoreIfImprovesButton = screen.getByText(messages.rescoreIfImprovesScoreButtonLabel.defaultMessage);
     await user.click(rescoreIfImprovesButton);
 
+    const confirmationModal = screen.getByRole('dialog');
+    expect(confirmationModal).toBeInTheDocument();
+
+    const confirmButton = screen.getByRole('button', { name: messages.rescore.defaultMessage });
+    await user.click(confirmButton);
+
     expect(mockMutateRescore).toHaveBeenCalledWith({
       learner: 'testuser@example.com',
       problem: 'block-v1:test+problem',
       onlyIfHigher: true,
-    });
+    },
+    expect.objectContaining({
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function),
+    }));
   });
 
   it('handles score input correctly', async () => {
     const user = userEvent.setup();
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     // Select learner and problem first
     await user.click(screen.getByText('Select Learner'));
@@ -198,16 +241,26 @@ describe('GradingLearnerContent', () => {
     const overrideButton = screen.getByText(messages.overrideScoreButtonLabel.defaultMessage);
     await user.click(overrideButton);
 
+    const confirmationModal = screen.getByRole('dialog');
+    expect(confirmationModal).toBeInTheDocument();
+
+    const confirmButton = screen.getByRole('button', { name: messages.rescore.defaultMessage });
+    await user.click(confirmButton);
+
     expect(mockMutateChangeScore).toHaveBeenCalledWith({
       learner: 'testuser@example.com',
       problem: 'block-v1:test+problem',
       newScore: 85.5,
-    });
+    },
+    expect.objectContaining({
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function),
+    }));
   });
 
   it('validates score input to only allow numeric values', async () => {
     const user = userEvent.setup();
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     // Select learner and problem first
     await user.click(screen.getByText('Select Learner'));
@@ -232,7 +285,7 @@ describe('GradingLearnerContent', () => {
 
   it('calls delete history when button is clicked', async () => {
     const user = userEvent.setup();
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     // Select learner and problem first
     await user.click(screen.getByText('Select Learner'));
@@ -242,17 +295,27 @@ describe('GradingLearnerContent', () => {
     const deleteButton = screen.getByText(messages.deleteHistoryButtonLabel.defaultMessage);
     await user.click(deleteButton);
 
+    const confirmationModal = screen.getByRole('dialog');
+    expect(confirmationModal).toBeInTheDocument();
+
+    const confirmButton = screen.getByRole('button', { name: messages.deleteStateButtonLabel.defaultMessage });
+    await user.click(confirmButton);
+
     expect(mockMutateDelete).toHaveBeenCalledWith({
       learner: 'testuser@example.com',
       problem: 'block-v1:test+problem',
-    });
+    },
+    expect.objectContaining({
+      onSuccess: expect.any(Function),
+      onError: expect.any(Function),
+    }));
   });
 
   it('calls onShowTasks and refetches when task status button is clicked', async () => {
     const user = userEvent.setup();
     const mockOnShowTasks = jest.fn();
 
-    renderWithIntl(
+    renderWithAlertAndIntl(
       <GradingLearnerContent
         {...defaultProps}
         onShowTasks={mockOnShowTasks}
@@ -272,14 +335,14 @@ describe('GradingLearnerContent', () => {
   });
 
   it('disables problem selection when no learner is selected in single mode', () => {
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     const selectProblemButton = screen.getByText('Select Problem');
     expect(selectProblemButton).toBeDisabled();
   });
 
   it('disables action buttons when learner or problem is not selected', () => {
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     const resetButton = screen.getByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage });
     const rescoreButton = screen.getByRole('button', { name: messages.rescoreSubmissionButtonLabel.defaultMessage });
@@ -294,7 +357,7 @@ describe('GradingLearnerContent', () => {
 
   it('disables override score button when no score is entered', async () => {
     const user = userEvent.setup();
-    renderWithIntl(<GradingLearnerContent {...defaultProps} />);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
 
     // Select learner and problem first
     await user.click(screen.getByText('Select Learner'));
@@ -304,10 +367,153 @@ describe('GradingLearnerContent', () => {
     expect(overrideButton).toBeDisabled();
   });
 
+  it('shows custom error from API in modal when resetAttempts fails', async () => {
+    mockUseResetAttempts.mockReturnValue({ mutate: (_data, { onError }) => onError(axiosError('custom error')) } as any);
+    const user = userEvent.setup();
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
+    await user.click(screen.getByText('Select Learner'));
+    await user.click(screen.getByText('Select Problem'));
+    await user.click(screen.getAllByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage })[0]);
+    const confirmButton = screen.getByRole('button', { name: messages.resetAttempts.defaultMessage });
+    await user.click(confirmButton);
+    expect(screen.getByText('custom error')).toBeInTheDocument();
+  });
+
+  it('calls onSuccess and closes modal when resetAttempts succeeds', async () => {
+    const user = userEvent.setup();
+    const onSuccess = jest.fn();
+    mockUseResetAttempts.mockReturnValue({ mutate: (_data, { onSuccess: cb }) => {
+      cb();
+      onSuccess();
+    } } as any);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
+    await user.click(screen.getByText('Select Learner'));
+    await user.click(screen.getByText('Select Problem'));
+    await user.click(screen.getAllByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage })[0]);
+    const confirmButton = screen.getByRole('button', { name: messages.resetAttempts.defaultMessage });
+    await user.click(confirmButton);
+    expect(onSuccess).toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('calls onSuccess and closes modal when rescoreSubmission succeeds', async () => {
+    const user = userEvent.setup();
+    const onSuccess = jest.fn();
+    mockUseRescoreSubmission.mockReturnValue({ mutate: (_data, { onSuccess: cb }) => {
+      cb();
+      onSuccess();
+    } } as any);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
+    await user.click(screen.getByText('Select Learner'));
+    await user.click(screen.getByText('Select Problem'));
+    await user.click(screen.getByText(messages.rescoreSubmissionButtonLabel.defaultMessage));
+    const confirmButton = screen.getByRole('button', { name: messages.rescore.defaultMessage });
+    await user.click(confirmButton);
+    expect(onSuccess).toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('calls onSuccess and closes modal when deleteHistory succeeds', async () => {
+    const user = userEvent.setup();
+    const onSuccess = jest.fn();
+    mockUseDeleteHistory.mockReturnValue({ mutate: (_data, { onSuccess: cb }) => {
+      cb();
+      onSuccess();
+    } } as any);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
+    await user.click(screen.getByText('Select Learner'));
+    await user.click(screen.getByText('Select Problem'));
+    await user.click(screen.getByText(messages.deleteHistoryButtonLabel.defaultMessage));
+    const confirmButton = screen.getByRole('button', { name: messages.deleteStateButtonLabel.defaultMessage });
+    await user.click(confirmButton);
+    expect(onSuccess).toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('calls onSuccess and closes modal when overrideScore succeeds', async () => {
+    const user = userEvent.setup();
+    const onSuccess = jest.fn();
+    mockUseChangeScore.mockReturnValue({ mutate: (_data, { onSuccess: cb }) => {
+      cb();
+      onSuccess();
+    } } as any);
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
+    await user.click(screen.getByText('Select Learner'));
+    await user.click(screen.getByText('Select Problem'));
+    const scoreInput = screen.getByPlaceholderText(messages.overrideScorePlaceholder.defaultMessage);
+    await user.type(scoreInput, '99');
+    await user.click(screen.getByText(messages.overrideScoreButtonLabel.defaultMessage));
+    const confirmButton = screen.getByRole('button', { name: messages.rescore.defaultMessage });
+    await user.click(confirmButton);
+    expect(onSuccess).toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('shows generic error in modal when resetAttempts fails with unknown error', async () => {
+    mockUseResetAttempts.mockReturnValue({ mutate: (_data, { onError }) => onError({}) } as any);
+    const user = userEvent.setup();
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
+    await user.click(screen.getByText('Select Learner'));
+    await user.click(screen.getByText('Select Problem'));
+    await user.click(screen.getAllByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage })[0]);
+    const confirmButton = screen.getByRole('button', { name: messages.resetAttempts.defaultMessage });
+    await user.click(confirmButton);
+    expect(screen.getByText(messages.unexpectedError.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('shows custom error from API in modal when rescoreSubmission fails', async () => {
+    mockUseRescoreSubmission.mockReturnValue({ mutate: (_data, { onError }) => onError(axiosError('rescore error')) } as any);
+    const user = userEvent.setup();
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
+    await user.click(screen.getByText('Select Learner'));
+    await user.click(screen.getByText('Select Problem'));
+    await user.click(screen.getByText(messages.rescoreSubmissionButtonLabel.defaultMessage));
+    const confirmButton = screen.getByRole('button', { name: messages.rescore.defaultMessage });
+    await user.click(confirmButton);
+    expect(screen.getByText('rescore error')).toBeInTheDocument();
+  });
+
+  it('shows custom error from API in modal when deleteHistory fails', async () => {
+    mockUseDeleteHistory.mockReturnValue({ mutate: (_data, { onError }) => onError(axiosError('delete error')) } as any);
+    const user = userEvent.setup();
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
+    await user.click(screen.getByText('Select Learner'));
+    await user.click(screen.getByText('Select Problem'));
+    await user.click(screen.getByText(messages.deleteHistoryButtonLabel.defaultMessage));
+    const confirmButton = screen.getByRole('button', { name: messages.deleteStateButtonLabel.defaultMessage });
+    await user.click(confirmButton);
+    expect(screen.getByText('delete error')).toBeInTheDocument();
+  });
+
+  it('shows custom error from API in modal when overrideScore fails', async () => {
+    mockUseChangeScore.mockReturnValue({ mutate: (_data, { onError }) => onError(axiosError('override error')) } as any);
+    const user = userEvent.setup();
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
+    await user.click(screen.getByText('Select Learner'));
+    await user.click(screen.getByText('Select Problem'));
+    const scoreInput = screen.getByPlaceholderText(messages.overrideScorePlaceholder.defaultMessage);
+    await user.type(scoreInput, '99');
+    await user.click(screen.getByText(messages.overrideScoreButtonLabel.defaultMessage));
+    const confirmButton = screen.getByRole('button', { name: messages.rescore.defaultMessage });
+    await user.click(confirmButton);
+    expect(screen.getByText('override error')).toBeInTheDocument();
+  });
+
+  it('closes confirmation modal when cancel is clicked', async () => {
+    const user = userEvent.setup();
+    renderWithAlertAndIntl(<GradingLearnerContent {...defaultProps} />);
+    await user.click(screen.getByText('Select Learner'));
+    await user.click(screen.getByText('Select Problem'));
+    await user.click(screen.getAllByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage })[0]);
+    const cancelButton = screen.getByRole('button', { name: messages.close.defaultMessage });
+    await user.click(cancelButton);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
   // Tests for "all learners" mode functionality
   describe('All Learners Mode', () => {
     it('renders all learners specific action cards', () => {
-      renderWithIntl(
+      renderWithAlertAndIntl(
         <GradingLearnerContent
           {...defaultProps}
           toolType="all"
@@ -326,7 +532,7 @@ describe('GradingLearnerContent', () => {
 
     it('calls reset attempts for all learners when button is clicked', async () => {
       const user = userEvent.setup();
-      renderWithIntl(
+      renderWithAlertAndIntl(
         <GradingLearnerContent
           {...defaultProps}
           toolType="all"
@@ -340,15 +546,25 @@ describe('GradingLearnerContent', () => {
       const resetButton = screen.getByRole('button', { name: messages.resetAttemptsButtonLabel.defaultMessage });
       await user.click(resetButton);
 
+      const confirmationModal = screen.getByRole('dialog');
+      expect(confirmationModal).toBeInTheDocument();
+
+      const confirmButton = screen.getByRole('button', { name: messages.resetAttempts.defaultMessage });
+      await user.click(confirmButton);
+
       expect(mockMutateReset).toHaveBeenCalledWith({
         problem: 'block-v1:test+problem',
         learner: '',
-      });
+      },
+      expect.objectContaining({
+        onSuccess: expect.any(Function),
+        onError: expect.any(Function),
+      }));
     });
 
     it('calls rescore all submissions when button is clicked', async () => {
       const user = userEvent.setup();
-      renderWithIntl(
+      renderWithAlertAndIntl(
         <GradingLearnerContent
           {...defaultProps}
           toolType="all"
@@ -362,16 +578,26 @@ describe('GradingLearnerContent', () => {
       const rescoreAllButton = screen.getByRole('button', { name: messages.rescoreAllSubmissionButtonLabel.defaultMessage });
       await user.click(rescoreAllButton);
 
+      const confirmationModal = screen.getByRole('dialog');
+      expect(confirmationModal).toBeInTheDocument();
+
+      const confirmButton = screen.getByRole('button', { name: messages.rescore.defaultMessage });
+      await user.click(confirmButton);
+
       expect(mockMutateRescore).toHaveBeenCalledWith({
         problem: 'block-v1:test+problem',
         onlyIfHigher: false,
         learner: '',
-      });
+      },
+      expect.objectContaining({
+        onSuccess: expect.any(Function),
+        onError: expect.any(Function),
+      }));
     });
 
     it('calls rescore submissions with onlyIfHigher when "if improves" button is clicked', async () => {
       const user = userEvent.setup();
-      renderWithIntl(
+      renderWithAlertAndIntl(
         <GradingLearnerContent
           {...defaultProps}
           toolType="all"
@@ -385,18 +611,28 @@ describe('GradingLearnerContent', () => {
       const rescoreIfImprovesButton = screen.getByRole('button', { name: messages.rescoreIfImprovesScoreButtonLabel.defaultMessage });
       await user.click(rescoreIfImprovesButton);
 
+      const confirmationModal = screen.getByRole('dialog');
+      expect(confirmationModal).toBeInTheDocument();
+
+      const confirmButton = screen.getByRole('button', { name: messages.rescore.defaultMessage });
+      await user.click(confirmButton);
+
       expect(mockMutateRescore).toHaveBeenCalledWith({
         problem: 'block-v1:test+problem',
         onlyIfHigher: true,
         learner: '',
-      });
+      },
+      expect.objectContaining({
+        onSuccess: expect.any(Function),
+        onError: expect.any(Function),
+      }));
     });
 
     it('calls onShowTasks and refetches when task status button is clicked in all learners mode', async () => {
       const user = userEvent.setup();
       const mockOnShowTasks = jest.fn();
 
-      renderWithIntl(
+      renderWithAlertAndIntl(
         <GradingLearnerContent
           {...defaultProps}
           toolType="all"
@@ -416,7 +652,7 @@ describe('GradingLearnerContent', () => {
     });
 
     it('disables action buttons when problem is not selected in all learners mode', () => {
-      renderWithIntl(
+      renderWithAlertAndIntl(
         <GradingLearnerContent
           {...defaultProps}
           toolType="all"
@@ -434,7 +670,7 @@ describe('GradingLearnerContent', () => {
 
     it('enables action buttons when problem is selected in all learners mode', async () => {
       const user = userEvent.setup();
-      renderWithIntl(
+      renderWithAlertAndIntl(
         <GradingLearnerContent
           {...defaultProps}
           toolType="all"
@@ -456,7 +692,7 @@ describe('GradingLearnerContent', () => {
     });
 
     it('task status button is always enabled in all learners mode (does not depend on problem selection)', () => {
-      renderWithIntl(
+      renderWithAlertAndIntl(
         <GradingLearnerContent
           {...defaultProps}
           toolType="all"

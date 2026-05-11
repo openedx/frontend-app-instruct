@@ -170,6 +170,81 @@ const messages = defineMessages({
     id: 'instruct.grading.rescoreAllSubmissionButtonLabel',
     defaultMessage: 'Rescore All Learners\' Submissions',
     description: 'Button label for the rescore submission action card in the all learners view'
+  },
+  currentScore: {
+    id: 'instruct.grading.currentScore',
+    defaultMessage: 'Current Score',
+    description: 'Label for the current score displayed in the single learner view'
+  },
+  viewProgress: {
+    id: 'instruct.grading.viewProgress',
+    defaultMessage: 'View Progress Page',
+    description: 'Label for the view progress button displayed next to the current score in the single learner view'
+  },
+  score: {
+    id: 'instruct.grading.score',
+    defaultMessage: 'Score',
+    description: 'Label for the score displayed in the current status section of the single learner view'
+  },
+  attempts: {
+    id: 'instruct.grading.attempts',
+    defaultMessage: 'Attempts',
+    description: 'Label for the attempts displayed in the current status section of the single learner view'
+  },
+  rescore: {
+    id: 'instruct.grading.rescore',
+    defaultMessage: 'Rescore',
+    description: 'Label for the rescore confirmation action'
+  },
+  resetAttemptsConfirmation: {
+    id: 'instruct.grading.resetAttemptsConfirmation',
+    defaultMessage: 'Reset attempts for {student} on problem "{blockId}"?',
+    description: 'Confirmation message for resetting attempts'
+  },
+  overrideScoreConfirmation: {
+    id: 'instruct.grading.overrideScoreConfirmation',
+    defaultMessage: 'Override score for {student} for problem "{blockId}"?',
+    description: 'Confirmation message for overriding score'
+  },
+  deleteStateConfirmation: {
+    id: 'instruct.grading.deleteStateConfirmation',
+    defaultMessage: 'Delete state for student "{student}" on problem "{blockId}"?',
+    description: 'Confirmation message for deleting state'
+  },
+  rescoreConfirmation: {
+    id: 'instruct.grading.rescoreConfirmation',
+    defaultMessage: 'Rescore problem for {student} for "{blockId}"?',
+    description: 'Confirmation message for rescoring a submission'
+  },
+  deleteStateButtonLabel: {
+    id: 'instruct.grading.deleteStateButtonLabel',
+    defaultMessage: 'Delete State',
+    description: 'Button label for the delete state confirmation action'
+  },
+  resetAttemptsSuccess: {
+    id: 'instruct.grading.resetAttemptsSuccess',
+    defaultMessage: 'Successfully reset problem attempts for {student} on problem "{blockId}".',
+    description: 'Success message for resetting attempts'
+  },
+  overrideScoreSuccess: {
+    id: 'instruct.grading.overrideScoreSuccess',
+    defaultMessage: 'Started task to override the score for {student} on problem "{blockId}". \n \n Click the \'Show Task Status\' button to see the status of the task.',
+    description: 'Success message for overriding score'
+  },
+  rescoreSubmissionSuccess: {
+    id: 'instruct.grading.rescoreSubmissionSuccess',
+    defaultMessage: 'Successfully started task to rescore problem "{blockId}" for {student}. \n \n Click the \'Show Task Status\' button to see the status of the task.',
+    description: 'Success message for rescoring submission'
+  },
+  deleteHistorySuccess: {
+    id: 'instruct.grading.deleteHistorySuccess',
+    defaultMessage: 'State for student "{student}" successfully deleted.',
+    description: 'Success message for deleting history'
+  },
+  unexpectedError: {
+    id: 'instruct.grading.unexpectedError',
+    defaultMessage: 'An unexpected error occurred. Please try again.',
+    description: 'Message to display when an unexpected error occurs'
   }
 });
 

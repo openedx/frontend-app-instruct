@@ -1,14 +1,16 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
+import { isAxiosError } from 'axios';
 import { useIntl } from '@openedx/frontend-base';
-import { Button, FormControl } from '@openedx/paragon';
+import { Button, FormControl, ModalDialog, Stack } from '@openedx/paragon';
 import ActionCard, { ActionCardProps } from '@src/components/ActionCard';
 import SpecifyLearnerField from '@src/components/SpecifyLearnerField';
 import SpecifyProblemField from '@src/components/SpecifyProblemField';
 import { useChangeScore, useDeleteHistory, useRescoreSubmission, useResetAttempts } from '@src/grading/data/apiHook';
 import messages from '@src/grading/messages';
 import { GradingToolsType } from '@src/grading/types';
-import { usePendingTasks } from '@src/data/apiHook';
+import { useLearner, usePendingTasks, useProblemDetails } from '@src/data/apiHook';
+import { useAlert } from '@src/providers/AlertProvider';
 
 interface GradingLearnerContentProps {
   toolType: GradingToolsType,
@@ -23,6 +25,11 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
   const [score, setScore] = useState('');
   const learnerFieldRef = useRef<{ reset: () => void }>(null);
   const problemFieldRef = useRef<{ reset: () => void }>(null);
+  const [showCurrentStatus, setShowCurrentStatus] = useState(false);
+  const [confirmationModalData, setConfirmationModalData] = useState<{ message: string, confirmButtonLabel: string, action?: () => void }>({ message: '', confirmButtonLabel: '', action: undefined });
+  const { data: problemData = { currentScore: { score: 0, total: null }, attempts: { current: null, total: 0 } }, isError: isProblemDataError } = useProblemDetails(courseId, blockId, usernameOrEmail);
+  const { data: learnerData = { username: '', progressUrl: '' } } = useLearner(courseId, usernameOrEmail);
+  const { showModal, showToast } = useAlert();
 
   const { mutate: resetAttempts } = useResetAttempts(courseId);
   const { mutate: deleteHistory } = useDeleteHistory(courseId);
@@ -30,20 +37,56 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
   const { mutate: rescoreSubmission } = useRescoreSubmission(courseId);
   const { refetch: refetchTasks } = usePendingTasks(courseId);
 
+  const resetConfirmationModalData = () => setConfirmationModalData({ message: '', confirmButtonLabel: '', action: undefined });
+
+  const manageOnError = (error: Error) => {
+    resetConfirmationModalData();
+    const errorMessage = isAxiosError(error) && error.response?.data?.error ? error.response.data.error : intl.formatMessage(messages.unexpectedError);
+    showModal({
+      message: errorMessage,
+      variant: 'danger',
+      confirmText: intl.formatMessage(messages.close),
+    });
+  };
+
   const handleResetAttempts = (): void => {
-    resetAttempts({ learner: usernameOrEmail, problem: blockId });
+    resetAttempts({ learner: usernameOrEmail, problem: blockId }, {
+      onSuccess: () => {
+        resetConfirmationModalData();
+        showToast(intl.formatMessage(messages.resetAttemptsSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
+      },
+      onError: manageOnError
+    });
   };
 
   const handleRescoreSubmission = (onlyIfHigher = false): void => {
-    rescoreSubmission({ learner: usernameOrEmail, problem: blockId, onlyIfHigher });
+    rescoreSubmission({ learner: usernameOrEmail, problem: blockId, onlyIfHigher }, {
+      onSuccess: () => {
+        resetConfirmationModalData();
+        showToast(intl.formatMessage(messages.rescoreSubmissionSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
+      },
+      onError: manageOnError
+    });
   };
 
   const handleDeleteHistory = (): void => {
-    deleteHistory({ learner: usernameOrEmail, problem: blockId });
+    deleteHistory({ learner: usernameOrEmail, problem: blockId }, {
+      onSuccess: () => {
+        resetConfirmationModalData();
+        showToast(intl.formatMessage(messages.deleteHistorySuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
+      },
+      onError: manageOnError
+    });
   };
 
   const handleOverrideScore = (): void => {
-    changeScore({ learner: usernameOrEmail, problem: blockId, newScore: Number(score) });
+    changeScore({ learner: usernameOrEmail, problem: blockId, newScore: Number(score) }, {
+      onSuccess: () => {
+        resetConfirmationModalData();
+        showToast(intl.formatMessage(messages.overrideScoreSuccess, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }));
+      },
+      onError: manageOnError
+    });
   };
 
   const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -55,6 +98,39 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
     }
   };
 
+  const confirmationInfo = {
+    resetAttempts: {
+      message: messages.resetAttemptsConfirmation,
+      confirmButtonLabel: messages.resetAttempts,
+      action: handleResetAttempts,
+    },
+    deleteState: {
+      message: messages.deleteStateConfirmation,
+      confirmButtonLabel: messages.deleteStateButtonLabel,
+      action: handleDeleteHistory,
+    },
+    overrideScore: {
+      message: messages.overrideScoreConfirmation,
+      confirmButtonLabel: messages.rescore,
+      action: handleOverrideScore,
+    },
+    rescore: {
+      message: messages.rescoreConfirmation,
+      confirmButtonLabel: messages.rescore,
+      action: () => handleRescoreSubmission(),
+    },
+    rescoreIfImproves: {
+      message: messages.rescoreConfirmation,
+      confirmButtonLabel: messages.rescore,
+      action: () => handleRescoreSubmission(true),
+    }
+  };
+
+  const openConfirmationModal = (type: keyof typeof confirmationInfo): void => {
+    const { message, confirmButtonLabel, action } = confirmationInfo[type];
+    setConfirmationModalData({ message: intl.formatMessage(message, { student: usernameOrEmail || intl.formatMessage(messages.allLearners), blockId }), confirmButtonLabel: intl.formatMessage(confirmButtonLabel), action });
+  };
+
   const handleTaskStatusClick = (): void => {
     refetchTasks();
     onShowTasks();
@@ -64,6 +140,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
     setUsernameOrEmail('');
     setBlockId('');
     setScore('');
+    setShowCurrentStatus(false);
     learnerFieldRef.current?.reset();
     problemFieldRef.current?.reset();
   }, [toolType]);
@@ -73,7 +150,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
       title: intl.formatMessage(messages.resetAttempts),
       description: intl.formatMessage(messages.resetAttemptsDescription),
       customAction: (
-        <Button disabled={!usernameOrEmail || !blockId} onClick={handleResetAttempts}>
+        <Button disabled={!usernameOrEmail || !blockId} onClick={() => openConfirmationModal('resetAttempts')}>
           {intl.formatMessage(messages.resetAttemptsButtonLabel)}
         </Button>
       )
@@ -83,8 +160,12 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
       description: intl.formatMessage(messages.rescoreSubmissionDescription),
       customAction: (
         <div className="d-flex flex-column gap-3">
-          <Button disabled={!usernameOrEmail || !blockId} onClick={() => handleRescoreSubmission()}>{intl.formatMessage(messages.rescoreSubmissionButtonLabel)}</Button>
-          <Button disabled={!usernameOrEmail || !blockId} onClick={() => handleRescoreSubmission(true)}>{intl.formatMessage(messages.rescoreIfImprovesScoreButtonLabel)}</Button>
+          <Button disabled={!usernameOrEmail || !blockId} onClick={() => openConfirmationModal('rescore')}>
+            {intl.formatMessage(messages.rescoreSubmissionButtonLabel)}
+          </Button>
+          <Button disabled={!usernameOrEmail || !blockId} onClick={() => openConfirmationModal('rescoreIfImproves')}>
+            {intl.formatMessage(messages.rescoreIfImprovesScoreButtonLabel)}
+          </Button>
         </div>
       ),
     },
@@ -101,7 +182,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
             value={score}
             onChange={handleScoreChange}
           />
-          <Button disabled={!usernameOrEmail || !blockId || !score} onClick={handleOverrideScore}>{intl.formatMessage(messages.overrideScoreButtonLabel)}</Button>
+          <Button disabled={!usernameOrEmail || !blockId || !score} onClick={() => openConfirmationModal('overrideScore')}>{intl.formatMessage(messages.overrideScoreButtonLabel)}</Button>
         </div>
       )
     },
@@ -110,7 +191,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
       description: intl.formatMessage(messages.deleteHistoryDescription),
       customAction: (
         <div className="d-flex flex-column gap-3">
-          <Button disabled={!usernameOrEmail || !blockId} onClick={handleDeleteHistory}>{intl.formatMessage(messages.deleteHistoryButtonLabel)}</Button>
+          <Button disabled={!usernameOrEmail || !blockId} onClick={() => openConfirmationModal('deleteState')}>{intl.formatMessage(messages.deleteHistoryButtonLabel)}</Button>
         </div>
       ),
     },
@@ -131,7 +212,7 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
       description: intl.formatMessage(messages.resetAllLearnersAttemptsDescription),
       buttonLabel: intl.formatMessage(messages.resetAttemptsButtonLabel),
       customAction: (
-        <Button disabled={!blockId} onClick={handleResetAttempts}>
+        <Button disabled={!blockId} onClick={() => openConfirmationModal('resetAttempts')}>
           {intl.formatMessage(messages.resetAttemptsButtonLabel)}
         </Button>
       )
@@ -141,8 +222,8 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
       description: intl.formatMessage(messages.rescoreSubmissionAllLearnersDescription),
       customAction: (
         <div className="d-flex flex-column gap-3">
-          <Button disabled={!blockId} onClick={() => handleRescoreSubmission()}>{intl.formatMessage(messages.rescoreAllSubmissionButtonLabel)}</Button>
-          <Button disabled={!blockId} onClick={() => handleRescoreSubmission(true)}>{intl.formatMessage(messages.rescoreIfImprovesScoreButtonLabel)}</Button>
+          <Button disabled={!blockId} onClick={() => openConfirmationModal('rescore')}>{intl.formatMessage(messages.rescoreAllSubmissionButtonLabel)}</Button>
+          <Button disabled={!blockId} onClick={() => openConfirmationModal('rescoreIfImproves')}>{intl.formatMessage(messages.rescoreIfImprovesScoreButtonLabel)}</Button>
         </div>
       ),
     },
@@ -161,6 +242,9 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
 
   const handleProblemChange = (location: string): void => {
     setBlockId(location);
+    if (usernameOrEmail && location) {
+      setShowCurrentStatus(true);
+    }
   };
 
   const handleLearnerChange = (usernameOrEmail: string): void => {
@@ -168,6 +252,9 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
     // Reset problem field when learner changes due to progress and attempts change for every learner
     setBlockId('');
     problemFieldRef.current?.reset();
+    if (showCurrentStatus) {
+      setShowCurrentStatus(false);
+    }
   };
 
   return (
@@ -197,9 +284,49 @@ const GradingLearnerContent = ({ toolType, onShowTasks }: GradingLearnerContentP
         </div>
       </div>
       {
+        showCurrentStatus && learnerData.username && !isProblemDataError && (
+          <>
+            <p className="text-primary-500 x-small mb-0 mt-3">{intl.formatMessage(messages.currentScore)}</p>
+            <Stack direction="horizontal" gap={2} className="align-items-center justify-content-between mr-3.5">
+              <Stack direction="horizontal" gap={5} className="align-items-end">
+                <p className="text-primary-500 mb-0">{learnerData.username}</p>
+                <Stack className="align-items-center">
+                  <p className="x-small mb-0 text-gray-500">{intl.formatMessage(messages.score)}</p>
+                  <p className="lead m-0 text-primary-700">{problemData.currentScore?.score || 0} {problemData.currentScore?.total && `/ ${problemData.currentScore.total}`}</p>
+                </Stack>
+                <Stack className="align-items-center">
+                  <p className="x-small mb-0 text-gray-500">{intl.formatMessage(messages.attempts)}</p>
+                  <p className="lead m-0 text-primary-700">{problemData.attempts?.current || 0} {problemData.attempts?.total && `/ ${problemData.attempts.total}`}</p>
+                </Stack>
+              </Stack>
+              <Button as="a" href={learnerData.progressUrl} className="bg-white" variant="outline-primary">{intl.formatMessage(messages.viewProgress)}</Button>
+            </Stack>
+          </>
+        )
+      }
+      {
         rows.map(({ title, description, buttonLabel, customAction, onButtonClick }, index) => (
           <ActionCard key={title} buttonLabel={buttonLabel} description={description} title={title} hasBorderBottom={index !== rows.length - 1} customAction={customAction} onButtonClick={onButtonClick} />
         ))
+      }
+      {
+        confirmationModalData.message !== '' && (
+          <ModalDialog
+            title={confirmationModalData.confirmButtonLabel}
+            isOpen={confirmationModalData.message !== ''}
+            onClose={() => setConfirmationModalData({ message: '', confirmButtonLabel: '', action: undefined })}
+            isOverflowVisible={false}
+            hasCloseButton={false}
+          >
+            <ModalDialog.Body className="pt-4">
+              <p className="text-break">{confirmationModalData.message}</p>
+            </ModalDialog.Body>
+            <ModalDialog.Footer>
+              <Button variant="tertiary" onClick={() => setConfirmationModalData({ message: '', confirmButtonLabel: '', action: undefined })}>{intl.formatMessage(messages.close)}</Button>
+              <Button className="ml-2" onClick={confirmationModalData.action}>{confirmationModalData.confirmButtonLabel}</Button>
+            </ModalDialog.Footer>
+          </ModalDialog>
+        )
       }
     </>
   );
