@@ -4,6 +4,7 @@ import { Card, Container, Button, ButtonGroup, Alert } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
 import { useAlert } from '@src/providers/AlertProvider';
 import { useCourseInfo } from '@src/data/apiHook';
+import { PendingTasks } from '@src/components/PendingTasks';
 import CertificatesPageHeader from '@src/certificates/components/CertificatesPageHeader';
 import IssuedCertificatesTab from '@src/certificates/components/IssuedCertificatesTab';
 import GenerationHistoryTable from '@src/certificates/components/GenerationHistoryTable';
@@ -53,6 +54,7 @@ const CertificatesPage = () => {
   const [isDisableCertificatesOpen, setIsDisableCertificatesOpen] = useState(false);
   const [isRegenerateModalOpen, setIsRegenerateModalOpen] = useState(false);
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+  const [isPendingTasksOpen, setIsPendingTasksOpen] = useState(false);
 
   const {
     data: certificatesData,
@@ -150,6 +152,7 @@ const CertificatesPage = () => {
               title: intl.formatMessage(messages.errorModalTitle),
               message: `Some invalidations failed:\n${errorMessages}`,
               variant: ALERT_VARIANTS.WARNING,
+              confirmText: intl.formatMessage(messages.close),
             });
           }
           if (data.success && data.success.length > 0) {
@@ -504,6 +507,7 @@ const CertificatesPage = () => {
         isSubmitting={false}
         learnerCount={certificatesData?.count || 0}
       />
+      <PendingTasks isOpen={isPendingTasksOpen} onToggle={() => setIsPendingTasksOpen(prev => !prev)} />
     </Container>
   );
 };

@@ -229,7 +229,7 @@ export const AlertProvider: FC<AlertProviderProps> = ({ children }) => {
                 {modal.confirmText && (
                   <Button
                     variant={modal.variant === 'danger' ? 'danger' : 'primary'}
-                    onClick={() => confirmModal(modal.id)}
+                    onClick={() => modal.onConfirm ? confirmModal(modal.id) : closeModal(modal.id, false)}
                   >
                     {modal.confirmText}
                   </Button>
