@@ -318,6 +318,44 @@ const CertificatesPage = () => {
     });
   }, [regenerateCerts, filter, showToast, showModal, intl]);
 
+  const handleTabKeyDown = useCallback((event: React.KeyboardEvent) => {
+    const tabs = [TAB_KEYS.ISSUED, TAB_KEYS.HISTORY];
+    const currentIndex = tabs.indexOf(activeTab);
+
+    let nextIndex = currentIndex;
+
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        event.preventDefault();
+        nextIndex = (currentIndex + 1) % tabs.length;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        event.preventDefault();
+        nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        break;
+      case 'Home':
+        event.preventDefault();
+        nextIndex = 0;
+        break;
+      case 'End':
+        event.preventDefault();
+        nextIndex = tabs.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    const nextTab = tabs[nextIndex];
+    setActiveTab(nextTab);
+
+    // Focus the new tab
+    setTimeout(() => {
+      document.getElementById(`certificates-tab-${nextTab}`)?.focus();
+    }, 0);
+  }, [activeTab]);
+
   // Check if certificate management is disabled
   if (courseInfo && !courseInfo.certificatesEnabled) {
     return (
@@ -338,53 +376,75 @@ const CertificatesPage = () => {
       />
 
       <Card variant="muted" className="pt-3 pt-md-4 pb-4 pb-md-6 certificates-card">
-        <ButtonGroup className="d-block mx-4">
+        <ButtonGroup className="d-block mx-4" role="tablist">
           <Button
-            onClick={() => setActiveTab(TAB_KEYS.ISSUED)}
-            variant={activeTab === TAB_KEYS.ISSUED ? 'primary' : 'outline-primary'}
+            id="certificates-tab-issued"
             role="tab"
+            aria-controls="certificates-tabpanel-issued"
             aria-selected={activeTab === TAB_KEYS.ISSUED}
+            tabIndex={activeTab === TAB_KEYS.ISSUED ? 0 : -1}
+            onClick={() => setActiveTab(TAB_KEYS.ISSUED)}
+            onKeyDown={handleTabKeyDown}
+            variant={activeTab === TAB_KEYS.ISSUED ? 'primary' : 'outline-primary'}
           >
             {intl.formatMessage(messages.issuedCertificatesTab)}
           </Button>
           <Button
-            onClick={() => setActiveTab(TAB_KEYS.HISTORY)}
-            variant={activeTab === TAB_KEYS.HISTORY ? 'primary' : 'outline-primary'}
+            id="certificates-tab-history"
             role="tab"
+            aria-controls="certificates-tabpanel-history"
             aria-selected={activeTab === TAB_KEYS.HISTORY}
+            tabIndex={activeTab === TAB_KEYS.HISTORY ? 0 : -1}
+            onClick={() => setActiveTab(TAB_KEYS.HISTORY)}
+            onKeyDown={handleTabKeyDown}
+            variant={activeTab === TAB_KEYS.HISTORY ? 'primary' : 'outline-primary'}
           >
             {intl.formatMessage(messages.generationHistoryTab)}
           </Button>
         </ButtonGroup>
-        {activeTab === TAB_KEYS.ISSUED && (
-          <IssuedCertificatesTab
-            data={certificatesData?.results || []}
-            isLoading={isLoadingCertificates}
-            itemCount={certificatesData?.count || 0}
-            pageCount={certificatesData?.numPages || 0}
-            search={search}
-            onSearchChange={setSearch}
-            filter={filter}
-            onFilterChange={setFilter}
-            currentPage={certificatesPage}
-            onPageChange={setCertificatesPage}
-            onRemoveException={handleRemoveExceptionClick}
-            onRemoveInvalidation={handleRemoveInvalidationClick}
-            onRegenerateCertificates={handleRegenerateCertificatesClick}
-          />
-        )}
-        {activeTab === TAB_KEYS.HISTORY && (
-          <div className="d-flex flex-column mt-3 mt-md-4">
-            <GenerationHistoryTable
-              data={historyData?.results || []}
-              isLoading={isLoadingHistory}
-              itemCount={historyData?.count || 0}
-              pageCount={historyData?.numPages || 0}
-              currentPage={tasksPage}
-              onPageChange={setTasksPage}
+        <div
+          id="certificates-tabpanel-issued"
+          role="tabpanel"
+          aria-labelledby="certificates-tab-issued"
+          hidden={activeTab !== TAB_KEYS.ISSUED}
+        >
+          {activeTab === TAB_KEYS.ISSUED && (
+            <IssuedCertificatesTab
+              data={certificatesData?.results || []}
+              isLoading={isLoadingCertificates}
+              itemCount={certificatesData?.count || 0}
+              pageCount={certificatesData?.numPages || 0}
+              search={search}
+              onSearchChange={setSearch}
+              filter={filter}
+              onFilterChange={setFilter}
+              currentPage={certificatesPage}
+              onPageChange={setCertificatesPage}
+              onRemoveException={handleRemoveExceptionClick}
+              onRemoveInvalidation={handleRemoveInvalidationClick}
+              onRegenerateCertificates={handleRegenerateCertificatesClick}
             />
-          </div>
-        )}
+          )}
+        </div>
+        <div
+          id="certificates-tabpanel-history"
+          role="tabpanel"
+          aria-labelledby="certificates-tab-history"
+          hidden={activeTab !== TAB_KEYS.HISTORY}
+        >
+          {activeTab === TAB_KEYS.HISTORY && (
+            <div className="d-flex flex-column mt-3 mt-md-4">
+              <GenerationHistoryTable
+                data={historyData?.results || []}
+                isLoading={isLoadingHistory}
+                itemCount={historyData?.count || 0}
+                pageCount={historyData?.numPages || 0}
+                currentPage={tasksPage}
+                onPageChange={setTasksPage}
+              />
+            </div>
+          )}
+        </div>
       </Card>
 
       <GrantExceptionsModal
