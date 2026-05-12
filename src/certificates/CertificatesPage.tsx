@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Container, Tab, Tabs, Alert } from '@openedx/paragon';
+import { Card, Container, Button, ButtonGroup, Alert } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
 import { useAlert } from '@src/providers/AlertProvider';
 import { useCourseInfo } from '@src/data/apiHook';
@@ -41,7 +41,7 @@ const CertificatesPage = () => {
   const [search, setSearch] = useState('');
   const [certificatesPage, setCertificatesPage] = useState(0);
   const [tasksPage, setTasksPage] = useState(0);
-  const [activeTab, setActiveTab] = useState(TAB_KEYS.ISSUED);
+  const [activeTab, setActiveTab] = useState<typeof TAB_KEYS.ISSUED | typeof TAB_KEYS.HISTORY>(TAB_KEYS.ISSUED);
   const [selectedUsername, setSelectedUsername] = useState('');
   const [selectedEmail, setSelectedEmail] = useState('');
   const [isCertificateGenerationEnabled, setIsCertificateGenerationEnabled] = useState(true);
@@ -338,42 +338,53 @@ const CertificatesPage = () => {
       />
 
       <Card variant="muted" className="pt-3 pt-md-4 pb-4 pb-md-6 certificates-card">
-        <Tabs
-          activeKey={activeTab}
-          onSelect={(key) => setActiveTab(key || TAB_KEYS.ISSUED)}
-          className="mx-4"
-          variant="button-group"
-        >
-          <Tab eventKey={TAB_KEYS.ISSUED} title={intl.formatMessage(messages.issuedCertificatesTab)}>
-            <IssuedCertificatesTab
-              data={certificatesData?.results || []}
-              isLoading={isLoadingCertificates}
-              itemCount={certificatesData?.count || 0}
-              pageCount={certificatesData?.numPages || 0}
-              search={search}
-              onSearchChange={setSearch}
-              filter={filter}
-              onFilterChange={setFilter}
-              currentPage={certificatesPage}
-              onPageChange={setCertificatesPage}
-              onRemoveException={handleRemoveExceptionClick}
-              onRemoveInvalidation={handleRemoveInvalidationClick}
-              onRegenerateCertificates={handleRegenerateCertificatesClick}
+        <ButtonGroup className="d-block mx-4">
+          <Button
+            onClick={() => setActiveTab(TAB_KEYS.ISSUED)}
+            variant={activeTab === TAB_KEYS.ISSUED ? 'primary' : 'outline-primary'}
+            role="tab"
+            aria-selected={activeTab === TAB_KEYS.ISSUED}
+          >
+            {intl.formatMessage(messages.issuedCertificatesTab)}
+          </Button>
+          <Button
+            onClick={() => setActiveTab(TAB_KEYS.HISTORY)}
+            variant={activeTab === TAB_KEYS.HISTORY ? 'primary' : 'outline-primary'}
+            role="tab"
+            aria-selected={activeTab === TAB_KEYS.HISTORY}
+          >
+            {intl.formatMessage(messages.generationHistoryTab)}
+          </Button>
+        </ButtonGroup>
+        {activeTab === TAB_KEYS.ISSUED && (
+          <IssuedCertificatesTab
+            data={certificatesData?.results || []}
+            isLoading={isLoadingCertificates}
+            itemCount={certificatesData?.count || 0}
+            pageCount={certificatesData?.numPages || 0}
+            search={search}
+            onSearchChange={setSearch}
+            filter={filter}
+            onFilterChange={setFilter}
+            currentPage={certificatesPage}
+            onPageChange={setCertificatesPage}
+            onRemoveException={handleRemoveExceptionClick}
+            onRemoveInvalidation={handleRemoveInvalidationClick}
+            onRegenerateCertificates={handleRegenerateCertificatesClick}
+          />
+        )}
+        {activeTab === TAB_KEYS.HISTORY && (
+          <div className="d-flex flex-column mt-3 mt-md-4">
+            <GenerationHistoryTable
+              data={historyData?.results || []}
+              isLoading={isLoadingHistory}
+              itemCount={historyData?.count || 0}
+              pageCount={historyData?.numPages || 0}
+              currentPage={tasksPage}
+              onPageChange={setTasksPage}
             />
-          </Tab>
-          <Tab eventKey={TAB_KEYS.HISTORY} title={intl.formatMessage(messages.generationHistoryTab)}>
-            <div className="d-flex flex-column mt-3 mt-md-4">
-              <GenerationHistoryTable
-                data={historyData?.results || []}
-                isLoading={isLoadingHistory}
-                itemCount={historyData?.count || 0}
-                pageCount={historyData?.numPages || 0}
-                currentPage={tasksPage}
-                onPageChange={setTasksPage}
-              />
-            </div>
-          </Tab>
-        </Tabs>
+          </div>
+        )}
       </Card>
 
       <GrantExceptionsModal
