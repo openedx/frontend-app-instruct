@@ -28,6 +28,17 @@ jest.mock('@src/data/apiHook', () => ({
   usePendingTasks: jest.fn(),
 }));
 
+jest.mock('@src/components/PendingTasks', () => ({
+  PendingTasks: function MockPendingTasks({ isOpen, onToggle }: { isOpen: boolean, onToggle: () => void }) {
+    return (
+      <div data-testid="pending-tasks">
+        Pending Tasks
+        <button onClick={onToggle}>Toggle</button>
+      </div>
+    );
+  },
+}));
+
 const mockUseCourseInfo = useCourseInfo as jest.MockedFunction<typeof useCourseInfo>;
 const mockUsePendingTasks = usePendingTasks as jest.MockedFunction<typeof usePendingTasks>;
 const mockUseCertificateGenerationHistory = useCertificateGenerationHistory as jest.MockedFunction<typeof useCertificateGenerationHistory>;
@@ -187,6 +198,12 @@ describe('CertificatesPage', () => {
 
     expect(screen.getByText(messages.issuedCertificatesTab.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.generationHistoryTab.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders pending tasks component', () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+
+    expect(screen.getByTestId('pending-tasks')).toBeInTheDocument();
   });
 
   it('renders issued certificates tab by default', () => {
