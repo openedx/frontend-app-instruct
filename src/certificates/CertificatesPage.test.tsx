@@ -199,6 +199,110 @@ describe('CertificatesPage', () => {
     });
   });
 
+  it('navigates tabs with arrow keys', async () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+    const user = userEvent.setup();
+
+    const issuedTab = screen.getByRole('tab', { name: messages.issuedCertificatesTab.defaultMessage });
+    const historyTab = screen.getByRole('tab', { name: messages.generationHistoryTab.defaultMessage });
+
+    // Focus the issued tab
+    issuedTab.focus();
+    expect(issuedTab).toHaveFocus();
+
+    // Press ArrowRight to move to history tab
+    await user.keyboard('{ArrowRight}');
+    await waitFor(() => {
+      expect(historyTab).toHaveFocus();
+      expect(historyTab).toHaveAttribute('aria-selected', 'true');
+    });
+
+    // Press ArrowLeft to move back to issued tab
+    await user.keyboard('{ArrowLeft}');
+    await waitFor(() => {
+      expect(issuedTab).toHaveFocus();
+      expect(issuedTab).toHaveAttribute('aria-selected', 'true');
+    });
+  });
+
+  it('navigates tabs with Home and End keys', async () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+    const user = userEvent.setup();
+
+    const issuedTab = screen.getByRole('tab', { name: messages.issuedCertificatesTab.defaultMessage });
+    const historyTab = screen.getByRole('tab', { name: messages.generationHistoryTab.defaultMessage });
+
+    // Focus the issued tab
+    issuedTab.focus();
+
+    // Press End to move to last tab
+    await user.keyboard('{End}');
+    await waitFor(() => {
+      expect(historyTab).toHaveFocus();
+      expect(historyTab).toHaveAttribute('aria-selected', 'true');
+    });
+
+    // Press Home to move to first tab
+    await user.keyboard('{Home}');
+    await waitFor(() => {
+      expect(issuedTab).toHaveFocus();
+      expect(issuedTab).toHaveAttribute('aria-selected', 'true');
+    });
+  });
+
+  it('wraps around when navigating past last tab with ArrowRight', async () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+    const user = userEvent.setup();
+
+    const issuedTab = screen.getByRole('tab', { name: messages.issuedCertificatesTab.defaultMessage });
+    const historyTab = screen.getByRole('tab', { name: messages.generationHistoryTab.defaultMessage });
+
+    // Focus the history tab (last tab)
+    historyTab.focus();
+    await user.click(historyTab);
+
+    // Press ArrowRight to wrap around to first tab
+    await user.keyboard('{ArrowRight}');
+    await waitFor(() => {
+      expect(issuedTab).toHaveFocus();
+      expect(issuedTab).toHaveAttribute('aria-selected', 'true');
+    });
+  });
+
+  it('has proper ARIA attributes on tabs', () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+
+    const issuedTab = screen.getByRole('tab', { name: messages.issuedCertificatesTab.defaultMessage });
+    const historyTab = screen.getByRole('tab', { name: messages.generationHistoryTab.defaultMessage });
+
+    // Check issued tab (active by default)
+    expect(issuedTab).toHaveAttribute('aria-selected', 'true');
+    expect(issuedTab).toHaveAttribute('aria-controls', 'certificates-tabpanel-issued');
+    expect(issuedTab).toHaveAttribute('tabindex', '0');
+
+    // Check history tab (inactive)
+    expect(historyTab).toHaveAttribute('aria-selected', 'false');
+    expect(historyTab).toHaveAttribute('aria-controls', 'certificates-tabpanel-history');
+    expect(historyTab).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('has proper ARIA attributes on tab panels', () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+
+    const issuedPanel = document.getElementById('certificates-tabpanel-issued');
+    const historyPanel = document.getElementById('certificates-tabpanel-history');
+
+    // Check issued panel (visible by default)
+    expect(issuedPanel).toHaveAttribute('role', 'tabpanel');
+    expect(issuedPanel).toHaveAttribute('aria-labelledby', 'certificates-tab-issued');
+    expect(issuedPanel).not.toHaveAttribute('hidden');
+
+    // Check history panel (hidden by default)
+    expect(historyPanel).toHaveAttribute('role', 'tabpanel');
+    expect(historyPanel).toHaveAttribute('aria-labelledby', 'certificates-tab-history');
+    expect(historyPanel).toHaveAttribute('hidden');
+  });
+
   it('renders page header with action buttons', () => {
     renderWithAlertAndIntl(<CertificatesPage />);
 
