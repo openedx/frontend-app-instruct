@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Container, Tab, Tabs, Alert } from '@openedx/paragon';
+import { Card, Container, Button, ButtonGroup, Alert } from '@openedx/paragon';
 import { useIntl } from '@openedx/frontend-base';
 import { useAlert } from '@src/providers/AlertProvider';
 import { useCourseInfo } from '@src/data/apiHook';
@@ -12,6 +12,8 @@ import InvalidateCertificateModal from '@src/certificates/components/InvalidateC
 import RemoveExceptionModal from '@src/certificates/components/RemoveExceptionModal';
 import RemoveInvalidationModal from '@src/certificates/components/RemoveInvalidationModal';
 import DisableCertificatesModal from '@src/certificates/components/DisableCertificatesModal';
+import RegenerateCertificatesModal from '@src/certificates/components/RegenerateCertificatesModal';
+import GenerateCertificatesModal from '@src/certificates/components/GenerateCertificatesModal';
 import {
   useCertificateGenerationHistory,
   useGrantBulkExceptions,
@@ -39,7 +41,7 @@ const CertificatesPage = () => {
   const [search, setSearch] = useState('');
   const [certificatesPage, setCertificatesPage] = useState(0);
   const [tasksPage, setTasksPage] = useState(0);
-  const [activeTab, setActiveTab] = useState(TAB_KEYS.ISSUED);
+  const [activeTab, setActiveTab] = useState<typeof TAB_KEYS.ISSUED | typeof TAB_KEYS.HISTORY>(TAB_KEYS.ISSUED);
   const [selectedUsername, setSelectedUsername] = useState('');
   const [selectedEmail, setSelectedEmail] = useState('');
   const [isCertificateGenerationEnabled, setIsCertificateGenerationEnabled] = useState(true);
@@ -49,6 +51,8 @@ const CertificatesPage = () => {
   const [isRemoveExceptionOpen, setIsRemoveExceptionOpen] = useState(false);
   const [isRemoveInvalidationOpen, setIsRemoveInvalidationOpen] = useState(false);
   const [isDisableCertificatesOpen, setIsDisableCertificatesOpen] = useState(false);
+  const [isRegenerateModalOpen, setIsRegenerateModalOpen] = useState(false);
+  const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
 
   const {
     data: certificatesData,
@@ -263,20 +267,94 @@ const CertificatesPage = () => {
     });
   }, [isCertificateGenerationEnabled, toggleGeneration, showToast, showModal, intl]);
 
-  const handleRegenerateCertificates = useCallback(() => {
-    regenerateCerts(filter, {
+  const handleRegenerateCertificatesClick = useCallback(() => {
+    // Don't open modal for disabled filters
+    if (filter === CertificateFilter.ALL_LEARNERS || filter === CertificateFilter.INVALIDATED) {
+      return;
+    }
+
+    // For granted exceptions, open the generate modal
+    if (filter === CertificateFilter.GRANTED_EXCEPTIONS) {
+      setIsGenerateModalOpen(true);
+    } else {
+      // For other filters, open the regenerate modal
+      setIsRegenerateModalOpen(true);
+    }
+  }, [filter]);
+
+  const handleRegenerateCertificatesConfirm = useCallback(() => {
+    regenerateCerts({ filter, onlyWithoutCertificate: false }, {
       onSuccess: () => {
+        setIsRegenerateModalOpen(false);
         showToast(intl.formatMessage(messages.certificatesRegeneratedToast));
       },
       onError: (error) => {
+        setIsRegenerateModalOpen(false);
+        const errorMessage = getErrorMessage(error, intl.formatMessage(messages.errorRegenerateCertificates));
         showModal({
           title: MODAL_TITLES.ERROR,
-          message: getErrorMessage(error, intl.formatMessage(messages.errorRegenerateCertificates)),
+          message: errorMessage,
           variant: ALERT_VARIANTS.DANGER,
         });
       },
     });
   }, [regenerateCerts, filter, showToast, showModal, intl]);
+
+  const handleGenerateCertificatesConfirm = useCallback((onlyWithoutCertificate: boolean) => {
+    regenerateCerts({ filter, onlyWithoutCertificate }, {
+      onSuccess: () => {
+        setIsGenerateModalOpen(false);
+        showToast(intl.formatMessage(messages.certificatesRegeneratedToast));
+      },
+      onError: (error) => {
+        setIsGenerateModalOpen(false);
+        const errorMessage = getErrorMessage(error, intl.formatMessage(messages.errorRegenerateCertificates));
+        showModal({
+          title: MODAL_TITLES.ERROR,
+          message: errorMessage,
+          variant: ALERT_VARIANTS.DANGER,
+        });
+      },
+    });
+  }, [regenerateCerts, filter, showToast, showModal, intl]);
+
+  const handleTabKeyDown = useCallback((event: React.KeyboardEvent) => {
+    const tabs = [TAB_KEYS.ISSUED, TAB_KEYS.HISTORY];
+    const currentIndex = tabs.indexOf(activeTab);
+
+    let nextIndex = currentIndex;
+
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        event.preventDefault();
+        nextIndex = (currentIndex + 1) % tabs.length;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        event.preventDefault();
+        nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        break;
+      case 'Home':
+        event.preventDefault();
+        nextIndex = 0;
+        break;
+      case 'End':
+        event.preventDefault();
+        nextIndex = tabs.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    const nextTab = tabs[nextIndex];
+    setActiveTab(nextTab);
+
+    // Focus the new tab
+    setTimeout(() => {
+      document.getElementById(`certificates-tab-${nextTab}`)?.focus();
+    }, 0);
+  }, [activeTab]);
 
   // Check if certificate management is disabled
   if (courseInfo && !courseInfo.certificatesEnabled) {
@@ -298,13 +376,39 @@ const CertificatesPage = () => {
       />
 
       <Card variant="muted" className="pt-3 pt-md-4 pb-4 pb-md-6 certificates-card">
-        <Tabs
-          activeKey={activeTab}
-          onSelect={(key) => setActiveTab(key || TAB_KEYS.ISSUED)}
-          className="mx-4"
-          variant="button-group"
+        <ButtonGroup className="d-block mx-4" role="tablist">
+          <Button
+            id="certificates-tab-issued"
+            role="tab"
+            aria-controls="certificates-tabpanel-issued"
+            aria-selected={activeTab === TAB_KEYS.ISSUED}
+            tabIndex={activeTab === TAB_KEYS.ISSUED ? 0 : -1}
+            onClick={() => setActiveTab(TAB_KEYS.ISSUED)}
+            onKeyDown={handleTabKeyDown}
+            variant={activeTab === TAB_KEYS.ISSUED ? 'primary' : 'outline-primary'}
+          >
+            {intl.formatMessage(messages.issuedCertificatesTab)}
+          </Button>
+          <Button
+            id="certificates-tab-history"
+            role="tab"
+            aria-controls="certificates-tabpanel-history"
+            aria-selected={activeTab === TAB_KEYS.HISTORY}
+            tabIndex={activeTab === TAB_KEYS.HISTORY ? 0 : -1}
+            onClick={() => setActiveTab(TAB_KEYS.HISTORY)}
+            onKeyDown={handleTabKeyDown}
+            variant={activeTab === TAB_KEYS.HISTORY ? 'primary' : 'outline-primary'}
+          >
+            {intl.formatMessage(messages.generationHistoryTab)}
+          </Button>
+        </ButtonGroup>
+        <div
+          id="certificates-tabpanel-issued"
+          role="tabpanel"
+          aria-labelledby="certificates-tab-issued"
+          hidden={activeTab !== TAB_KEYS.ISSUED}
         >
-          <Tab eventKey={TAB_KEYS.ISSUED} title={intl.formatMessage(messages.issuedCertificatesTab)}>
+          {activeTab === TAB_KEYS.ISSUED && (
             <IssuedCertificatesTab
               data={certificatesData?.results || []}
               isLoading={isLoadingCertificates}
@@ -318,10 +422,17 @@ const CertificatesPage = () => {
               onPageChange={setCertificatesPage}
               onRemoveException={handleRemoveExceptionClick}
               onRemoveInvalidation={handleRemoveInvalidationClick}
-              onRegenerateCertificates={handleRegenerateCertificates}
+              onRegenerateCertificates={handleRegenerateCertificatesClick}
             />
-          </Tab>
-          <Tab eventKey={TAB_KEYS.HISTORY} title={intl.formatMessage(messages.generationHistoryTab)}>
+          )}
+        </div>
+        <div
+          id="certificates-tabpanel-history"
+          role="tabpanel"
+          aria-labelledby="certificates-tab-history"
+          hidden={activeTab !== TAB_KEYS.HISTORY}
+        >
+          {activeTab === TAB_KEYS.HISTORY && (
             <div className="d-flex flex-column mt-3 mt-md-4">
               <GenerationHistoryTable
                 data={historyData?.results || []}
@@ -332,8 +443,8 @@ const CertificatesPage = () => {
                 onPageChange={setTasksPage}
               />
             </div>
-          </Tab>
-        </Tabs>
+          )}
+        </div>
       </Card>
 
       <GrantExceptionsModal
@@ -377,6 +488,21 @@ const CertificatesPage = () => {
         onClose={() => setIsDisableCertificatesOpen(false)}
         onConfirm={handleToggleCertificateGeneration}
         isSubmitting={isTogglingGeneration}
+      />
+      <RegenerateCertificatesModal
+        isOpen={isRegenerateModalOpen}
+        onClose={() => setIsRegenerateModalOpen(false)}
+        onConfirm={handleRegenerateCertificatesConfirm}
+        isSubmitting={false}
+        filter={filter}
+        learnerCount={certificatesData?.count || 0}
+      />
+      <GenerateCertificatesModal
+        isOpen={isGenerateModalOpen}
+        onClose={() => setIsGenerateModalOpen(false)}
+        onConfirm={handleGenerateCertificatesConfirm}
+        isSubmitting={false}
+        learnerCount={certificatesData?.count || 0}
       />
     </Container>
   );
