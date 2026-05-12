@@ -1,15 +1,22 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@openedx/frontend-base';
-import { DataTable } from '@openedx/paragon';
+import { DataTable, IconButton, OverlayTrigger, Popover } from '@openedx/paragon';
+import { MoreVert } from '@openedx/paragon/icons';
 import UsernameFilter from '@src/components/UsernameFilter';
-import messages from '@src/specialExams/messages';
 import { useAttempts } from '@src/specialExams/data/apiHook';
-import { DataTableFetchDataProps } from '@src/types';
+import messages from '@src/specialExams/messages';
+import { Attempt } from '@src/specialExams/types';
+import { DataTableFetchDataProps, TableCellValue } from '@src/types';
 
 export const ATTEMPTS_PAGE_SIZE = 25;
 
-const AttemptsList = () => {
+interface AttemptsListProps {
+  onResume: (attempt: Attempt) => void,
+  onReset: (attempt: Attempt) => void,
+}
+
+const AttemptsList = ({ onResume, onReset }: AttemptsListProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams();
   const [filters, setFilters] = useState({ page: 0, emailOrUsername: '', ordering: '' });
@@ -18,15 +25,106 @@ const AttemptsList = () => {
     pageSize: ATTEMPTS_PAGE_SIZE
   });
 
+  const ActionCustomCell = ({ row: { original } }: TableCellValue<Attempt>) => {
+    const popoverContent = (
+      <Popover
+        id={`popover-${original.user.username}-${original.examName}`}
+        className="border-0 shadow-sm"
+      >
+        <Popover.Content className="p-0 border-0">
+          <div className="dropdown-menu show position-static border shadow-sm">
+            <button
+              type="button"
+              className="dropdown-item"
+              onClick={() => original.readyToResume ? onResume(original) : onReset(original)}
+            >
+              {original.readyToResume ? intl.formatMessage(messages.resume) : intl.formatMessage(messages.reset)}
+            </button>
+          </div>
+        </Popover.Content>
+      </Popover>
+    );
+    return (
+      <>
+        <OverlayTrigger
+          trigger="click"
+          placement="bottom-end"
+          overlay={popoverContent}
+          rootClose
+        >
+          <IconButton
+            alt={intl.formatMessage(messages.actions)}
+            className="lead"
+            iconAs={MoreVert}
+          />
+        </OverlayTrigger>
+      </>
+    );
+  };
+
   const columns = useMemo(() => [
     { accessor: 'user.username', Header: intl.formatMessage(messages.username), Filter: UsernameFilter, },
     { accessor: 'examName', Header: intl.formatMessage(messages.examName), disableFilters: true, },
     { accessor: 'allowedTimeLimitMins', Header: intl.formatMessage(messages.timeLimit), disableFilters: true, },
-    { accessor: 'type', Header: intl.formatMessage(messages.type), disableFilters: true, },
-    { accessor: 'startTime', Header: intl.formatMessage(messages.startedAt), disableFilters: true, },
-    { accessor: 'endTime', Header: intl.formatMessage(messages.completedAt), disableFilters: true, },
-    { accessor: 'status', Header: intl.formatMessage(messages.status), disableFilters: true, },
+    {
+      accessor: 'examType',
+      Cell: ({ row }: TableCellValue<any>) => <span className="text-capitalize">{row.original.examType}</span>,
+      disableFilters: true,
+      Header: intl.formatMessage(messages.type),
+    },
+    {
+      accessor: 'startTime',
+      Cell: ({ row }: TableCellValue<any>) => (
+        <span>{ row.original.startTime ? `${intl.formatDate(new Date(row.original.startTime), {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'UTC',
+        })} UTC` : ''}
+        </span>
+      ),
+      disableFilters: true,
+      Header: intl.formatMessage(messages.startedAt),
+    },
+    {
+      accessor: 'endTime',
+      Cell: ({ row }: TableCellValue<any>) => (
+        <span>{row.original.endTime ? `${intl.formatDate(new Date(row.original.endTime), {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'UTC',
+        })} UTC` : ''}
+        </span>
+      ),
+      disableFilters: true,
+      Header: intl.formatMessage(messages.completedAt),
+    },
+    {
+      accessor: 'status',
+      Cell: ({ row }: TableCellValue<any>) => <span className="text-capitalize">{row.original.status}</span>,
+      disableFilters: true,
+      Header: intl.formatMessage(messages.status),
+    },
+    {
+      accessor: 'readyToResume',
+      Cell: ({ row }: TableCellValue<any>) => (
+        <span className="text-capitalize">{row.original.readyToResume ? intl.formatMessage(messages.true) : ''}</span>
+      ),
+      disableFilters: true,
+      Header: intl.formatMessage(messages.readyForResume),
+    }
   ], [intl]);
+
+  const additionalColumns = [{
+    id: 'actions',
+    Header: '',
+    Cell: ActionCustomCell,
+  }];
 
   const handleFetchData = (data: DataTableFetchDataProps) => {
     const emailOrUsernameFilter = data.filters?.find((f) => f.id === 'user.username');
@@ -44,6 +142,7 @@ const AttemptsList = () => {
 
   return (
     <DataTable
+      additionalColumns={additionalColumns}
       className="mt-3"
       columns={columns}
       data={data.results}

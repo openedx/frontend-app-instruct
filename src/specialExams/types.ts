@@ -12,6 +12,7 @@ export interface Attempt {
   startTime: string,
   endTime: string,
   status: string,
+  readyToResume: boolean,
 }
 
 export interface AttemptsParams extends PaginationParams {
@@ -69,4 +70,9 @@ export interface DeleteAllowanceParams {
   examId: number,
   userIds: number[],
   allowanceType: string,
+}
+
+export interface ResetAttemptParams {
+  username: string,
+  examId: number,
 }

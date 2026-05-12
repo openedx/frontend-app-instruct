@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { addAllowance, deleteAllowance, getAllowances, getAttempts, getSpecialExams } from './api';
-import { specialExamsQueryKeys } from './queryKeys';
-import { AddAllowanceParams, AttemptsParams, DeleteAllowanceParams } from '../types';
+import { addAllowance, deleteAllowance, getAllowances, getAttempts, getSpecialExams, resetAttempt } from '@src/specialExams/data/api';
+import { specialExamsQueryKeys } from '@src/specialExams/data/queryKeys';
+import { AddAllowanceParams, AttemptsParams, DeleteAllowanceParams, ResetAttemptParams } from '@src/specialExams/types';
 
 export const useAttempts = (courseId: string, params: AttemptsParams, enabled = true) => (
   useQuery({
@@ -47,3 +47,13 @@ export const useSpecialExams = (courseId: string, examType: string) => (
     enabled: !!courseId && !!examType,
   })
 );
+
+export const useResetAttempt = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (params: ResetAttemptParams) => resetAttempt(courseId, params),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: specialExamsQueryKeys.attempts(courseId), exact: false });
+    },
+  });
+};

@@ -2,7 +2,7 @@ import { getAuthenticatedHttpClient, camelCaseObject, snakeCaseObject } from '@o
 import { snakeCase } from 'lodash';
 import { getApiBaseUrl } from '@src/data/api';
 import { DataList } from '@src/types';
-import { AddAllowanceParams, Allowance, Attempt, AttemptsParams, DeleteAllowanceParams, SpecialExam } from '../types';
+import { AddAllowanceParams, Allowance, Attempt, AttemptsParams, DeleteAllowanceParams, ResetAttemptParams, SpecialExam } from '../types';
 
 const getQueryParams = (params: AttemptsParams) => {
   const queryParams = new URLSearchParams({
@@ -66,6 +66,13 @@ export const getSpecialExams = async (courseId: string, examType: string): Promi
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/special_exams`, {
       params: { exam_type: examType }
     }
+  );
+  return camelCaseObject(data);
+};
+
+export const resetAttempt = async (courseId: string, params: ResetAttemptParams) => {
+  const { data } = await getAuthenticatedHttpClient().post(
+    `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/special_exams/${params.examId}/reset/${params.username}`
   );
   return camelCaseObject(data);
 };

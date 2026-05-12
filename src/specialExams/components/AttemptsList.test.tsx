@@ -21,7 +21,7 @@ const mockExamAttempts = {
       },
       examName: 'Midterm',
       allowedTimeLimitMins: 60,
-      type: 'proctored',
+      examType: 'proctored',
       startTime: '2024-01-01',
       endTime: '2024-01-02',
       status: 'completed',
@@ -35,6 +35,10 @@ describe('AttemptsList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+  const mockReset = jest.fn();
+  const mockResume = jest.fn();
+
+  const renderComponent = () => renderWithIntl(<AttemptsList onReset={mockReset} onResume={mockResume} />);
 
   it('renders DataTable with correct columns and empty data', () => {
     (useAttempts as jest.Mock).mockReturnValue({
@@ -42,7 +46,7 @@ describe('AttemptsList', () => {
       isLoading: false,
     });
 
-    renderWithIntl(<AttemptsList />);
+    renderComponent();
 
     expect(screen.getByText('No exam attempts found')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search By Username or Email')).toBeInTheDocument();
@@ -54,7 +58,7 @@ describe('AttemptsList', () => {
       isLoading: true,
     });
 
-    renderWithIntl(<AttemptsList />);
+    renderComponent();
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
@@ -64,13 +68,13 @@ describe('AttemptsList', () => {
       isLoading: false,
     });
 
-    renderWithIntl(<AttemptsList />);
+    renderComponent();
     expect(screen.getByText(mockExamAttempts.results[0].user.username)).toBeInTheDocument();
     expect(screen.getByText(mockExamAttempts.results[0].examName)).toBeInTheDocument();
     expect(screen.getByText(mockExamAttempts.results[0].allowedTimeLimitMins.toString())).toBeInTheDocument();
-    expect(screen.getByText(mockExamAttempts.results[0].type)).toBeInTheDocument();
-    expect(screen.getByText(mockExamAttempts.results[0].startTime)).toBeInTheDocument();
-    expect(screen.getByText(mockExamAttempts.results[0].endTime)).toBeInTheDocument();
+    expect(screen.getByText(mockExamAttempts.results[0].examType)).toBeInTheDocument();
+    expect(screen.getByText(/01\/01\/2024.*UTC/)).toBeInTheDocument();
+    expect(screen.getByText(/01\/02\/2024.*UTC/)).toBeInTheDocument();
     expect(screen.getByText(mockExamAttempts.results[0].status)).toBeInTheDocument();
   });
 
@@ -80,7 +84,7 @@ describe('AttemptsList', () => {
       isLoading: false,
     });
 
-    renderWithIntl(<AttemptsList />);
+    renderComponent();
 
     const input = screen.getByRole('textbox');
     const user = userEvent.setup();
@@ -99,7 +103,7 @@ describe('AttemptsList', () => {
       isLoading: false,
     });
 
-    renderWithIntl(<AttemptsList />);
+    renderComponent();
     expect(useAttempts).toHaveBeenCalledWith('course-v1:edX+Test+2024', expect.any(Object));
   });
 });

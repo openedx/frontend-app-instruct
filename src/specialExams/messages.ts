@@ -225,6 +225,26 @@ const messages = defineMessages({
     id: 'instruct.specialExams.cannotModifyAllowance',
     defaultMessage: 'Cannot {action} allowance: {username} has already attempted the exam',
     description: 'Warning message shown when trying to edit or delete an allowance for a student who has already attempted the exam'
+  },
+  readyForResume: {
+    id: 'instruct.specialExams.readyForResume',
+    defaultMessage: 'Ready to Resume?',
+    description: 'Label for whether the exam attempt is ready to be resumed in the exam attempts list',
+  },
+  resume: {
+    id: 'instruct.specialExams.resume',
+    defaultMessage: 'Resume',
+    description: 'Label for resume action in exam attempts list',
+  },
+  reset: {
+    id: 'instruct.specialExams.reset',
+    defaultMessage: 'Reset',
+    description: 'Label for reset action in exam attempts list',
+  },
+  true: {
+    id: 'instruct.specialExams.true',
+    defaultMessage: 'True',
+    description: 'Display value for a boolean true value'
   }
 });
 

@@ -1,6 +1,6 @@
 import { camelCaseObject, getAuthenticatedHttpClient, snakeCaseObject } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '@src/data/api';
-import { getAttempts, getAllowances, addAllowance, deleteAllowance, getSpecialExams } from '@src/specialExams/data/api';
+import { getAttempts, getAllowances, addAllowance, deleteAllowance, getSpecialExams, resetAttempt } from '@src/specialExams/data/api';
 import { AttemptsParams, Attempt, AddAllowanceParams, DeleteAllowanceParams } from '@src/specialExams/types';
 import { DataList } from '@src/types';
 
@@ -86,6 +86,7 @@ describe('specialExams api', () => {
           startTime: '2023-01-01T10:00:00Z',
           endTime: '2023-01-01T13:00:00Z',
           status: 'completed',
+          readyToResume: false
         },
         {
           id: 2,
@@ -99,6 +100,7 @@ describe('specialExams api', () => {
           startTime: '2023-01-02T14:00:00Z',
           endTime: '2023-01-02T16:00:00Z',
           status: 'completed',
+          readyToResume: true
         },
       ],
     };
@@ -390,6 +392,38 @@ describe('specialExams api', () => {
       mockHttpClient.get.mockRejectedValue(error);
 
       await expect(getSpecialExams(courseId, examType)).rejects.toThrow('Network error');
+    });
+  });
+
+  describe('resetAttempt', () => {
+    it('makes correct API call and returns camelCase data', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const examId = 1;
+      const username = 'testuser';
+      const mockResponseData = { detail: 'Attempt reset successfully' };
+
+      mockHttpClient.post.mockResolvedValue({ data: mockResponseData });
+      mockCamelCaseObject.mockReturnValue(mockResponseData);
+
+      const result = await resetAttempt(courseId, { examId, username });
+
+      expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        `https://test-lms.com/api/instructor/v2/courses/course-v1:edX+Test+2023/special_exams/${examId}/reset/${username}`
+      );
+      expect(mockCamelCaseObject).toHaveBeenCalledWith(mockResponseData);
+      expect(result).toBe(mockResponseData);
+    });
+
+    it('handles API error', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const examId = 1;
+      const username = 'testuser';
+      const error = new Error('Failed to reset attempt');
+
+      mockHttpClient.post.mockRejectedValue(error);
+
+      await expect(resetAttempt(courseId, { examId, username })).rejects.toThrow('Failed to reset attempt');
     });
   });
 });
