@@ -200,10 +200,15 @@ describe('CertificatesPage', () => {
     expect(screen.getByText(messages.generationHistoryTab.defaultMessage)).toBeInTheDocument();
   });
 
-  it('renders pending tasks component', () => {
+  it('renders pending tasks component', async () => {
     renderWithAlertAndIntl(<CertificatesPage />);
+    const user = userEvent.setup();
 
     expect(screen.getByTestId('pending-tasks')).toBeInTheDocument();
+
+    // Test toggle functionality
+    const toggleButton = screen.getByText('Toggle');
+    await user.click(toggleButton);
   });
 
   it('renders issued certificates tab by default', () => {
