@@ -16,8 +16,10 @@ jest.mock('../data/apiHook', () => ({
 const mockExamAttempts = {
   results: [
     {
+      id: 1,
       user: {
         username: 'user1',
+        id: 1,
       },
       examName: 'Midterm',
       allowedTimeLimitMins: 60,
@@ -25,6 +27,31 @@ const mockExamAttempts = {
       startTime: '2024-01-01',
       endTime: '2024-01-02',
       status: 'completed',
+      readyToResume: false,
+    },
+    {
+      id: 2,
+      user: { username: 'testuser2', id: 2 },
+      examId: 43,
+      examName: 'Final Exam',
+      allowedTimeLimitMins: 120,
+      examType: 'timed',
+      startTime: '2024-01-03T00:00:00Z',
+      endTime: null,
+      status: 'error',
+      readyToResume: false,
+    },
+    {
+      id: 3,
+      user: { username: 'testuser3', id: 3 },
+      examId: 44,
+      examName: 'Quiz',
+      allowedTimeLimitMins: 30,
+      examType: 'timed',
+      startTime: '2024-01-04T00:00:00Z',
+      endTime: null,
+      status: 'error',
+      readyToResume: true,
     },
   ],
   count: 1,
@@ -105,5 +132,44 @@ describe('AttemptsList', () => {
 
     renderComponent();
     expect(useAttempts).toHaveBeenCalledWith('course-v1:edX+Test+2024', expect.any(Object));
+  });
+
+  describe('Resume option visibility', () => {
+    beforeEach(() => {
+      (useAttempts as jest.Mock).mockReturnValue({
+        data: mockExamAttempts,
+        isLoading: false,
+      });
+    });
+
+    it('does not show Resume option when status is not "error"', async () => {
+      renderComponent();
+
+      const user = userEvent.setup();
+      const actionsButton = screen.getAllByRole('button', { name: 'Actions' });
+      await user.click(actionsButton[0]);
+
+      expect(screen.queryByText('Resume')).not.toBeInTheDocument();
+    });
+
+    it('shows Resume option when status is "error" and readyToResume is false', async () => {
+      renderComponent();
+
+      const user = userEvent.setup();
+      const actionsButton = screen.getAllByRole('button', { name: 'Actions' });
+      await user.click(actionsButton[1]);
+
+      expect(screen.getByText('Resume')).toBeInTheDocument();
+    });
+
+    it('does not show Resume option when readyToResume is true', async () => {
+      renderComponent();
+
+      const user = userEvent.setup();
+      const actionsButton = screen.getAllByRole('button', { name: 'Actions' });
+      await user.click(actionsButton[2]);
+
+      expect(screen.queryByText('Resume')).not.toBeInTheDocument();
+    });
   });
 });

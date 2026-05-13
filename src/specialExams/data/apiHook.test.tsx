@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { getAttempts, getAllowances, addAllowance, deleteAllowance, getSpecialExams, resetAttempt } from '@src/specialExams/data/api';
-import { useAttempts, useAllowances, useAddAllowance, useDeleteAllowance, useSpecialExams, useResetAttempt } from '@src/specialExams/data/apiHook';
+import { getAttempts, getAllowances, addAllowance, deleteAllowance, getSpecialExams, resetAttempt, resumeAttempt } from '@src/specialExams/data/api';
+import { useAttempts, useAllowances, useAddAllowance, useDeleteAllowance, useSpecialExams, useResetAttempt, useResumeAttempt } from '@src/specialExams/data/apiHook';
 import { AttemptsParams, AddAllowanceParams, DeleteAllowanceParams } from '@src/specialExams/types';
 
 jest.mock('@src/specialExams/data/api');
@@ -12,6 +12,7 @@ const mockAddAllowance = addAllowance as jest.MockedFunction<typeof addAllowance
 const mockDeleteAllowance = deleteAllowance as jest.MockedFunction<typeof deleteAllowance>;
 const mockGetSpecialExams = getSpecialExams as jest.MockedFunction<typeof getSpecialExams>;
 const mockResetAttempt = resetAttempt as jest.MockedFunction<typeof resetAttempt>;
+const mockResumeAttempt = resumeAttempt as jest.MockedFunction<typeof resumeAttempt>;
 
 const mockAttemptsData = {
   count: 2,
@@ -22,10 +23,11 @@ const mockAttemptsData = {
       examId: 101,
       user: {
         username: 'student1',
+        id: 1
       },
       examName: 'Final Exam',
       allowedTimeLimitMins: 180,
-      type: 'proctored',
+      examType: 'proctored',
       startTime: '2023-01-01T10:00:00Z',
       endTime: '2023-01-01T13:00:00Z',
       status: 'completed',
@@ -36,10 +38,11 @@ const mockAttemptsData = {
       examId: 102,
       user: {
         username: 'student2',
+        id: 2
       },
       examName: 'Midterm Exam',
       allowedTimeLimitMins: 120,
-      type: 'timed',
+      examType: 'timed',
       startTime: '2023-01-02T14:00:00Z',
       endTime: '2023-01-02T16:00:00Z',
       status: 'completed',
@@ -483,6 +486,31 @@ describe('specialExams api hooks', () => {
       });
 
       expect(mockResetAttempt).toHaveBeenCalledWith(courseId, params);
+    });
+  });
+
+  describe('useResumeAttempt', () => {
+    it('handles resume attempt successfully', async () => {
+      const courseId = 'course-v1:edX+Test+2023';
+      const params = {
+        userId: 2,
+        attemptId: 3
+      };
+      mockResumeAttempt.mockResolvedValue({});
+
+      const { result } = renderHook(() => useResumeAttempt(courseId), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => {
+        result.current.mutate(params);
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(mockResumeAttempt).toHaveBeenCalledWith(params);
     });
   });
 });

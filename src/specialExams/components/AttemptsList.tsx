@@ -6,7 +6,7 @@ import { MoreVert } from '@openedx/paragon/icons';
 import UsernameFilter from '@src/components/UsernameFilter';
 import { useAttempts } from '@src/specialExams/data/apiHook';
 import messages from '@src/specialExams/messages';
-import { Attempt } from '@src/specialExams/types';
+import { Attempt, AttemptAction } from '@src/specialExams/types';
 import { DataTableFetchDataProps, TableCellValue } from '@src/types';
 
 export const ATTEMPTS_PAGE_SIZE = 25;
@@ -26,6 +26,17 @@ const AttemptsList = ({ onResume, onReset }: AttemptsListProps) => {
   });
 
   const ActionCustomCell = ({ row: { original } }: TableCellValue<Attempt>) => {
+    const [showPopover, setShowPopover] = useState(false);
+
+    const handleAction = (action: AttemptAction) => {
+      setShowPopover(false);
+      if (action === 'resume') {
+        onResume(original);
+      } else {
+        onReset(original);
+      }
+    };
+
     const popoverContent = (
       <Popover
         id={`popover-${original.user.username}-${original.examName}`}
@@ -36,10 +47,19 @@ const AttemptsList = ({ onResume, onReset }: AttemptsListProps) => {
             <button
               type="button"
               className="dropdown-item"
-              onClick={() => original.readyToResume ? onResume(original) : onReset(original)}
+              onClick={() => handleAction('reset')}
             >
-              {original.readyToResume ? intl.formatMessage(messages.resume) : intl.formatMessage(messages.reset)}
+              {intl.formatMessage(messages.reset)}
             </button>
+            {!original.readyToResume && original.status === 'error' && (
+              <button
+                type="button"
+                className="dropdown-item"
+                onClick={() => handleAction('resume')}
+              >
+                {intl.formatMessage(messages.resume)}
+              </button>
+            )}
           </div>
         </Popover.Content>
       </Popover>
@@ -51,6 +71,8 @@ const AttemptsList = ({ onResume, onReset }: AttemptsListProps) => {
           placement="bottom-end"
           overlay={popoverContent}
           rootClose
+          show={showPopover}
+          onToggle={setShowPopover}
         >
           <IconButton
             alt={intl.formatMessage(messages.actions)}
@@ -68,13 +90,13 @@ const AttemptsList = ({ onResume, onReset }: AttemptsListProps) => {
     { accessor: 'allowedTimeLimitMins', Header: intl.formatMessage(messages.timeLimit), disableFilters: true, },
     {
       accessor: 'examType',
-      Cell: ({ row }: TableCellValue<any>) => <span className="text-capitalize">{row.original.examType}</span>,
+      Cell: ({ row }: TableCellValue<Attempt>) => <span className="text-capitalize">{row.original.examType}</span>,
       disableFilters: true,
       Header: intl.formatMessage(messages.type),
     },
     {
       accessor: 'startTime',
-      Cell: ({ row }: TableCellValue<any>) => (
+      Cell: ({ row }: TableCellValue<Attempt>) => (
         <span>{ row.original.startTime ? `${intl.formatDate(new Date(row.original.startTime), {
           year: 'numeric',
           month: '2-digit',
@@ -90,7 +112,7 @@ const AttemptsList = ({ onResume, onReset }: AttemptsListProps) => {
     },
     {
       accessor: 'endTime',
-      Cell: ({ row }: TableCellValue<any>) => (
+      Cell: ({ row }: TableCellValue<Attempt>) => (
         <span>{row.original.endTime ? `${intl.formatDate(new Date(row.original.endTime), {
           year: 'numeric',
           month: '2-digit',
@@ -106,13 +128,13 @@ const AttemptsList = ({ onResume, onReset }: AttemptsListProps) => {
     },
     {
       accessor: 'status',
-      Cell: ({ row }: TableCellValue<any>) => <span className="text-capitalize">{row.original.status}</span>,
+      Cell: ({ row }: TableCellValue<Attempt>) => <span className="text-capitalize">{row.original.status}</span>,
       disableFilters: true,
       Header: intl.formatMessage(messages.status),
     },
     {
       accessor: 'readyToResume',
-      Cell: ({ row }: TableCellValue<any>) => (
+      Cell: ({ row }: TableCellValue<Attempt>) => (
         <span className="text-capitalize">{row.original.readyToResume ? intl.formatMessage(messages.true) : ''}</span>
       ),
       disableFilters: true,

@@ -260,6 +260,31 @@ const messages = defineMessages({
     id: 'instruct.specialExams.close',
     defaultMessage: 'Close',
     description: 'Label for close button'
+  },
+  confirmationModal: {
+    id: 'instruct.specialExams.confirmationModal',
+    defaultMessage: 'Confirmation Modal',
+    description: 'Confirmation modal title'
+  },
+  confirmationMessageReset: {
+    id: 'instruct.specialExams.confirmationMessageReset',
+    defaultMessage: 'Are you sure you want to remove this student\'s exam attempt?',
+    description: 'Confirmation message shown when resetting an exam attempt'
+  },
+  confirmationMessageResume: {
+    id: 'instruct.specialExams.confirmationMessageResume',
+    defaultMessage: 'Are you sure you want to resume this exam attempt?',
+    description: 'Confirmation message shown when resuming an exam attempt'
+  },
+  errorOnResume: {
+    id: 'instruct.specialExams.errorOnResume',
+    defaultMessage: 'An error occurred while resuming the attempt. Please try again.',
+    description: 'Error message shown when resuming an exam attempt fails'
+  },
+  successOnResume: {
+    id: 'instruct.specialExams.successOnResume',
+    defaultMessage: 'Successfully resumed attempt for {student}.',
+    description: 'Success message shown after resuming an exam attempt'
   }
 });
 

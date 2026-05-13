@@ -4,13 +4,14 @@ export interface Attempt {
   id: number,
   user: {
     username: string,
+    id: number,
   },
   examId: number,
   examName: string,
   allowedTimeLimitMins: number,
-  type: string,
+  examType: string,
   startTime: string,
-  endTime: string,
+  endTime: string | null,
   status: string,
   readyToResume: boolean,
 }
@@ -18,6 +19,18 @@ export interface Attempt {
 export interface AttemptsParams extends PaginationParams {
   emailOrUsername: string,
   ordering: string,
+}
+
+export type AttemptAction = 'reset' | 'resume';
+
+export interface ResetAttemptParams {
+  username: string,
+  examId: number,
+}
+
+export interface ResumeAttemptParams {
+  attemptId: number,
+  userId: number,
 }
 
 export interface Allowance {
@@ -70,9 +83,4 @@ export interface DeleteAllowanceParams {
   examId: number,
   userIds: number[],
   allowanceType: string,
-}
-
-export interface ResetAttemptParams {
-  username: string,
-  examId: number,
 }

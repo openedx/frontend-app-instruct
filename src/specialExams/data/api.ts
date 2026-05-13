@@ -2,7 +2,7 @@ import { getAuthenticatedHttpClient, camelCaseObject, snakeCaseObject } from '@o
 import { snakeCase } from 'lodash';
 import { getApiBaseUrl } from '@src/data/api';
 import { DataList } from '@src/types';
-import { AddAllowanceParams, Allowance, Attempt, AttemptsParams, DeleteAllowanceParams, ResetAttemptParams, SpecialExam } from '../types';
+import { AddAllowanceParams, Allowance, Attempt, AttemptsParams, DeleteAllowanceParams, ResetAttemptParams, ResumeAttemptParams, SpecialExam } from '@src/specialExams/types';
 
 const getQueryParams = (params: AttemptsParams) => {
   const queryParams = new URLSearchParams({
@@ -73,6 +73,18 @@ export const getSpecialExams = async (courseId: string, examType: string): Promi
 export const resetAttempt = async (courseId: string, params: ResetAttemptParams) => {
   const { data } = await getAuthenticatedHttpClient().post(
     `${getApiBaseUrl()}/api/instructor/v2/courses/${courseId}/special_exams/${params.examId}/reset/${params.username}`
+  );
+  return camelCaseObject(data);
+};
+
+export const resumeAttempt = async (params: ResumeAttemptParams) => {
+  const { userId, attemptId } = params;
+  const formData = new FormData();
+  formData.append('user_id', userId.toString());
+  formData.append('action', 'mark_ready_to_resume');
+  const { data } = await getAuthenticatedHttpClient().put(
+    `${getApiBaseUrl()}/api/edx_proctoring/v1/proctored_exam/attempt/${attemptId}`,
+    formData
   );
   return camelCaseObject(data);
 };

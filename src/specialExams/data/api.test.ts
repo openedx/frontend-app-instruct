@@ -1,6 +1,6 @@
 import { camelCaseObject, getAuthenticatedHttpClient, snakeCaseObject } from '@openedx/frontend-base';
 import { getApiBaseUrl } from '@src/data/api';
-import { getAttempts, getAllowances, addAllowance, deleteAllowance, getSpecialExams, resetAttempt } from '@src/specialExams/data/api';
+import { getAttempts, getAllowances, addAllowance, deleteAllowance, getSpecialExams, resetAttempt, resumeAttempt } from '@src/specialExams/data/api';
 import { AttemptsParams, Attempt, AddAllowanceParams, DeleteAllowanceParams } from '@src/specialExams/types';
 import { DataList } from '@src/types';
 
@@ -25,6 +25,7 @@ describe('specialExams api', () => {
     get: jest.fn(),
     post: jest.fn(),
     delete: jest.fn(),
+    put: jest.fn()
   };
 
   beforeEach(() => {
@@ -46,10 +47,11 @@ describe('specialExams api', () => {
           exam_id: 101,
           user: {
             username: 'student1',
+            id: 1,
           },
           exam_name: 'Final Exam',
           allowed_time_limit_mins: 180,
-          type: 'proctored',
+          exam_type: 'proctored',
           start_time: '2023-01-01T10:00:00Z',
           end_time: '2023-01-01T13:00:00Z',
           status: 'completed',
@@ -59,10 +61,11 @@ describe('specialExams api', () => {
           exam_id: 102,
           user: {
             username: 'student2',
+            id: 2
           },
           exam_name: 'Midterm Exam',
           allowed_time_limit_mins: 120,
-          type: 'timed',
+          exam_type: 'timed',
           start_time: '2023-01-02T14:00:00Z',
           end_time: '2023-01-02T16:00:00Z',
           status: 'completed',
@@ -79,10 +82,11 @@ describe('specialExams api', () => {
           examId: 101,
           user: {
             username: 'student1',
+            id: 1,
           },
           examName: 'Final Exam',
           allowedTimeLimitMins: 180,
-          type: 'proctored',
+          examType: 'proctored',
           startTime: '2023-01-01T10:00:00Z',
           endTime: '2023-01-01T13:00:00Z',
           status: 'completed',
@@ -93,10 +97,11 @@ describe('specialExams api', () => {
           examId: 102,
           user: {
             username: 'student2',
+            id: 2,
           },
           examName: 'Midterm Exam',
           allowedTimeLimitMins: 120,
-          type: 'timed',
+          examType: 'timed',
           startTime: '2023-01-02T14:00:00Z',
           endTime: '2023-01-02T16:00:00Z',
           status: 'completed',
@@ -424,6 +429,37 @@ describe('specialExams api', () => {
       mockHttpClient.post.mockRejectedValue(error);
 
       await expect(resetAttempt(courseId, { examId, username })).rejects.toThrow('Failed to reset attempt');
+    });
+  });
+
+  describe('resumeAttempt', () => {
+    it('makes correct API call and returns camelCase data', async () => {
+      const attemptId = 1;
+      const userId = 2;
+      const mockResponseData = { detail: 'Attempt resumed successfully' };
+
+      mockHttpClient.put.mockResolvedValue({ data: mockResponseData });
+      mockCamelCaseObject.mockReturnValue(mockResponseData);
+
+      const result = await resumeAttempt({ attemptId, userId });
+
+      expect(mockGetAuthenticatedHttpClient).toHaveBeenCalled();
+      expect(mockHttpClient.put).toHaveBeenCalledWith(
+        `https://test-lms.com/api/edx_proctoring/v1/proctored_exam/attempt/${attemptId}`,
+        expect.any(FormData)
+      );
+      expect(mockCamelCaseObject).toHaveBeenCalledWith(mockResponseData);
+      expect(result).toBe(mockResponseData);
+    });
+
+    it('handles API error', async () => {
+      const attemptId = 1;
+      const userId = 2;
+      const error = new Error('Failed to resume attempt');
+
+      mockHttpClient.put.mockRejectedValue(error);
+
+      await expect(resumeAttempt({ attemptId, userId })).rejects.toThrow('Failed to resume attempt');
     });
   });
 });
