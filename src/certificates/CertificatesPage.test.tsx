@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CertificatesPage from '@src/certificates/CertificatesPage';
 import { renderWithAlertAndIntl } from '@src/testUtils';
-import { useCourseInfo } from '@src/data/apiHook';
+import { useCourseInfo, usePendingTasks } from '@src/data/apiHook';
 import {
   useCertificateGenerationHistory,
   useGrantBulkExceptions,
@@ -25,9 +25,22 @@ jest.mock('react-router-dom', () => ({
 jest.mock('@src/certificates/data/apiHook');
 jest.mock('@src/data/apiHook', () => ({
   useCourseInfo: jest.fn(),
+  usePendingTasks: jest.fn(),
+}));
+
+jest.mock('@src/components/PendingTasks', () => ({
+  PendingTasks: function MockPendingTasks({ onToggle }: { isOpen: boolean, onToggle: () => void }) {
+    return (
+      <div data-testid="pending-tasks">
+        Pending Tasks
+        <button onClick={onToggle}>Toggle</button>
+      </div>
+    );
+  },
 }));
 
 const mockUseCourseInfo = useCourseInfo as jest.MockedFunction<typeof useCourseInfo>;
+const mockUsePendingTasks = usePendingTasks as jest.MockedFunction<typeof usePendingTasks>;
 const mockUseCertificateGenerationHistory = useCertificateGenerationHistory as jest.MockedFunction<typeof useCertificateGenerationHistory>;
 const mockUseInstructorTasks = useInstructorTasks as jest.MockedFunction<typeof useInstructorTasks>;
 const mockUseIssuedCertificates = useIssuedCertificates as jest.MockedFunction<typeof useIssuedCertificates>;
@@ -54,6 +67,12 @@ describe('CertificatesPage', () => {
       data: { certificatesEnabled: true },
       isLoading: false,
       error: null,
+    } as any);
+
+    mockUsePendingTasks.mockReturnValue({
+      data: [],
+      isLoading: false,
+      refetch: jest.fn(),
     } as any);
 
     mockUseCertificateGenerationHistory.mockReturnValue({
@@ -179,6 +198,17 @@ describe('CertificatesPage', () => {
 
     expect(screen.getByText(messages.issuedCertificatesTab.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.generationHistoryTab.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders pending tasks component', async () => {
+    renderWithAlertAndIntl(<CertificatesPage />);
+    const user = userEvent.setup();
+
+    expect(screen.getByTestId('pending-tasks')).toBeInTheDocument();
+
+    // Test toggle functionality
+    const toggleButton = screen.getByText('Toggle');
+    await user.click(toggleButton);
   });
 
   it('renders issued certificates tab by default', () => {
