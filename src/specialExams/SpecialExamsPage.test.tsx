@@ -10,9 +10,9 @@ jest.mock('./components/Allowances', () => {
   }
   return MockedAllowances;
 });
-jest.mock('./components/AttemptsList', () => {
+jest.mock('./components/Attempts', () => {
   function MockedAttemptsList() {
-    return <div>AttemptsList Component</div>;
+    return <div>Attempts Component</div>;
   }
   return MockedAttemptsList;
 });
@@ -26,7 +26,7 @@ describe('SpecialExamsPage', () => {
   it('renders the attempts tab and its content by default', () => {
     renderWithIntl(<SpecialExamsPage />);
     expect(screen.getByText('Exam Attempts')).toBeInTheDocument();
-    expect(screen.getByText('AttemptsList Component')).toBeInTheDocument();
+    expect(screen.getByText('Attempts Component')).toBeInTheDocument();
     expect(screen.queryByText('Allowances Component')).not.toBeInTheDocument();
   });
 
@@ -43,7 +43,7 @@ describe('SpecialExamsPage', () => {
     const user = userEvent.setup();
     await user.click(screen.getByText('Allowances'));
     await user.click(screen.getByText('Exam Attempts'));
-    expect(screen.getByText('AttemptsList Component')).toBeInTheDocument();
+    expect(screen.getByText('Attempts Component')).toBeInTheDocument();
     expect(screen.queryByText('Allowances Component')).not.toBeInTheDocument();
   });
 

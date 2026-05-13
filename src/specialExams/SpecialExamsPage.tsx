@@ -3,7 +3,7 @@ import { useIntl } from '@openedx/frontend-base';
 import { Button, ButtonGroup, Card } from '@openedx/paragon';
 import messages from './messages';
 import Allowances from './components/Allowances';
-import AttemptsList from './components/AttemptsList';
+import Attempts from './components/Attempts';
 
 const SPECIAL_EXAMS_TAB = {
   ATTEMPTS: 'attempts',
@@ -31,7 +31,7 @@ const SpecialExamsPage = () => {
           </Button>
         </ButtonGroup>
         {
-          selectedTab === SPECIAL_EXAMS_TAB.ATTEMPTS ? <AttemptsList /> : <Allowances />
+          selectedTab === SPECIAL_EXAMS_TAB.ATTEMPTS ? <Attempts /> : <Allowances />
         }
       </Card>
     </>

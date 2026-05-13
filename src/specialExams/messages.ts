@@ -225,6 +225,66 @@ const messages = defineMessages({
     id: 'instruct.specialExams.cannotModifyAllowance',
     defaultMessage: 'Cannot {action} allowance: {username} has already attempted the exam',
     description: 'Warning message shown when trying to edit or delete an allowance for a student who has already attempted the exam'
+  },
+  readyForResume: {
+    id: 'instruct.specialExams.readyForResume',
+    defaultMessage: 'Ready to Resume?',
+    description: 'Label for whether the exam attempt is ready to be resumed in the exam attempts list',
+  },
+  resume: {
+    id: 'instruct.specialExams.resume',
+    defaultMessage: 'Resume',
+    description: 'Label for resume action in exam attempts list',
+  },
+  reset: {
+    id: 'instruct.specialExams.reset',
+    defaultMessage: 'Reset',
+    description: 'Label for reset action in exam attempts list',
+  },
+  true: {
+    id: 'instruct.specialExams.true',
+    defaultMessage: 'True',
+    description: 'Display value for a boolean true value'
+  },
+  successOnReset: {
+    id: 'instruct.specialExams.successOnReset',
+    defaultMessage: 'Successfully reset attempt on {examName} for {student}.',
+    description: 'Success message shown after resetting an exam attempt'
+  },
+  errorOnReset: {
+    id: 'instruct.specialExams.errorOnReset',
+    defaultMessage: 'An error occurred while resetting the attempt. Please try again.',
+    description: 'Error message shown when resetting an exam attempt fails'
+  },
+  close: {
+    id: 'instruct.specialExams.close',
+    defaultMessage: 'Close',
+    description: 'Label for close button'
+  },
+  confirmationModal: {
+    id: 'instruct.specialExams.confirmationModal',
+    defaultMessage: 'Confirmation Modal',
+    description: 'Confirmation modal title'
+  },
+  confirmationMessageReset: {
+    id: 'instruct.specialExams.confirmationMessageReset',
+    defaultMessage: 'Are you sure you want to remove this student\'s exam attempt?',
+    description: 'Confirmation message shown when resetting an exam attempt'
+  },
+  confirmationMessageResume: {
+    id: 'instruct.specialExams.confirmationMessageResume',
+    defaultMessage: 'Are you sure you want to resume this exam attempt?',
+    description: 'Confirmation message shown when resuming an exam attempt'
+  },
+  errorOnResume: {
+    id: 'instruct.specialExams.errorOnResume',
+    defaultMessage: 'An error occurred while resuming the attempt. Please try again.',
+    description: 'Error message shown when resuming an exam attempt fails'
+  },
+  successOnResume: {
+    id: 'instruct.specialExams.successOnResume',
+    defaultMessage: 'Successfully resumed attempt for {student}.',
+    description: 'Success message shown after resuming an exam attempt'
   }
 });
 
