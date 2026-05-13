@@ -1,9 +1,10 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { AxiosError } from 'axios';
 import Attempts from './Attempts';
 import { useAttempts, useResetAttempt } from '../data/apiHook';
 import { Attempt } from '../types';
-import { renderWithIntl } from '@src/testUtils';
+import { renderWithAlertAndIntl } from '@src/testUtils';
 import messages from '../messages';
 
 jest.mock('react-router-dom', () => ({
@@ -42,27 +43,88 @@ describe('Attempts', () => {
     });
   });
 
+  const clickReset = async () => {
+    const actionsButton = screen.getByRole('button', { name: messages.actions.defaultMessage });
+    await userEvent.click(actionsButton);
+    const resetButton = screen.getByRole('button', { name: messages.reset.defaultMessage });
+    await userEvent.click(resetButton);
+  };
+
   it('renders AttemptsList component', () => {
-    renderWithIntl(<Attempts />);
+    renderWithAlertAndIntl(<Attempts />);
     const usernameCell = screen.getByRole('cell', { name: mockAttempt.user.username });
     expect(usernameCell).toBeInTheDocument();
   });
 
   it('calls useResetAttempt with courseId from route params', () => {
-    renderWithIntl(<Attempts />);
+    renderWithAlertAndIntl(<Attempts />);
     expect(useResetAttempt).toHaveBeenCalledWith('course-v1:edX+Test+2024');
   });
 
   it('calls resetAttempt with username and examId when onReset is triggered', async () => {
-    renderWithIntl(<Attempts />);
-    const actionsButton = screen.getByRole('button', { name: messages.actions.defaultMessage });
-    await userEvent.click(actionsButton);
-    const resetButton = screen.getByRole('button', { name: messages.reset.defaultMessage });
-    await userEvent.click(resetButton);
+    renderWithAlertAndIntl(<Attempts />);
+    await clickReset();
 
-    expect(mockResetAttempt).toHaveBeenCalledWith({
-      username: 'testuser',
-      examId: 42,
+    expect(mockResetAttempt).toHaveBeenCalledWith(
+      { username: 'testuser', examId: 42 },
+      expect.objectContaining({
+        onSuccess: expect.any(Function),
+        onError: expect.any(Function),
+      }),
+    );
+  });
+
+  it('shows a success toast when reset succeeds', async () => {
+    mockResetAttempt.mockImplementation((_params, options) => {
+      options.onSuccess();
     });
+
+    renderWithAlertAndIntl(<Attempts />);
+    await clickReset();
+
+    const successMessage = screen.getByText(messages.successOnReset.defaultMessage.replace('{student}', mockAttempt.user.username).replace('{examName}', mockAttempt.examName));
+
+    await waitFor(() => {
+      expect(successMessage).toBeInTheDocument();
+    });
+  });
+
+  it('shows an error modal with API detail when reset fails with AxiosError', async () => {
+    const axiosError = new AxiosError('Request failed');
+    axiosError.response = {
+      data: { detail: 'Student has no active attempt.' },
+      status: 400,
+      statusText: 'Bad Request',
+      headers: {},
+      config: {} as any,
+    };
+
+    mockResetAttempt.mockImplementation((_params, options) => {
+      options.onError(axiosError);
+    });
+
+    renderWithAlertAndIntl(<Attempts />);
+    await clickReset();
+
+    await waitFor(() => {
+      expect(screen.getByText('Student has no active attempt.')).toBeInTheDocument();
+    });
+    expect(screen.getByText(messages.close.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('shows a generic error modal when reset fails with a non-Axios error', async () => {
+    const genericError = new Error('Something went wrong');
+
+    mockResetAttempt.mockImplementation((_params, options) => {
+      options.onError(genericError);
+    });
+
+    renderWithAlertAndIntl(<Attempts />);
+    await clickReset();
+
+    await waitFor(() => {
+      expect(screen.getByText(messages.errorOnReset.defaultMessage)).toBeInTheDocument();
+    });
+    expect(screen.getByText(messages.close.defaultMessage)).toBeInTheDocument();
   });
 });

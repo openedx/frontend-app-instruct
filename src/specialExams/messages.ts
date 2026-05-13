@@ -245,6 +245,21 @@ const messages = defineMessages({
     id: 'instruct.specialExams.true',
     defaultMessage: 'True',
     description: 'Display value for a boolean true value'
+  },
+  successOnReset: {
+    id: 'instruct.specialExams.successOnReset',
+    defaultMessage: 'Successfully reset attempt on {examName} for {student}.',
+    description: 'Success message shown after resetting an exam attempt'
+  },
+  errorOnReset: {
+    id: 'instruct.specialExams.errorOnReset',
+    defaultMessage: 'An error occurred while resetting the attempt. Please try again.',
+    description: 'Error message shown when resetting an exam attempt fails'
+  },
+  close: {
+    id: 'instruct.specialExams.close',
+    defaultMessage: 'Close',
+    description: 'Label for close button'
   }
 });
 
