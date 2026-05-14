@@ -12,6 +12,7 @@ import SpecialExamsPage from '@src/specialExams/SpecialExamsPage';
 import PageNotFound from '@src/components/PageNotFound';
 import { useWidgetProps } from './slots/SlotUtils';
 import { instructorDashboardRole } from './constants';
+import { authenticatedLoader } from '@openedx/frontend-base';
 
 interface InstructorRouteProps {
   tabId: string,
@@ -51,6 +52,7 @@ const routes = [
   {
     id: 'org.openedx.frontend.route.instructorDashboard.main',
     path: 'instructor-dashboard/:courseId',
+    loader: authenticatedLoader,
     handle: {
       roles: [instructorDashboardRole]
     },
