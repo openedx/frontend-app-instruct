@@ -87,7 +87,7 @@ export default siteConfig;
 
 #### UI with New Tab Selected and Dynamic Content Displayed
 
-![Instructor Tabs with New Tab and Dynamic Content Displayed](./instructorTabsSlot/NewTabSlot.png)
+![Instructor Tabs with New Tab and Dynamic Content Displayed](./PlaceholderSlot/NewTabSlot.png)
 
 
 ### 2. How it works
